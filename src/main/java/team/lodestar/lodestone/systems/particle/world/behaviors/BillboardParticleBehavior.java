@@ -6,16 +6,12 @@ import net.minecraft.util.*;
 import net.minecraft.world.phys.*;
 import org.joml.*;
 import team.lodestar.lodestone.systems.particle.world.*;
-import team.lodestar.lodestone.systems.particle.world.behaviors.components.*;
 
 public class BillboardParticleBehavior implements LodestoneParticleBehavior {
 
-    protected BillboardParticleBehavior() {
-    }
+    public static final BillboardParticleBehavior INSTANCE = new BillboardParticleBehavior();
 
-    @Override
-    public LodestoneBehaviorComponent getComponent(LodestoneBehaviorComponent component) {
-        return null;
+    protected BillboardParticleBehavior() {
     }
 
     @Override

@@ -4,10 +4,13 @@ import net.minecraft.client.Camera;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import team.lodestar.lodestone.systems.easing.Easing;
+import team.lodestar.lodestone.systems.particle.data.*;
 
 public class ScreenshakeInstance {
     public int progress;
     public final int duration;
+
+
     public float intensity1, intensity2, intensity3;
     public Easing intensityCurveStartEasing = Easing.LINEAR, intensityCurveEndEasing = Easing.LINEAR;
 

@@ -1,33 +1,32 @@
-package team.lodestar.lodestone.systems.particle.world.behaviors.components;
+package team.lodestar.lodestone.systems.particle.world.behaviors;
 
 import net.minecraft.world.phys.*;
 import team.lodestar.lodestone.systems.particle.builder.*;
-import team.lodestar.lodestone.systems.particle.data.*;
 import team.lodestar.lodestone.systems.particle.data.spin.*;
 import team.lodestar.lodestone.systems.particle.world.*;
 import team.lodestar.lodestone.systems.particle.world.options.*;
 
-public class BedrockDirectionalBehaviorComponent extends DirectionalBehaviorComponent {
+public class BedrockDirectionalParticleBehavior extends DirectionalParticleBehavior {
 
-    private SpinParticleData pitchData;
-    private SpinParticleData yawData;
+    private final SpinParticleData pitchData;
+    private final SpinParticleData yawData;
 
     public float pitch;
     public float yaw;
 
-    public BedrockDirectionalBehaviorComponent(SpinParticleData pitchData, SpinParticleData yawData) {
+    public BedrockDirectionalParticleBehavior(SpinParticleData pitchData, SpinParticleData yawData) {
         this.pitchData = pitchData;
         this.yawData = yawData;
         this.pitch = pitchData.spinOffset + pitchData.startingValue;
         this.yaw = yawData.spinOffset + yawData.startingValue;
     }
 
-    public BedrockDirectionalBehaviorComponent() {
+    public BedrockDirectionalParticleBehavior() {
         this.pitchData = null;
         this.yawData = null;
     }
 
-    public BedrockDirectionalBehaviorComponent(SpinParticleData data) {
+    public BedrockDirectionalParticleBehavior(SpinParticleData data) {
         this(data, data);
     }
 

@@ -15,7 +15,6 @@ import team.lodestar.lodestone.systems.particle.SimpleParticleOptions;
 import team.lodestar.lodestone.systems.particle.data.GenericParticleData;
 import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
 import team.lodestar.lodestone.systems.particle.data.spin.SpinParticleData;
-import team.lodestar.lodestone.systems.particle.world.behaviors.components.*;
 import team.lodestar.lodestone.systems.particle.world.options.WorldParticleOptions;
 import team.lodestar.lodestone.systems.particle.render_types.LodestoneWorldParticleRenderType;
 import team.lodestar.lodestone.systems.particle.world.behaviors.*;
@@ -32,7 +31,6 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
 
     public final ParticleRenderType renderType;
     public final LodestoneParticleBehavior behavior;
-    public final LodestoneBehaviorComponent behaviorComponent;
 
     public final RenderHandler.LodestoneRenderLayer renderLayer;
     public final ParticleEngine.MutableSpriteSet spriteSet;
@@ -58,7 +56,6 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
         super(world, x, y, z);
         this.renderType = options.renderType;
         this.behavior = options.behavior;
-        this.behaviorComponent = behavior.getComponent(options.behaviorComponent);
         this.renderLayer = options.renderLayer;
         this.spriteSet = spriteSet;
         this.spritePicker = options.spritePicker;
@@ -156,8 +153,8 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
         if (!tickActors.isEmpty()) {
             tickActors.forEach(a -> a.accept(this));
         }
-        if (behaviorComponent != null) {
-            behaviorComponent.tick(this);
+        if (behavior != null) {
+            behavior.tick(this);
         }
     }
 

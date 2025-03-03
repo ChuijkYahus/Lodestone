@@ -6,25 +6,29 @@ import net.minecraft.util.*;
 import net.minecraft.world.phys.*;
 import org.joml.*;
 import team.lodestar.lodestone.systems.particle.world.*;
-import team.lodestar.lodestone.systems.particle.world.behaviors.components.*;
 
-import java.lang.*;
 import java.lang.Math;
+import java.util.function.*;
 
 public class DirectionalParticleBehavior implements LodestoneParticleBehavior {
 
-    protected DirectionalParticleBehavior() {
+    private final Function<LodestoneWorldParticle, Vec3> direction;
+
+    protected DirectionalParticleBehavior(Function<LodestoneWorldParticle, Vec3> direction) {
+        this.direction = direction;
     }
 
-    @Override
-    public DirectionalBehaviorComponent getComponent(LodestoneBehaviorComponent component) {
-        return component instanceof DirectionalBehaviorComponent directional ? directional : LodestoneBehaviorComponent.DIRECTIONAL;
+    public DirectionalParticleBehavior(Vec3 direction) {
+        this(p -> direction);
+    }
+
+    public DirectionalParticleBehavior() {
+        this(p -> p.getParticleSpeed().normalize());
     }
 
     @Override
     public void render(LodestoneWorldParticle particle, VertexConsumer consumer, Camera camera, float partialTicks) {
-        var component = getComponent(particle.behaviorComponent);
-        var direction = component.getDirection(particle);
+        var direction = getDirection(particle);
         float yRot = ((float) (Mth.atan2(direction.x, direction.z) * (double) (180F / (float) Math.PI)));
         float xRot = ((float) (Mth.atan2(direction.y, direction.horizontalDistance()) * (double) (180F / (float) Math.PI)));
         float yaw = (float) Math.toRadians(yRot);
@@ -77,5 +81,9 @@ public class DirectionalParticleBehavior implements LodestoneParticleBehavior {
         float z = f * f2 * f5 + f1 * f3 * f4;
         float w = f1 * f3 * f5 - f * f2 * f4;
         return new Quaternionf(x, y, z, w);
+    }
+
+    public Vec3 getDirection(LodestoneWorldParticle particle) {
+        return direction.apply(particle);
     }
 }

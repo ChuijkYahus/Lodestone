@@ -15,7 +15,7 @@ import team.lodestar.lodestone.systems.particle.data.*;
 import team.lodestar.lodestone.systems.particle.data.color.*;
 import team.lodestar.lodestone.systems.particle.data.spin.*;
 import team.lodestar.lodestone.systems.particle.world.*;
-import team.lodestar.lodestone.systems.particle.world.behaviors.components.*;
+import team.lodestar.lodestone.systems.particle.world.behaviors.*;
 import team.lodestar.lodestone.systems.particle.world.options.*;
 import team.lodestar.lodestone.systems.particle.world.type.*;
 
@@ -36,18 +36,16 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
     double maxZSpeed = 0;
     double maxZOffset = 0;
 
-    public static WorldParticleBuilder create(LodestoneWorldParticleType particle) {
-        return create(particle, null);
-    }
-    public static WorldParticleBuilder create(LodestoneWorldParticleType particle, LodestoneBehaviorComponent behavior) {
-        return create(new WorldParticleOptions(particle).setBehavior(behavior));
+    public static WorldParticleBuilder create(Holder<? extends LodestoneWorldParticleType> particle) {
+        return create(particle.value());
     }
 
     public static WorldParticleBuilder create(Supplier<? extends LodestoneWorldParticleType> particle) {
-        return create(particle, null);
+        return create(particle.get());
     }
-    public static WorldParticleBuilder create(Supplier<? extends LodestoneWorldParticleType> particle, LodestoneBehaviorComponent behavior) {
-        return create(new WorldParticleOptions(particle.get()).setBehavior(behavior));
+
+    public static WorldParticleBuilder create(LodestoneWorldParticleType particle) {
+        return create(new WorldParticleOptions(particle));
     }
 
     public static WorldParticleBuilder create(WorldParticleOptions options) {
@@ -63,54 +61,32 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
         return options;
     }
 
-    public WorldParticleBuilder setBehavior(LodestoneBehaviorComponent behaviorComponent) {
-        getParticleOptions().setBehavior(behaviorComponent);
+    public <T extends LodestoneParticleBehavior> WorldParticleBuilder setBehavior(Class<T> targetClass, Function<T, LodestoneParticleBehavior> behaviorFunction) {
+        var behavior = getBehavior(targetClass);
+        return setBehavior(behavior != null ? behaviorFunction.apply(behavior) : null);
+    }
+
+    public <T extends LodestoneParticleBehavior> GenericParticleData getBehaviorData(Class<T> targetClass, Function<T, GenericParticleData> dataFunction) {
+        var behavior = getBehavior(targetClass);
+        return behavior != null ? dataFunction.apply(behavior) : null;
+    }
+
+    public WorldParticleBuilder setBehavior(LodestoneParticleBehavior behavior) {
+        getParticleOptions().setBehavior(behavior);
         return this;
     }
 
-    public <T extends LodestoneBehaviorComponent> Optional<T> getBehaviorComponent(Class<T> targetClass) {
-        if (targetClass.isInstance(getParticleOptions().behaviorComponent)) {
-            return Optional.of((T) getParticleOptions().behaviorComponent);
+    public <T extends LodestoneParticleBehavior> T getBehavior(Class<T> targetClass) {
+        if (targetClass.isInstance(getParticleOptions().behavior)) {
+            return targetClass.cast(getParticleOptions().behavior);
         }
-        return Optional.empty();
-    }
-
-    public <T extends LodestoneBehaviorComponent> Optional<GenericParticleData> getBehaviorData(Class<T> targetClass, Function<T, GenericParticleData> dataFunction) {
-        if (targetClass.isInstance(options.behaviorComponent)) {
-            return Optional.of(dataFunction.apply((T) options.behaviorComponent));
-        }
-        return Optional.empty();
-    }
-
-    public <T extends LodestoneBehaviorComponent> Optional<LodestoneBehaviorComponent> getBehaviorComponent(Class<T> targetClass, Function<WorldParticleOptions, T> componentSupplier) {
-        if (targetClass.isInstance(options.behaviorComponent)) {
-            return Optional.of(componentSupplier.apply(getParticleOptions()));
-        }
-        return Optional.empty();
-    }
-
-    public <T extends LodestoneBehaviorComponent> WorldParticleBuilder replaceExistingBehavior(Class<T> targetClass, Function<T, LodestoneBehaviorComponent> behaviorFunction) {
-        if (targetClass.isInstance(options.behaviorComponent)) {
-            getParticleOptions().setBehavior(behaviorFunction.apply((T) options.behaviorComponent));
-        }
-        return this;
-    }
-
-    public <T extends LodestoneBehaviorComponent> WorldParticleBuilder modifyBehaviorData(Class<T> targetClass, Function<T, GenericParticleData> dataGetter, Consumer<GenericParticleData> dataConsumer) {
-        if (targetClass.isInstance(options.behaviorComponent)) {
-            dataConsumer.accept(dataGetter.apply((T) options.behaviorComponent));
-        }
-        return this;
-    }
-    public <T extends LodestoneBehaviorComponent> WorldParticleBuilder modifyBehavior(Class<T> targetClass, Consumer<T> behaviorConsumer) {
-        if (targetClass.isInstance(options.behaviorComponent)) {
-            behaviorConsumer.accept((T) options.behaviorComponent);
-        }
-        return this;
+        return null;
     }
 
     public WorldParticleBuilder modifyData(GenericParticleData dataType, Consumer<GenericParticleData> dataConsumer) {
-        dataConsumer.accept(dataType);
+        if (dataType != null) {
+            dataConsumer.accept(dataType);
+        }
         return this;
     }
 
@@ -120,16 +96,6 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
 
     public WorldParticleBuilder modifyData(Function<WorldParticleBuilder, GenericParticleData> dataType, Consumer<GenericParticleData> dataConsumer) {
         modifyData(dataType.apply(this), dataConsumer);
-        return this;
-    }
-
-    public WorldParticleBuilder modifyOptionalData(Optional<GenericParticleData> dataType, Consumer<GenericParticleData> dataConsumer) {
-        dataType.ifPresent(dataConsumer);
-        return this;
-    }
-
-    public WorldParticleBuilder modifyOptionalData(Function<WorldParticleBuilder, Optional<GenericParticleData>> dataType, Consumer<GenericParticleData> dataConsumer) {
-        modifyOptionalData(dataType.apply(this), dataConsumer);
         return this;
     }
 
