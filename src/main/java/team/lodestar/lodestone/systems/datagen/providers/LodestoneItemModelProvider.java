@@ -4,8 +4,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.client.model.generators.*;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.function.Function;
@@ -86,7 +85,7 @@ public abstract class LodestoneItemModelProvider extends ItemModelProvider {
     }
 
     public ItemModelBuilder createGenericModel(Item item, ResourceLocation modelParent, ResourceLocation... textures) {
-        ItemModelBuilder itemModelBuilder = withExistingParent(getItemName(item), modelParent);
+        var itemModelBuilder = getBuilder(getItemName(item)).parent(new ModelFile.UncheckedModelFile(modelParent));
         for (int i = 0; i < textures.length; i++) {
             itemModelBuilder.texture("layer" + i, textures[i]);
         }
