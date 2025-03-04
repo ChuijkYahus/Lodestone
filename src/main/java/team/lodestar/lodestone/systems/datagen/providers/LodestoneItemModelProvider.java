@@ -84,8 +84,12 @@ public abstract class LodestoneItemModelProvider extends ItemModelProvider {
         return super.modLoc(path);
     }
 
+    public ItemModelBuilder createParentedModel(Item item, ResourceLocation modelParent) {
+        return getBuilder(getItemName(item)).parent(new ModelFile.UncheckedModelFile(modelParent));
+    }
+
     public ItemModelBuilder createGenericModel(Item item, ResourceLocation modelParent, ResourceLocation... textures) {
-        var itemModelBuilder = getBuilder(getItemName(item)).parent(new ModelFile.UncheckedModelFile(modelParent));
+        var itemModelBuilder = createParentedModel(item, modelParent);
         for (int i = 0; i < textures.length; i++) {
             itemModelBuilder.texture("layer" + i, textures[i]);
         }

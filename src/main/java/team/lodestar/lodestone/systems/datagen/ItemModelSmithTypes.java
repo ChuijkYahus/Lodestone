@@ -23,7 +23,8 @@ public class ItemModelSmithTypes {
     })));
     public static ItemModelSmith GENERATED_ITEM = PARENTED_ITEM.apply(GENERATED);
     public static ItemModelSmith HANDHELD_ITEM = PARENTED_ITEM.apply(HANDHELD);
-    public static ItemModelSmith BUILTIN_ENTITY_ITEM = PARENTED_ITEM.apply(BUILTIN_ENTITY);
+
+    public static ItemModelSmith BUILTIN_ENTITY_ITEM = new ItemModelSmith(((item, provider) -> provider.createParentedModel(item, BUILTIN_ENTITY)));
 
     public static ItemModelSmith BLOCK_TEXTURE_ITEM = new ItemModelSmith(((item, provider) -> {
         String name = provider.getItemName(item);
