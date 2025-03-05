@@ -38,7 +38,7 @@ public class SparkParticleBehavior implements LodestoneParticleBehavior {
         Vec3 movingTo = sparkEnd(pos, offset);
         SPARK_BUILDER.setVertexConsumer(consumer)
                 .setUV(particle.getU0(), particle.getV0(), particle.getU1(), particle.getV1())
-                .setColorRaw(particle.getRed(), particle.getGreen(), particle.getBlue())
+                .setColor(particle.getRed(), particle.getGreen(), particle.getBlue())
                 .setAlpha(particle.getAlpha())
                 .renderBeam(null, movingFrom, movingTo, particle.getQuadSize(partialTicks), Vec3.ZERO);
     }
