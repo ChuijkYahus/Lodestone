@@ -44,11 +44,11 @@ public class WorldParticleOptions extends SimpleParticleOptions implements Parti
         return this;
     }
 
-    public WorldParticleOptions setBehaviorIfDefault(LodestoneParticleBehavior behavior) {
-        if (!behavior.equals(BillboardParticleBehavior.INSTANCE)) {
-            return this;
+    public WorldParticleOptions setBehaviorIfDefault(LodestoneParticleBehavior newBehavior) {
+        if (behavior.equals(BillboardParticleBehavior.INSTANCE)) {
+            return setBehavior(newBehavior);
         }
-        return setBehavior(behavior);
+        return this;
     }
 
     @Override
