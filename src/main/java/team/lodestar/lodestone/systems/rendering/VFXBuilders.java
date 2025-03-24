@@ -537,7 +537,7 @@ public class VFXBuilders {
         }
 
         public WorldVFXBuilder renderBeam(Matrix4f last, BlockPos start, BlockPos end, float width) {
-            return renderBeam(last, VecHelper.getCenterOf(start), VecHelper.getCenterOf(end), width);
+            return renderBeam(last, start.getCenter(), end.getCenter(), width);
         }
 
         public WorldVFXBuilder renderBeam(@Nullable Matrix4f last, Vec3 start, Vec3 end, float width) {
