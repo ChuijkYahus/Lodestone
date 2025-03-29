@@ -22,6 +22,10 @@ public class PointyDirectionalParticleBehavior implements LodestoneParticleBehav
         return new PointyDirectionalParticleBehavior();
     }
 
+    public static PointyDirectionalParticleBehavior pointyDirectional(Vec3 direction) {
+        return pointyDirectional().setForcedDirection(direction);
+    }
+
     protected PointyDirectionalParticleBehavior() {
 
     }

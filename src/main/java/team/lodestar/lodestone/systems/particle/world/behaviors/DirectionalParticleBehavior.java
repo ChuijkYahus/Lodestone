@@ -19,6 +19,9 @@ public class DirectionalParticleBehavior implements LodestoneParticleBehavior {
     public static DirectionalParticleBehavior directional() {
         return new DirectionalParticleBehavior();
     }
+    public static DirectionalParticleBehavior directional(Vec3 direction) {
+        return directional().setForcedDirection(direction);
+    }
 
     protected DirectionalParticleBehavior() {
 
