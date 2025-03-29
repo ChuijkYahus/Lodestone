@@ -80,7 +80,7 @@ public class SparkParticleBehavior implements LodestoneParticleBehavior {
     }
 
     public Vec3 getStartPos(Vec3 pos, Vec3 offset) {
-        return pos.subtract(offset.scale(lengthCenter-1));
+        return pos.add(offset.scale(lengthCenter-1));
     }
 
     public Vec3 getEndPos(Vec3 pos, Vec3 offset) {
