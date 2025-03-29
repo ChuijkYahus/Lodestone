@@ -455,6 +455,11 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
     }
 
     @Override
+    public WorldParticleBuilder setLengthData(GenericParticleData lengthData) {
+        return (WorldParticleBuilder) super.setLengthData(lengthData);
+    }
+
+    @Override
     public WorldParticleBuilder setScaleData(GenericParticleData scaleData) {
         return (WorldParticleBuilder) super.setScaleData(scaleData);
     }
