@@ -41,7 +41,7 @@ public class SparkParticleBehavior implements LodestoneParticleBehavior {
      * Positive values cause the spark to extrude forward, whereas negative ones cause it to extrude backwards
      * 0 causes an equal length distribution between forwards and backwards
      */
-    public SparkParticleBehavior setOffsetDirection(float lengthCenter) {
+    public SparkParticleBehavior setLengthCenter(float lengthCenter) {
         this.lengthCenter = lengthCenter;
         return this;
     }
