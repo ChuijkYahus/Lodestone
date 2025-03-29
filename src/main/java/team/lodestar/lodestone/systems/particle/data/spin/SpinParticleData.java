@@ -33,6 +33,11 @@ public class SpinParticleData extends GenericParticleData {
         return (SpinParticleData) super.overrideCoefficientMultiplier(coefficientMultiplier);
     }
 
+    @Override
+    public SpinParticleData immutable() {
+        return (SpinParticleData) super.immutable();
+    }
+
     public static SpinParticleDataBuilder create(float value) {
         return new SpinParticleDataBuilder(value, value, -1);
     }

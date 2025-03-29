@@ -2,7 +2,9 @@ package team.lodestar.lodestone.systems.particle.data;
 
 import net.minecraft.util.Mth;
 import team.lodestar.lodestone.systems.easing.Easing;
+import team.lodestar.lodestone.systems.particle.SimpleParticleOptions;
 
+@SuppressWarnings("unused")
 public class GenericParticleData {
     public final float startingValue, middleValue, endingValue;
     public final float coefficient;
@@ -10,7 +12,7 @@ public class GenericParticleData {
 
     public float valueMultiplier = 1;
     public float coefficientMultiplier = 1;
-
+    protected boolean immutable;
     protected GenericParticleData(float startingValue, float middleValue, float endingValue, float coefficient, Easing startToMiddleEasing, Easing middleToEndEasing) {
         this.startingValue = startingValue;
         this.middleValue = middleValue;
@@ -28,13 +30,13 @@ public class GenericParticleData {
         return new GenericParticleData(startingValue*valueMultiplier, middleValue*valueMultiplier, endingValue*valueMultiplier, coefficient*coefficientMultiplier, startToMiddleEasing, middleToEndEasing);
     }
 
-    public GenericParticleData multiplyCoefficient(float coefficientMultiplier) {
-        this.coefficientMultiplier *= coefficientMultiplier;
+    public GenericParticleData immutable() {
+        immutable = true;
         return this;
     }
 
-    public GenericParticleData multiplyValue(float valueMultiplier) {
-        this.valueMultiplier *= valueMultiplier;
+    public GenericParticleData multiplyCoefficient(float coefficientMultiplier) {
+        this.coefficientMultiplier *= coefficientMultiplier;
         return this;
     }
 
@@ -43,9 +45,22 @@ public class GenericParticleData {
         return this;
     }
 
+    public GenericParticleData multiplyValue(float valueMultiplier) {
+        this.valueMultiplier *= valueMultiplier;
+        return this;
+    }
+
     public GenericParticleData overrideValueMultiplier(float valueMultiplier) {
         this.valueMultiplier = valueMultiplier;
         return this;
+    }
+
+    public float getCoefficient() {
+        return coefficient * (immutable ? 1 : coefficientMultiplier);
+    }
+
+    public float getValueMultiplier() {
+        return immutable ? 1 : valueMultiplier;
     }
 
     public boolean isTrinary() {
@@ -53,7 +68,7 @@ public class GenericParticleData {
     }
 
     public float getProgress(float age, float lifetime) {
-        return Mth.clamp((age * coefficient * coefficientMultiplier) / lifetime, 0, 1);
+        return Mth.clamp((age * getCoefficient()) / lifetime, 0, 1);
     }
 
     public float getValue(float age, float lifetime) {
@@ -68,7 +83,7 @@ public class GenericParticleData {
         } else {
             result = Mth.lerp(startToMiddleEasing.ease(progress, 0, 1, 1), startingValue, middleValue);
         }
-        return result * valueMultiplier;
+        return result * getValueMultiplier();
     }
 
     public static GenericParticleDataBuilder create(float value) {

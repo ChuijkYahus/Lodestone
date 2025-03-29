@@ -6,6 +6,7 @@ import team.lodestar.lodestone.systems.particle.world.*;
 
 public interface LodestoneParticleBehavior {
 
+
     default void tick(LodestoneWorldParticle particle) {
 
     }

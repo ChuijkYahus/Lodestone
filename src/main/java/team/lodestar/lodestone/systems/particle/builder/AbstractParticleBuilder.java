@@ -41,6 +41,15 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
         return getParticleOptions().scaleData;
     }
 
+    public AbstractParticleBuilder<T> setLengthData(GenericParticleData lengthData) {
+        getParticleOptions().lengthData = lengthData;
+        return this;
+    }
+
+    public GenericParticleData getLengthData() {
+        return getParticleOptions().lengthData;
+    }
+
     public AbstractParticleBuilder<T> setTransparencyData(GenericParticleData transparencyData) {
         getParticleOptions().transparencyData = transparencyData;
         return this;
@@ -133,11 +142,6 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
 
     public AbstractParticleBuilder<T> setSpritePicker(SimpleParticleOptions.ParticleSpritePicker spritePicker) {
         getParticleOptions().spritePicker = spritePicker;
-        return this;
-    }
-
-    public AbstractParticleBuilder<T> setDiscardFunction(SimpleParticleOptions.ParticleDiscardFunctionType discardFunctionType) {
-        getParticleOptions().discardFunctionType = discardFunctionType;
         return this;
     }
 

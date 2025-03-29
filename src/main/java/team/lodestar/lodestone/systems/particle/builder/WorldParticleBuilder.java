@@ -25,6 +25,7 @@ import java.util.*;
 import java.util.Random;
 import java.util.function.*;
 
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleOptions> {
 
     private static final Random RANDOM = new Random();
@@ -411,7 +412,6 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
 
     public WorldParticleBuilder createBlockOutline(Level level, BlockPos pos, BlockState state) {
         VoxelShape voxelShape = state.getShape(level, pos);
-        double d = 0.25;
         voxelShape.forAllBoxes(
                 (x1, y1, z1, x2, y2, z2) -> {
                     var v = BlockPosHelper.fromBlockPos(pos);
@@ -552,10 +552,5 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
     @Override
     public WorldParticleBuilder setSpritePicker(SimpleParticleOptions.ParticleSpritePicker spritePicker) {
         return (WorldParticleBuilder) super.setSpritePicker(spritePicker);
-    }
-
-    @Override
-    public WorldParticleBuilder setDiscardFunction(SimpleParticleOptions.ParticleDiscardFunctionType discardFunctionType) {
-        return (WorldParticleBuilder) super.setDiscardFunction(discardFunctionType);
     }
 }

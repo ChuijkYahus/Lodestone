@@ -19,12 +19,11 @@ import team.lodestar.lodestone.systems.particle.world.options.WorldParticleOptio
 import team.lodestar.lodestone.systems.particle.render_types.LodestoneWorldParticleRenderType;
 import team.lodestar.lodestone.systems.particle.world.behaviors.*;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-import static team.lodestar.lodestone.systems.particle.SimpleParticleOptions.ParticleDiscardFunctionType.ENDING_CURVE_INVISIBLE;
-import static team.lodestar.lodestone.systems.particle.SimpleParticleOptions.ParticleDiscardFunctionType.INVISIBLE;
 import static team.lodestar.lodestone.systems.particle.SimpleParticleOptions.ParticleSpritePicker.*;
 
 public class LodestoneWorldParticle extends TextureSheetParticle {
@@ -35,20 +34,20 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
     public final RenderHandler.LodestoneRenderLayer renderLayer;
     public final ParticleEngine.MutableSpriteSet spriteSet;
     public final SimpleParticleOptions.ParticleSpritePicker spritePicker;
-    public final SimpleParticleOptions.ParticleDiscardFunctionType discardFunctionType;
     public final ColorParticleData colorData;
     public final GenericParticleData transparencyData;
     public final GenericParticleData scaleData;
+    @Nullable
+    public final GenericParticleData lengthData;
     public final SpinParticleData spinData;
     public final Collection<Consumer<LodestoneWorldParticle>> tickActors;
     public final Collection<Consumer<LodestoneWorldParticle>> renderActors;
 
     public final int particleLight;
 
-    private boolean reachedPositiveAlpha;
-    private boolean reachedPositiveScale;
-
     public int lifeDelay;
+
+    private float quadLength;
 
     float[] hsv1 = new float[3], hsv2 = new float[3];
 
@@ -59,10 +58,10 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
         this.renderLayer = options.renderLayer;
         this.spriteSet = spriteSet;
         this.spritePicker = options.spritePicker;
-        this.discardFunctionType = options.discardFunctionType;
         this.colorData = options.colorData;
-        this.transparencyData = GenericParticleData.constrictTransparency(options.transparencyData);
+        this.transparencyData = options.transparencyData;
         this.scaleData = options.scaleData;
+        this.lengthData = options.lengthData != WorldParticleOptions.DEFAULT_GENERIC ? options.lengthData : null;
         this.spinData = options.spinData;
         this.tickActors = options.tickActors;
         this.renderActors = options.renderActors;
@@ -83,10 +82,10 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
             if (getSpritePicker().equals(RANDOM_SPRITE)) {
                 pickSprite(spriteSet);
             }
-            if (getSpritePicker().equals(FIRST_INDEX) || getSpritePicker().equals(WITH_AGE)) {
+            else if (getSpritePicker().equals(FIRST_INDEX) || getSpritePicker().equals(WITH_AGE)) {
                 pickSprite(0);
             }
-            if (getSpritePicker().equals(LAST_INDEX)) {
+            else if (getSpritePicker().equals(LAST_INDEX)) {
                 pickSprite(spriteSet.sprites.size() - 1);
             }
         }
@@ -124,29 +123,18 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
     }
 
     protected void updateTraits() {
-        boolean shouldAttemptRemoval = discardFunctionType == INVISIBLE;
-        if (discardFunctionType == ENDING_CURVE_INVISIBLE) {
-            if (scaleData.getProgress(age, lifetime) > 0.5f || transparencyData.getProgress(age, lifetime) > 0.5f) {
-                shouldAttemptRemoval = true;
-            }
-        }
-        if (shouldAttemptRemoval) {
-            if ((reachedPositiveAlpha && alpha <= 0) || (reachedPositiveScale && quadSize <= 0)) {
+        if (scaleData.getProgress(age, lifetime) > 0.8f || transparencyData.getProgress(age, lifetime) > 0.8f) {
+            if (alpha <= 0 || getQuadSize(0) <= 0 || getQuadLength(0) <= 0) {
                 remove();
-                return;
             }
-        }
-
-        if (!reachedPositiveAlpha && alpha > 0) {
-            reachedPositiveAlpha = true;
-        }
-        if (!reachedPositiveScale && quadSize > 0) {
-            reachedPositiveScale = true;
+            return;
         }
         pickColor(colorData.colorCurveEasing.ease(colorData.getProgress(age, lifetime), 0, 1, 1));
 
         quadSize = scaleData.getValue(age, lifetime);
-        alpha = transparencyData.getValue(age, lifetime);
+        quadLength = lengthData != null ? lengthData.getValue(age, lifetime) : quadSize;
+
+        alpha = Mth.clamp(transparencyData.getValue(age, lifetime), 0, 1);
         oRoll = roll;
         roll += spinData.getValue(age, lifetime);
 
@@ -197,9 +185,8 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
         return renderType;
     }
 
-    @Override
-    public float getQuadSize(float pScaleFactor) {
-        return super.getQuadSize(pScaleFactor);
+    public float getQuadLength(float partialTicks) {
+        return quadLength;
     }
 
     @Override

@@ -12,18 +12,39 @@ import java.util.function.*;
 
 public class DirectionalParticleBehavior implements LodestoneParticleBehavior {
 
-    private final Function<LodestoneWorldParticle, Vec3> direction;
+    protected Vec3 forcedDirection;
 
-    protected DirectionalParticleBehavior(Function<LodestoneWorldParticle, Vec3> direction) {
-        this.direction = direction;
+    private Vec3 cachedDirection;
+
+    public static DirectionalParticleBehavior directional() {
+        return new DirectionalParticleBehavior();
     }
 
-    public DirectionalParticleBehavior(Vec3 direction) {
-        this(p -> direction);
+    protected DirectionalParticleBehavior() {
+
     }
 
-    public DirectionalParticleBehavior() {
-        this(p -> p.getParticleSpeed().normalize());
+    /**
+     * Defines a static direction for the particle to aim towards instead, regardless of velocity
+     */
+    public DirectionalParticleBehavior setForcedDirection(Vec3 forcedDirection) {
+        this.forcedDirection = forcedDirection;
+        return this;
+    }
+
+    public Vec3 getDirection(LodestoneWorldParticle particle) {
+        if (forcedDirection != null) {
+            return forcedDirection;
+        }
+        return cachedDirection != null ? cachedDirection : particle.getParticleSpeed().normalize();
+    }
+
+    @Override
+    public void tick(LodestoneWorldParticle particle) {
+        var direction = particle.getParticleSpeed().normalize();
+        if (!direction.equals(Vec3.ZERO)) {
+            cachedDirection = direction;
+        }
     }
 
     @Override
@@ -45,11 +66,12 @@ public class DirectionalParticleBehavior implements LodestoneParticleBehavior {
         float y = (float) (Mth.lerp(partialTicks, particle.getYOld(), particle.getY()) - vec3.y());
         float z = (float) (Mth.lerp(partialTicks, particle.getZOld(), particle.getZ()) - vec3.z());
         Vector3f[] avector3f = new Vector3f[]{new Vector3f(-1.0F, -1.0F, 0.0F), new Vector3f(-1.0F, 1.0F, 0.0F), new Vector3f(1.0F, 1.0F, 0.0F), new Vector3f(1.0F, -1.0F, 0.0F)};
-        float f4 = particle.getQuadSize(partialTicks);
+        float width = particle.getQuadSize(partialTicks);
+        float length = particle.getQuadLength(partialTicks);
         for (int i = 0; i < 4; ++i) {
             Vector3f vector3f = avector3f[i];
             vector3f.rotate(quaternion);
-            vector3f.mul(f4);
+            vector3f.mul(width, length, 1);
             vector3f.add(x, y, z);
         }
 
@@ -81,9 +103,5 @@ public class DirectionalParticleBehavior implements LodestoneParticleBehavior {
         float z = f * f2 * f5 + f1 * f3 * f4;
         float w = f1 * f3 * f5 - f * f2 * f4;
         return new Quaternionf(x, y, z, w);
-    }
-
-    public Vec3 getDirection(LodestoneWorldParticle particle) {
-        return direction.apply(particle);
     }
 }
