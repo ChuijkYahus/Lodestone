@@ -13,11 +13,6 @@
   ],
   "passes": [
     {
-      "name": "lodestone:bloom_mask",
-      "intarget": "minecraft:main",
-      "outtarget": "bloomColor"
-    },
-    {
       "name": "lodestone:gaussian",
       "intarget": "bloomColor",
       "outtarget": "blurSwap",

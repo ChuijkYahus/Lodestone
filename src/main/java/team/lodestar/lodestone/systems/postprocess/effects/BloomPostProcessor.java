@@ -3,7 +3,6 @@ package team.lodestar.lodestone.systems.postprocess.effects;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.EffectInstance;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
@@ -14,12 +13,8 @@ import team.lodestar.lodestone.systems.texture.CustomizableTextureTarget;
 import team.lodestar.lodestone.systems.texture.InternalTextureFormat;
 
 public class BloomPostProcessor extends PostProcessor {
-    private final RenderTarget bloomTarget;
+    private RenderTarget bloomTarget;
     private final RenderStateShard.OutputStateShard bloomOutput;
-
-    private EffectInstance bloomMask;
-    private RenderTarget bloomColor;
-    private RenderTarget blurSwap;
 
     private boolean forceDisabled;
 
@@ -42,15 +37,12 @@ public class BloomPostProcessor extends PostProcessor {
     public void init() {
         super.init();
         if (this.postChain != null) {
-            this.bloomMask = effects[0];
-            this.bloomColor = this.postChain.getTempTarget("bloomColor");
-            this.blurSwap = this.postChain.getTempTarget("blurSwap");
+            this.bloomTarget = this.postChain.getTempTarget("bloomColor");
         }
     }
 
     @Override
     public void beforeProcess(Matrix4f viewModelMatrix) {
-        this.bloomMask.setSampler("BloomMaskSampler", this.bloomTarget::getColorTextureId);
     }
 
     @Override
