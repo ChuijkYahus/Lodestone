@@ -76,7 +76,7 @@ public class PointyDirectionalParticleBehavior implements LodestoneParticleBehav
         float length = particle.getQuadLength(partialTicks);
         for (int i = 0; i < 4; ++i) {
             Vector3f vector3f = avector3f[i];
-            vector3f.mul(width, length, 1);
+            vector3f.mul(width, 1, length);
             vector3f.rotate(quaternion);
             vector3f.add(x, y, z);
         }
