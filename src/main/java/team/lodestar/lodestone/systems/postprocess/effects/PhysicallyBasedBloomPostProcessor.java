@@ -3,7 +3,7 @@ package team.lodestar.lodestone.systems.postprocess.effects;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.EffectInstance;
+import net.minecraft.client.renderer.PostPass;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
@@ -11,8 +11,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import team.lodestar.lodestone.LodestoneLib;
 import team.lodestar.lodestone.systems.postprocess.PostProcessor;
-import team.lodestar.lodestone.systems.texture.CustomizableTextureTarget;
-import team.lodestar.lodestone.systems.texture.InternalTextureFormat;
 
 public class PhysicallyBasedBloomPostProcessor extends PostProcessor {
     private RenderTarget bloomTarget;
@@ -63,22 +61,29 @@ public class PhysicallyBasedBloomPostProcessor extends PostProcessor {
 
     @Override
     public void resize(int width, int height) {
-        super.resize(width, height);
-        //this.bloomTarget.resize(width, height, Minecraft.ON_OSX);
+        if (this.postChain == null) return;
+        this.postChain.screenWidth = width;
+        this.postChain.screenHeight = this.postChain.screenTarget.height;
+        this.postChain.updateOrthoMatrix();
 
-        this.BLURX2.resize(width / 2, height / 2, Minecraft.ON_OSX);
-        this.BLURY2.resize(width / 2, height / 2, Minecraft.ON_OSX);
-        this.BLURX4.resize(width / 4, height / 4, Minecraft.ON_OSX);
-        this.BLURY4.resize(width / 4, height / 4, Minecraft.ON_OSX);
-        this.BLURX8.resize(width / 8, height / 8, Minecraft.ON_OSX);
-        this.BLURY8.resize(width / 8, height / 8, Minecraft.ON_OSX);
+        for(PostPass postpass : this.postChain.passes) {
+            postpass.setOrthoMatrix(this.postChain.shaderOrthoMatrix);
+        }
 
-        this.BLURX2.setFilterMode(GL11.GL_LINEAR);
-        this.BLURY2.setFilterMode(GL11.GL_LINEAR);
-        this.BLURX4.setFilterMode(GL11.GL_LINEAR);
-        this.BLURY4.setFilterMode(GL11.GL_LINEAR);
-        this.BLURX8.setFilterMode(GL11.GL_LINEAR);
-        this.BLURY8.setFilterMode(GL11.GL_LINEAR);
+        this.bloomTarget.resize(width, height, Minecraft.ON_OSX);
+
+        resize(this.BLURX2, width, height, 2);
+        resize(this.BLURY2, width, height, 2);
+        resize(this.BLURX4, width, height, 4);
+        resize(this.BLURY4, width, height, 4);
+        resize(this.BLURX8, width, height, 8);
+        resize(this.BLURY8, width, height, 8);
+    }
+
+    private void resize(RenderTarget target, int width, int height, int divisor) {
+        if (target == null) return;
+        target.resize(width / divisor, height / divisor, Minecraft.ON_OSX);
+        target.setFilterMode(GL11.GL_LINEAR);
     }
 
     public void forceDisable() {

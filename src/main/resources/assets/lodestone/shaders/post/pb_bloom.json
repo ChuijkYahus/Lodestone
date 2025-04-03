@@ -28,8 +28,7 @@
     {
       "name": "blurY8",
       "format": "RGBA16F"
-    },
-    "final"
+    }
   ],
   "passes": [
     {
@@ -107,7 +106,7 @@
     {
       "name": "lodestone:blend",
       "intarget": "minecraft:main",
-      "outtarget": "final",
+      "outtarget": "bloomColor",
       "use_linear_filter": true,
       "auxtargets": [
         {
@@ -118,7 +117,7 @@
     },
     {
       "name": "blit",
-      "intarget": "final",
+      "intarget": "bloomColor",
       "outtarget": "minecraft:main"
     }
   ]
