@@ -114,8 +114,8 @@ public class LodestoneBlockProperties extends BlockBehaviour.Properties {
         return this;
     }
 
-    public LodestoneBlockProperties hasInheritedLoot() {
-        addDatagenData(LodestoneDatagenBlockData::hasInheritedLoot);
+    public LodestoneBlockProperties noLootDatagen() {
+        addDatagenData(LodestoneDatagenBlockData::noLootDatagen);
         return this;
     }
 
@@ -229,6 +229,7 @@ public class LodestoneBlockProperties extends BlockBehaviour.Properties {
     @Override
     @NotNull
     public LodestoneBlockProperties noLootTable() {
+        noLootDatagen();
         return (LodestoneBlockProperties) super.noLootTable();
     }
 
@@ -236,16 +237,14 @@ public class LodestoneBlockProperties extends BlockBehaviour.Properties {
     @NotNull
     @SuppressWarnings("deprecation")
     public LodestoneBlockProperties dropsLike(@NotNull Block block) {
-        if (DatagenModLoader.isRunningDataGen()) {
-            getDatagenData().hasInheritedLootTable = true;
-        }
+        noLootDatagen();
         return (LodestoneBlockProperties) super.dropsLike(block);
     }
 
     @Override
     @NotNull
     public LodestoneBlockProperties lootFrom(@NotNull Supplier<? extends Block> blockIn) {
-        hasInheritedLoot();
+        noLootDatagen();
         return (LodestoneBlockProperties) super.lootFrom(blockIn);
     }
 

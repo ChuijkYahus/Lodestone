@@ -23,10 +23,14 @@ public class LodestoneDirectionalBlock extends DirectionalBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        if (context.getPlayer() != null && context.getPlayer().isShiftKeyDown()) {
-            return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection());
+        var direction = context.getNearestLookingDirection();
+        if (direction.getAxis().isHorizontal()) {
+            direction = direction.getOpposite();
         }
-        return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
+        if (context.getPlayer() != null && context.getPlayer().isShiftKeyDown()) {
+            return this.defaultBlockState().setValue(FACING, direction);
+        }
+        return this.defaultBlockState().setValue(FACING, direction.getOpposite());
     }
 
     @Override
