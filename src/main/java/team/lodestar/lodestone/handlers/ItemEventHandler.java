@@ -42,6 +42,16 @@ public class ItemEventHandler {
         }
     }
 
+    public static void triggerHurtResponses(LivingIncomingDamageEvent event) {
+        var source = event.getSource();
+        var target = event.getEntity();
+        var attacker = source.getEntity() instanceof LivingEntity livingAttacker ? livingAttacker : target.getLastAttacker();
+        getEventResponders(target).forEach(lookup -> lookup.run((eventResponderItem, stack) -> eventResponderItem.incomingDamageEvent(event, attacker, target, stack)));
+        if (attacker != null) {
+            getEventResponders(attacker).forEach(lookup -> lookup.run((eventResponderItem, stack) -> eventResponderItem.outgoingDamageEvent(event, attacker, target, stack)));
+        }
+    }
+
     public static void triggerHurtResponses(LivingDamageEvent.Pre event) {
         var source = event.getSource();
         var target = event.getEntity();
@@ -51,6 +61,7 @@ public class ItemEventHandler {
             getEventResponders(attacker).forEach(lookup -> lookup.run((eventResponderItem, stack) -> eventResponderItem.outgoingDamageEvent(event, attacker, target, stack)));
         }
     }
+
     public static void triggerHurtResponses(LivingDamageEvent.Post event) {
         var source = event.getSource();
         var target = event.getEntity();
@@ -89,7 +100,13 @@ public class ItemEventHandler {
 
         }
 
-        default void modifyAttributesEvent(ItemAttributeModifierEvent event) {
+        //TODO: the naming here is confusing. We have the `Incoming` event which is ran before any damage is done
+        // We also have Our Incoming and Outgoing wrappers for LivingDamageEvent Pre and Post
+        // Need to figure out a nice naming consistency here
+        default void incomingDamageEvent(LivingIncomingDamageEvent event, LivingEntity attacker, LivingEntity target, ItemStack stack) {
+        }
+
+        default void outgoingDamageEvent(LivingIncomingDamageEvent event, LivingEntity attacker, LivingEntity target, ItemStack stack) {
         }
 
         default void incomingDamageEvent(LivingDamageEvent.Pre event, LivingEntity attacker, LivingEntity target, ItemStack stack) {
@@ -111,11 +128,13 @@ public class ItemEventHandler {
         }
     }
 
-    public record EventResponderLookupResult(EventResponderSource source, ArrayList<Pair<IEventResponder, ItemStack>> result) {
+    public record EventResponderLookupResult(EventResponderSource source,
+                                             ArrayList<Pair<IEventResponder, ItemStack>> result) {
 
         public void run(BiConsumer<IEventResponder, ItemStack> consumer) {
             run(IEventResponder.class, consumer);
         }
+
         public <T extends IEventResponder> void run(Class<T> type, BiConsumer<T, ItemStack> consumer) {
             for (Pair<IEventResponder, ItemStack> pair : result) {
                 if (type.isInstance(pair.getFirst())) {
@@ -124,6 +143,7 @@ public class ItemEventHandler {
             }
         }
     }
+
     public static class EventResponderSource {
 
         public final ResourceLocation id;
