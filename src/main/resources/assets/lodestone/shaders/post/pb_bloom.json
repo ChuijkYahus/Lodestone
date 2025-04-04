@@ -1,0 +1,124 @@
+{
+  "targets": [
+    "depthMain",
+    {
+      "name": "bloomColor",
+      "format": "RGBA16F"
+    },
+    {
+      "name": "blurX2",
+      "format": "RGBA16F"
+    },
+    {
+      "name": "blurY2",
+      "format": "RGBA16F"
+    },
+    {
+      "name": "blurX4",
+      "format": "RGBA16F"
+    },
+    {
+      "name": "blurY4",
+      "format": "RGBA16F"
+    },
+    {
+      "name": "blurX8",
+      "format": "RGBA16F"
+    },
+    {
+      "name": "blurY8",
+      "format": "RGBA16F"
+    }
+  ],
+  "passes": [
+    {
+      "name": "lodestone:gaussian",
+      "intarget": "bloomColor",
+      "outtarget": "blurX2",
+      "use_linear_filter": true,
+      "uniforms": [
+        {
+          "name": "Direction",
+          "values": [0.0]
+        }
+      ]
+    },
+    {
+      "name": "lodestone:gaussian",
+      "intarget": "blurX2",
+      "outtarget": "blurY2",
+      "use_linear_filter": true,
+      "uniforms": [
+        {
+          "name": "Direction",
+          "values": [1.0]
+        }
+      ]
+    },
+    {
+      "name": "lodestone:gaussian",
+      "intarget": "blurY2",
+      "outtarget": "blurX4",
+      "use_linear_filter": true,
+      "uniforms": [
+        {
+          "name": "Direction",
+          "values": [0.0]
+        }
+      ]
+    },
+    {
+      "name": "lodestone:gaussian",
+      "intarget": "blurX4",
+      "outtarget": "blurY4",
+      "use_linear_filter": true,
+      "uniforms": [
+        {
+          "name": "Direction",
+          "values": [1.0]
+        }
+      ]
+    },
+    {
+      "name": "lodestone:gaussian",
+      "intarget": "blurY4",
+      "outtarget": "blurX8",
+      "use_linear_filter": true,
+      "uniforms": [
+        {
+          "name": "Direction",
+          "values": [0.0]
+        }
+      ]
+    },
+    {
+      "name": "lodestone:gaussian",
+      "intarget": "blurX8",
+      "outtarget": "blurY8",
+      "use_linear_filter": true,
+      "uniforms": [
+        {
+          "name": "Direction",
+          "values": [1.0]
+        }
+      ]
+    },
+    {
+      "name": "lodestone:blend",
+      "intarget": "minecraft:main",
+      "outtarget": "bloomColor",
+      "use_linear_filter": true,
+      "auxtargets": [
+        {
+          "name": "BlendSampler",
+          "id": "blurY8"
+        }
+      ]
+    },
+    {
+      "name": "blit",
+      "intarget": "bloomColor",
+      "outtarget": "minecraft:main"
+    }
+  ]
+}
