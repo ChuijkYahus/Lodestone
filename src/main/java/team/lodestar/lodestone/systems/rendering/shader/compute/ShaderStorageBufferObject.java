@@ -1,11 +1,10 @@
 package team.lodestar.lodestone.systems.rendering.shader.compute;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import org.lwjgl.system.MemoryUtil;
 import team.lodestar.lodestone.systems.rendering.IBufferObject;
 import team.lodestar.lodestone.systems.rendering.LodestoneRenderSystem;
 
-import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL43.*;
 
@@ -16,27 +15,31 @@ public class ShaderStorageBufferObject implements IBufferObject {
     private int bufferId;
     private final Usage usage;
     private final int bindingIndex;
-    private ByteBuffer byteBuffer;
+    private FloatBuffer floatBuffer;
 
 
     public ShaderStorageBufferObject(Usage usage, int bindingIndex) {
         this.usage = usage;
         this.bindingIndex = bindingIndex;
-        LodestoneRenderSystem.glGenBuffers(i -> this.bufferId = i);
-        LodestoneRenderSystem.glBindBuffer(GL_SHADER_STORAGE_BUFFER, this.bufferId);
-        LodestoneRenderSystem.bindBufferBase(GL_SHADER_STORAGE_BUFFER, bindingIndex, this.bufferId);
+        LodestoneRenderSystem.wrap(() -> {
+            this.bufferId = glGenBuffers();
+            LodestoneRenderSystem.glBindBuffer(GL_SHADER_STORAGE_BUFFER, this.bufferId);
+            LodestoneRenderSystem.bindBufferBase(GL_SHADER_STORAGE_BUFFER, bindingIndex, this.bufferId);
 
+        });
         this.registerBufferObject();
     }
 
-    public void upload(ByteBuffer byteBuffer) {
-        int size = byteBuffer.remaining();
-        if(byteBuffer.remaining() > glGetInteger(GL_MAX_SHADER_STORAGE_BLOCK_SIZE))
+    public void upload(FloatBuffer floatBuffer) {
+        int size = floatBuffer.remaining();
+        if(floatBuffer.remaining() > SystemDetails.getMaxShaderStorageBlockSize())
             throw new RuntimeException("Buffer size exceeds maximum shader storage block size");
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, this.bufferId);
-        glBufferData(GL_SHADER_STORAGE_BUFFER, byteBuffer, this.usage.getGlEnum());
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-        this.byteBuffer = byteBuffer;
+        LodestoneRenderSystem.wrap(() -> {
+            glBindBuffer(GL_SHADER_STORAGE_BUFFER, this.bufferId);
+            glBufferData(GL_SHADER_STORAGE_BUFFER, floatBuffer, this.usage.getGlEnum());
+            glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+        });
+        this.floatBuffer = floatBuffer;
     }
 
     public static void unbind() {
@@ -55,6 +58,10 @@ public class ShaderStorageBufferObject implements IBufferObject {
         return this.usage;
     }
 
+    public FloatBuffer getFloatBuffer() {
+        return this.floatBuffer;
+    }
+
     @Override
     public String toString() {
         return "ShaderStorageBufferObject{" +
@@ -69,8 +76,8 @@ public class ShaderStorageBufferObject implements IBufferObject {
         if (this.bufferId != 0)
             glDeleteProgram(this.bufferId);
 
-        if (this.byteBuffer != null)
-            MemoryUtil.memFree(this.byteBuffer);
+        if (this.floatBuffer != null)
+            MemoryUtil.memFree(this.floatBuffer);
     }
 
     public enum Usage {
