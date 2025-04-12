@@ -30,6 +30,7 @@ public class ComputePreprocessor extends GlslPreprocessor {
         });
         return localSize;
     }
+
     @Override
     public List<String> process(String shaderData) {
 //        shaderData = concatPattern.matcher(shaderData).replaceAll(matchResult -> {
