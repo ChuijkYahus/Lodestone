@@ -13,13 +13,13 @@ import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class EntityHelper {
-    public static void pick(LivingEntity entity) {
+    public static HitResult pick(LivingEntity entity) {
         double d0 = entity.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE);
         double d1 = entity.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE);
-        HitResult hitresult = pick(entity, d0, d1);
+        return pick(entity, d0, d1);
     }
 
-    public static  HitResult pick(Entity entity, double blockInteractionRange, double entityInteractionRange) {
+    public static HitResult pick(Entity entity, double blockInteractionRange, double entityInteractionRange) {
         double d0 = Math.max(blockInteractionRange, entityInteractionRange);
         double d1 = Mth.square(d0);
         Vec3 vec3 = entity.getEyePosition();
