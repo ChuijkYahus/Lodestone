@@ -112,6 +112,7 @@ public class RenderHelper {
         return new Vec2((pos.x() + 1F) / 2F, (pos.y() + 1F) / 2F);
     }
 
+    //TODO: Move this to our WORLDVFXBuilder
     /**
      * Draw a segmented line between two points, subdividing the line into a number of segments
      *
@@ -130,6 +131,7 @@ public class RenderHelper {
         }
     }
 
+    //TODO: Move this to our WorldVFXBuilder
     /**
      * Draw a segmented line between two points, subdividing the line into a number of segments
      *
@@ -152,6 +154,7 @@ public class RenderHelper {
         }
     }
 
+    //TODO: move this to our WorldVFXBuilder
     /**
      * Draw a line between two points
      *
