@@ -3,6 +3,8 @@ package team.lodestar.lodestone.systems.particle.data.color;
 import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.*;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import team.lodestar.lodestone.helpers.RandomHelper;
 import team.lodestar.lodestone.systems.easing.Easing;
 
 import java.awt.*;
@@ -87,5 +89,11 @@ public class ColorParticleData {
 
     public static ColorParticleDataBuilder create(Color color) {
         return create(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f);
+    }
+
+    public static ColorParticleData createGrayParticleColor(RandomSource random) {
+        int brightness = (int) (255 * RandomHelper.randomBetween(random, 0.6f, 1f));
+        Color color = new Color(brightness, brightness, brightness);
+        return ColorParticleData.create(color, color.darker()).setEasing(Easing.SINE_IN_OUT).build();
     }
 }
