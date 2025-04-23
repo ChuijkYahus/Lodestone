@@ -9,6 +9,7 @@ import team.lodestar.lodestone.systems.network.WeaponParticleEffectType;
 import team.lodestar.lodestone.systems.network.particle.NetworkedParticleEffectColorData;
 import team.lodestar.lodestone.systems.network.particle.NetworkedParticleEffectExtraData;
 import team.lodestar.lodestone.systems.network.particle.NetworkedParticleEffectType;
+import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
 
 /**
  * A Helper class designed for creating networked weapon particle effects, such as sword slashes or any kinda jab.
@@ -24,15 +25,15 @@ public class WeaponParticleEffectHelper {
 
     public static class WeaponParticleEffectBuilder {
 
-        public final NetworkedParticleEffectType effectType;
-        public final EffectDataSupplier supplier;
-        public float horizontalOffset;
-        public float slashAngle;
-        public boolean isMirrored;
-        public NetworkedParticleEffectColorData color;
+        protected final NetworkedParticleEffectType effectType;
+        protected NetworkedParticleEffectColorData color;
+        protected final EffectDataSupplier supplier;
+        protected float horizontalOffset;
+        protected float slashAngle;
+        protected boolean isMirrored;
 
-        public Vec3 positionOffset = Vec3.ZERO;
-        public float horizontalDeviationStrength = 0, verticalDeviationStrength = 0, forwardOffset = 0, deviationAngle = 0;
+        protected Vec3 positionOffset = Vec3.ZERO;
+        protected float horizontalDeviationStrength = 0, verticalDeviationStrength = 0, forwardOffset = 0, deviationAngle = 0;
 
         protected WeaponParticleEffectBuilder(NetworkedParticleEffectType effectType, EffectDataSupplier supplier) {
             this.effectType = effectType;
@@ -151,7 +152,7 @@ public class WeaponParticleEffectHelper {
          * @param offset The offset to apply vertically.
          */
         public WeaponParticleEffectBuilder setVerticalDirectionDeviation(float offset) {
-            this.horizontalDeviationStrength = offset;
+            this.verticalDeviationStrength = offset;
             return this;
         }
 
@@ -318,6 +319,9 @@ public class WeaponParticleEffectHelper {
          * @param slashDirection The direction for the effect.
          */
         public void spawnSlashingParticle(ServerLevel level, Vec3 slashPosition, Vec3 slashDirection) {
+            if (color == null) {
+                color = NetworkedParticleEffectColorData.fromColor(ColorParticleData.createGrayParticleColor(level.getRandom()));
+            }
             effectType.createEffect(getPosition(slashPosition, slashDirection))
                     .color(color)
                     .customData(supplier.createData(getDirection(slashDirection), this))
