@@ -1,20 +1,30 @@
 package team.lodestar.lodestone.systems.network.particle;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
+import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
 
 public class NetworkedParticleEffectPositionData {
 
-    //TODO: this could just use a codec
-    public final double posX;
-    public final double posY;
-    public final double posZ;
+    public static final Codec<NetworkedParticleEffectPositionData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.DOUBLE.fieldOf("posX").forGetter(data -> data.posX),
+            Codec.DOUBLE.fieldOf("posY").forGetter(data -> data.posY),
+            Codec.DOUBLE.fieldOf("posZ").forGetter(data -> data.posZ)
+    ).apply(instance, NetworkedParticleEffectPositionData::new));
 
-    public NetworkedParticleEffectPositionData(FriendlyByteBuf buf) {
-        this(buf.readDouble(), buf.readDouble(), buf.readDouble());
-    }
+    public static final StreamCodec<ByteBuf, NetworkedParticleEffectPositionData> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
+
+    //TODO: this could just use a codec
+    protected final double posX;
+    protected final double posY;
+    protected final double posZ;
 
     public NetworkedParticleEffectPositionData(BlockPos pos) {
         this(pos.getX(), pos.getY(), pos.getZ());
@@ -23,6 +33,7 @@ public class NetworkedParticleEffectPositionData {
     public NetworkedParticleEffectPositionData(Entity entity) {
         this(entity.getX(), entity.getY() + entity.getBbHeight() / 2f, entity.getZ());
     }
+
     public NetworkedParticleEffectPositionData(Vec3 pos) {
         this(pos.x, pos.y, pos.z);
     }
@@ -33,17 +44,23 @@ public class NetworkedParticleEffectPositionData {
         this.posZ = posZ;
     }
 
-    public void encode(FriendlyByteBuf buf) {
-        buf.writeDouble(posX);
-        buf.writeDouble(posY);
-        buf.writeDouble(posZ);
-    }
-
     public BlockPos getAsBlockPos() {
         return new BlockPos((int) posX, (int) posY, (int) posZ);
     }
 
     public Vec3 getAsVector() {
         return new Vec3(posX, posY, posZ);
+    }
+
+    public double getPosX() {
+        return posX;
+    }
+
+    public double getPosY() {
+        return posY;
+    }
+
+    public double getPosZ() {
+        return posZ;
     }
 }

@@ -28,7 +28,7 @@ public class NetworkedParticleEffectPayload extends OneSidedPayloadData {
 
     public NetworkedParticleEffectPayload(FriendlyByteBuf buf) {
         this.id = buf.readUtf();
-        this.positionData = new NetworkedParticleEffectPositionData(buf);
+        this.positionData = NetworkedParticleEffectPositionData.STREAM_CODEC.decode(buf);
         this.colorData = buf.readBoolean() ? NetworkedParticleEffectColorData.STREAM_CODEC.decode(buf) : null;
         this.nbtData = buf.readBoolean() ? new NetworkedParticleEffectExtraData(buf.readNbt()) : null;
     }
@@ -36,12 +36,14 @@ public class NetworkedParticleEffectPayload extends OneSidedPayloadData {
     @Override
     public void serialize(FriendlyByteBuf buf) {
         buf.writeUtf(id);
-        positionData.encode(buf);
+        NetworkedParticleEffectPositionData.STREAM_CODEC.encode(buf, positionData);
+
         boolean nonNullColorData = colorData != null;
         buf.writeBoolean(nonNullColorData);
         if (nonNullColorData) {
             NetworkedParticleEffectColorData.STREAM_CODEC.encode(buf, colorData);
         }
+
         boolean nonNullCompoundTag = nbtData != null;
         buf.writeBoolean(nonNullCompoundTag);
         if (nonNullCompoundTag) {

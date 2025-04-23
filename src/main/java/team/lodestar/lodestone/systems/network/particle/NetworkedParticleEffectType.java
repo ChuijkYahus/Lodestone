@@ -28,7 +28,7 @@ public abstract class NetworkedParticleEffectType {
                     DataResult.success(EFFECT_TYPES.get(s)),
             NetworkedParticleEffectType::getId);
 
-    public final String id;
+    protected final String id;
 
     public NetworkedParticleEffectType(String id) {
         this.id = id;

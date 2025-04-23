@@ -6,6 +6,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class NetworkedParticleEffectExtraData {
 
+    //TODO: figure out what to do with this
     public static final String ITEM = "stack";
 
     public final CompoundTag compoundTag;

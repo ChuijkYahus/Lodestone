@@ -5,9 +5,11 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class NetworkedParticleEffectColorData {
