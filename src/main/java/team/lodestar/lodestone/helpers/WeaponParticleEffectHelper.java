@@ -29,6 +29,7 @@ public class WeaponParticleEffectHelper {
         protected NetworkedParticleEffectColorData color;
         protected final EffectDataSupplier supplier;
         protected float horizontalOffset;
+
         protected float slashAngle;
         protected boolean isMirrored;
 
@@ -38,6 +39,14 @@ public class WeaponParticleEffectHelper {
         protected WeaponParticleEffectBuilder(NetworkedParticleEffectType effectType, EffectDataSupplier supplier) {
             this.effectType = effectType;
             this.supplier = supplier;
+        }
+
+        public float getSlashAngle() {
+            return slashAngle;
+        }
+
+        public boolean isMirrored() {
+            return isMirrored;
         }
 
         /**
