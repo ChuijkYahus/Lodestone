@@ -141,16 +141,18 @@ public class WeaponParticleEffectHelper {
          * Adds horizontal deviation to the effect's direction.
          * @param offset The offset to apply horizontally.
          */
-        public void setHorizontalDirectionDeviation(float offset) {
+        public WeaponParticleEffectBuilder setHorizontalDirectionDeviation(float offset) {
             this.horizontalDeviationStrength = offset;
+            return this;
         }
 
         /**
          * Adds vertical deviation to the effect's direction.
          * @param offset The offset to apply vertically.
          */
-        public void setVerticalDirectionDeviation(float offset) {
+        public WeaponParticleEffectBuilder setVerticalDirectionDeviation(float offset) {
             this.horizontalDeviationStrength = offset;
+            return this;
         }
 
         /**
