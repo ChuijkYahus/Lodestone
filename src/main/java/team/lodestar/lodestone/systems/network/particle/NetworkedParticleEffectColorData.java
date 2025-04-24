@@ -20,8 +20,8 @@ public class NetworkedParticleEffectColorData {
 
     public static final StreamCodec<ByteBuf, NetworkedParticleEffectColorData> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
 
-    private final List<ColorParticleData> colors;
-    public int colorCycleCounter;
+    protected final List<ColorParticleData> colors;
+    protected int colorCycleCounter;
 
     public static NetworkedParticleEffectColorData fromColors(List<ColorParticleData> colors) {
         return new NetworkedParticleEffectColorData(colors);
