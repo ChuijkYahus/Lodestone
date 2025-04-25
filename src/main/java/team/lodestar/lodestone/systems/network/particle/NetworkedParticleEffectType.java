@@ -16,6 +16,7 @@ import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
 
 import java.awt.*;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -113,6 +114,10 @@ public abstract class NetworkedParticleEffectType<T extends NetworkedParticleEff
 
         public ParticleEffectBuilder<T> color(ColorParticleData color) {
             return color(NetworkedParticleEffectColorData.fromColor(color));
+        }
+
+        public ParticleEffectBuilder<T> color(List<ColorParticleData> colors) {
+            return color(NetworkedParticleEffectColorData.fromColors(colors));
         }
 
         public ParticleEffectBuilder<T> color(NetworkedParticleEffectColorData color) {

@@ -16,6 +16,7 @@ import team.lodestar.lodestone.systems.network.particle.*;
 import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
 
 import java.awt.*;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -331,6 +332,11 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
         @Override
         public WeaponParticleEffectBuilder<T> color(ColorParticleData color) {
             return (WeaponParticleEffectBuilder<T>)super.color(color);
+        }
+
+        @Override
+        public WeaponParticleEffectBuilder<T> color(List<ColorParticleData> colors) {
+            return (WeaponParticleEffectBuilder<T>) super.color(colors);
         }
 
         @Override
