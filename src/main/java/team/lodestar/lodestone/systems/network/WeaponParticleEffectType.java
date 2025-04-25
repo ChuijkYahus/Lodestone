@@ -89,11 +89,11 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
 
     @Override
     public WeaponParticleEffectBuilder<T> createEffect(Entity target) {
-        return createEffect().at(target);
+        return createEffect().targets(target);
     }
 
     @Override
-    protected WeaponParticleEffectBuilder<T> createEffect() {
+    public WeaponParticleEffectBuilder<T> createEffect() {
         return new WeaponParticleEffectBuilder<>(this);
     }
 
