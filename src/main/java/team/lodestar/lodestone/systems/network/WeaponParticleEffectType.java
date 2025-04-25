@@ -18,11 +18,10 @@ import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
 import java.awt.*;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectType.WeaponParticleEffectData> extends NetworkedParticleEffectType<T> {
 
-    public static class WeaponParticleEffectData extends NetworkedParticleEffectExtraData {
+    public record WeaponParticleEffectData(Vec3 direction, boolean isMirrored, float slashRotation) implements NetworkedParticleEffectExtraData {
         public static final Codec<WeaponParticleEffectData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Vec3.CODEC.fieldOf("direction").forGetter(data -> data.direction),
                 Codec.BOOL.fieldOf("mirror").forGetter(data -> data.isMirrored),
@@ -32,15 +31,6 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
         public static final StreamCodec<ByteBuf, WeaponParticleEffectData> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
 
         public static final WeaponParticleEffectData DEFAULT = new WeaponParticleEffectData(Vec3.ZERO, false, 0);
-        public final Vec3 direction;
-        public final boolean isMirrored;
-        public final float slashRotation;
-
-        public WeaponParticleEffectData(Vec3 direction, boolean isMirrored, float slashRotation) {
-            this.direction = direction;
-            this.isMirrored = isMirrored;
-            this.slashRotation = slashRotation;
-        }
 
         public WeaponParticleEffectData withDirection(Vec3 direction) {
             return modify(direction, isMirrored, slashRotation);
