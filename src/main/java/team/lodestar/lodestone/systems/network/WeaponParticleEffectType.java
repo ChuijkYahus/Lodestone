@@ -31,6 +31,7 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
 
         public static final StreamCodec<ByteBuf, WeaponParticleEffectData> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
 
+        public static final WeaponParticleEffectData DEFAULT = new WeaponParticleEffectData(Vec3.ZERO, false, 0);
         public final Vec3 direction;
         public final boolean isMirrored;
         public final float slashRotation;
@@ -65,6 +66,11 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
     @Override
     public Optional<StreamCodec<ByteBuf, ? extends NetworkedParticleEffectExtraData>> getExtraCodec() {
         return Optional.of(WeaponParticleEffectData.STREAM_CODEC);
+    }
+
+    @Override
+    public Optional<? extends NetworkedParticleEffectExtraData> getDefaultExtraData() {
+        return Optional.of(WeaponParticleEffectData.DEFAULT);
     }
 
     public WeaponParticleEffectType(String id) {
