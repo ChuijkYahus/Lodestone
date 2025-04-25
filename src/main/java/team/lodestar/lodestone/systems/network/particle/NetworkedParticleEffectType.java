@@ -2,29 +2,29 @@ package team.lodestar.lodestone.systems.network.particle;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
 
 import java.awt.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
-public abstract class NetworkedParticleEffectType {
+public abstract class NetworkedParticleEffectType<T extends NetworkedParticleEffectExtraData> {
 
-    public static final Map<String, NetworkedParticleEffectType> EFFECT_TYPES = new LinkedHashMap<>();
+    public static final Map<String, NetworkedParticleEffectType<?>> EFFECT_TYPES = new LinkedHashMap<>();
 
-    public static final Codec<NetworkedParticleEffectType> CODEC = Codec.STRING.comapFlatMap(s ->
+    public static final Codec<NetworkedParticleEffectType<?>> CODEC = Codec.STRING.comapFlatMap(s ->
                     DataResult.success(EFFECT_TYPES.get(s)),
             NetworkedParticleEffectType::getId);
 
@@ -39,82 +39,113 @@ public abstract class NetworkedParticleEffectType {
         return id;
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public abstract Supplier<ParticleEffectActor> get();
-
-    protected ParticleEffectBuilder createEffect() {
-        return new ParticleEffectBuilder(this);
+    public Optional<StreamCodec<ByteBuf, ? extends NetworkedParticleEffectPositionData>> getPositionCodec() {
+        return Optional.of(NetworkedParticleEffectPositionData.STREAM_CODEC);
     }
 
-    public ParticleEffectBuilder createEffect(BlockPos position) {
+    public Optional<StreamCodec<ByteBuf, ? extends NetworkedParticleEffectColorData>> getColorCodec() {
+        return Optional.of(NetworkedParticleEffectColorData.STREAM_CODEC);
+    }
+
+    public Optional<StreamCodec<ByteBuf, ? extends NetworkedParticleEffectExtraData>> getExtraCodec() {
+        return Optional.empty();
+    }
+
+    public Optional<? extends NetworkedParticleEffectExtraData> getDefaultExtraData() {
+        return Optional.empty();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void castAndAct(Level level, RandomSource random, NetworkedParticleEffectPositionData positionData, NetworkedParticleEffectColorData colorData, NetworkedParticleEffectExtraData extraData) {
+        act(level, random, positionData, colorData, (T) extraData);
+    }
+
+    public abstract void act(Level level, RandomSource random, NetworkedParticleEffectPositionData positionData, NetworkedParticleEffectColorData colorData, T extraData);
+
+    public ParticleEffectBuilder<T> createEffect(BlockPos position) {
         return createEffect().at(position);
     }
 
-    public ParticleEffectBuilder createEffect(Vec3 position) {
+    public ParticleEffectBuilder<T> createEffect(Vec3 position) {
         return createEffect().at(position);
     }
 
-    public ParticleEffectBuilder createEffect(Entity target) {
+    public ParticleEffectBuilder<T> createEffect(Entity target) {
         return createEffect().at(target);
     }
 
-    public static class ParticleEffectBuilder {
+    protected ParticleEffectBuilder<T> createEffect() {
+        return new ParticleEffectBuilder<>(this);
+    }
 
-        public final NetworkedParticleEffectType type;
+    @SuppressWarnings("UnusedReturnValue")
+    public static class ParticleEffectBuilder<T extends NetworkedParticleEffectExtraData> {
+
+        public final NetworkedParticleEffectType<T> type;
         public NetworkedParticleEffectPositionData position;
         public NetworkedParticleEffectColorData color;
-        public NetworkedParticleEffectExtraData nbt;
+        public T extra;
 
-        public ParticleEffectBuilder(NetworkedParticleEffectType type) {
+        public ParticleEffectBuilder(NetworkedParticleEffectType<T> type) {
             this.type = type;
         }
 
-        public ParticleEffectBuilder at(BlockPos position) {
+        public ParticleEffectBuilder<T> at(BlockPos position) {
             return at(new NetworkedParticleEffectPositionData(position));
         }
 
-        public ParticleEffectBuilder at(Vec3 position) {
+        public ParticleEffectBuilder<T> at(Vec3 position) {
             return at(new NetworkedParticleEffectPositionData(position));
         }
 
-        public ParticleEffectBuilder at(Entity target) {
+        public ParticleEffectBuilder<T> at(Entity target) {
             return at(new NetworkedParticleEffectPositionData(target));
         }
 
-        public ParticleEffectBuilder at(NetworkedParticleEffectPositionData position) {
+        public ParticleEffectBuilder<T> at(NetworkedParticleEffectPositionData position) {
             this.position = position;
             return this;
         }
 
-        public ParticleEffectBuilder color(Color color) {
+        public ParticleEffectBuilder<T> color(Color color) {
             return color(ColorParticleData.create(color).build());
         }
 
-        public ParticleEffectBuilder color(ColorParticleData color) {
+        public ParticleEffectBuilder<T> color(ColorParticleData color) {
             return color(NetworkedParticleEffectColorData.fromColor(color));
         }
 
-        public ParticleEffectBuilder color(NetworkedParticleEffectColorData color) {
+        public ParticleEffectBuilder<T> color(NetworkedParticleEffectColorData color) {
             this.color = color;
             return this;
         }
 
-        public ParticleEffectBuilder customData(NetworkedParticleEffectExtraData nbt) {
-            this.nbt = nbt;
+        public ParticleEffectBuilder<T> customData(T extra) {
+            this.extra = extra;
             return this;
         }
 
-        public ParticleEffectBuilder spawn(ServerLevel level) {
+        protected T getCustomData() {
+            if (type.getExtraCodec().isEmpty()) {
+                return null;
+            }
+            if (extra == null) {
+                var defaultExtra = type.getDefaultExtraData();
+                if (defaultExtra.isEmpty()) {
+                    throw new IllegalArgumentException("Effect type that demands custom data did not receive any and has no default provided");
+                }
+                customData((T) defaultExtra.get());
+            }
+            return extra;
+        }
+
+        public ParticleEffectBuilder<T> spawn(ServerLevel level) {
             return spawn(p -> PacketDistributor.sendToPlayersTrackingChunk(level, new ChunkPos(position.getAsBlockPos()), p));
         }
 
-        public ParticleEffectBuilder spawn(Consumer<NetworkedParticleEffectPayload> sender) {
-            sender.accept(new NetworkedParticleEffectPayload(type.id, position, color, nbt));
+        public ParticleEffectBuilder<T> spawn(Consumer<NetworkedParticleEffectPayload> sender) {
+            sender.accept(new NetworkedParticleEffectPayload(type, position, color, getCustomData()));
             return this;
         }
-    }
-
-    public interface ParticleEffectActor {
-        void act(Level level, RandomSource random, NetworkedParticleEffectPositionData positionData, NetworkedParticleEffectColorData colorData, NetworkedParticleEffectExtraData nbtData);
     }
 }

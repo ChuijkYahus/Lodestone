@@ -21,7 +21,6 @@ public class NetworkedParticleEffectPositionData {
 
     public static final StreamCodec<ByteBuf, NetworkedParticleEffectPositionData> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
 
-    //TODO: this could just use a codec
     protected final double posX;
     protected final double posY;
     protected final double posZ;

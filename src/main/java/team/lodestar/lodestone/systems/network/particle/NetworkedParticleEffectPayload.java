@@ -1,8 +1,10 @@
 package team.lodestar.lodestone.systems.network.particle;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -12,42 +14,52 @@ import javax.annotation.Nullable;
 
 public class NetworkedParticleEffectPayload extends OneSidedPayloadData {
 
-    private final String id;
+    private final NetworkedParticleEffectType<?> effect;
+    @Nullable
     private final NetworkedParticleEffectPositionData positionData;
     @Nullable
     private final NetworkedParticleEffectColorData colorData;
     @Nullable
-    private final NetworkedParticleEffectExtraData nbtData;
+    private final NetworkedParticleEffectExtraData extraData;
 
-    public NetworkedParticleEffectPayload(String id, NetworkedParticleEffectPositionData positionData, @Nullable NetworkedParticleEffectColorData colorData, @Nullable NetworkedParticleEffectExtraData nbtData) {
-        this.id = id;
+    public NetworkedParticleEffectPayload(NetworkedParticleEffectType<?> effect, @Nullable NetworkedParticleEffectPositionData positionData, @Nullable NetworkedParticleEffectColorData colorData, @Nullable NetworkedParticleEffectExtraData extraData) {
+        this.effect = effect;
         this.positionData = positionData;
         this.colorData = colorData;
-        this.nbtData = nbtData;
+        this.extraData = extraData;
     }
 
     public NetworkedParticleEffectPayload(FriendlyByteBuf buf) {
-        this.id = buf.readUtf();
-        this.positionData = NetworkedParticleEffectPositionData.STREAM_CODEC.decode(buf);
-        this.colorData = buf.readBoolean() ? NetworkedParticleEffectColorData.STREAM_CODEC.decode(buf) : null;
-        this.nbtData = buf.readBoolean() ? new NetworkedParticleEffectExtraData(buf.readNbt()) : null;
+        this.effect = getEffectType(buf.readUtf());
+        this.positionData = effect.getPositionCodec().isPresent() ? effect.getPositionCodec().get().decode(buf) : null;
+        this.colorData = effect.getColorCodec().isPresent() ? effect.getColorCodec().get().decode(buf) : null;
+        this.extraData = effect.getExtraCodec().isPresent() ? effect.getExtraCodec().get().decode(buf) : null;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void serialize(FriendlyByteBuf buf) {
-        buf.writeUtf(id);
-        NetworkedParticleEffectPositionData.STREAM_CODEC.encode(buf, positionData);
-
-        boolean nonNullColorData = colorData != null;
-        buf.writeBoolean(nonNullColorData);
-        if (nonNullColorData) {
-            NetworkedParticleEffectColorData.STREAM_CODEC.encode(buf, colorData);
+        buf.writeUtf(effect.id);
+        if (effect.getPositionCodec().isPresent()) {
+            if (positionData == null) {
+                throw new IllegalArgumentException("Networked Particle Effect expected position data, did not receive any.");
+            }
+            StreamCodec codec = effect.getPositionCodec().get();
+            codec.encode(buf, positionData);
         }
-
-        boolean nonNullCompoundTag = nbtData != null;
-        buf.writeBoolean(nonNullCompoundTag);
-        if (nonNullCompoundTag) {
-            buf.writeNbt(nbtData.compoundTag);
+        if (effect.getColorCodec().isPresent()) {
+            if (colorData == null) {
+                throw new IllegalArgumentException("Networked Particle Effect expected color data, did not receive any.");
+            }
+            StreamCodec codec = effect.getColorCodec().get();
+            codec.encode(buf, colorData);
+        }
+        if (effect.getExtraCodec().isPresent()) {
+            if (extraData == null) {
+                throw new IllegalArgumentException("Networked Particle Effect expected extra data, did not receive any.");
+            }
+            StreamCodec codec = effect.getExtraCodec().get();
+            codec.encode(buf, extraData);
         }
     }
 
@@ -56,11 +68,14 @@ public class NetworkedParticleEffectPayload extends OneSidedPayloadData {
     public void handle(IPayloadContext iPayloadContext) {
         Minecraft instance = Minecraft.getInstance();
         ClientLevel level = instance.level;
-        NetworkedParticleEffectType particleEffectType = NetworkedParticleEffectType.EFFECT_TYPES.get(id);
+        effect.castAndAct(level, level.random, positionData, colorData, extraData);
+    }
+
+    public NetworkedParticleEffectType<?> getEffectType(String id) {
+        NetworkedParticleEffectType<?> particleEffectType = NetworkedParticleEffectType.EFFECT_TYPES.get(id);
         if (particleEffectType == null) {
             throw new RuntimeException("This shouldn't be happening.");
         }
-        NetworkedParticleEffectType.ParticleEffectActor particleEffectActor = particleEffectType.get().get();
-        particleEffectActor.act(level, level.random, positionData, colorData, nbtData);
+        return particleEffectType;
     }
 }

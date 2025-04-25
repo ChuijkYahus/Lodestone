@@ -1,61 +1,342 @@
 package team.lodestar.lodestone.systems.network;
 
-import net.minecraft.nbt.*;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.*;
-import net.neoforged.api.distmarker.*;
-import team.lodestar.lodestone.helpers.*;
-import team.lodestar.lodestone.systems.network.particle.NetworkedParticleEffectColorData;
-import team.lodestar.lodestone.systems.network.particle.NetworkedParticleEffectExtraData;
-import team.lodestar.lodestone.systems.network.particle.NetworkedParticleEffectPositionData;
-import team.lodestar.lodestone.systems.network.particle.NetworkedParticleEffectType;
-import team.lodestar.lodestone.systems.particle.data.*;
-import team.lodestar.lodestone.systems.particle.data.spin.*;
-import team.lodestar.lodestone.systems.particle.world.behaviors.*;
+import team.lodestar.lodestone.systems.network.particle.*;
+import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
 
-import java.util.function.*;
+import java.awt.*;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
-public abstract class WeaponParticleEffectType extends NetworkedParticleEffectType {
+public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectType.WeaponParticleEffectData> extends NetworkedParticleEffectType<T> {
+
+    public static class WeaponParticleEffectData extends NetworkedParticleEffectExtraData {
+        public static final Codec<WeaponParticleEffectData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Vec3.CODEC.fieldOf("direction").forGetter(data -> data.direction),
+                Codec.BOOL.fieldOf("mirror").forGetter(data -> data.isMirrored),
+                Codec.FLOAT.fieldOf("slashRotation").forGetter(data -> data.slashRotation)
+        ).apply(instance, WeaponParticleEffectData::new));
+
+        public static final StreamCodec<ByteBuf, WeaponParticleEffectData> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
+
+        public final Vec3 direction;
+        public final boolean isMirrored;
+        public final float slashRotation;
+
+        public WeaponParticleEffectData(Vec3 direction, boolean isMirrored, float slashRotation) {
+            this.direction = direction;
+            this.isMirrored = isMirrored;
+            this.slashRotation = slashRotation;
+        }
+
+        public WeaponParticleEffectData withDirection(Vec3 direction) {
+            return new WeaponParticleEffectData(direction, isMirrored, slashRotation);
+        }
+
+        public WeaponParticleEffectData withMirror(boolean mirror) {
+            return new WeaponParticleEffectData(direction, mirror, slashRotation);
+        }
+
+        public WeaponParticleEffectData withRotation(float slashRotation) {
+            return new WeaponParticleEffectData(direction, isMirrored, slashRotation);
+        }
+    }
+
+    public static WeaponParticleEffectData createData(Vec3 direction, boolean mirror, float angle) {
+        return new WeaponParticleEffectData(direction, mirror, angle);
+    }
+
+    @Override
+    public Optional<StreamCodec<ByteBuf, ? extends NetworkedParticleEffectExtraData>> getExtraCodec() {
+        return Optional.of(WeaponParticleEffectData.STREAM_CODEC);
+    }
 
     public WeaponParticleEffectType(String id) {
         super(id);
     }
 
-    public static NetworkedParticleEffectExtraData createData(Vec3 direction, boolean mirror, float angle) {
-        CompoundTag tag = new CompoundTag();
-        CompoundTag directionTag = new CompoundTag();
-        directionTag.putDouble("x", direction.x);
-        directionTag.putDouble("y", direction.y);
-        directionTag.putDouble("z", direction.z);
-        tag.putFloat("angle", angle);
-        tag.putBoolean("mirror", mirror);
-        tag.put("direction", directionTag);
-        return new NetworkedParticleEffectExtraData(tag);
-    }
-
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public final Supplier<ParticleEffectActor> get() {
-        return () -> (level, random, positionData, colorData, nbtData) -> {
-            if (!nbtData.compoundTag.contains("direction")) {
-                return;
-            }
-            final CompoundTag directionData = nbtData.compoundTag.getCompound("direction");
-            double dirX = directionData.getDouble("x");
-            double dirY = directionData.getDouble("y");
-            double dirZ = directionData.getDouble("z");
-            Vec3 direction = new Vec3(dirX, dirY, dirZ);
-            float angle = nbtData.compoundTag.getFloat("angle");
-            boolean mirror = nbtData.compoundTag.getBoolean("mirror");
-            float spinOffset = angle + RandomHelper.randomBetween(random, -0.5f, 0.5f) + (mirror ? 3.14f : 0);
-
-            spawnParticles(level, random, positionData, colorData, nbtData, direction, angle, mirror, spinOffset);
-        };
+    public WeaponParticleEffectBuilder<T> createEffect(BlockPos position) {
+        return createEffect().at(position);
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public abstract void spawnParticles(Level level, RandomSource random, NetworkedParticleEffectPositionData positionData,
-                                        NetworkedParticleEffectColorData colorData, NetworkedParticleEffectExtraData nbtData,
-                                        Vec3 direction, float angle, boolean mirror, float spinOffset);
+    @Override
+    public WeaponParticleEffectBuilder<T> createEffect(Vec3 position) {
+        return createEffect().at(position);
+    }
+
+    @Override
+    public WeaponParticleEffectBuilder<T> createEffect(Entity target) {
+        return createEffect().at(target);
+    }
+
+    @Override
+    protected WeaponParticleEffectBuilder<T> createEffect() {
+        return new WeaponParticleEffectBuilder<>(this);
+    }
+
+    @SuppressWarnings({"UnusedReturnValue", "unchecked"})
+    public static class WeaponParticleEffectBuilder<T extends WeaponParticleEffectData> extends ParticleEffectBuilder<T> {
+
+        protected Vec3 direction;
+        protected Entity source;
+        protected Entity target;
+        protected boolean tiedToTarget;
+
+        protected boolean isMirrored;
+        protected float slashRotation;
+
+        protected Vec3 absoluteOffset = Vec3.ZERO;
+        protected float horizontalOffset, forwardOffset, upwardOffset;
+        protected float horizontalDeviation, verticalDeviation, deviationAngle;
+        protected boolean exactDeviationAngle;
+
+        public WeaponParticleEffectBuilder(WeaponParticleEffectType<T> type) {
+            super(type);
+        }
+
+        /**
+         * Ties the effect to an entity.
+         * If no target is given, the attacker's look angle will be used as the direction.
+         * @param source The entity initiating the effect
+         */
+        public WeaponParticleEffectBuilder<T> originatesFrom(Entity source) {
+            this.source = source;
+            return this;
+        }
+
+        /**
+         * Aims the effect at a given entity.
+         * If no source is given, the direction will be random.
+         * @param target The entity to aim the effect at
+         */
+        public WeaponParticleEffectBuilder<T> targets(Entity target) {
+            this.target = target;
+            return this;
+        }
+
+        /**
+         * Sets a predetermined direction for the effect to use.
+         * If a source or target is given, they will still be considered when determining the effect's position.
+         * @param direction The direction for the effect
+         */
+        public WeaponParticleEffectBuilder<T> aimedAt(Vec3 direction) {
+            this.direction = direction;
+            return this;
+        }
+
+        /**
+         * Spawns the effect at the target's position offset towards the source instead.
+         * Innate behavior has the effect spawn originating from the source.
+         */
+        public WeaponParticleEffectBuilder<T> tiedToTarget() {
+            tiedToTarget = true;
+            return this;
+        }
+
+        public WeaponParticleEffectBuilder<T> mirroredRandomly(RandomSource random) {
+            return mirrored(random.nextBoolean());
+        }
+
+        public WeaponParticleEffectBuilder<T> mirrored() {
+            return mirrored(true);
+        }
+
+        public WeaponParticleEffectBuilder<T> mirrored(boolean isMirrored) {
+            this.isMirrored = isMirrored;
+            return this;
+        }
+
+        public WeaponParticleEffectBuilder<T> randomSlashRotation(RandomSource random) {
+            return slashRotation(random.nextFloat() * 6.28f);
+        }
+
+        public WeaponParticleEffectBuilder<T> verticalSlashRotation() {
+            return slashRotation(1.57f);
+        }
+
+        public WeaponParticleEffectBuilder<T> slashRotation(float slashRotation) {
+            this.slashRotation = slashRotation;
+            return this;
+        }
+
+        public WeaponParticleEffectBuilder<T> setOffsetsFromHand(InteractionHand hand) {
+            return horizontalOffset(hand.equals(InteractionHand.MAIN_HAND) ? 0.4f : -0.4f);
+        }
+
+        public WeaponParticleEffectBuilder<T> horizontalOffset(float horizontalOffset) {
+            this.horizontalOffset = horizontalOffset;
+            return this;
+        }
+
+        public WeaponParticleEffectBuilder<T> forwardOffset(float forwardOffset) {
+            this.forwardOffset = forwardOffset;
+            return this;
+        }
+
+        public WeaponParticleEffectBuilder<T> upwardOffset(float upwardOffset) {
+            this.upwardOffset = upwardOffset;
+            return this;
+        }
+
+        public WeaponParticleEffectBuilder<T> absoluteOffset(Vec3 absoluteOffset) {
+            this.absoluteOffset = absoluteOffset;
+            return this;
+        }
+
+        public WeaponParticleEffectBuilder<T> deviation(float deviation, float deviationAngle) {
+            return horizontalDeviation(deviation).verticalDeviation(deviation).deviationAngle(deviationAngle);
+        }
+
+        public WeaponParticleEffectBuilder<T> horizontalDeviation(float horizontalDeviation) {
+            this.horizontalDeviation = horizontalDeviation;
+            return this;
+        }
+
+        public WeaponParticleEffectBuilder<T> verticalDeviation(float verticalDeviation) {
+            this.verticalDeviation = verticalDeviation;
+            return this;
+        }
+
+        public WeaponParticleEffectBuilder<T> deviationAngle(float deviationAngle) {
+            this.deviationAngle = deviationAngle;
+            this.exactDeviationAngle = true;
+            return this;
+        }
+
+        @Override
+        public WeaponParticleEffectBuilder<T> spawn(ServerLevel level) {
+            Vec3 effectDirection = getEffectDirection(level.getRandom());
+            Vec3 effectPosition = getEffectPosition(effectDirection);
+            customData((T) getCustomData().withDirection(effectDirection).withMirror(isMirrored).withRotation(slashRotation));
+            at(effectPosition);
+            return (WeaponParticleEffectBuilder<T>)super.spawn(level);
+        }
+
+        protected Vec3 getEffectPosition(Vec3 direction) {
+            Vec3 positionToUse = null;
+            if (position != null) {
+                positionToUse = position.getAsVector();
+            } else {
+                Entity anchor = null;
+                if (tiedToTarget && target != null) {
+                    anchor = target;
+                } else if (source != null) {
+                    anchor = source;
+                }
+                if (anchor != null) {
+                    positionToUse = anchor.position().add(0, target.getBbHeight() / 2f, 0);
+                }
+            }
+            if (positionToUse == null) {
+                throw new IllegalArgumentException("Networked Weapon Particle Effect failed to provide a valid position to spawn at. This is a bug.");
+            }
+
+            float yRot = ((float) (Mth.atan2(direction.x, direction.z) * (double) (180F / (float) Math.PI)));
+            float yaw = (float) Math.toRadians(yRot);
+            var left = new Vec3(-Math.cos(yaw), 0, Math.sin(yaw));
+            var up = left.cross(direction);
+            var offset = absoluteOffset
+                    .add(direction.scale(forwardOffset))
+                    .add(up.scale(upwardOffset))
+                    .add(left.scale(horizontalOffset));
+            return positionToUse.add(offset);
+        }
+
+        protected Vec3 getEffectDirection(RandomSource random) {
+            Vec3 directionToUse = direction;
+            if (directionToUse == null) {
+                if (target != null && source != null) {
+                    directionToUse = target.position().subtract(source.position()).normalize();
+                }
+                else if (source != null) {
+                    directionToUse = source.getLookAngle();
+                }
+                else {
+                    double theta = random.nextDouble() * 2 * Math.PI;
+                    double phi = Math.acos(2 * random.nextDouble() - 1);
+                    double x = Math.sin(phi) * Math.cos(theta);
+                    double y = Math.sin(phi) * Math.sin(theta);
+                    double z = Math.cos(phi);
+                    directionToUse = new Vec3(x, y, z);
+                }
+            }
+            if (horizontalDeviation == 0 && verticalDeviation == 0) {
+                return directionToUse;
+            }
+            float yRot = ((float) (Mth.atan2(directionToUse.x, directionToUse.z) * (double) (180F / (float) Math.PI)));
+            float yaw = (float) Math.toRadians(yRot);
+            var left = new Vec3(-Math.cos(yaw), 0, Math.sin(yaw));
+            var up = left.cross(directionToUse);
+            float leftOffset = horizontalDeviation;
+            float upOffset = verticalDeviation;
+            if (exactDeviationAngle) {
+                leftOffset *= Mth.sin(deviationAngle);
+                upOffset *= Mth.cos(deviationAngle);
+            }
+            return directionToUse
+                    .add(left.scale(leftOffset))
+                    .add(up.scale(upOffset))
+                    .normalize();
+        }
+
+
+        @Override
+        public WeaponParticleEffectBuilder<T> at(BlockPos position) {
+            return (WeaponParticleEffectBuilder<T>)super.at(position);
+        }
+
+        @Override
+        public WeaponParticleEffectBuilder<T> at(Vec3 position) {
+            return (WeaponParticleEffectBuilder<T>)super.at(position);
+        }
+
+        @Override
+        public WeaponParticleEffectBuilder<T> at(Entity target) {
+            return (WeaponParticleEffectBuilder<T>)super.at(target);
+        }
+
+        @Override
+        public WeaponParticleEffectBuilder<T> at(NetworkedParticleEffectPositionData position) {
+            return (WeaponParticleEffectBuilder<T>)super.at(position);
+        }
+
+        @Override
+        public WeaponParticleEffectBuilder<T> color(Color color) {
+            return (WeaponParticleEffectBuilder<T>)super.color(color);
+        }
+
+        @Override
+        public WeaponParticleEffectBuilder<T> color(ColorParticleData color) {
+            return (WeaponParticleEffectBuilder<T>)super.color(color);
+        }
+
+        @Override
+        public WeaponParticleEffectBuilder<T> color(NetworkedParticleEffectColorData color) {
+            return (WeaponParticleEffectBuilder<T>)super.color(color);
+        }
+
+        @Override
+        public final WeaponParticleEffectBuilder<T> customData(T extra) {
+            return (WeaponParticleEffectBuilder<T>)super.customData(extra);
+        }
+
+        @Override
+        public WeaponParticleEffectBuilder<T> spawn(Consumer<NetworkedParticleEffectPayload> sender) {
+            return (WeaponParticleEffectBuilder<T>)super.spawn(sender);
+        }
+    }
+
 }
