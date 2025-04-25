@@ -226,15 +226,6 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
             return this;
         }
 
-        @Override
-        public WeaponParticleEffectBuilder<T> spawn(ServerLevel level) {
-            Vec3 effectDirection = getEffectDirection(level.getRandom());
-            Vec3 effectPosition = getEffectPosition(effectDirection);
-            customData((T) getCustomData().withDirection(effectDirection).withMirror(isMirrored).withRotation(slashRotation));
-            at(effectPosition);
-            return (WeaponParticleEffectBuilder<T>)super.spawn(level);
-        }
-
         protected Vec3 getEffectPosition(Vec3 direction) {
             Vec3 positionToUse = null;
             if (position != null) {
@@ -300,6 +291,18 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
                     .add(left.scale(leftOffset))
                     .add(up.scale(upOffset))
                     .normalize();
+        }
+
+        @Override
+        public WeaponParticleEffectBuilder<T> spawn(ServerLevel level) {
+            Vec3 effectDirection = getEffectDirection(level.getRandom());
+            Vec3 effectPosition = getEffectPosition(effectDirection);
+            customData((T) getCustomData().withDirection(effectDirection).withMirror(isMirrored).withRotation(slashRotation));
+            at(effectPosition);
+            if (color == null) {
+                color(NetworkedParticleEffectColorData.fromColor(ColorParticleData.createGrayParticleColor(level.getRandom())));
+            }
+            return (WeaponParticleEffectBuilder<T>)super.spawn(level);
         }
 
 
