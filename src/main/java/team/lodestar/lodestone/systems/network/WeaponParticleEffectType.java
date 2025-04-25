@@ -42,14 +42,18 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
         }
 
         public WeaponParticleEffectData withDirection(Vec3 direction) {
-            return new WeaponParticleEffectData(direction, isMirrored, slashRotation);
+            return modify(direction, isMirrored, slashRotation);
         }
 
         public WeaponParticleEffectData withMirror(boolean mirror) {
-            return new WeaponParticleEffectData(direction, mirror, slashRotation);
+            return modify(direction, mirror, slashRotation);
         }
 
         public WeaponParticleEffectData withRotation(float slashRotation) {
+            return modify(direction, isMirrored, slashRotation);
+        }
+
+        public WeaponParticleEffectData modify(Vec3 direction, boolean isMirrored, float slashRotation) {
             return new WeaponParticleEffectData(direction, isMirrored, slashRotation);
         }
     }
