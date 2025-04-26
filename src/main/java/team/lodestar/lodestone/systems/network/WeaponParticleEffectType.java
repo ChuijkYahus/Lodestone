@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 
 public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectType.WeaponParticleEffectData> extends NetworkedParticleEffectType<T> {
 
-    public static final class WeaponParticleEffectData implements NetworkedParticleEffectExtraData {
+    public static class WeaponParticleEffectData implements NetworkedParticleEffectExtraData {
         public static final Codec<WeaponParticleEffectData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Vec3.CODEC.fieldOf("direction").forGetter(data -> data.direction),
                 Codec.BOOL.fieldOf("mirror").forGetter(data -> data.isMirrored),
