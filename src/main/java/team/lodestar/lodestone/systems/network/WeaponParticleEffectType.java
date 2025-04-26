@@ -17,12 +17,13 @@ import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectType.WeaponParticleEffectData> extends NetworkedParticleEffectType<T> {
 
-    public record WeaponParticleEffectData(Vec3 direction, boolean isMirrored, float slashRotation) implements NetworkedParticleEffectExtraData {
+    public static final class WeaponParticleEffectData implements NetworkedParticleEffectExtraData {
         public static final Codec<WeaponParticleEffectData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Vec3.CODEC.fieldOf("direction").forGetter(data -> data.direction),
                 Codec.BOOL.fieldOf("mirror").forGetter(data -> data.isMirrored),
@@ -32,6 +33,15 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
         public static final StreamCodec<ByteBuf, WeaponParticleEffectData> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
 
         public static final WeaponParticleEffectData DEFAULT = new WeaponParticleEffectData(Vec3.ZERO, false, 0);
+        private final Vec3 direction;
+        private final boolean isMirrored;
+        private final float slashRotation;
+
+        public WeaponParticleEffectData(Vec3 direction, boolean isMirrored, float slashRotation) {
+            this.direction = direction;
+            this.isMirrored = isMirrored;
+            this.slashRotation = slashRotation;
+        }
 
         public WeaponParticleEffectData withDirection(Vec3 direction) {
             return modify(direction, isMirrored, slashRotation);
@@ -48,8 +58,19 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
         public WeaponParticleEffectData modify(Vec3 direction, boolean isMirrored, float slashRotation) {
             return new WeaponParticleEffectData(direction, isMirrored, slashRotation);
         }
-    }
 
+        public Vec3 direction() {
+            return direction;
+        }
+
+        public boolean isMirrored() {
+            return isMirrored;
+        }
+
+        public float slashRotation() {
+            return slashRotation;
+        }
+    }
     public static WeaponParticleEffectData createData(Vec3 direction, boolean mirror, float angle) {
         return new WeaponParticleEffectData(direction, mirror, angle);
     }

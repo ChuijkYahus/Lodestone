@@ -35,6 +35,10 @@ public class NetworkedParticleEffectColorData {
         this.colors = colors.isEmpty() ? Collections.emptyList() : colors;
     }
 
+    public NetworkedParticleEffectColorData(ColorParticleData... colors) {
+        this(List.of(colors));
+    }
+
     public ColorParticleData getColor() {
         if (colors.size() == 1) {
             return colors.getFirst();
