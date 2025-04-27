@@ -45,4 +45,8 @@ public class NetworkedParticleEffectColorData {
         }
         return colors.get(colorCycleCounter++ % colors.size());
     }
+
+    public List<ColorParticleData> getColors() {
+        return colors;
+    }
 }
