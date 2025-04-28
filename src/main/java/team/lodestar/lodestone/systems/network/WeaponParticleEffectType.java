@@ -17,7 +17,6 @@ import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
 
 import java.awt.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -25,9 +24,9 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
 
     public static class WeaponParticleEffectData implements NetworkedParticleEffectExtraData {
         public static final Codec<WeaponParticleEffectData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Vec3.CODEC.fieldOf("direction").forGetter(data -> data.direction),
-                Codec.BOOL.fieldOf("mirror").forGetter(data -> data.isMirrored),
-                Codec.FLOAT.fieldOf("slashRotation").forGetter(data -> data.slashRotation)
+                Vec3.CODEC.fieldOf("direction").forGetter(WeaponParticleEffectData::getDirection),
+                Codec.BOOL.fieldOf("mirror").forGetter(WeaponParticleEffectData::isMirrored),
+                Codec.FLOAT.fieldOf("slashRotation").forGetter(WeaponParticleEffectData::getSlashRotation)
         ).apply(instance, WeaponParticleEffectData::new));
 
         public static final StreamCodec<ByteBuf, WeaponParticleEffectData> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
@@ -59,7 +58,7 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
             return new WeaponParticleEffectData(direction, isMirrored, slashRotation);
         }
 
-        public Vec3 direction() {
+        public Vec3 getDirection() {
             return direction;
         }
 
@@ -67,9 +66,10 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
             return isMirrored;
         }
 
-        public float slashRotation() {
+        public float getSlashRotation() {
             return slashRotation;
         }
+
     }
     public static WeaponParticleEffectData createData(Vec3 direction, boolean mirror, float angle) {
         return new WeaponParticleEffectData(direction, mirror, angle);
