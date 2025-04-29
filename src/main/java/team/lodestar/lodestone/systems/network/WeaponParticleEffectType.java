@@ -132,6 +132,7 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
         /**
          * Ties the effect to an entity.
          * If no target is given, the attacker's look angle will be used as the direction.
+         *
          * @param source The entity initiating the effect
          */
         public WeaponParticleEffectBuilder<T> originatesFrom(Entity source) {
@@ -142,6 +143,7 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
         /**
          * Aims the effect at a given entity.
          * If no source is given, the direction will be random.
+         *
          * @param target The entity to aim the effect at
          */
         public WeaponParticleEffectBuilder<T> targets(Entity target) {
@@ -152,6 +154,7 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
         /**
          * Sets a predetermined direction for the effect to use.
          * If a source or target is given, they will still be considered when determining the effect's position.
+         *
          * @param direction The direction for the effect
          */
         public WeaponParticleEffectBuilder<T> aimedAt(Vec3 direction) {
@@ -215,19 +218,28 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
 
         public WeaponParticleEffectBuilder<T> randomOffset(RandomSource random, float min, float max) {
             return absoluteOffset(new Vec3(
-                            random.nextFloat() * (max - min) + min,
-                            random.nextFloat() * (max - min) + min,
-                            random.nextFloat() * (max - min) + min)
+                    random.nextFloat() * (max - min) + min,
+                    random.nextFloat() * (max - min) + min,
+                    random.nextFloat() * (max - min) + min)
             );
         }
-        
+
         public WeaponParticleEffectBuilder<T> absoluteOffset(Vec3 absoluteOffset) {
             this.absoluteOffset = absoluteOffset;
             return this;
         }
 
-        public WeaponParticleEffectBuilder<T> deviation(float deviation, float deviationAngle) {
-            return horizontalDeviation(deviation).verticalDeviation(deviation).deviationAngle(deviationAngle);
+
+        public WeaponParticleEffectBuilder<T> deviation(float horizontalDeviation, float verticalDeviation, float deviationAngle) {
+            return deviation(horizontalDeviation, verticalDeviation).deviationAngle(deviationAngle);
+        }
+
+        public WeaponParticleEffectBuilder<T> deviation(float horizontalDeviation, float verticalDeviation) {
+            return horizontalDeviation(horizontalDeviation).verticalDeviation(verticalDeviation);
+        }
+
+        public WeaponParticleEffectBuilder<T> deviation(float deviation) {
+            return horizontalDeviation(deviation).verticalDeviation(deviation);
         }
 
         public WeaponParticleEffectBuilder<T> horizontalDeviation(float horizontalDeviation) {
