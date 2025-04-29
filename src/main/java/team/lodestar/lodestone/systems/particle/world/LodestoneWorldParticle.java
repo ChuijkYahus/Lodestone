@@ -160,12 +160,12 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
             lifeDelay--;
             return;
         }
-        updateTraits();
         if (spriteSet != null) {
             if (getSpritePicker().equals(WITH_AGE)) {
                 setSpriteFromAge(spriteSet);
             }
         }
+        updateTraits();
         super.tick();
     }
 
