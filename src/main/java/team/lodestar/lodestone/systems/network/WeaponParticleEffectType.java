@@ -252,6 +252,10 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
             return this;
         }
 
+        public WeaponParticleEffectBuilder<T> randomDeviationAngle(RandomSource random) {
+            return deviationAngle(random.nextFloat() * 6.28f);
+        }
+
         public WeaponParticleEffectBuilder<T> deviationAngle(float deviationAngle) {
             this.deviationAngle = deviationAngle;
             this.exactDeviationAngle = true;
