@@ -213,6 +213,14 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
             return this;
         }
 
+        public WeaponParticleEffectBuilder<T> randomOffset(RandomSource random, float min, float max) {
+            return absoluteOffset(new Vec3(
+                            random.nextFloat() * (max - min) + min,
+                            random.nextFloat() * (max - min) + min,
+                            random.nextFloat() * (max - min) + min)
+            );
+        }
+        
         public WeaponParticleEffectBuilder<T> absoluteOffset(Vec3 absoluteOffset) {
             this.absoluteOffset = absoluteOffset;
             return this;
