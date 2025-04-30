@@ -390,7 +390,7 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
         }
 
         @Override
-        public final WeaponParticleEffectBuilder<T> customData(T extra) {
+        public WeaponParticleEffectBuilder<T> customData(T extra) {
             return (WeaponParticleEffectBuilder<T>)super.customData(extra);
         }
 
