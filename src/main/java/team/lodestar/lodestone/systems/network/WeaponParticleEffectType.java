@@ -274,7 +274,7 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
                     anchor = source;
                 }
                 if (anchor != null) {
-                    positionToUse = anchor.position().add(0, target.getBbHeight() / 2f, 0);
+                    positionToUse = anchor.position().add(0, anchor.getBbHeight() / 2f, 0);
                 }
             }
             if (positionToUse == null) {
@@ -327,6 +327,10 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
                     .add(left.scale(leftOffset))
                     .add(up.scale(upOffset))
                     .normalize();
+        }
+
+        public float getSlashRotation() {
+            return slashRotation + (isMirrored ? 3.14f : 0);
         }
 
         protected void updateData(ServerLevel level) {
