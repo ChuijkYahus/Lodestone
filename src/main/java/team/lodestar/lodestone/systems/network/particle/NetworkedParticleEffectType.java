@@ -82,10 +82,10 @@ public abstract class NetworkedParticleEffectType<T extends NetworkedParticleEff
     @SuppressWarnings("UnusedReturnValue")
     public static class ParticleEffectBuilder<T extends NetworkedParticleEffectExtraData> {
 
-        public final NetworkedParticleEffectType<T> type;
-        public NetworkedParticleEffectPositionData position;
-        public NetworkedParticleEffectColorData color;
-        public T extra;
+        protected final NetworkedParticleEffectType<T> type;
+        protected NetworkedParticleEffectPositionData position;
+        protected NetworkedParticleEffectColorData color;
+        protected T extra;
 
         public ParticleEffectBuilder(NetworkedParticleEffectType<T> type) {
             this.type = type;
