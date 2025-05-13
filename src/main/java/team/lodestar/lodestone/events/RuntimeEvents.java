@@ -3,8 +3,7 @@ package team.lodestar.lodestone.events;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import team.lodestar.lodestone.handlers.ItemEventHandler;
 import team.lodestar.lodestone.handlers.LodestoneAttributeEventHandler;
@@ -14,12 +13,18 @@ import team.lodestar.lodestone.handlers.WorldEventHandler;
 public class RuntimeEvents {
 
     @SubscribeEvent
-    public static void onHurt(LivingDamageEvent.Pre event) {
+    public static void onIncomingDamage(LivingIncomingDamageEvent event) {
+        ItemEventHandler.triggerHurtResponses(event);
+    }
+
+    @SubscribeEvent
+    public static void onDamage(LivingDamageEvent.Pre event) {
         LodestoneAttributeEventHandler.processAttributes(event);
         ItemEventHandler.triggerHurtResponses(event);
     }
+
     @SubscribeEvent
-    public static void onHurt(LivingDamageEvent.Post event) {
+    public static void onDamage(LivingDamageEvent.Post event) {
         ItemEventHandler.triggerHurtResponses(event);
         LodestoneAttributeEventHandler.triggerMagicDamage(event);
     }

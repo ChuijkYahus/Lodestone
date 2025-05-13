@@ -6,25 +6,53 @@ import net.minecraft.util.*;
 import net.minecraft.world.phys.*;
 import org.joml.*;
 import team.lodestar.lodestone.systems.particle.world.*;
-import team.lodestar.lodestone.systems.particle.world.behaviors.components.*;
 
-import java.lang.*;
 import java.lang.Math;
+import java.util.function.*;
 
 public class DirectionalParticleBehavior implements LodestoneParticleBehavior {
 
+    protected Vec3 forcedDirection;
+
+    private Vec3 cachedDirection;
+
+    public static DirectionalParticleBehavior directional() {
+        return new DirectionalParticleBehavior();
+    }
+    public static DirectionalParticleBehavior directional(Vec3 direction) {
+        return directional().setForcedDirection(direction);
+    }
+
     protected DirectionalParticleBehavior() {
+
+    }
+
+    /**
+     * Defines a static direction for the particle to aim towards instead, regardless of velocity
+     */
+    public DirectionalParticleBehavior setForcedDirection(Vec3 forcedDirection) {
+        this.forcedDirection = forcedDirection;
+        return this;
+    }
+
+    public Vec3 getDirection(LodestoneWorldParticle particle) {
+        if (forcedDirection != null) {
+            return forcedDirection;
+        }
+        return cachedDirection != null ? cachedDirection : particle.getParticleSpeed().normalize();
     }
 
     @Override
-    public DirectionalBehaviorComponent getComponent(LodestoneBehaviorComponent component) {
-        return component instanceof DirectionalBehaviorComponent directional ? directional : LodestoneBehaviorComponent.DIRECTIONAL;
+    public void tick(LodestoneWorldParticle particle) {
+        var direction = particle.getParticleSpeed().normalize();
+        if (!direction.equals(Vec3.ZERO)) {
+            cachedDirection = direction;
+        }
     }
 
     @Override
     public void render(LodestoneWorldParticle particle, VertexConsumer consumer, Camera camera, float partialTicks) {
-        var component = getComponent(particle.behaviorComponent);
-        var direction = component.getDirection(particle);
+        var direction = getDirection(particle);
         float yRot = ((float) (Mth.atan2(direction.x, direction.z) * (double) (180F / (float) Math.PI)));
         float xRot = ((float) (Mth.atan2(direction.y, direction.horizontalDistance()) * (double) (180F / (float) Math.PI)));
         float yaw = (float) Math.toRadians(yRot);
@@ -41,11 +69,12 @@ public class DirectionalParticleBehavior implements LodestoneParticleBehavior {
         float y = (float) (Mth.lerp(partialTicks, particle.getYOld(), particle.getY()) - vec3.y());
         float z = (float) (Mth.lerp(partialTicks, particle.getZOld(), particle.getZ()) - vec3.z());
         Vector3f[] avector3f = new Vector3f[]{new Vector3f(-1.0F, -1.0F, 0.0F), new Vector3f(-1.0F, 1.0F, 0.0F), new Vector3f(1.0F, 1.0F, 0.0F), new Vector3f(1.0F, -1.0F, 0.0F)};
-        float f4 = particle.getQuadSize(partialTicks);
+        float width = particle.getQuadSize(partialTicks);
+        float length = particle.getQuadLength(partialTicks);
         for (int i = 0; i < 4; ++i) {
             Vector3f vector3f = avector3f[i];
+            vector3f.mul(width, length, 1);
             vector3f.rotate(quaternion);
-            vector3f.mul(f4);
             vector3f.add(x, y, z);
         }
 

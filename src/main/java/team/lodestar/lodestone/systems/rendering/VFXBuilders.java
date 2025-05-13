@@ -17,8 +17,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import team.lodestar.lodestone.handlers.RenderHandler;
-import team.lodestar.lodestone.helpers.RenderHelper;
-import team.lodestar.lodestone.helpers.VecHelper;
+import team.lodestar.lodestone.helpers.*;
 import team.lodestar.lodestone.systems.rendering.cube.CubeVertexData;
 import team.lodestar.lodestone.systems.rendering.trail.*;
 
@@ -55,6 +54,93 @@ public class VFXBuilders {
         float r = 1, g = 1, b = 1, a = 1;
         int light = RenderHelper.FULL_BRIGHT;
         float u0 = 0, v0 = 0, u1 = 1, v1 = 1;
+
+        public AbstractVFXBuilder setColor(int rgba) {
+            return setColor((rgba >> 16) & 0xFF, (rgba >> 8) & 0xFF, rgba & 0xFF, (rgba >> 24) & 0xFF);
+        }
+        public AbstractVFXBuilder setColor(Color color) {
+            return setColor(color.getRed(), color.getGreen(), color.getBlue());
+        }
+
+        public AbstractVFXBuilder setColor(Color color, int a) {
+            return setColor(color).setAlpha(a);
+        }
+
+        public AbstractVFXBuilder setColor(Color color, float a) {
+            return setColor(color).setAlpha(a);
+        }
+
+        public AbstractVFXBuilder setColor(int r, int g, int b, int a) {
+            return setColor(r, g, b).setAlpha(a);
+        }
+
+        public AbstractVFXBuilder setColor(float r, float g, float b, float a) {
+            return setColor(r, g, b).setAlpha(a);
+        }
+
+        public AbstractVFXBuilder setColor(int r, int g, int b) {
+            return setColor(r / 255f, g / 255f, b / 255f);
+        }
+
+        public AbstractVFXBuilder setColor(float r, float g, float b) {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+            return this;
+        }
+
+        public AbstractVFXBuilder multiplyColor(float scalar) {
+            return multiplyColor(scalar, scalar, scalar);
+        }
+        public AbstractVFXBuilder multiplyColor(float r, float g, float b) {
+            return setColor(this.r * r, this.g * g, this.b * b);
+        }
+
+        public AbstractVFXBuilder setAlpha(int a) {
+            return setAlpha(a / 255f);
+        }
+
+        public AbstractVFXBuilder setAlpha(float a) {
+            this.a = a;
+            return this;
+        }
+
+        public AbstractVFXBuilder setLight(int light) {
+            this.light = light;
+            return this;
+        }
+
+        public AbstractVFXBuilder setUVWithWidth(float u, float v, float width, float height, float canvasSize) {
+            return setUVWithWidth(u, v, width, height, canvasSize, canvasSize);
+        }
+
+        public AbstractVFXBuilder setUVWithWidth(float u, float v, float width, float height, float canvasSizeX, float canvasSizeY) {
+            return setUVWithWidth(u / canvasSizeX, v / canvasSizeY, width / canvasSizeX, height / canvasSizeY);
+        }
+
+        public AbstractVFXBuilder setUVWithWidth(float u, float v, float width, float height) {
+            this.u0 = u;
+            this.v0 = v;
+            this.u1 = (u + width);
+            this.v1 = (v + height);
+            return this;
+        }
+
+        public AbstractVFXBuilder setUV(float u0, float v0, float u1, float v1, float canvasSize) {
+            return setUV(u0, v0, u1, v1, canvasSize, canvasSize);
+        }
+
+        public AbstractVFXBuilder setUV(float u0, float v0, float u1, float v1, float canvasSizeX, float canvasSizeY) {
+            return setUV(u0 / canvasSizeX, v0 / canvasSizeY, u1 / canvasSizeX, v1 / canvasSizeY);
+        }
+
+        public AbstractVFXBuilder setUV(float u0, float v0, float u1, float v1) {
+            this.u0 = u0;
+            this.v0 = v0;
+            this.u1 = u1;
+            this.v1 = v1;
+            return this;
+        }
     }
 
     public static ScreenVFXBuilder createScreen() {
@@ -72,24 +158,95 @@ public class VFXBuilders {
         VertexFormat.Mode mode = VertexFormat.Mode.QUADS;
         Tesselator tesselator = Tesselator.getInstance();
 
-        @Deprecated
-        public ScreenVFXBuilder setPosTexDefaultFormat() {
-            return this;
+        @Override
+        public ScreenVFXBuilder setColor(int rgba) {
+            return (ScreenVFXBuilder)super.setColor(rgba);
         }
 
-        @Deprecated
-        public ScreenVFXBuilder setPosColorDefaultFormat() {
-            return this;
+        @Override
+        public ScreenVFXBuilder setColor(Color color) {
+            return (ScreenVFXBuilder)super.setColor(color);
         }
 
-        @Deprecated
-        public ScreenVFXBuilder setPosTexColorDefaultFormat() {
-            return this;
+        @Override
+        public ScreenVFXBuilder setColor(Color color, int a) {
+            return (ScreenVFXBuilder)super.setColor(color, a);
         }
 
-        @Deprecated
-        public ScreenVFXBuilder setPosColorTexLightmapDefaultFormat() {
-            return this;
+        @Override
+        public ScreenVFXBuilder setColor(Color color, float a) {
+            return (ScreenVFXBuilder)super.setColor(color, a);
+        }
+
+        @Override
+        public ScreenVFXBuilder setColor(int r, int g, int b, int a) {
+            return (ScreenVFXBuilder)super.setColor(r, g, b, a);
+        }
+
+        @Override
+        public ScreenVFXBuilder setColor(float r, float g, float b, float a) {
+            return (ScreenVFXBuilder)super.setColor(r, g, b, a);
+        }
+
+        @Override
+        public ScreenVFXBuilder setColor(int r, int g, int b) {
+            return (ScreenVFXBuilder)super.setColor(r, g, b);
+        }
+
+        @Override
+        public ScreenVFXBuilder setColor(float r, float g, float b) {
+            return (ScreenVFXBuilder)super.setColor(r, g, b);
+        }
+
+        @Override
+        public ScreenVFXBuilder multiplyColor(float scalar) {
+            return (ScreenVFXBuilder)super.multiplyColor(scalar);
+        }
+
+        @Override
+        public ScreenVFXBuilder multiplyColor(float r, float g, float b) {
+            return (ScreenVFXBuilder)super.multiplyColor(r, g, b);
+        }
+
+        @Override
+        public ScreenVFXBuilder setAlpha(int a) {
+            return (ScreenVFXBuilder)super.setAlpha(a);
+        }
+
+        @Override
+        public ScreenVFXBuilder setAlpha(float a) {
+            return (ScreenVFXBuilder)super.setAlpha(a);
+        }
+
+
+        @Override
+        public ScreenVFXBuilder setUVWithWidth(float u, float v, float width, float height, float canvasSize) {
+            return (ScreenVFXBuilder)super.setUVWithWidth(u, v, width, height, canvasSize);
+        }
+
+        @Override
+        public ScreenVFXBuilder setUVWithWidth(float u, float v, float width, float height, float canvasSizeX, float canvasSizeY) {
+            return (ScreenVFXBuilder)super.setUVWithWidth(u, v, width, height, canvasSizeX, canvasSizeY);
+        }
+
+        @Override
+        public ScreenVFXBuilder setUVWithWidth(float u, float v, float width, float height) {
+            return (ScreenVFXBuilder)super.setUVWithWidth(u, v, width, height);
+        }
+
+        @Override
+        public ScreenVFXBuilder setUV(float u0, float v0, float u1, float v1, float canvasSize) {
+            return (ScreenVFXBuilder)super.setUV(u0, v0, u1, v1, canvasSize);
+        }
+
+        @Override
+        public ScreenVFXBuilder setUV(float u0, float v0, float u1, float v1, float canvasSizeX, float canvasSizeY) {
+            return (ScreenVFXBuilder)super.setUV(u0, v0, u1, v1, canvasSizeX, canvasSizeY);
+        }
+
+        @Override
+        public ScreenVFXBuilder setUV(float u0, float v0, float u1, float v1) {
+            return (ScreenVFXBuilder)super.setUV(u0, v0, u1, v1);
         }
 
         public ScreenVFXBuilder setShader(Supplier<ShaderInstance> shader) {
@@ -142,37 +299,6 @@ public class VFXBuilders {
             return this;
         }
 
-        public ScreenVFXBuilder setColor(Color color) {
-            return setColor(color.getRed(), color.getGreen(), color.getBlue());
-        }
-
-        public ScreenVFXBuilder setColor(Color color, float a) {
-            return setColor(color).setAlpha(a);
-        }
-
-        public ScreenVFXBuilder setColor(float r, float g, float b, float a) {
-            return setColor(r, g, b).setAlpha(a);
-        }
-
-        public ScreenVFXBuilder setColor(float r, float g, float b) {
-            this.r = r / 255f;
-            this.g = g / 255f;
-            this.b = b / 255f;
-            return this;
-        }
-
-        public ScreenVFXBuilder setColorRaw(float r, float g, float b) {
-            this.r = r;
-            this.g = g;
-            this.b = b;
-            return this;
-        }
-
-        public ScreenVFXBuilder setAlpha(float a) {
-            this.a = a;
-            return this;
-        }
-
         public ScreenVFXBuilder setPositionWithWidth(float x, float y, float width, float height) {
             return setPosition(x, y, x + width, y + height);
         }
@@ -190,38 +316,6 @@ public class VFXBuilders {
             return this;
         }
 
-        public ScreenVFXBuilder setUVWithWidth(float u, float v, float width, float height, float canvasSize) {
-            return setUVWithWidth(u, v, width, height, canvasSize, canvasSize);
-        }
-
-        public ScreenVFXBuilder setUVWithWidth(float u, float v, float width, float height, float canvasSizeX, float canvasSizeY) {
-            return setUVWithWidth(u / canvasSizeX, v / canvasSizeY, width / canvasSizeX, height / canvasSizeY);
-        }
-
-        public ScreenVFXBuilder setUVWithWidth(float u, float v, float width, float height) {
-            this.u0 = u;
-            this.v0 = v;
-            this.u1 = (u + width);
-            this.v1 = (v + height);
-            return this;
-        }
-
-        public ScreenVFXBuilder setUV(float u0, float v0, float u1, float v1, float canvasSize) {
-            return setUV(u0, v0, u1, v1, canvasSize, canvasSize);
-        }
-
-        public ScreenVFXBuilder setUV(float u0, float v0, float u1, float v1, float canvasSizeX, float canvasSizeY) {
-            return setUV(u0 / canvasSizeX, v0 / canvasSizeY, u1 / canvasSizeX, v1 / canvasSizeY);
-        }
-
-        public ScreenVFXBuilder setUV(float u0, float v0, float u1, float v1) {
-            this.u0 = u0;
-            this.v0 = v0;
-            this.u1 = u1;
-            this.v1 = v1;
-            return this;
-        }
-
         public ScreenVFXBuilder blit(PoseStack stack) {
             Matrix4f last = stack.last().pose();
             RenderSystem.setShader(getShader());
@@ -234,22 +328,6 @@ public class VFXBuilders {
             supplier.placeVertex(bufferBuilder, last, this, x1, y0, zLevel, u1, v0);
             supplier.placeVertex(bufferBuilder, last, this, x0, y0, zLevel, u0, v0);
             BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
-            return this;
-        }
-
-        @Deprecated
-        public ScreenVFXBuilder draw(PoseStack stack) {
-            blit(stack);
-            return this;
-        }
-
-        @Deprecated
-        public ScreenVFXBuilder begin() {
-            return this;
-        }
-
-        @Deprecated
-        public ScreenVFXBuilder end() {
             return this;
         }
     }
@@ -271,6 +349,101 @@ public class VFXBuilders {
         protected HashMap<Object, Consumer<WorldVFXBuilder>> modularActors = new HashMap<>();
         protected int modularActorAddIndex;
         protected int modularActorGetIndex;
+
+        @Override
+        public WorldVFXBuilder setColor(int rgba) {
+            return (WorldVFXBuilder)super.setColor(rgba);
+        }
+
+        @Override
+        public WorldVFXBuilder setColor(Color color) {
+            return (WorldVFXBuilder)super.setColor(color);
+        }
+
+        @Override
+        public WorldVFXBuilder setColor(Color color, int a) {
+            return (WorldVFXBuilder)super.setColor(color, a);
+        }
+
+        @Override
+        public WorldVFXBuilder setColor(Color color, float a) {
+            return (WorldVFXBuilder)super.setColor(color, a);
+        }
+
+        @Override
+        public WorldVFXBuilder setColor(int r, int g, int b, int a) {
+            return (WorldVFXBuilder)super.setColor(r, g, b, a);
+        }
+
+        @Override
+        public WorldVFXBuilder setColor(float r, float g, float b, float a) {
+            return (WorldVFXBuilder)super.setColor(r, g, b, a);
+        }
+
+        @Override
+        public WorldVFXBuilder setColor(int r, int g, int b) {
+            return (WorldVFXBuilder)super.setColor(r, g, b);
+        }
+
+        @Override
+        public WorldVFXBuilder setColor(float r, float g, float b) {
+            return (WorldVFXBuilder)super.setColor(r, g, b);
+        }
+
+        @Override
+        public WorldVFXBuilder multiplyColor(float scalar) {
+            return (WorldVFXBuilder)super.multiplyColor(scalar);
+        }
+
+        @Override
+        public WorldVFXBuilder multiplyColor(float r, float g, float b) {
+            return (WorldVFXBuilder)super.multiplyColor(r, g, b);
+        }
+
+        @Override
+        public WorldVFXBuilder setAlpha(int a) {
+            return (WorldVFXBuilder)super.setAlpha(a);
+        }
+
+        @Override
+        public WorldVFXBuilder setAlpha(float a) {
+            return (WorldVFXBuilder)super.setAlpha(a);
+        }
+
+        @Override
+        public WorldVFXBuilder setLight(int light) {
+            return (WorldVFXBuilder)super.setLight(light);
+        }
+
+        @Override
+        public WorldVFXBuilder setUVWithWidth(float u, float v, float width, float height, float canvasSize) {
+            return (WorldVFXBuilder)super.setUVWithWidth(u, v, width, height, canvasSize);
+        }
+
+        @Override
+        public WorldVFXBuilder setUVWithWidth(float u, float v, float width, float height, float canvasSizeX, float canvasSizeY) {
+            return (WorldVFXBuilder)super.setUVWithWidth(u, v, width, height, canvasSizeX, canvasSizeY);
+        }
+
+        @Override
+        public WorldVFXBuilder setUVWithWidth(float u, float v, float width, float height) {
+            return (WorldVFXBuilder)super.setUVWithWidth(u, v, width, height);
+        }
+
+        @Override
+        public WorldVFXBuilder setUV(float u0, float v0, float u1, float v1, float canvasSize) {
+            return (WorldVFXBuilder)super.setUV(u0, v0, u1, v1, canvasSize);
+        }
+
+        @Override
+        public WorldVFXBuilder setUV(float u0, float v0, float u1, float v1, float canvasSizeX, float canvasSizeY) {
+            return (WorldVFXBuilder)super.setUV(u0, v0, u1, v1, canvasSizeX, canvasSizeY);
+        }
+
+        @Override
+        public WorldVFXBuilder setUV(float u0, float v0, float u1, float v1) {
+            return (WorldVFXBuilder)super.setUV(u0, v0, u1, v1);
+        }
 
         public WorldVFXBuilder replaceBufferSource(RenderHandler.LodestoneRenderLayer renderLayer) {
             return replaceBufferSource(renderLayer.getTarget());
@@ -363,52 +536,8 @@ public class VFXBuilders {
             return supplier;
         }
 
-        public WorldVFXBuilder setColor(Color color) {
-            return setColor(color.getRed(), color.getGreen(), color.getBlue());
-        }
-
-        public WorldVFXBuilder setColor(Color color, float a) {
-            return setColor(color).setAlpha(a);
-        }
-
-        public WorldVFXBuilder setColor(float r, float g, float b, float a) {
-            return setColor(r, g, b).setAlpha(a);
-        }
-
-        public WorldVFXBuilder setColor(float r, float g, float b) {
-            this.r = r / 255f;
-            this.g = g / 255f;
-            this.b = b / 255f;
-            return this;
-        }
-
-        public WorldVFXBuilder setColorRaw(float r, float g, float b) {
-            this.r = r;
-            this.g = g;
-            this.b = b;
-            return this;
-        }
-
-        public WorldVFXBuilder setAlpha(float a) {
-            this.a = a;
-            return this;
-        }
-
-        public WorldVFXBuilder setLight(int light) {
-            this.light = light;
-            return this;
-        }
-
-        public WorldVFXBuilder setUV(float u0, float v0, float u1, float v1) {
-            this.u0 = u0;
-            this.v0 = v0;
-            this.u1 = u1;
-            this.v1 = v1;
-            return this;
-        }
-
         public WorldVFXBuilder renderBeam(Matrix4f last, BlockPos start, BlockPos end, float width) {
-            return renderBeam(last, VecHelper.getCenterOf(start), VecHelper.getCenterOf(end), width);
+            return renderBeam(last, start.getCenter(), end.getCenter(), width);
         }
 
         public WorldVFXBuilder renderBeam(@Nullable Matrix4f last, Vec3 start, Vec3 end, float width) {

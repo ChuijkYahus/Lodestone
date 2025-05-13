@@ -1,29 +1,24 @@
 package team.lodestar.lodestone.systems.postprocess.effects;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.blaze3d.pipeline.TextureTarget;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.EffectInstance;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL30;
 import team.lodestar.lodestone.LodestoneLib;
 import team.lodestar.lodestone.systems.postprocess.PostProcessor;
 
 public class BloomPostProcessor extends PostProcessor {
-    private final RenderTarget bloomTarget;
+    private RenderTarget bloomTarget;
     private final RenderStateShard.OutputStateShard bloomOutput;
-
-    private EffectInstance bloomMask;
 
     private boolean forceDisabled;
 
     public BloomPostProcessor() {
-        var window = Minecraft.getInstance().getWindow();
-        this.bloomTarget = new TextureTarget(window.getWidth(), window.getHeight(), true, Minecraft.ON_OSX);
-        this.bloomTarget.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         this.bloomOutput = new RenderStateShard.OutputStateShard("bloomTarget",
-                () -> this.bloomTarget.bindWrite(false),
+                () -> { if (this.bloomTarget != null) this.bloomTarget.bindWrite(false); },
                 () -> Minecraft.getInstance().getMainRenderTarget().bindWrite(false)
         );
         this.setActive(false);
@@ -37,13 +32,13 @@ public class BloomPostProcessor extends PostProcessor {
     public void init() {
         super.init();
         if (this.postChain != null) {
-            this.bloomMask = effects[0];
+            this.bloomTarget = this.postChain.getTempTarget("bloomColor");
+            this.bloomTarget.setClearColor(0.0F, 0.0F, 0.0F, 0.0F);
         }
     }
 
     @Override
     public void beforeProcess(Matrix4f viewModelMatrix) {
-        this.bloomMask.setSampler("BloomMaskSampler", this.bloomTarget::getColorTextureId);
     }
 
     @Override
@@ -54,6 +49,7 @@ public class BloomPostProcessor extends PostProcessor {
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
+        if (this.bloomTarget == null) return;
         this.bloomTarget.resize(width, height, Minecraft.ON_OSX);
     }
 
@@ -70,5 +66,19 @@ public class BloomPostProcessor extends PostProcessor {
 
     public RenderStateShard.OutputStateShard getBloomOutput() {
         return bloomOutput;
+    }
+
+    public RenderTarget getBloomTarget() {
+        return bloomTarget;
+    }
+
+    public void copyDepthFromMain() {
+        this.copyDepthFrom(Minecraft.getInstance().getMainRenderTarget());
+    }
+
+    public void copyDepthFrom(RenderTarget src) {
+        if (this.bloomTarget == null) return;
+        this.bloomTarget.copyDepthFrom(src);
+        GlStateManager._glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, src.frameBufferId);
     }
 }

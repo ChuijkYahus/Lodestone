@@ -63,11 +63,6 @@ public class ScreenParticleBuilder extends AbstractParticleBuilder<ScreenParticl
         return this;
     }
 
-    public ScreenParticleBuilder setDiscardFunction(SimpleParticleOptions.ParticleDiscardFunctionType discardFunctionType) {
-        options.discardFunctionType = discardFunctionType;
-        return this;
-    }
-
     public ScreenParticleBuilder setSpritePicker(SimpleParticleOptions.ParticleSpritePicker spritePicker) {
         options.spritePicker = spritePicker;
         return this;

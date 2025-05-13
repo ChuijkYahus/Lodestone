@@ -77,10 +77,10 @@ public class ScreenParticleHandler {
                     currentItemY = y + yOffset;
 
                     if (currentItemX == 8 && currentItemY == 8) {
-                        float xOffsetf = pose.m30();
-                        float yOffsetf = pose.m31();
-                        currentItemX += xOffsetf;
-                        currentItemY += yOffsetf;
+                        int poseOffsetX = (int) pose.m30();
+                        int poseOffsetY = (int) pose.m31();
+                        currentItemX += poseOffsetX;
+                        currentItemY += poseOffsetY;
                     }
                     else if (!renderingHotbar && minecraft.screen instanceof AbstractContainerScreen<?> containerScreen) {
                         //currentItemX += containerScreen.getGuiLeft();
@@ -138,11 +138,13 @@ public class ScreenParticleHandler {
             return;
         }
         screenParticleTarget.particles.forEach((renderType, particles) -> {
-            var builder = renderType.begin(TESSELATOR, Minecraft.getInstance().getTextureManager());
-            for (ScreenParticle next : particles) {
-                next.render(builder);
+            if (!particles.isEmpty()) {
+                var builder = renderType.begin(TESSELATOR, Minecraft.getInstance().getTextureManager());
+                for (ScreenParticle next : particles) {
+                    next.render(builder);
+                }
+                renderType.end(builder);
             }
-            renderType.end(builder);
         });
     }
 

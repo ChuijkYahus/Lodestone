@@ -79,6 +79,7 @@ public interface LodestoneScreenParticleRenderType {
             RenderSystem.depthMask(true);
             RenderSystem.disableBlend();
             RenderSystem.defaultBlendFunc();
+
             Supplier<ShaderInstance> instance = LodestoneShaders.SCREEN_PARTICLE.getInstance();
             instance.get().safeGetUniform("LumiTransparency").set(0f);
         }

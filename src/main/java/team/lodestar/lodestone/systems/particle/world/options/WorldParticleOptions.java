@@ -10,7 +10,6 @@ import team.lodestar.lodestone.systems.particle.SimpleParticleOptions;
 import team.lodestar.lodestone.systems.particle.render_types.*;
 import team.lodestar.lodestone.systems.particle.world.*;
 import team.lodestar.lodestone.systems.particle.world.behaviors.*;
-import team.lodestar.lodestone.systems.particle.world.behaviors.components.*;
 import team.lodestar.lodestone.systems.particle.world.type.*;
 
 import java.util.ArrayList;
@@ -21,8 +20,7 @@ import java.util.function.*;
 public class WorldParticleOptions extends SimpleParticleOptions implements ParticleOptions {
 
     public final ParticleType<?> type;
-    public LodestoneParticleBehavior behavior = LodestoneParticleBehavior.BILLBOARD;
-    public LodestoneBehaviorComponent behaviorComponent;
+    public LodestoneParticleBehavior behavior = BillboardParticleBehavior.INSTANCE;
     public ParticleRenderType renderType = LodestoneWorldParticleRenderType.ADDITIVE;
     public RenderHandler.LodestoneRenderLayer renderLayer = RenderHandler.DELAYED_RENDER;
     public boolean shouldCull;
@@ -41,20 +39,16 @@ public class WorldParticleOptions extends SimpleParticleOptions implements Parti
         this(type.get());
     }
 
-    public WorldParticleOptions setBehavior(LodestoneBehaviorComponent behaviorComponent) {
-        if (behaviorComponent == null) {
-            return this;
-        }
-        this.behavior = behaviorComponent.getBehaviorType();
-        this.behaviorComponent = behaviorComponent;
+    public WorldParticleOptions setBehavior(LodestoneParticleBehavior behavior) {
+        this.behavior = behavior;
         return this;
     }
 
-    public WorldParticleOptions setBehaviorIfDefault(LodestoneBehaviorComponent behaviorComponent) {
-        if (!behavior.equals(LodestoneParticleBehavior.BILLBOARD)) {
-            return this;
+    public WorldParticleOptions setBehaviorIfDefault(LodestoneParticleBehavior newBehavior) {
+        if (behavior.equals(BillboardParticleBehavior.INSTANCE)) {
+            return setBehavior(newBehavior);
         }
-        return setBehavior(behaviorComponent);
+        return this;
     }
 
     @Override

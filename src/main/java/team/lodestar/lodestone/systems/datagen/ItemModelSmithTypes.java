@@ -13,6 +13,7 @@ public class ItemModelSmithTypes {
 
     public static final ResourceLocation GENERATED = ResourceLocation.parse("item/generated");
     public static final ResourceLocation HANDHELD = ResourceLocation.parse("item/handheld");
+    public static final ResourceLocation BUILTIN_ENTITY = ResourceLocation.parse("builtin/entity");
 
     public static ItemModelSmith NO_DATAGEN = new EmptyItemModelSmith();
 
@@ -20,8 +21,10 @@ public class ItemModelSmithTypes {
         String name = provider.getItemName(item);
         return provider.createGenericModel(item, parent, provider.getItemTexture(name));
     })));
-    public static ItemModelSmith HANDHELD_ITEM = PARENTED_ITEM.apply(HANDHELD);
     public static ItemModelSmith GENERATED_ITEM = PARENTED_ITEM.apply(GENERATED);
+    public static ItemModelSmith HANDHELD_ITEM = PARENTED_ITEM.apply(HANDHELD);
+
+    public static ItemModelSmith BUILTIN_ENTITY_ITEM = new ItemModelSmith(((item, provider) -> provider.createParentedModel(item, BUILTIN_ENTITY)));
 
     public static ItemModelSmith BLOCK_TEXTURE_ITEM = new ItemModelSmith(((item, provider) -> {
         String name = provider.getItemName(item);

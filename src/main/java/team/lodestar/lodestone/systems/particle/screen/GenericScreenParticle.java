@@ -13,32 +13,32 @@ import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
 import team.lodestar.lodestone.systems.particle.data.spin.SpinParticleData;
 import team.lodestar.lodestone.systems.particle.render_types.LodestoneScreenParticleRenderType;
 import team.lodestar.lodestone.systems.particle.screen.base.TextureSheetScreenParticle;
+import team.lodestar.lodestone.systems.particle.world.options.WorldParticleOptions;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.function.Consumer;
 
-import static team.lodestar.lodestone.systems.particle.SimpleParticleOptions.ParticleDiscardFunctionType.ENDING_CURVE_INVISIBLE;
-import static team.lodestar.lodestone.systems.particle.SimpleParticleOptions.ParticleDiscardFunctionType.INVISIBLE;
 import static team.lodestar.lodestone.systems.particle.SimpleParticleOptions.ParticleSpritePicker.*;
 
 public class GenericScreenParticle extends TextureSheetScreenParticle {
     private final LodestoneScreenParticleRenderType renderType;
     protected final ParticleEngine.MutableSpriteSet spriteSet;
     protected final SimpleParticleOptions.ParticleSpritePicker spritePicker;
-    protected final SimpleParticleOptions.ParticleDiscardFunctionType discardFunctionType;
     protected final ColorParticleData colorData;
     protected final GenericParticleData transparencyData;
     protected final GenericParticleData scaleData;
+    @Nullable
+    protected final GenericParticleData lengthData;
     protected final SpinParticleData spinData;
     protected final Consumer<GenericScreenParticle> actor;
     private final boolean tracksStack;
     private final double stackTrackXOffset;
     private final double stackTrackYOffset;
 
-    private boolean reachedPositiveAlpha;
-    private boolean reachedPositiveScale;
-
     private int lifeDelay;
+
+    private float quadLength;
 
     float[] hsv1 = new float[3], hsv2 = new float[3];
 
@@ -47,10 +47,10 @@ public class GenericScreenParticle extends TextureSheetScreenParticle {
         this.renderType = options.renderType;
         this.spriteSet = spriteSet;
         this.spritePicker = options.spritePicker;
-        this.discardFunctionType = options.discardFunctionType;
         this.colorData = options.colorData;
-        this.transparencyData = GenericParticleData.constrictTransparency(options.transparencyData);
+        this.transparencyData = options.transparencyData;
         this.scaleData = options.scaleData;
+        this.lengthData = options.lengthData != WorldParticleOptions.DEFAULT_GENERIC ? options.lengthData : null;
         this.spinData = options.spinData;
         this.actor = options.actor;
         this.tracksStack = options.tracksStack;
@@ -66,17 +66,21 @@ public class GenericScreenParticle extends TextureSheetScreenParticle {
         this.friction = options.frictionStrengthSupplier.get();
         Color.RGBtoHSB((int) (255 * Math.min(1.0f, colorData.r1)), (int) (255 * Math.min(1.0f, colorData.g1)), (int) (255 * Math.min(1.0f, colorData.b1)), hsv1);
         Color.RGBtoHSB((int) (255 * Math.min(1.0f, colorData.r2)), (int) (255 * Math.min(1.0f, colorData.g2)), (int) (255 * Math.min(1.0f, colorData.b2)), hsv2);
+        if (spriteSet != null) {
+            if (getSpritePicker().equals(RANDOM_SPRITE)) {
+                pickSprite(spriteSet);
+            } else if (getSpritePicker().equals(FIRST_INDEX) || getSpritePicker().equals(WITH_AGE)) {
+                pickSprite(0);
+            } else if (getSpritePicker().equals(LAST_INDEX)) {
+                pickSprite(spriteSet.sprites.size() - 1);
+            }
+        }
         updateTraits();
-        if (getSpritePicker().equals(RANDOM_SPRITE)) {
-            pickSprite(spriteSet);
-        }
-        if (getSpritePicker().equals(FIRST_INDEX) || getSpritePicker().equals(WITH_AGE)) {
-            pickSprite(0);
-        }
-        if (getSpritePicker().equals(LAST_INDEX)) {
-            pickSprite(spriteSet.sprites.size() - 1);
-        }
-        updateTraits();
+    }
+
+    @Override
+    public float getQuadLength(float partialTicks) {
+        return lengthData != null ? quadLength : super.getQuadLength(partialTicks);
     }
 
     public SimpleParticleOptions.ParticleSpritePicker getSpritePicker() {
@@ -105,29 +109,18 @@ public class GenericScreenParticle extends TextureSheetScreenParticle {
     }
 
     protected void updateTraits() {
-        boolean shouldAttemptRemoval = discardFunctionType == INVISIBLE;
-        if (discardFunctionType == ENDING_CURVE_INVISIBLE) {
-
-            if (scaleData.getProgress(age, lifetime) > 0.5f || transparencyData.getProgress(age, lifetime) > 0.5f) {
-                shouldAttemptRemoval = true;
-            }
-        }
-        if (shouldAttemptRemoval) {
-            if ((reachedPositiveAlpha && alpha <= 0) || (reachedPositiveScale && quadSize <= 0)) {
+        if (scaleData.getProgress(age, lifetime) > 0.8f || transparencyData.getProgress(age, lifetime) > 0.8f) {
+            if (alpha <= 0 || getQuadSize(0) <= 0 || getQuadLength(0) <= 0) {
                 remove();
-                return;
             }
+            return;
         }
 
-        if (!reachedPositiveAlpha && alpha > 0) {
-            reachedPositiveAlpha = true;
-        }
-        if (!reachedPositiveScale && quadSize > 0) {
-            reachedPositiveScale = true;
-        }
         pickColor(colorData.colorCurveEasing.ease(colorData.getProgress(age, lifetime), 0, 1, 1));
 
         quadSize = scaleData.getValue(age, lifetime);
+        quadLength = lengthData != null ? lengthData.getValue(age, lifetime) : quadSize;
+
         alpha = Mth.clamp(transparencyData.getValue(age, lifetime), 0, 1);
         oRoll = roll;
         roll += spinData.getValue(age, lifetime);

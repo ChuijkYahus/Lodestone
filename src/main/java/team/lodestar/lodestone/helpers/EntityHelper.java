@@ -1,13 +1,57 @@
 package team.lodestar.lodestone.helpers;
 
+import net.minecraft.core.*;
+import net.minecraft.util.*;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.*;
+import net.minecraft.world.entity.player.*;
+import net.minecraft.world.entity.projectile.*;
+import net.minecraft.world.phys.*;
 
 import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class EntityHelper {
+    public static HitResult pick(LivingEntity entity) {
+        double d0 = entity.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE);
+        double d1 = entity.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE);
+        return pick(entity, d0, d1);
+    }
+
+    public static HitResult pick(Entity entity, double blockInteractionRange, double entityInteractionRange) {
+        double d0 = Math.max(blockInteractionRange, entityInteractionRange);
+        double d1 = Mth.square(d0);
+        Vec3 vec3 = entity.getEyePosition();
+        HitResult hitresult = entity.pick(d0, 0, false);
+        double d2 = hitresult.getLocation().distanceToSqr(vec3);
+        if (hitresult.getType() != HitResult.Type.MISS) {
+            d1 = d2;
+            d0 = Math.sqrt(d2);
+        }
+
+        Vec3 vec31 = entity.getViewVector(0);
+        Vec3 vec32 = vec3.add(vec31.x * d0, vec31.y * d0, vec31.z * d0);
+        float f = 1.0F;
+        AABB aabb = entity.getBoundingBox().expandTowards(vec31.scale(d0)).inflate(1.0, 1.0, 1.0);
+        EntityHitResult entityhitresult = ProjectileUtil.getEntityHitResult(
+                entity, vec3, vec32, aabb, p_234237_ -> !p_234237_.isSpectator() && p_234237_.isPickable(), d1
+        );
+        return entityhitresult != null && entityhitresult.getLocation().distanceToSqr(vec3) < d2
+                ? filterHitResult(entityhitresult, vec3, entityInteractionRange)
+                : filterHitResult(hitresult, vec3, blockInteractionRange);
+    }
+
+    public static HitResult filterHitResult(HitResult hitResult, Vec3 pos, double blockInteractionRange) {
+        Vec3 vec3 = hitResult.getLocation();
+        if (!vec3.closerThan(pos, blockInteractionRange)) {
+            Vec3 vec31 = hitResult.getLocation();
+            Direction direction = Direction.getNearest(vec31.x - pos.x, vec31.y - pos.y, vec31.z - pos.z);
+            return BlockHitResult.miss(vec31, direction, BlockPos.containing(vec31));
+        } else {
+            return hitResult;
+        }
+    }
 
     //TODO: make these into a cool existing effect management helper
     public static void amplifyEffect(MobEffectInstance instance, LivingEntity target, int addedAmplifier, int cap) {
@@ -38,37 +82,5 @@ public class EntityHelper {
     public static void syncEffect(MobEffectInstance instance, LivingEntity target) {
         target.effectsDirty = true;
         target.onEffectUpdated(instance, true, target);
-    }
-
-    /**
-     * Tracks the travel path of an entity or other object
-     *
-     * @param pastPositions     An ArrayList that houses all the past positions.
-     * @param currentPosition   The current position to be added to the list.
-     * @param distanceThreshold the minimum distance from the latest PastPos before a new position is added.
-     */
-    public static void trackPastPositions(ArrayList<PastPosition> pastPositions, Vec3 currentPosition, float distanceThreshold) {
-        for (PastPosition pastPosition : pastPositions) {
-            pastPosition.time++;
-        }
-        if (!pastPositions.isEmpty()) {
-            PastPosition latest = pastPositions.get(pastPositions.size() - 1);
-            float distance = (float) latest.position.distanceTo(currentPosition);
-            if (distance > distanceThreshold) {
-                pastPositions.add(new PastPosition(currentPosition, 0));
-            }
-        } else {
-            pastPositions.add(new PastPosition(currentPosition, 0));
-        }
-    }
-
-    public static class PastPosition {
-        public Vec3 position;
-        public int time;
-
-        public PastPosition(Vec3 position, int time) {
-            this.position = position;
-            this.time = time;
-        }
     }
 }

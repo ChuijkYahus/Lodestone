@@ -22,11 +22,9 @@ import java.util.ArrayList;
  */
 @SuppressWarnings("unused")
 public class VecHelper {
-    //TODO: re-implement all NECESSARY functions into the new vecHelper method and remove ones that are not required.
-    public static final Vec3 CENTER_OF_ORIGIN = new Vec3(.5, .5, .5);
 
     /**
-     * A method that returns a position on the perimeter of a circle around a given Vec3 position
+     * Returns a position on the perimeter of a circle rotated around a given Vec3 position
      *
      * @param pos      - Defines the center of the circle
      * @param distance - Defines the radius of your circle
@@ -45,7 +43,7 @@ public class VecHelper {
     }
 
     /**
-     * A method that returns an array list of positions on the perimeter of a circle around a given Vec3 position.
+     * Returns a list of positions on the perimeter of a circle rotated around a given Vec3 position
      * These positions constantly rotate around the center of the circle based on gameTime
      *
      * @param pos      - Defines the center of the circle
@@ -59,7 +57,7 @@ public class VecHelper {
     }
 
     /**
-     * A method that returns an array list of positions on the perimeter of a sphere around a given Vec3 position.
+     * Returns an array list of positions on the perimeter of a sphere around a given Vec3 position.
      * These positions constantly rotate around the center of the circle based on gameTime.
      */
     public static ArrayList<Vec3> rotatingRadialOffsets(Vec3 pos, float distanceX, float distanceZ, float total, float gameTime, float timePerRotation) {
@@ -71,7 +69,7 @@ public class VecHelper {
     }
 
     /**
-     * A method that returns a single position on the perimeter of a circle around a given Vec3 position.
+     * Returns a single position on the perimeter of a circle around a given Vec3 position.
      * These positions constantly rotate around the center of the circle based on gameTime
      */
     public static Vec3 rotatingRadialOffset(Vec3 pos, float distance, float current, float total, float gameTime, float timePerRotation) {
@@ -79,7 +77,7 @@ public class VecHelper {
     }
 
     /**
-     * A method that returns a single position on the perimeter of a circle around a given Vec3 position.
+     * Returns a single position on the perimeter of a circle around a given Vec3 position.
      * These positions constantly rotate around the center of the circle based on gameTime
      */
     public static Vec3 rotatingRadialOffset(Vec3 pos, float distanceX, float distanceZ, float current, float total, float gameTime, float timePerRotation) {
@@ -109,12 +107,6 @@ public class VecHelper {
             }
         }
         return arrayList;
-    }
-
-    public static Vec3 getCenterOf(Vec3i pos) {
-        if (pos.equals(Vec3i.ZERO))
-            return CENTER_OF_ORIGIN;
-        return Vec3.atLowerCornerOf(pos).add(.5f, .5f, .5f);
     }
 
     public static Vec3 axisAlignedPlaneOf(Vec3 vec) {
