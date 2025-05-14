@@ -3,9 +3,7 @@ package team.lodestar.lodestone.systems.particle.world;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.particle.*;
 import net.minecraft.util.*;
 import net.minecraft.world.phys.*;
 import team.lodestar.lodestone.config.ClientConfig;
@@ -158,8 +156,9 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
         updateTraits();
         super.tick();
         if (spriteSet != null) {
-            if (getSpritePicker().equals(WITH_AGE)) {
-                setSpriteFromAge(spriteSet);
+            switch (spritePicker) {
+                case WITH_AGE -> setSpriteFromAge(spriteSet);
+                case WITH_AGE_INVERSE -> setSpriteFromInverseAge(spriteSet);
             }
         }
     }
@@ -178,6 +177,12 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
     @Override
     public ParticleRenderType getRenderType() {
         return renderType;
+    }
+
+    public void setSpriteFromInverseAge(SpriteSet sprite) {
+        if (!this.removed) {
+            this.setSprite(sprite.get(lifetime - age, lifetime));
+        }
     }
 
     public float getQuadLength(float partialTicks) {

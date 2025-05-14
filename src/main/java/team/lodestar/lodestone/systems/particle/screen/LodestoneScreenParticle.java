@@ -2,7 +2,7 @@ package team.lodestar.lodestone.systems.particle.screen;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.client.particle.*;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import org.joml.Vector3d;
@@ -146,15 +146,24 @@ public class LodestoneScreenParticle extends TextureSheetScreenParticle {
             return;
         }
         updateTraits();
-        if (getSpritePicker().equals(WITH_AGE)) {
-            setSpriteFromAge(spriteSet);
-        }
         super.tick();
+        if (spriteSet != null) {
+            switch (spritePicker) {
+                case WITH_AGE -> setSpriteFromAge(spriteSet);
+                case WITH_AGE_INVERSE -> setSpriteFromInverseAge(spriteSet);
+            }
+        }
     }
 
     @Override
     public LodestoneScreenParticleRenderType getRenderType() {
         return renderType;
+    }
+
+    public void setSpriteFromInverseAge(SpriteSet sprite) {
+        if (!this.removed) {
+            this.setSprite(sprite.get(lifetime - age, lifetime));
+        }
     }
 
     public void setParticleSpeed(Vector3d speed) {
