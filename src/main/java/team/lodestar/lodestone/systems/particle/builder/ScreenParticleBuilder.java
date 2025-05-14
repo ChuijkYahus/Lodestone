@@ -7,7 +7,7 @@ import team.lodestar.lodestone.systems.particle.data.color.*;
 import team.lodestar.lodestone.systems.particle.data.spin.*;
 import team.lodestar.lodestone.systems.particle.screen.ScreenParticleOptions;
 import team.lodestar.lodestone.systems.particle.render_types.LodestoneScreenParticleRenderType;
-import team.lodestar.lodestone.systems.particle.screen.GenericScreenParticle;
+import team.lodestar.lodestone.systems.particle.screen.LodestoneScreenParticle;
 import team.lodestar.lodestone.systems.particle.screen.ScreenParticleHolder;
 import team.lodestar.lodestone.systems.particle.screen.ScreenParticleType;
 
@@ -110,7 +110,7 @@ public class ScreenParticleBuilder extends AbstractParticleBuilder<ScreenParticl
         return this;
     }
 
-    public ScreenParticleBuilder addActor(Consumer<GenericScreenParticle> particleActor) {
+    public ScreenParticleBuilder addActor(Consumer<LodestoneScreenParticle> particleActor) {
         options.actor = particleActor;
         return this;
     }

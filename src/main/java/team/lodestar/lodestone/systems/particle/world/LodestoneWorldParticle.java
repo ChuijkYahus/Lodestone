@@ -79,14 +79,9 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
         Color.RGBtoHSB((int) (255 * Math.min(1.0f, colorData.r2)), (int) (255 * Math.min(1.0f, colorData.g2)), (int) (255 * Math.min(1.0f, colorData.b2)), hsv2);
 
         if (spriteSet != null) {
-            if (getSpritePicker().equals(RANDOM_SPRITE)) {
-                pickSprite(spriteSet);
-            }
-            else if (getSpritePicker().equals(FIRST_INDEX) || getSpritePicker().equals(WITH_AGE)) {
-                pickSprite(0);
-            }
-            else if (getSpritePicker().equals(LAST_INDEX)) {
-                pickSprite(spriteSet.sprites.size() - 1);
+            switch (spritePicker) {
+                case FIRST_INDEX, WITH_AGE -> pickSprite(0);
+                case LAST_INDEX, WITH_AGE_INVERSE -> pickSprite(spriteSet.sprites.size() - 1);
             }
         }
         options.spawnActors.forEach(actor -> actor.accept(this));
