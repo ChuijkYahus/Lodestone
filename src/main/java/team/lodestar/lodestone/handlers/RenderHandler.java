@@ -62,17 +62,11 @@ public class RenderHandler {
     }
 
     public static void endBatches(LodestoneRenderLayer renderLayer) {
-        Matrix4f last = new Matrix4f(RenderSystem.getModelViewMatrix());
         beginBufferedRendering();
         renderBufferedParticles(renderLayer, true);
-        if (RenderHandler.MATRIX4F != null) {
-            RenderSystem.getModelViewMatrix().set(MATRIX4F);
-        }
         renderBufferedBatches(renderLayer, true);
         renderBufferedBatches(renderLayer, false);
-        RenderSystem.getModelViewMatrix().set(last);
         renderBufferedParticles(renderLayer, false);
-
         endBufferedRendering();
     }
 

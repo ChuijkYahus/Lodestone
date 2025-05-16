@@ -73,10 +73,6 @@ public class ClientRuntimeEvents {
             WorldEventHandler.ClientOnly.renderWorldEvents(poseStack, partial);
         }
 
-        if (event.getStage().equals(RenderLevelStageEvent.Stage.AFTER_PARTICLES)) {
-            RenderHandler.MATRIX4F = new Matrix4f(RenderSystem.getModelViewMatrix());
-        }
-
         if (event.getStage().equals(RenderLevelStageEvent.Stage.AFTER_WEATHER)) {
             RenderHandler.endBatches();
         }
