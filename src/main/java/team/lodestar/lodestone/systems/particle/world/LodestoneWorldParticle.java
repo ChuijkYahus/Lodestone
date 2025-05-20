@@ -80,6 +80,7 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
             switch (spritePicker) {
                 case FIRST_INDEX, WITH_AGE -> pickSprite(0);
                 case LAST_INDEX, WITH_AGE_INVERSE -> pickSprite(spriteSet.sprites.size() - 1);
+                case RANDOM_SPRITE -> pickSprite(random.nextInt(spriteSet.sprites.size()));
             }
         }
         options.spawnActors.forEach(actor -> actor.accept(this));
