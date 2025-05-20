@@ -99,9 +99,7 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
     }
 
     public void pickSprite(int spriteIndex) {
-        if (spriteIndex < spriteSet.sprites.size() && spriteIndex >= 0) {
-            setSprite(spriteSet.sprites.get(spriteIndex));
-        }
+        setSprite(spriteSet.sprites.get(Mth.clamp(spriteIndex, 0, spriteSet.sprites.size() - 1)));
     }
 
     public void pickColor(float colorCoeff) {
