@@ -140,6 +140,7 @@ public class RenderHandler {
                     handler.updateShaderData(instance);
                 }
                 instance.setSampler("SceneDepthBuffer", LODESTONE_DEPTH_CACHE.getDepthTextureId());
+                instance.setSampler("SceneDiffuseBuffer", Minecraft.getInstance().getMainRenderTarget().getColorTextureId());
                 instance.safeGetUniform("InvProjMat").set(new Matrix4f(RenderSystem.getProjectionMatrix()).invert());
 
                 source.endBatch(type);
