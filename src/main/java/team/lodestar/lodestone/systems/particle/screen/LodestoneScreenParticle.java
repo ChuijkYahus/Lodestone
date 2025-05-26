@@ -2,7 +2,7 @@ package team.lodestar.lodestone.systems.particle.screen;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.client.particle.*;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import org.joml.Vector3d;
@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 
 import static team.lodestar.lodestone.systems.particle.SimpleParticleOptions.ParticleSpritePicker.*;
 
-public class GenericScreenParticle extends TextureSheetScreenParticle {
+public class LodestoneScreenParticle extends TextureSheetScreenParticle {
     private final LodestoneScreenParticleRenderType renderType;
     protected final ParticleEngine.MutableSpriteSet spriteSet;
     protected final SimpleParticleOptions.ParticleSpritePicker spritePicker;
@@ -31,7 +31,7 @@ public class GenericScreenParticle extends TextureSheetScreenParticle {
     @Nullable
     protected final GenericParticleData lengthData;
     protected final SpinParticleData spinData;
-    protected final Consumer<GenericScreenParticle> actor;
+    protected final Consumer<LodestoneScreenParticle> actor;
     private final boolean tracksStack;
     private final double stackTrackXOffset;
     private final double stackTrackYOffset;
@@ -42,7 +42,7 @@ public class GenericScreenParticle extends TextureSheetScreenParticle {
 
     float[] hsv1 = new float[3], hsv2 = new float[3];
 
-    public GenericScreenParticle(ClientLevel world, ScreenParticleOptions options, ParticleEngine.MutableSpriteSet spriteSet, double x, double y, double xMotion, double yMotion) {
+    public LodestoneScreenParticle(ClientLevel world, ScreenParticleOptions options, ParticleEngine.MutableSpriteSet spriteSet, double x, double y, double xMotion, double yMotion) {
         super(world, x, y);
         this.renderType = options.renderType;
         this.spriteSet = spriteSet;
@@ -67,12 +67,10 @@ public class GenericScreenParticle extends TextureSheetScreenParticle {
         Color.RGBtoHSB((int) (255 * Math.min(1.0f, colorData.r1)), (int) (255 * Math.min(1.0f, colorData.g1)), (int) (255 * Math.min(1.0f, colorData.b1)), hsv1);
         Color.RGBtoHSB((int) (255 * Math.min(1.0f, colorData.r2)), (int) (255 * Math.min(1.0f, colorData.g2)), (int) (255 * Math.min(1.0f, colorData.b2)), hsv2);
         if (spriteSet != null) {
-            if (getSpritePicker().equals(RANDOM_SPRITE)) {
-                pickSprite(spriteSet);
-            } else if (getSpritePicker().equals(FIRST_INDEX) || getSpritePicker().equals(WITH_AGE)) {
-                pickSprite(0);
-            } else if (getSpritePicker().equals(LAST_INDEX)) {
-                pickSprite(spriteSet.sprites.size() - 1);
+            switch (spritePicker) {
+                case FIRST_INDEX, WITH_AGE -> pickSprite(0);
+                case LAST_INDEX, WITH_AGE_INVERSE -> pickSprite(spriteSet.sprites.size() - 1);
+                case RANDOM_SPRITE -> pickSprite(random.nextInt(spriteSet.sprites.size()));
             }
         }
         updateTraits();
@@ -88,9 +86,7 @@ public class GenericScreenParticle extends TextureSheetScreenParticle {
     }
 
     public void pickSprite(int spriteIndex) {
-        if (spriteIndex < spriteSet.sprites.size() && spriteIndex >= 0) {
-            setSprite(spriteSet.sprites.get(spriteIndex));
-        }
+        setSprite(spriteSet.sprites.get(Mth.clamp(spriteIndex, 0, spriteSet.sprites.size() - 1)));
     }
 
     public void pickColor(float colorCoeff) {
@@ -149,15 +145,24 @@ public class GenericScreenParticle extends TextureSheetScreenParticle {
             return;
         }
         updateTraits();
-        if (getSpritePicker().equals(WITH_AGE)) {
-            setSpriteFromAge(spriteSet);
-        }
         super.tick();
+        if (spriteSet != null) {
+            switch (spritePicker) {
+                case WITH_AGE -> setSpriteFromAge(spriteSet);
+                case WITH_AGE_INVERSE -> setSpriteFromInverseAge(spriteSet);
+            }
+        }
     }
 
     @Override
     public LodestoneScreenParticleRenderType getRenderType() {
         return renderType;
+    }
+
+    public void setSpriteFromInverseAge(SpriteSet sprite) {
+        if (!this.removed) {
+            this.setSprite(sprite.get(lifetime - age, lifetime));
+        }
     }
 
     public void setParticleSpeed(Vector3d speed) {

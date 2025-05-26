@@ -3,9 +3,7 @@ package team.lodestar.lodestone.systems.particle.world;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.particle.*;
 import net.minecraft.util.*;
 import net.minecraft.world.phys.*;
 import team.lodestar.lodestone.config.ClientConfig;
@@ -79,14 +77,10 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
         Color.RGBtoHSB((int) (255 * Math.min(1.0f, colorData.r2)), (int) (255 * Math.min(1.0f, colorData.g2)), (int) (255 * Math.min(1.0f, colorData.b2)), hsv2);
 
         if (spriteSet != null) {
-            if (getSpritePicker().equals(RANDOM_SPRITE)) {
-                pickSprite(spriteSet);
-            }
-            else if (getSpritePicker().equals(FIRST_INDEX) || getSpritePicker().equals(WITH_AGE)) {
-                pickSprite(0);
-            }
-            else if (getSpritePicker().equals(LAST_INDEX)) {
-                pickSprite(spriteSet.sprites.size() - 1);
+            switch (spritePicker) {
+                case FIRST_INDEX, WITH_AGE -> pickSprite(0);
+                case LAST_INDEX, WITH_AGE_INVERSE -> pickSprite(spriteSet.sprites.size() - 1);
+                case RANDOM_SPRITE -> pickSprite(random.nextInt(spriteSet.sprites.size()));
             }
         }
         options.spawnActors.forEach(actor -> actor.accept(this));
@@ -106,9 +100,7 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
     }
 
     public void pickSprite(int spriteIndex) {
-        if (spriteIndex < spriteSet.sprites.size() && spriteIndex >= 0) {
-            setSprite(spriteSet.sprites.get(spriteIndex));
-        }
+        setSprite(spriteSet.sprites.get(Mth.clamp(spriteIndex, 0, spriteSet.sprites.size() - 1)));
     }
 
     public void pickColor(float colorCoeff) {
@@ -163,8 +155,9 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
         updateTraits();
         super.tick();
         if (spriteSet != null) {
-            if (getSpritePicker().equals(WITH_AGE)) {
-                setSpriteFromAge(spriteSet);
+            switch (spritePicker) {
+                case WITH_AGE -> setSpriteFromAge(spriteSet);
+                case WITH_AGE_INVERSE -> setSpriteFromInverseAge(spriteSet);
             }
         }
     }
@@ -183,6 +176,12 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
     @Override
     public ParticleRenderType getRenderType() {
         return renderType;
+    }
+
+    public void setSpriteFromInverseAge(SpriteSet sprite) {
+        if (!this.removed) {
+            this.setSprite(sprite.get(lifetime - age, lifetime));
+        }
     }
 
     public float getQuadLength(float partialTicks) {
