@@ -143,6 +143,9 @@ public class LodestoneRenderTypes extends RenderStateShard {
             LodestoneRenderTypes.createGenericRenderType("additive_text",
                     builder(token, StateShards.ADDITIVE_TRANSPARENCY, LodestoneShaders.LODESTONE_TEXT, LIGHTMAP, COLOR_WRITE)));
 
+    public static final RenderTypeProvider TEXTURE_FADE = new RenderTypeProvider((token) ->
+            createGenericRenderType("texture_fade",
+                    builder(token, StateShards.NO_TRANSPARENCY, LodestoneShaders.TEXTURE_FADE, CULL, LIGHTMAP)));
 
     public static LodestoneRenderType createGenericRenderType(String name, LodestoneCompositeStateBuilder builder) {
         return createGenericRenderType(name, POSITION_COLOR_TEX_LIGHTMAP, QUADS, builder);

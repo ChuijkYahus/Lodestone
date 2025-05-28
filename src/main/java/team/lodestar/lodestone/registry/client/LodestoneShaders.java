@@ -18,6 +18,7 @@ public class LodestoneShaders {
 
     public static ShaderHolder LODESTONE_TEXTURE = new ShaderHolder(lodestonePath("lodestone_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, "LumiTransparency");
     public static ShaderHolder DISTORTED_TEXTURE = new ShaderHolder(lodestonePath("distorted_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP , "Speed", "TimeOffset", "Intensity", "XFrequency", "YFrequency", "UVCoordinates");
+    public static ShaderHolder TEXTURE_FADE = new ShaderHolder(lodestonePath("texture_fade"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, "LumiTransparency");
     public static ShaderHolder LODESTONE_TEXT = new ShaderHolder(lodestonePath("lodestone_text"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP);
 
     public static ShaderHolder PARTICLE = new ShaderHolder(lodestonePath("particle/lodestone_particle"), DefaultVertexFormat.PARTICLE, "LumiTransparency", "DepthFade");
@@ -37,6 +38,7 @@ public class LodestoneShaders {
     public static void shaderRegistry(RegisterShadersEvent event) {
         registerShader(event, LODESTONE_TEXTURE);
         registerShader(event, DISTORTED_TEXTURE);
+        registerShader(event, TEXTURE_FADE);
 
         registerShader(event, LODESTONE_TEXT);
 

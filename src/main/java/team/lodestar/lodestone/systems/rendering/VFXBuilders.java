@@ -723,5 +723,41 @@ public class VFXBuilders {
             }
             return this;
         }
+
+        /**
+         * RenderTorus requires a triangle-based RenderType.
+         */
+        public WorldVFXBuilder renderTorus(PoseStack stack, float majorRadius, float minorRadius, int majorSegments, int minorSegments) {
+            Matrix4f last = stack.last().pose();
+            final float TAU = (float)(Math.PI * 2);
+
+            for (int i = 0; i < majorSegments; ++i) {
+                float u0n = (float) i / majorSegments;
+                float u1n = (float)(i + 1) / majorSegments;
+                float u0  = u0n * TAU;
+                float u1  = u1n * TAU;
+
+                for (int j = 0; j < minorSegments; ++j) {
+                    float v0n = (float) j / minorSegments;
+                    float v1n = (float)(j + 1) / minorSegments;
+                    float v0  = v0n * TAU;
+                    float v1  = v1n * TAU;
+
+                    Vector3f p0 = RenderHelper.parametricTorus(u0, v0, majorRadius, minorRadius);
+                    Vector3f p1 = RenderHelper.parametricTorus(u0, v1, majorRadius, minorRadius);
+                    Vector3f p2 = RenderHelper.parametricTorus(u1, v0, majorRadius, minorRadius);
+                    Vector3f p3 = RenderHelper.parametricTorus(u1, v1, majorRadius, minorRadius);
+
+                    supplier.placeVertex(getVertexConsumer(), last, this, p0.x(), p0.y(), p0.z(), u0n, v0n);
+                    supplier.placeVertex(getVertexConsumer(), last, this, p2.x(), p2.y(), p2.z(), u1n, v0n);
+                    supplier.placeVertex(getVertexConsumer(), last, this, p1.x(), p1.y(), p1.z(), u0n, v1n);
+
+                    supplier.placeVertex(getVertexConsumer(), last, this, p3.x(), p3.y(), p3.z(), u1n, v1n);
+                    supplier.placeVertex(getVertexConsumer(), last, this, p1.x(), p1.y(), p1.z(), u0n, v1n);
+                    supplier.placeVertex(getVertexConsumer(), last, this, p2.x(), p2.y(), p2.z(), u1n, v0n);
+                }
+            }
+            return this;
+        }
     }
 }
