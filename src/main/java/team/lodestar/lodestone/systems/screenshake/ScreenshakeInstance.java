@@ -80,7 +80,7 @@ public class ScreenshakeInstance {
         if (distance > falloffDistance || falloffDistance == 0) {
             return 0;
         }
-        float falloff = positionData.falloffCurve().clamped(distance / falloffDistance, 0, 1);
+        float falloff = 1 - positionData.falloffCurve().clamped(distance / falloffDistance, 0, 1);
         return strength * falloff;
     }
 
