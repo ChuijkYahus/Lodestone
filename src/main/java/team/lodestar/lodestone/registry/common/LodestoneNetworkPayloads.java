@@ -11,8 +11,7 @@ import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import team.lodestar.lodestone.LodestoneLib;
 import team.lodestar.lodestone.network.TotemOfUndyingPayload;
-import team.lodestar.lodestone.network.screenshake.PositionedScreenshakePayload;
-import team.lodestar.lodestone.network.screenshake.ScreenshakePayload;
+import team.lodestar.lodestone.network.ScreenshakePayload;
 import team.lodestar.lodestone.network.worldevent.SyncWorldEventPayload;
 import team.lodestar.lodestone.network.worldevent.UpdateWorldEventPayload;
 import team.lodestar.lodestone.systems.network.*;
@@ -33,7 +32,6 @@ public class LodestoneNetworkPayloads {
         LODESTONE_CHANNEL.playToClient(registrar, "sync_world_event", SyncWorldEventPayload.class, SyncWorldEventPayload::new);
         LODESTONE_CHANNEL.playToClient(registrar, "update_world_event", UpdateWorldEventPayload.class, UpdateWorldEventPayload::new);
         LODESTONE_CHANNEL.playToClient(registrar, "screenshake", ScreenshakePayload.class, ScreenshakePayload::new);
-        LODESTONE_CHANNEL.playToClient(registrar, "positioned_screenshake", PositionedScreenshakePayload.class, PositionedScreenshakePayload::new);
         LODESTONE_CHANNEL.playToClient(registrar, "particle_effect", NetworkedParticleEffectPayload.class, NetworkedParticleEffectPayload::new);
 
     }

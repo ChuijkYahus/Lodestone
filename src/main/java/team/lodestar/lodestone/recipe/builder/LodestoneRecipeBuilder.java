@@ -2,18 +2,12 @@ package team.lodestar.lodestone.recipe.builder;
 
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
-import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.registries.*;
-import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.*;
-import team.lodestar.lodestone.helpers.ReflectionHelper;
-
-import java.util.Map;
-import java.util.Optional;
 
 public interface LodestoneRecipeBuilder<R extends Recipe<?>> {
 
