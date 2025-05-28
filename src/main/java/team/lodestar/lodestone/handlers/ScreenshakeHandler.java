@@ -1,14 +1,16 @@
 package team.lodestar.lodestone.handlers;
 
 import net.minecraft.client.*;
+import net.minecraft.client.multiplayer.*;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.levelgen.*;
-import net.minecraft.world.level.levelgen.synth.*;
+import net.neoforged.neoforge.client.event.*;
 import team.lodestar.lodestone.config.ClientConfig;
-import team.lodestar.lodestone.systems.screenshake.ScreenshakeInstance;
+import team.lodestar.lodestone.helpers.*;
+import team.lodestar.lodestone.systems.screenshake.*;
 
 import java.util.*;
+import java.util.function.*;
 
 public class ScreenshakeHandler {
 
@@ -16,28 +18,33 @@ public class ScreenshakeHandler {
 
     private static float intensity;
 
-    public static void cameraSetup(Camera camera) {
-        if (intensity >= 0.1) {
-            var random = Minecraft.getInstance().level.getRandom();
-            float yawOffset = randomizeOffset(random);
-            float pitchOffset = randomizeOffset(random);
-            camera.setRotation(camera.getYRot() + yawOffset, camera.getXRot() + pitchOffset);
+    public static void computeAngles(ViewportEvent.ComputeCameraAngles event) {
+        RandomSource random = Minecraft.getInstance().level.getRandom();
+        if (intensity > 0) {
+            float yaw = RandomHelper.randomBetween(random, 0, intensity * 2) * (random.nextBoolean() ? 1 : -1);
+            float pitch = RandomHelper.randomBetween(random, 0, intensity * 2) * (random.nextBoolean() ? 1 : -1);
+            event.setYaw(event.getYaw() + yaw);
+            event.setPitch(event.getPitch() + pitch);
         }
     }
 
-    public static void clientTick(Camera camera) {
-        var random = Minecraft.getInstance().level.getRandom();
-        double sum = Math.min(INSTANCES.stream().mapToDouble(s -> s.updateIntensity(camera, random)).sum(), ClientConfig.SCREENSHAKE_INTENSITY.getConfigValue());
+    public static void clientTick(ClientLevel level, Camera camera) {
+        float intensitySum = 0;
+        for (ScreenshakeInstance instance : INSTANCES) {
+            instance.tick();
+            intensitySum += instance.getStrength(camera);
+        }
+        intensity = intensitySum;
+        INSTANCES.removeIf(ScreenshakeInstance::isExpired);
+    }
 
-        intensity = (float) Math.pow(sum, 3);
-        INSTANCES.removeIf(i -> i.progress >= i.duration);
+    public static void addScreenshake(Consumer<ScreenshakeBuilder> constructor) {
+        ScreenshakeBuilder builder = ScreenshakeBuilder.create();
+        constructor.accept(builder);
+        addScreenshake(builder.build());
     }
 
     public static void addScreenshake(ScreenshakeInstance instance) {
         INSTANCES.add(instance);
-    }
-
-    public static float randomizeOffset(RandomSource random) {
-        return Mth.nextFloat(random, -intensity * 2, intensity * 2);
     }
 }

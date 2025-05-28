@@ -614,14 +614,14 @@ public class VFXBuilders {
             int count = points.length - 1;
             float increment = 1.0F / count;
             vfxOperator.accept(0f);
-            points[0].renderStart(getVertexConsumer(), this, u0, v0, u1, Mth.lerp(increment, v0, v1));
+            points[0].renderStart(getVertexConsumer(), this, u0, v0, u1);
             for (int i = 1; i < count; i++) {
                 float current = Mth.lerp(i * increment, v0, v1);
                 vfxOperator.accept(current);
                 points[i].renderMid(getVertexConsumer(), this, u0, current, u1, current);
             }
             vfxOperator.accept(1f);
-            points[count].renderEnd(getVertexConsumer(), this, u0, Mth.lerp((count) * increment, v0, v1), u1, v1);
+            points[count].renderEnd(getVertexConsumer(), this, u0, u1, v1);
             return this;
         }
 

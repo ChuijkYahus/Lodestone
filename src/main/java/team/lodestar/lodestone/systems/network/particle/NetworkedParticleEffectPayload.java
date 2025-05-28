@@ -74,7 +74,7 @@ public class NetworkedParticleEffectPayload extends OneSidedPayloadData {
     public NetworkedParticleEffectType<?> getEffectType(String id) {
         NetworkedParticleEffectType<?> particleEffectType = NetworkedParticleEffectType.EFFECT_TYPES.get(id);
         if (particleEffectType == null) {
-            throw new RuntimeException("This shouldn't be happening.");
+            throw new NullPointerException("This shouldn't be happening. The particle effect type with id: \"" + id + "\" does not exist. This is most likely a networking error.");
         }
         return particleEffectType;
     }
