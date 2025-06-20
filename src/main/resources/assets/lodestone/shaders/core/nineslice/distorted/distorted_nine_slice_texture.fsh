@@ -41,7 +41,7 @@ vec2 sliceUV(vec2 uv, vec2 size) {
 
 void main() {
     float time = GameTime * Speed + TimeOffset;
-    vec2 uv = sliceUV(texCoord, size);
+    vec2 uv = texCoord;
     vec2 uCap = vec2(UVCoordinates.x, UVCoordinates.y);
     vec2 vCap = vec2(UVCoordinates.z, UVCoordinates.w);
 
@@ -50,6 +50,7 @@ void main() {
 
     uv.x = clamp(uv.x, uCap.x, uCap.y);
     uv.y = clamp(uv.y, vCap.x, vCap.y);
+    uv = sliceUV(uv, size);
     vec4 textureColor = texture(Sampler0, uv);
     if (textureColor.a == 0) {
         discard;
