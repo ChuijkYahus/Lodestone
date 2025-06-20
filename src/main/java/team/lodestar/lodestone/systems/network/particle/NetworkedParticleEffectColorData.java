@@ -23,7 +23,7 @@ public class NetworkedParticleEffectColorData {
     protected final List<ColorParticleData> colors;
     protected int colorCycleCounter;
 
-    public static NetworkedParticleEffectColorData fromColors(List<ColorParticleDataWrapper> colors) {
+    public static NetworkedParticleEffectColorData fromColors(List<? extends ColorParticleDataWrapper> colors) {
         return new NetworkedParticleEffectColorData(colors);
     }
 

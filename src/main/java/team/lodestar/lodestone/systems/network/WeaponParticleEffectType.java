@@ -384,7 +384,7 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
         }
 
         @Override
-        public WeaponParticleEffectBuilder<T> color(List<ColorParticleDataWrapper> colors) {
+        public WeaponParticleEffectBuilder<T> color(List<? extends ColorParticleDataWrapper> colors) {
             return (WeaponParticleEffectBuilder<T>) super.color(colors);
         }
 

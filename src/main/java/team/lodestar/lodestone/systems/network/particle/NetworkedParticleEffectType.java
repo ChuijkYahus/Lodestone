@@ -116,7 +116,7 @@ public abstract class NetworkedParticleEffectType<T extends NetworkedParticleEff
             return color(NetworkedParticleEffectColorData.fromColor(color));
         }
 
-        public ParticleEffectBuilder<T> color(List<ColorParticleDataWrapper> colors) {
+        public ParticleEffectBuilder<T> color(List<? extends ColorParticleDataWrapper> colors) {
             return color(NetworkedParticleEffectColorData.fromColors(colors));
         }
 
