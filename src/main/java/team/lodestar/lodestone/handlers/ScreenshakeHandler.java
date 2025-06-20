@@ -21,6 +21,7 @@ public class ScreenshakeHandler {
     public static void computeAngles(ViewportEvent.ComputeCameraAngles event) {
         RandomSource random = Minecraft.getInstance().level.getRandom();
         if (intensity > 0) {
+            float intensity = (float) (ScreenshakeHandler.intensity * ClientConfig.SCREENSHAKE_INTENSITY.getConfigValue());
             float yaw = RandomHelper.randomBetween(random, 0, intensity * 2) * (random.nextBoolean() ? 1 : -1);
             float pitch = RandomHelper.randomBetween(random, 0, intensity * 2) * (random.nextBoolean() ? 1 : -1);
             event.setYaw(event.getYaw() + yaw);
