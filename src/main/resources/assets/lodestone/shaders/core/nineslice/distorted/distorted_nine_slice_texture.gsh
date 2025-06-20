@@ -22,6 +22,8 @@ void main() {
         length(data_in[1].localVertexPos - data_in[2].localVertexPos)
     );
 
+    size = round(size);
+
     for (int i = 0; i < gl_VerticesIn; i++) {
         gl_Position = gl_in[i].gl_Position;
         vertexColor = data_in[i].vertexColor;
