@@ -13,7 +13,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.*;
 import team.lodestar.lodestone.systems.network.particle.*;
-import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
+import team.lodestar.lodestone.systems.particle.data.color.*;
 
 import java.awt.*;
 import java.util.List;
@@ -379,12 +379,12 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
         }
 
         @Override
-        public WeaponParticleEffectBuilder<T> color(ColorParticleData color) {
+        public WeaponParticleEffectBuilder<T> color(ColorParticleDataWrapper color) {
             return (WeaponParticleEffectBuilder<T>)super.color(color);
         }
 
         @Override
-        public WeaponParticleEffectBuilder<T> color(List<ColorParticleData> colors) {
+        public WeaponParticleEffectBuilder<T> color(List<ColorParticleDataWrapper> colors) {
             return (WeaponParticleEffectBuilder<T>) super.color(colors);
         }
 

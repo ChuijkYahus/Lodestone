@@ -6,7 +6,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
+import team.lodestar.lodestone.systems.particle.data.color.*;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,19 +23,19 @@ public class NetworkedParticleEffectColorData {
     protected final List<ColorParticleData> colors;
     protected int colorCycleCounter;
 
-    public static NetworkedParticleEffectColorData fromColors(List<ColorParticleData> colors) {
+    public static NetworkedParticleEffectColorData fromColors(List<ColorParticleDataWrapper> colors) {
         return new NetworkedParticleEffectColorData(colors);
     }
 
-    public static NetworkedParticleEffectColorData fromColor(ColorParticleData color) {
+    public static NetworkedParticleEffectColorData fromColor(ColorParticleDataWrapper color) {
         return fromColors(List.of(color));
     }
 
-    public NetworkedParticleEffectColorData(List<ColorParticleData> colors) {
-        this.colors = colors.isEmpty() ? Collections.emptyList() : colors;
+    public NetworkedParticleEffectColorData(List<? extends ColorParticleDataWrapper> colors) {
+        this.colors = colors.isEmpty() ? Collections.emptyList() : colors.stream().map(ColorParticleDataWrapper::unwrap).toList();
     }
 
-    public NetworkedParticleEffectColorData(ColorParticleData... colors) {
+    public NetworkedParticleEffectColorData(ColorParticleDataWrapper... colors) {
         this(List.of(colors));
     }
 

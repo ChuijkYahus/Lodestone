@@ -1,5 +1,7 @@
 package team.lodestar.lodestone.systems.particle.builder;
 
+import it.unimi.dsi.fastutil.floats.*;
+import it.unimi.dsi.fastutil.ints.*;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.*;
 import net.minecraft.world.level.*;
@@ -84,6 +86,15 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
         return null;
     }
 
+    /**
+     * @deprecated Use one of the following instead:
+     * {@link #modifyColorData(Consumer)}
+     * {@link #modifyScaleData(Consumer)}}
+     * {@link #modifyLengthData(Consumer)}}
+     * {@link #modifyTransparencyData(Consumer)}}
+     * {@link #modifySpinData(Consumer)}}
+     */
+    @Deprecated(forRemoval = true, since = "1.7.2")
     public WorldParticleBuilder modifyData(GenericParticleData dataType, Consumer<GenericParticleData> dataConsumer) {
         if (dataType != null) {
             dataConsumer.accept(dataType);
@@ -91,15 +102,42 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
         return this;
     }
 
+    /**
+     * @deprecated Use one of the following instead:
+     * {@link #modifyColorData(Consumer)}
+     * {@link #modifyScaleData(Consumer)}}
+     * {@link #modifyLengthData(Consumer)}}
+     * {@link #modifyTransparencyData(Consumer)}}
+     * {@link #modifySpinData(Consumer)}}
+     */
+    @Deprecated(forRemoval = true, since = "1.7.2")
     public WorldParticleBuilder modifyData(Supplier<GenericParticleData> dataType, Consumer<GenericParticleData> dataConsumer) {
         return modifyData(dataType.get(), dataConsumer);
     }
 
+    /**
+     * @deprecated Use one of the following instead:
+     * {@link #modifyColorData(Consumer)}
+     * {@link #modifyScaleData(Consumer)}}
+     * {@link #modifyLengthData(Consumer)}}
+     * {@link #modifyTransparencyData(Consumer)}}
+     * {@link #modifySpinData(Consumer)}}
+     */
+    @Deprecated(forRemoval = true, since = "1.7.2")
     public WorldParticleBuilder modifyData(Function<WorldParticleBuilder, GenericParticleData> dataType, Consumer<GenericParticleData> dataConsumer) {
         modifyData(dataType.apply(this), dataConsumer);
         return this;
     }
 
+    /**
+     * @deprecated Use one of the following instead:
+     * {@link #modifyColorData(Consumer)}
+     * {@link #modifyScaleData(Consumer)}}
+     * {@link #modifyLengthData(Consumer)}}
+     * {@link #modifyTransparencyData(Consumer)}}
+     * {@link #modifySpinData(Consumer)}}
+     */
+    @Deprecated(forRemoval = true, since = "1.7.2")
     public final WorldParticleBuilder modifyData(Collection<Supplier<GenericParticleData>> dataTypes, Consumer<GenericParticleData> dataConsumer) {
         for (Supplier<GenericParticleData> dataFunction : dataTypes) {
             dataConsumer.accept(dataFunction.get());
@@ -450,98 +488,28 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
     }
 
     @Override
-    public WorldParticleBuilder setColorData(ColorParticleData colorData) {
+    public WorldParticleBuilder setColorData(ColorParticleDataWrapper colorData) {
         return (WorldParticleBuilder) super.setColorData(colorData);
     }
 
     @Override
-    public WorldParticleBuilder setLengthData(GenericParticleData lengthData) {
-        return (WorldParticleBuilder) super.setLengthData(lengthData);
+    public WorldParticleBuilder modifyScaleData(Consumer<GenericParticleData> dataConsumer) {
+        return (WorldParticleBuilder) super.modifyScaleData(dataConsumer);
     }
 
     @Override
-    public WorldParticleBuilder setScaleData(GenericParticleData scaleData) {
+    public WorldParticleBuilder setScaleData(GenericParticleDataWrapper scaleData) {
         return (WorldParticleBuilder) super.setScaleData(scaleData);
     }
 
     @Override
-    public WorldParticleBuilder setTransparencyData(GenericParticleData transparencyData) {
-        return (WorldParticleBuilder) super.setTransparencyData(transparencyData);
+    public WorldParticleBuilder modifyLengthData(Consumer<GenericParticleData> dataConsumer) {
+        return (WorldParticleBuilder) super.modifyLengthData(dataConsumer);
     }
 
     @Override
-    public WorldParticleBuilder setSpinData(SpinParticleData spinData) {
-        return (WorldParticleBuilder) super.setSpinData(spinData);
-    }
-
-    @Override
-    public WorldParticleBuilder multiplyGravity(float gravityMultiplier) {
-        return (WorldParticleBuilder) super.multiplyGravity(gravityMultiplier);
-    }
-
-    @Override
-    public WorldParticleBuilder modifyGravity(Function<Float, Supplier<Float>> gravityReplacement) {
-        return (WorldParticleBuilder) super.modifyGravity(gravityReplacement);
-    }
-
-    @Override
-    public WorldParticleBuilder setGravityStrength(float gravity) {
-        return (WorldParticleBuilder) super.setGravityStrength(gravity);
-    }
-
-    @Override
-    public WorldParticleBuilder setGravityStrength(Supplier<Float> gravityStrengthSupplier) {
-        return (WorldParticleBuilder) super.setGravityStrength(gravityStrengthSupplier);
-    }
-
-    @Override
-    public WorldParticleBuilder multiplyFriction(float GravityMultiplier) {
-        return (WorldParticleBuilder) super.multiplyFriction(GravityMultiplier);
-    }
-
-    @Override
-    public WorldParticleBuilder modifyFriction(Function<Float, Supplier<Float>> GravityReplacement) {
-        return (WorldParticleBuilder) super.modifyFriction(GravityReplacement);
-    }
-
-    @Override
-    public WorldParticleBuilder setFrictionStrength(float Gravity) {
-        return (WorldParticleBuilder) super.setFrictionStrength(Gravity);
-    }
-
-    @Override
-    public WorldParticleBuilder setFrictionStrength(Supplier<Float> GravityStrengthSupplier) {
-        return (WorldParticleBuilder) super.setFrictionStrength(GravityStrengthSupplier);
-    }
-
-    @Override
-    public WorldParticleBuilder multiplyLifetime(float lifetimeMultiplier) {
-        return (WorldParticleBuilder) super.multiplyLifetime(lifetimeMultiplier);
-    }
-
-    @Override
-    public WorldParticleBuilder modifyLifetime(Function<Integer, Supplier<Integer>> lifetimeReplacement) {
-        return (WorldParticleBuilder) super.modifyLifetime(lifetimeReplacement);
-    }
-
-    @Override
-    public WorldParticleBuilder setLifetime(int lifetime) {
-        return (WorldParticleBuilder) super.setLifetime(lifetime);
-    }
-
-    @Override
-    public WorldParticleBuilder setLifetime(Supplier<Integer> lifetimeSupplier) {
-        return (WorldParticleBuilder) super.setLifetime(lifetimeSupplier);
-    }
-
-    @Override
-    public WorldParticleBuilder multiplyLifeDelay(float lifeDelayMultiplier) {
-        return (WorldParticleBuilder) super.multiplyLifeDelay(lifeDelayMultiplier);
-    }
-
-    @Override
-    public WorldParticleBuilder modifyLifeDelay(Function<Integer, Supplier<Integer>> lifeDelayReplacement) {
-        return (WorldParticleBuilder) super.modifyLifeDelay(lifeDelayReplacement);
+    public WorldParticleBuilder setLengthData(GenericParticleDataWrapper lengthData) {
+        return (WorldParticleBuilder) super.setLengthData(lengthData);
     }
 
     @Override
@@ -550,12 +518,97 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
     }
 
     @Override
-    public WorldParticleBuilder setLifeDelay(Supplier<Integer> lifeDelaySupplier) {
-        return (WorldParticleBuilder) super.setLifeDelay(lifeDelaySupplier);
+    public WorldParticleBuilder setLifeDelay(Supplier<Integer> supplier) {
+        return (WorldParticleBuilder) super.setLifeDelay(supplier);
     }
 
     @Override
-    public WorldParticleBuilder setSpritePicker(SimpleParticleOptions.ParticleSpritePicker spritePicker) {
-        return (WorldParticleBuilder) super.setSpritePicker(spritePicker);
+    public WorldParticleBuilder setLifetime(int lifetime) {
+        return (WorldParticleBuilder) super.setLifetime(lifetime);
+    }
+
+    @Override
+    public WorldParticleBuilder setLifetime(Supplier<Integer> supplier) {
+        return (WorldParticleBuilder) super.setLifetime(supplier);
+    }
+
+    @Override
+    public WorldParticleBuilder setGravity(float gravity) {
+        return (WorldParticleBuilder) super.setGravity(gravity);
+    }
+
+    @Override
+    public WorldParticleBuilder setGravity(Supplier<Float> supplier) {
+        return (WorldParticleBuilder) super.setGravity(supplier);
+    }
+
+    @Override
+    public WorldParticleBuilder setFriction(float friction) {
+        return (WorldParticleBuilder) super.setFriction(friction);
+    }
+
+    @Override
+    public WorldParticleBuilder setFriction(Supplier<Float> supplier) {
+        return (WorldParticleBuilder) super.setFriction(supplier);
+    }
+
+    @Override
+    public WorldParticleBuilder multiplyLifeDelay(float multiplier) {
+        return (WorldParticleBuilder) super.multiplyLifeDelay(multiplier);
+    }
+
+    @Override
+    public WorldParticleBuilder modifyLifeDelay(Int2IntFunction modifier) {
+        return (WorldParticleBuilder) super.modifyLifeDelay(modifier);
+    }
+
+    @Override
+    public WorldParticleBuilder multiplyLifetime(float multiplier) {
+        return (WorldParticleBuilder) super.multiplyLifetime(multiplier);
+    }
+
+    @Override
+    public WorldParticleBuilder modifyLifetime(Int2IntFunction modifier) {
+        return (WorldParticleBuilder) super.modifyLifetime(modifier);
+    }
+
+    @Override
+    public WorldParticleBuilder multiplyGravity(float multiplier) {
+        return (WorldParticleBuilder) super.multiplyGravity(multiplier);
+    }
+
+    @Override
+    public WorldParticleBuilder modifyGravity(Float2FloatFunction modifier) {
+        return (WorldParticleBuilder) super.modifyGravity(modifier);
+    }
+
+    @Override
+    public WorldParticleBuilder multiplyFriction(float multiplier) {
+        return (WorldParticleBuilder) super.multiplyFriction(multiplier);
+    }
+
+    @Override
+    public WorldParticleBuilder modifyFriction(Float2FloatFunction modifier) {
+        return (WorldParticleBuilder) super.modifyFriction(modifier);
+    }
+
+    @Override
+    public WorldParticleBuilder setSpinData(SpinParticleDataWrapper spinData) {
+        return (WorldParticleBuilder) super.setSpinData(spinData);
+    }
+
+    @Override
+    public WorldParticleBuilder modifySpinData(Consumer<SpinParticleData> dataConsumer) {
+        return (WorldParticleBuilder) super.modifySpinData(dataConsumer);
+    }
+
+    @Override
+    public WorldParticleBuilder setTransparencyData(GenericParticleDataWrapper transparencyData) {
+        return (WorldParticleBuilder) super.setTransparencyData(transparencyData);
+    }
+
+    @Override
+    public WorldParticleBuilder modifyTransparencyData(Consumer<GenericParticleData> dataConsumer) {
+        return (WorldParticleBuilder) super.modifyTransparencyData(dataConsumer);
     }
 }

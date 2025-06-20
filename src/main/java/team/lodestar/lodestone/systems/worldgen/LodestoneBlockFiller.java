@@ -11,6 +11,10 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+/**
+ * @deprecated use the {@link LodestoneWorldgenBuilder} system instead.
+ */
+@Deprecated(forRemoval = true, since = "1.7.2")
 public class LodestoneBlockFiller extends ArrayList<LodestoneBlockFiller.LodestoneBlockFillerLayer> {
 
     public static final LodestoneLayerToken MAIN = new LodestoneLayerToken();

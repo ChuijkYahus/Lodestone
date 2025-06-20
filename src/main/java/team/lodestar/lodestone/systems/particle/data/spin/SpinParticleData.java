@@ -4,7 +4,7 @@ import net.minecraft.util.RandomSource;
 import team.lodestar.lodestone.systems.easing.Easing;
 import team.lodestar.lodestone.systems.particle.data.GenericParticleData;
 
-public class SpinParticleData extends GenericParticleData {
+public class SpinParticleData extends GenericParticleData implements SpinParticleDataWrapper {
 
     public final float spinOffset;
 
@@ -14,13 +14,18 @@ public class SpinParticleData extends GenericParticleData {
     }
 
     @Override
+    public SpinParticleData unwrap() {
+        return this;
+    }
+
+    @Override
     public SpinParticleData copy() {
-        return new SpinParticleData(spinOffset, startingValue, middleValue, endingValue, coefficient, startToMiddleEasing, middleToEndEasing).overrideValueMultiplier(valueMultiplier).overrideCoefficientMultiplier(coefficientMultiplier);
+        return new SpinParticleData(spinOffset, startingValue, middleValue, endingValue, coefficient, startingCurve, endingCurve).overrideValueMultiplier(valueMultiplier).overrideCoefficientMultiplier(coefficientMultiplier);
     }
 
     @Override
     public SpinParticleData bake() {
-        return new SpinParticleData(spinOffset, startingValue*valueMultiplier, middleValue*valueMultiplier, endingValue*valueMultiplier, coefficient*coefficientMultiplier, startToMiddleEasing, middleToEndEasing);
+        return new SpinParticleData(spinOffset, startingValue*valueMultiplier, middleValue*valueMultiplier, endingValue*valueMultiplier, coefficient*coefficientMultiplier, startingCurve, endingCurve);
     }
 
     @Override
@@ -34,8 +39,8 @@ public class SpinParticleData extends GenericParticleData {
     }
 
     @Override
-    public SpinParticleData immutable() {
-        return (SpinParticleData) super.immutable();
+    public SpinParticleData lock() {
+        return (SpinParticleData) super.lock();
     }
 
     public static SpinParticleDataBuilder create(float value) {

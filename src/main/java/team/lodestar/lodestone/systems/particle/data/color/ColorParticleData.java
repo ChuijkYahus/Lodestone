@@ -9,7 +9,7 @@ import team.lodestar.lodestone.systems.easing.Easing;
 
 import java.awt.*;
 
-public class ColorParticleData {
+public class ColorParticleData implements ColorParticleDataWrapper {
 
     public static final Codec<ColorParticleData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.FLOAT.fieldOf("r1").forGetter(data -> data.r1),
@@ -19,30 +19,54 @@ public class ColorParticleData {
             Codec.FLOAT.fieldOf("g2").forGetter(data -> data.g2),
             Codec.FLOAT.fieldOf("b2").forGetter(data -> data.b2),
             Codec.FLOAT.fieldOf("colorCoefficient").forGetter(data -> data.colorCoefficient),
-            Easing.CODEC.fieldOf("colorCurveEasing").forGetter(data -> data.colorCurveEasing),
+            Easing.CODEC.fieldOf("colorCurveEasing").forGetter(data -> data.colorCurve),
             Codec.FLOAT.fieldOf("coefficientMultiplier").forGetter(data -> data.coefficientMultiplier)
     ).apply(instance, ColorParticleData::new));
 
-    public final float r1, g1, b1, r2, g2, b2;
-    public final float colorCoefficient;
-    public final Easing colorCurveEasing;
+    protected final float r1, g1, b1, r2, g2, b2;
+    protected final Color startingColor, endingColor;
+    protected final float colorCoefficient;
+    protected final Easing colorCurve;
 
-    public float coefficientMultiplier = 1;
+    protected float coefficientMultiplier = 1;
 
-    protected ColorParticleData(float r1, float g1, float b1, float r2, float g2, float b2, float colorCoefficient, Easing colorCurveEasing, float coefficientMultiplier) {
-        this(r1, g1, b1, r2, g2, b2, colorCoefficient, colorCurveEasing);
+    protected ColorParticleData(float r1, float g1, float b1, float r2, float g2, float b2, float colorCoefficient, Easing colorCurve, float coefficientMultiplier) {
+        this(r1, g1, b1, r2, g2, b2, colorCoefficient, colorCurve);
         this.coefficientMultiplier = coefficientMultiplier;
     }
 
-    protected ColorParticleData(float r1, float g1, float b1, float r2, float g2, float b2, float colorCoefficient, Easing colorCurveEasing) {
+    protected ColorParticleData(float r1, float g1, float b1, float r2, float g2, float b2, float colorCoefficient, Easing colorCurve) {
         this.r1 = r1;
         this.g1 = g1;
         this.b1 = b1;
         this.r2 = r2;
         this.g2 = g2;
         this.b2 = b2;
+        this.startingColor = new Color(r1, g1, b1);
+        this.endingColor = new Color(r2, g2, b2);
         this.colorCoefficient = colorCoefficient;
-        this.colorCurveEasing = colorCurveEasing;
+        this.colorCurve = colorCurve;
+    }
+
+    @Override
+    public ColorParticleData unwrap() {
+        return this;
+    }
+
+    public Color getStartingColor() {
+        return startingColor;
+    }
+
+    public Color getEndingColor() {
+        return endingColor;
+    }
+
+    public float getColorCoefficient() {
+        return colorCoefficient;
+    }
+
+    public Easing getColorCurve() {
+        return colorCurve;
     }
 
     public ColorParticleData multiplyCoefficient(float coefficientMultiplier) {
@@ -55,24 +79,22 @@ public class ColorParticleData {
         return this;
     }
 
+    public void rgbToHsv(float[] hsv1, float[] hsv2) {
+        Color.RGBtoHSB((int) (255 * Math.min(1.0f, r1)), (int) (255 * Math.min(1.0f, g1)), (int) (255 * Math.min(1.0f, b1)), hsv1);
+        Color.RGBtoHSB((int) (255 * Math.min(1.0f, r2)), (int) (255 * Math.min(1.0f, g2)), (int) (255 * Math.min(1.0f, b2)), hsv2);
+
+    }
+
     public float getProgress(float age, float lifetime) {
         return Mth.clamp((age * colorCoefficient * coefficientMultiplier) / lifetime, 0, 1);
     }
 
-    public Color getStartingColor() {
-        return new Color(r1, g1, b1);
-    }
-
-    public Color getEndingColor() {
-        return new Color(r2, g2, b2);
-    }
-
     public ColorParticleDataBuilder invert() {
-        return create(r2, g2, b2, r1, g1, b1).setCoefficient(colorCoefficient).setEasing(colorCurveEasing);
+        return create(r2, g2, b2, r1, g1, b1).setCoefficient(colorCoefficient).setEasing(colorCurve);
     }
 
     public ColorParticleDataBuilder copy() {
-        return create(r1, g1, b1, r2, g2, b2).setCoefficient(colorCoefficient).setEasing(colorCurveEasing);
+        return create(r1, g1, b1, r2, g2, b2).setCoefficient(colorCoefficient).setEasing(colorCurve);
     }
 
     public static ColorParticleDataBuilder create(float r1, float g1, float b1, float r2, float g2, float b2) {

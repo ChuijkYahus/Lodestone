@@ -19,8 +19,6 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.function.Consumer;
 
-import static team.lodestar.lodestone.systems.particle.SimpleParticleOptions.ParticleSpritePicker.*;
-
 public class LodestoneScreenParticle extends TextureSheetScreenParticle {
     private final LodestoneScreenParticleRenderType renderType;
     protected final ParticleEngine.MutableSpriteSet spriteSet;
@@ -62,10 +60,9 @@ public class LodestoneScreenParticle extends TextureSheetScreenParticle {
 
         this.setLifetime(options.lifetimeSupplier.get());
         this.lifeDelay = options.lifeDelaySupplier.get();
-        this.gravity = options.gravityStrengthSupplier.get();
-        this.friction = options.frictionStrengthSupplier.get();
-        Color.RGBtoHSB((int) (255 * Math.min(1.0f, colorData.r1)), (int) (255 * Math.min(1.0f, colorData.g1)), (int) (255 * Math.min(1.0f, colorData.b1)), hsv1);
-        Color.RGBtoHSB((int) (255 * Math.min(1.0f, colorData.r2)), (int) (255 * Math.min(1.0f, colorData.g2)), (int) (255 * Math.min(1.0f, colorData.b2)), hsv2);
+        this.gravity = options.gravitySupplier.get();
+        this.friction = options.frictionSupplier.get();
+        colorData.rgbToHsv(hsv1, hsv2);
         if (spriteSet != null) {
             switch (spritePicker) {
                 case FIRST_INDEX, WITH_AGE -> pickSprite(0);
@@ -112,7 +109,7 @@ public class LodestoneScreenParticle extends TextureSheetScreenParticle {
             return;
         }
 
-        pickColor(colorData.colorCurveEasing.ease(colorData.getProgress(age, lifetime), 0, 1, 1));
+        pickColor(colorData.getColorCurve().clamped(colorData.getProgress(age, lifetime), 0, 1));
 
         quadSize = scaleData.getValue(age, lifetime);
         quadLength = lengthData != null ? lengthData.getValue(age, lifetime) : quadSize;

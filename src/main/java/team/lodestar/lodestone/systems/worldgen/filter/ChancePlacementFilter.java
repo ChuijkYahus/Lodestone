@@ -1,6 +1,5 @@
-package team.lodestar.lodestone.systems.worldgen;
+package team.lodestar.lodestone.systems.worldgen.filter;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
@@ -9,7 +8,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementFilter;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
-import net.minecraft.world.level.levelgen.placement.SurfaceWaterDepthFilter;
 import team.lodestar.lodestone.registry.common.*;
 
 public class ChancePlacementFilter extends PlacementFilter {

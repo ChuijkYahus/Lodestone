@@ -1,17 +1,19 @@
 package team.lodestar.lodestone.systems.particle;
 
+import it.unimi.dsi.fastutil.floats.*;
+import it.unimi.dsi.fastutil.ints.*;
 import team.lodestar.lodestone.systems.particle.data.GenericParticleData;
 import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
 import team.lodestar.lodestone.systems.particle.data.spin.SpinParticleData;
 
 import java.awt.*;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 public abstract class SimpleParticleOptions {
 
     public static final ColorParticleData DEFAULT_COLOR = ColorParticleData.create(Color.WHITE, Color.WHITE).build();
-    public static final SpinParticleData DEFAULT_SPIN = SpinParticleData.create(0).build().immutable();
-    public static final GenericParticleData DEFAULT_GENERIC = GenericParticleData.create(1, 0).build().immutable();
+    public static final SpinParticleData DEFAULT_SPIN = SpinParticleData.create(0).build().lock();
+    public static final GenericParticleData DEFAULT_GENERIC = GenericParticleData.create(1, 0).build().lock();
 
     public enum ParticleSpritePicker { //TODO: this kinda sucks, should be a class
         FIRST_INDEX, LAST_INDEX, WITH_AGE, WITH_AGE_INVERSE, RANDOM_SPRITE
@@ -27,7 +29,12 @@ public abstract class SimpleParticleOptions {
 
     public Supplier<Integer> lifetimeSupplier = ()->20;
     public Supplier<Integer> lifeDelaySupplier = ()->0;
-    public Supplier<Float> gravityStrengthSupplier = ()->0f;
-    public Supplier<Float> frictionStrengthSupplier = ()->1f;
+    public Supplier<Float> gravitySupplier = ()->0f;
+    public Supplier<Float> frictionSupplier = ()->1f;
+
+    public Int2IntFunction lifetimeModifier = i -> i;
+    public Int2IntFunction lifeDelayModifier = i -> i;
+    public Float2FloatFunction gravityModifier = f -> f;
+    public Float2FloatFunction frictionModifier = f -> f;
 
 }

@@ -2,13 +2,19 @@ package team.lodestar.lodestone.systems.particle.data.spin;
 
 import net.minecraft.util.RandomSource;
 import team.lodestar.lodestone.systems.easing.Easing;
-import team.lodestar.lodestone.systems.particle.data.GenericParticleDataBuilder;
+import team.lodestar.lodestone.systems.particle.data.*;
 
-public class SpinParticleDataBuilder extends GenericParticleDataBuilder {
+public class SpinParticleDataBuilder extends GenericParticleDataBuilder implements SpinParticleDataWrapper {
     protected float spinOffset;
 
     protected SpinParticleDataBuilder(float startingValue, float middleValue, float endingValue) {
         super(startingValue, middleValue, endingValue);
+    }
+
+
+    @Override
+    public SpinParticleData unwrap() {
+        return build();
     }
 
     public SpinParticleDataBuilder setSpinOffset(float spinOffset) {

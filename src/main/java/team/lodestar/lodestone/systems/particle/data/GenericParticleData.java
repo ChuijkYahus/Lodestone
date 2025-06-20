@@ -2,65 +2,87 @@ package team.lodestar.lodestone.systems.particle.data;
 
 import net.minecraft.util.Mth;
 import team.lodestar.lodestone.systems.easing.Easing;
-import team.lodestar.lodestone.systems.particle.SimpleParticleOptions;
 
 @SuppressWarnings("unused")
-public class GenericParticleData {
+public class GenericParticleData implements GenericParticleDataWrapper {
     public final float startingValue, middleValue, endingValue;
     public final float coefficient;
-    public final Easing startToMiddleEasing, middleToEndEasing;
+    public final Easing startingCurve, endingCurve;
 
     public float valueMultiplier = 1;
     public float coefficientMultiplier = 1;
-    protected boolean immutable;
-    protected GenericParticleData(float startingValue, float middleValue, float endingValue, float coefficient, Easing startToMiddleEasing, Easing middleToEndEasing) {
+    protected boolean locked;
+
+    protected GenericParticleData(float startingValue, float middleValue, float endingValue, float coefficient, Easing startingCurve, Easing endingCurve) {
         this.startingValue = startingValue;
         this.middleValue = middleValue;
         this.endingValue = endingValue;
         this.coefficient = coefficient;
-        this.startToMiddleEasing = startToMiddleEasing;
-        this.middleToEndEasing = middleToEndEasing;
+        this.startingCurve = startingCurve;
+        this.endingCurve = endingCurve;
     }
 
+    @Override
+    public GenericParticleData unwrap() {
+        return this;
+    }
+
+    /**
+     * Creates a copy of the GenericParticleData instance.
+     */
     public GenericParticleData copy() {
-        return new GenericParticleData(startingValue, middleValue, endingValue, coefficient, startToMiddleEasing, middleToEndEasing).overrideValueMultiplier(valueMultiplier).overrideCoefficientMultiplier(coefficientMultiplier);
+        return new GenericParticleData(startingValue, middleValue, endingValue, coefficient, startingCurve, endingCurve).overrideValueMultiplier(valueMultiplier).overrideCoefficientMultiplier(coefficientMultiplier);
     }
 
+    /**
+     * Bakes the data into a new GenericParticleData instance with the current multipliers baked into .
+     */
     public GenericParticleData bake() {
-        return new GenericParticleData(startingValue*valueMultiplier, middleValue*valueMultiplier, endingValue*valueMultiplier, coefficient*coefficientMultiplier, startToMiddleEasing, middleToEndEasing);
+        return new GenericParticleData(startingValue*valueMultiplier, middleValue*valueMultiplier, endingValue*valueMultiplier, coefficient*coefficientMultiplier, startingCurve, endingCurve);
     }
 
-    public GenericParticleData immutable() {
-        immutable = true;
+    /**
+     * Locks the data, preventing any modifications to the value and coefficient.
+     */
+    public GenericParticleData lock() {
+        locked = true;
         return this;
     }
 
     public GenericParticleData multiplyCoefficient(float coefficientMultiplier) {
-        this.coefficientMultiplier *= coefficientMultiplier;
+        if (!locked) {
+            this.coefficientMultiplier *= coefficientMultiplier;
+        }
         return this;
     }
 
     public GenericParticleData overrideCoefficientMultiplier(float coefficientMultiplier) {
-        this.coefficientMultiplier = coefficientMultiplier;
+        if (!locked) {
+            this.coefficientMultiplier = coefficientMultiplier;
+        }
         return this;
     }
 
     public GenericParticleData multiplyValue(float valueMultiplier) {
-        this.valueMultiplier *= valueMultiplier;
+        if (!locked) {
+            this.valueMultiplier *= valueMultiplier;
+        }
         return this;
     }
 
     public GenericParticleData overrideValueMultiplier(float valueMultiplier) {
-        this.valueMultiplier = valueMultiplier;
+        if (!locked) {
+            this.valueMultiplier = valueMultiplier;
+        }
         return this;
     }
 
     public float getCoefficient() {
-        return coefficient * (immutable ? 1 : coefficientMultiplier);
+        return coefficient * (coefficientMultiplier);
     }
 
     public float getValueMultiplier() {
-        return immutable ? 1 : valueMultiplier;
+        return valueMultiplier;
     }
 
     public boolean isTrinary() {
@@ -76,12 +98,12 @@ public class GenericParticleData {
         float result;
         if (isTrinary()) {
             if (progress >= 0.5f) {
-                result = Mth.lerp(middleToEndEasing.ease(progress - 0.5f, 0, 1, 0.5f), middleValue, endingValue);
+                result = Mth.lerp(endingCurve.ease(progress - 0.5f, 0, 1, 0.5f), middleValue, endingValue);
             } else {
-                result = Mth.lerp(startToMiddleEasing.ease(progress, 0, 1, 0.5f), startingValue, middleValue);
+                result = Mth.lerp(startingCurve.ease(progress, 0, 1, 0.5f), startingValue, middleValue);
             }
         } else {
-            result = Mth.lerp(startToMiddleEasing.ease(progress, 0, 1, 1), startingValue, middleValue);
+            result = Mth.lerp(startingCurve.ease(progress, 0, 1, 1), startingValue, middleValue);
         }
         return result * getValueMultiplier();
     }
@@ -102,9 +124,6 @@ public class GenericParticleData {
         float startingValue = Mth.clamp(data.startingValue, 0, 1);
         float middleValue = Mth.clamp(data.middleValue, 0, 1);
         float endingValue = data.endingValue == -1 ? -1 : Mth.clamp(data.endingValue, 0, 1);
-        float coefficient = data.coefficient;
-        Easing startToMiddleEasing = data.startToMiddleEasing;
-        Easing middleToEndEasing = data.middleToEndEasing;
-        return new GenericParticleData(startingValue, middleValue, endingValue, coefficient, startToMiddleEasing, middleToEndEasing);
+        return new GenericParticleData(startingValue, middleValue, endingValue, data.coefficient, data.startingCurve, data.endingCurve);
     }
 }

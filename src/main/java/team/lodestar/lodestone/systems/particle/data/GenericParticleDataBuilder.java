@@ -2,7 +2,7 @@ package team.lodestar.lodestone.systems.particle.data;
 
 import team.lodestar.lodestone.systems.easing.Easing;
 
-public class GenericParticleDataBuilder {
+public class GenericParticleDataBuilder implements GenericParticleDataWrapper {
     protected float startingValue, middleValue, endingValue;
     protected float coefficient = 1f;
     protected Easing startToMiddleEasing = Easing.LINEAR, middleToEndEasing = Easing.LINEAR;
@@ -11,6 +11,11 @@ public class GenericParticleDataBuilder {
         this.startingValue = startingValue;
         this.middleValue = middleValue;
         this.endingValue = endingValue;
+    }
+
+    @Override
+    public GenericParticleData unwrap() {
+        return build();
     }
 
     public GenericParticleDataBuilder setCoefficient(float coefficient) {

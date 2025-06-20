@@ -1,6 +1,5 @@
-package team.lodestar.lodestone.systems.worldgen;
+package team.lodestar.lodestone.systems.worldgen.filter;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
@@ -8,7 +7,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
@@ -19,6 +17,7 @@ import team.lodestar.lodestone.registry.common.*;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 
 public class DimensionPlacementFilter extends PlacementFilter {
 

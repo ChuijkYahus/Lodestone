@@ -1,15 +1,13 @@
 package team.lodestar.lodestone.systems.particle.builder;
 
-import team.lodestar.lodestone.registry.common.particle.*;
+import it.unimi.dsi.fastutil.floats.*;
+import it.unimi.dsi.fastutil.ints.*;
 import team.lodestar.lodestone.systems.particle.SimpleParticleOptions;
-import team.lodestar.lodestone.systems.particle.data.GenericParticleData;
-import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
-import team.lodestar.lodestone.systems.particle.data.spin.SpinParticleData;
-import team.lodestar.lodestone.systems.particle.world.options.*;
+import team.lodestar.lodestone.systems.particle.data.*;
+import team.lodestar.lodestone.systems.particle.data.color.*;
+import team.lodestar.lodestone.systems.particle.data.spin.*;
 
-import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
@@ -23,8 +21,8 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
         return this;
     }
 
-    public AbstractParticleBuilder<T> setColorData(ColorParticleData colorData) {
-        getParticleOptions().colorData = colorData;
+    public AbstractParticleBuilder<T> setColorData(ColorParticleDataWrapper colorData) {
+        getParticleOptions().colorData = colorData.unwrap();
         return this;
     }
 
@@ -32,8 +30,13 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
         return getParticleOptions().colorData;
     }
 
-    public AbstractParticleBuilder<T> setScaleData(GenericParticleData scaleData) {
-        getParticleOptions().scaleData = scaleData;
+    public AbstractParticleBuilder<T> modifyScaleData(Consumer<GenericParticleData> dataConsumer) {
+        dataConsumer.accept(getScaleData());
+        return this;
+    }
+
+    public AbstractParticleBuilder<T> setScaleData(GenericParticleDataWrapper scaleData) {
+        getParticleOptions().scaleData = scaleData.unwrap();
         return this;
     }
 
@@ -41,8 +44,13 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
         return getParticleOptions().scaleData;
     }
 
-    public AbstractParticleBuilder<T> setLengthData(GenericParticleData lengthData) {
-        getParticleOptions().lengthData = lengthData;
+    public AbstractParticleBuilder<T> modifyLengthData(Consumer<GenericParticleData> dataConsumer) {
+        dataConsumer.accept(getLengthData());
+        return this;
+    }
+
+    public AbstractParticleBuilder<T> setLengthData(GenericParticleDataWrapper lengthData) {
+        getParticleOptions().lengthData = lengthData.unwrap();
         return this;
     }
 
@@ -50,8 +58,13 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
         return getParticleOptions().lengthData;
     }
 
-    public AbstractParticleBuilder<T> setTransparencyData(GenericParticleData transparencyData) {
-        getParticleOptions().transparencyData = transparencyData;
+    public AbstractParticleBuilder<T> modifyTransparencyData(Consumer<GenericParticleData> dataConsumer) {
+        dataConsumer.accept(getTransparencyData());
+        return this;
+    }
+
+    public AbstractParticleBuilder<T> setTransparencyData(GenericParticleDataWrapper transparencyData) {
+        getParticleOptions().transparencyData = transparencyData.unwrap();
         return this;
     }
 
@@ -59,8 +72,13 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
         return getParticleOptions().transparencyData;
     }
 
-    public AbstractParticleBuilder<T> setSpinData(SpinParticleData spinData) {
-        getParticleOptions().spinData = spinData;
+    public AbstractParticleBuilder<T> modifySpinData(Consumer<SpinParticleData> dataConsumer) {
+        dataConsumer.accept(getSpinData());
+        return this;
+    }
+
+    public AbstractParticleBuilder<T> setSpinData(SpinParticleDataWrapper spinData) {
+        getParticleOptions().spinData = spinData.unwrap();
         return this;
     }
 
@@ -68,48 +86,12 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
         return getParticleOptions().spinData;
     }
 
-    public AbstractParticleBuilder<T> multiplyGravity(float gravityMultiplier) {
-        return modifyGravity(f -> () -> f * gravityMultiplier);
+    public AbstractParticleBuilder<T> setLifeDelay(int lifeDelay) {
+        return setLifeDelay(() -> lifeDelay);
     }
 
-    public AbstractParticleBuilder<T> modifyGravity(Function<Float, Supplier<Float>> gravityReplacement) {
-        getParticleOptions().gravityStrengthSupplier = gravityReplacement.apply(getParticleOptions().gravityStrengthSupplier.get());
-        return this;
-    }
-
-    public AbstractParticleBuilder<T> setGravityStrength(float gravity) {
-        return setGravityStrength(() -> gravity);
-    }
-
-    public AbstractParticleBuilder<T> setGravityStrength(Supplier<Float> gravityStrengthSupplier) {
-        getParticleOptions().gravityStrengthSupplier = gravityStrengthSupplier;
-        return this;
-    }
-
-    public AbstractParticleBuilder<T> multiplyFriction(float frictionMultiplier) {
-        return modifyFriction(f -> () -> f * frictionMultiplier);
-    }
-
-    public AbstractParticleBuilder<T> modifyFriction(Function<Float, Supplier<Float>> frictionReplacement) {
-        getParticleOptions().frictionStrengthSupplier = frictionReplacement.apply(getParticleOptions().frictionStrengthSupplier.get());
-        return this;
-    }
-
-    public AbstractParticleBuilder<T> setFrictionStrength(float friction) {
-        return setFrictionStrength(() -> friction);
-    }
-
-    public AbstractParticleBuilder<T> setFrictionStrength(Supplier<Float> frictionStrengthSupplier) {
-        getParticleOptions().frictionStrengthSupplier = frictionStrengthSupplier;
-        return this;
-    }
-
-    public AbstractParticleBuilder<T> multiplyLifetime(float lifetimeMultiplier) {
-        return modifyLifetime(i -> () -> (int) (i * lifetimeMultiplier));
-    }
-
-    public AbstractParticleBuilder<T> modifyLifetime(Function<Integer, Supplier<Integer>> lifetimeReplacement) {
-        getParticleOptions().lifetimeSupplier = lifetimeReplacement.apply(getParticleOptions().lifetimeSupplier.get());
+    public AbstractParticleBuilder<T> setLifeDelay(Supplier<Integer> supplier) {
+        getParticleOptions().lifeDelaySupplier = supplier;
         return this;
     }
 
@@ -117,26 +99,62 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
         return setLifetime(() -> lifetime);
     }
 
-    public AbstractParticleBuilder<T> setLifetime(Supplier<Integer> lifetimeSupplier) {
-        getParticleOptions().lifetimeSupplier = lifetimeSupplier;
+    public AbstractParticleBuilder<T> setLifetime(Supplier<Integer> supplier) {
+        getParticleOptions().lifetimeSupplier = supplier;
         return this;
     }
 
-    public AbstractParticleBuilder<T> multiplyLifeDelay(float lifeDelayMultiplier) {
-        return modifyLifeDelay(i -> () -> (int) (i * lifeDelayMultiplier));
+    public AbstractParticleBuilder<T> setGravity(float gravity) {
+        return setGravity(() -> gravity);
     }
 
-    public AbstractParticleBuilder<T> modifyLifeDelay(Function<Integer, Supplier<Integer>> lifeDelayReplacement) {
-        getParticleOptions().lifeDelaySupplier = lifeDelayReplacement.apply(getParticleOptions().lifeDelaySupplier.get());
+    public AbstractParticleBuilder<T> setGravity(Supplier<Float> supplier) {
+        getParticleOptions().gravitySupplier = supplier;
         return this;
     }
 
-    public AbstractParticleBuilder<T> setLifeDelay(int lifeDelay) {
-        return setLifeDelay(() -> lifeDelay);
+    public AbstractParticleBuilder<T> setFriction(float friction) {
+        return setFriction(() -> friction);
     }
 
-    public AbstractParticleBuilder<T> setLifeDelay(Supplier<Integer> lifeDelaySupplier) {
-        getParticleOptions().lifeDelaySupplier = lifeDelaySupplier;
+    public AbstractParticleBuilder<T> setFriction(Supplier<Float> supplier) {
+        getParticleOptions().frictionSupplier = supplier;
+        return this;
+    }
+    
+    public AbstractParticleBuilder<T> multiplyLifeDelay(float multiplier) {
+        return modifyLifeDelay(i -> (int) (i * multiplier));
+    }
+
+    public AbstractParticleBuilder<T> modifyLifeDelay(Int2IntFunction modifier) {
+        getParticleOptions().lifeDelayModifier = getParticleOptions().lifeDelayModifier.andThenInt(modifier);
+        return this;
+    }
+
+    public AbstractParticleBuilder<T> multiplyLifetime(float multiplier) {
+        return modifyLifetime(i -> (int) (i * multiplier));
+    }
+
+    public AbstractParticleBuilder<T> modifyLifetime(Int2IntFunction modifier) {
+        getParticleOptions().lifetimeModifier = getParticleOptions().lifetimeModifier.andThenInt(modifier);
+        return this;
+    }
+
+    public AbstractParticleBuilder<T> multiplyGravity(float multiplier) {
+        return modifyGravity(i -> (int) (i * multiplier));
+    }
+
+    public AbstractParticleBuilder<T> modifyGravity(Float2FloatFunction modifier) {
+        getParticleOptions().gravityModifier = getParticleOptions().gravityModifier.andThenFloat(modifier);
+        return this;
+    }
+
+    public AbstractParticleBuilder<T> multiplyFriction(float multiplier) {
+        return modifyFriction(i -> (int) (i * multiplier));
+    }
+
+    public AbstractParticleBuilder<T> modifyFriction(Float2FloatFunction modifier) {
+        getParticleOptions().frictionModifier = getParticleOptions().frictionModifier.andThenFloat(modifier);
         return this;
     }
 

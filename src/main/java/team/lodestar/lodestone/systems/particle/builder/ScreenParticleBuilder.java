@@ -1,5 +1,7 @@
 package team.lodestar.lodestone.systems.particle.builder;
 
+import it.unimi.dsi.fastutil.floats.*;
+import it.unimi.dsi.fastutil.ints.*;
 import team.lodestar.lodestone.handlers.screenparticle.ScreenParticleHandler;
 import team.lodestar.lodestone.systems.particle.SimpleParticleOptions;
 import team.lodestar.lodestone.systems.particle.data.*;
@@ -37,25 +39,43 @@ public class ScreenParticleBuilder extends AbstractParticleBuilder<ScreenParticl
         return options;
     }
 
+    /**
+     * @deprecated Use one of the following instead:
+     * {@link #modifyColorData(Consumer)}
+     * {@link #modifyScaleData(Consumer)}}
+     * {@link #modifyLengthData(Consumer)}}
+     * {@link #modifyTransparencyData(Consumer)}}
+     * {@link #modifySpinData(Consumer)}}
+     */
+    @Deprecated(forRemoval = true, since = "1.7.2")
     public ScreenParticleBuilder modifyData(Supplier<GenericParticleData> dataType, Consumer<GenericParticleData> dataConsumer) {
         dataConsumer.accept(dataType.get());
         return this;
     }
 
-    public ScreenParticleBuilder modifyData(Optional<GenericParticleData> dataType, Consumer<GenericParticleData> dataConsumer) {
-        dataType.ifPresent(dataConsumer);
-        return this;
-    }
-
+    /**
+     * @deprecated Use one of the following instead:
+     * {@link #modifyColorData(Consumer)}
+     * {@link #modifyScaleData(Consumer)}}
+     * {@link #modifyLengthData(Consumer)}}
+     * {@link #modifyTransparencyData(Consumer)}}
+     * {@link #modifySpinData(Consumer)}}
+     */
+    @Deprecated(forRemoval = true, since = "1.7.2")
     public ScreenParticleBuilder modifyData(Function<ScreenParticleBuilder, GenericParticleData> dataType, Consumer<GenericParticleData> dataConsumer) {
         dataConsumer.accept(dataType.apply(this));
         return this;
     }
 
-    public ScreenParticleBuilder modifyDataOptional(Function<ScreenParticleBuilder, Optional<GenericParticleData>> dataType, Consumer<GenericParticleData> dataConsumer) {
-        return modifyData(dataType.apply(this), dataConsumer);
-    }
-
+    /**
+     * @deprecated Use one of the following instead:
+     * {@link #modifyColorData(Consumer)}
+     * {@link #modifyScaleData(Consumer)}}
+     * {@link #modifyLengthData(Consumer)}}
+     * {@link #modifyTransparencyData(Consumer)}}
+     * {@link #modifySpinData(Consumer)}}
+     */
+    @Deprecated(forRemoval = true, since = "1.7.2")
     public final ScreenParticleBuilder modifyData(Collection<Supplier<GenericParticleData>> dataTypes, Consumer<GenericParticleData> dataConsumer) {
         for (Supplier<GenericParticleData> dataFunction : dataTypes) {
             dataConsumer.accept(dataFunction.get());
@@ -150,73 +170,28 @@ public class ScreenParticleBuilder extends AbstractParticleBuilder<ScreenParticl
     }
 
     @Override
-    public ScreenParticleBuilder setColorData(ColorParticleData colorData) {
+    public ScreenParticleBuilder setColorData(ColorParticleDataWrapper colorData) {
         return (ScreenParticleBuilder) super.setColorData(colorData);
     }
 
     @Override
-    public ScreenParticleBuilder setScaleData(GenericParticleData scaleData) {
+    public ScreenParticleBuilder modifyScaleData(Consumer<GenericParticleData> dataConsumer) {
+        return (ScreenParticleBuilder) super.modifyScaleData(dataConsumer);
+    }
+
+    @Override
+    public ScreenParticleBuilder setScaleData(GenericParticleDataWrapper scaleData) {
         return (ScreenParticleBuilder) super.setScaleData(scaleData);
     }
 
     @Override
-    public ScreenParticleBuilder setTransparencyData(GenericParticleData transparencyData) {
-        return (ScreenParticleBuilder) super.setTransparencyData(transparencyData);
+    public ScreenParticleBuilder modifyLengthData(Consumer<GenericParticleData> dataConsumer) {
+        return (ScreenParticleBuilder) super.modifyLengthData(dataConsumer);
     }
 
     @Override
-    public ScreenParticleBuilder setSpinData(SpinParticleData spinData) {
-        return (ScreenParticleBuilder) super.setSpinData(spinData);
-    }
-
-    @Override
-    public ScreenParticleBuilder multiplyGravity(float gravityMultiplier) {
-        return (ScreenParticleBuilder) super.multiplyGravity(gravityMultiplier);
-    }
-
-    @Override
-    public ScreenParticleBuilder modifyGravity(Function<Float, Supplier<Float>> gravityReplacement) {
-        return (ScreenParticleBuilder) super.modifyGravity(gravityReplacement);
-    }
-
-    @Override
-    public ScreenParticleBuilder setGravityStrength(float gravity) {
-        return (ScreenParticleBuilder) super.setGravityStrength(gravity);
-    }
-
-    @Override
-    public ScreenParticleBuilder setGravityStrength(Supplier<Float> gravityStrengthSupplier) {
-        return (ScreenParticleBuilder) super.setGravityStrength(gravityStrengthSupplier);
-    }
-
-    @Override
-    public ScreenParticleBuilder multiplyLifetime(float lifetimeMultiplier) {
-        return (ScreenParticleBuilder) super.multiplyLifetime(lifetimeMultiplier);
-    }
-
-    @Override
-    public ScreenParticleBuilder modifyLifetime(Function<Integer, Supplier<Integer>> lifetimeReplacement) {
-        return (ScreenParticleBuilder) super.modifyLifetime(lifetimeReplacement);
-    }
-
-    @Override
-    public ScreenParticleBuilder setLifetime(int lifetime) {
-        return (ScreenParticleBuilder) super.setLifetime(lifetime);
-    }
-
-    @Override
-    public ScreenParticleBuilder setLifetime(Supplier<Integer> lifetimeSupplier) {
-        return (ScreenParticleBuilder) super.setLifetime(lifetimeSupplier);
-    }
-
-    @Override
-    public ScreenParticleBuilder multiplyLifeDelay(float lifeDelayMultiplier) {
-        return (ScreenParticleBuilder) super.multiplyLifeDelay(lifeDelayMultiplier);
-    }
-
-    @Override
-    public ScreenParticleBuilder modifyLifeDelay(Function<Integer, Supplier<Integer>> lifeDelayReplacement) {
-        return (ScreenParticleBuilder) super.modifyLifeDelay(lifeDelayReplacement);
+    public ScreenParticleBuilder setLengthData(GenericParticleDataWrapper lengthData) {
+        return (ScreenParticleBuilder) super.setLengthData(lengthData);
     }
 
     @Override
@@ -225,7 +200,97 @@ public class ScreenParticleBuilder extends AbstractParticleBuilder<ScreenParticl
     }
 
     @Override
-    public ScreenParticleBuilder setLifeDelay(Supplier<Integer> lifeDelaySupplier) {
-        return (ScreenParticleBuilder) super.setLifeDelay(lifeDelaySupplier);
+    public ScreenParticleBuilder setLifeDelay(Supplier<Integer> supplier) {
+        return (ScreenParticleBuilder) super.setLifeDelay(supplier);
+    }
+
+    @Override
+    public ScreenParticleBuilder setLifetime(int lifetime) {
+        return (ScreenParticleBuilder) super.setLifetime(lifetime);
+    }
+
+    @Override
+    public ScreenParticleBuilder setLifetime(Supplier<Integer> supplier) {
+        return (ScreenParticleBuilder) super.setLifetime(supplier);
+    }
+
+    @Override
+    public ScreenParticleBuilder setGravity(float gravity) {
+        return (ScreenParticleBuilder) super.setGravity(gravity);
+    }
+
+    @Override
+    public ScreenParticleBuilder setGravity(Supplier<Float> supplier) {
+        return (ScreenParticleBuilder) super.setGravity(supplier);
+    }
+
+    @Override
+    public ScreenParticleBuilder setFriction(float friction) {
+        return (ScreenParticleBuilder) super.setFriction(friction);
+    }
+
+    @Override
+    public ScreenParticleBuilder setFriction(Supplier<Float> supplier) {
+        return (ScreenParticleBuilder) super.setFriction(supplier);
+    }
+
+    @Override
+    public ScreenParticleBuilder multiplyLifeDelay(float multiplier) {
+        return (ScreenParticleBuilder) super.multiplyLifeDelay(multiplier);
+    }
+
+    @Override
+    public ScreenParticleBuilder modifyLifeDelay(Int2IntFunction modifier) {
+        return (ScreenParticleBuilder) super.modifyLifeDelay(modifier);
+    }
+
+    @Override
+    public ScreenParticleBuilder multiplyLifetime(float multiplier) {
+        return (ScreenParticleBuilder) super.multiplyLifetime(multiplier);
+    }
+
+    @Override
+    public ScreenParticleBuilder modifyLifetime(Int2IntFunction modifier) {
+        return (ScreenParticleBuilder) super.modifyLifetime(modifier);
+    }
+
+    @Override
+    public ScreenParticleBuilder multiplyGravity(float multiplier) {
+        return (ScreenParticleBuilder) super.multiplyGravity(multiplier);
+    }
+
+    @Override
+    public ScreenParticleBuilder modifyGravity(Float2FloatFunction modifier) {
+        return (ScreenParticleBuilder) super.modifyGravity(modifier);
+    }
+
+    @Override
+    public ScreenParticleBuilder multiplyFriction(float multiplier) {
+        return (ScreenParticleBuilder) super.multiplyFriction(multiplier);
+    }
+
+    @Override
+    public ScreenParticleBuilder modifyFriction(Float2FloatFunction modifier) {
+        return (ScreenParticleBuilder) super.modifyFriction(modifier);
+    }
+
+    @Override
+    public ScreenParticleBuilder setSpinData(SpinParticleDataWrapper spinData) {
+        return (ScreenParticleBuilder) super.setSpinData(spinData);
+    }
+
+    @Override
+    public ScreenParticleBuilder modifySpinData(Consumer<SpinParticleData> dataConsumer) {
+        return (ScreenParticleBuilder) super.modifySpinData(dataConsumer);
+    }
+
+    @Override
+    public ScreenParticleBuilder setTransparencyData(GenericParticleDataWrapper transparencyData) {
+        return (ScreenParticleBuilder) super.setTransparencyData(transparencyData);
+    }
+
+    @Override
+    public ScreenParticleBuilder modifyTransparencyData(Consumer<GenericParticleData> dataConsumer) {
+        return (ScreenParticleBuilder) super.modifyTransparencyData(dataConsumer);
     }
 }

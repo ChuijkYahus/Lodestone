@@ -2,7 +2,7 @@ package team.lodestar.lodestone.systems.particle.data.color;
 
 import team.lodestar.lodestone.systems.easing.Easing;
 
-public class ColorParticleDataBuilder {
+public class ColorParticleDataBuilder implements ColorParticleDataWrapper {
 
     protected float r1, g1, b1, r2, g2, b2;
     protected float colorCoefficient = 1f;
@@ -18,6 +18,11 @@ public class ColorParticleDataBuilder {
         this.b2 = b2;
     }
 
+    @Override
+    public ColorParticleData unwrap() {
+        return build();
+    }
+
     public ColorParticleDataBuilder setCoefficient(float coefficient) {
         this.colorCoefficient = coefficient;
         return this;
@@ -31,5 +36,4 @@ public class ColorParticleDataBuilder {
     public ColorParticleData build() {
         return new ColorParticleData(r1, g1, b1, r2, g2, b2, colorCoefficient, colorCurveEasing);
     }
-
 }

@@ -12,7 +12,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
-import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
+import team.lodestar.lodestone.systems.particle.data.color.*;
 
 import java.awt.*;
 import java.util.LinkedHashMap;
@@ -112,11 +112,11 @@ public abstract class NetworkedParticleEffectType<T extends NetworkedParticleEff
             return color(ColorParticleData.create(color).build());
         }
 
-        public ParticleEffectBuilder<T> color(ColorParticleData color) {
+        public ParticleEffectBuilder<T> color(ColorParticleDataWrapper color) {
             return color(NetworkedParticleEffectColorData.fromColor(color));
         }
 
-        public ParticleEffectBuilder<T> color(List<ColorParticleData> colors) {
+        public ParticleEffectBuilder<T> color(List<ColorParticleDataWrapper> colors) {
             return color(NetworkedParticleEffectColorData.fromColors(colors));
         }
 
@@ -130,6 +130,7 @@ public abstract class NetworkedParticleEffectType<T extends NetworkedParticleEff
             return this;
         }
 
+        @SuppressWarnings("unchecked")
         protected T getCustomData() {
             if (type.getExtraCodec().isEmpty()) {
                 return null;

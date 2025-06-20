@@ -8,7 +8,6 @@ import net.minecraft.util.*;
 import net.minecraft.world.phys.*;
 import team.lodestar.lodestone.config.ClientConfig;
 import team.lodestar.lodestone.handlers.RenderHandler;
-import team.lodestar.lodestone.helpers.RenderHelper;
 import team.lodestar.lodestone.systems.particle.SimpleParticleOptions;
 import team.lodestar.lodestone.systems.particle.data.GenericParticleData;
 import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
@@ -21,8 +20,6 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Collection;
 import java.util.function.Consumer;
-
-import static team.lodestar.lodestone.systems.particle.SimpleParticleOptions.ParticleSpritePicker.*;
 
 public class LodestoneWorldParticle extends TextureSheetParticle {
 
@@ -70,12 +67,11 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
         this.zd = zd;
         this.setLifetime(options.lifetimeSupplier.get());
         this.lifeDelay = options.lifeDelaySupplier.get();
-        this.gravity = options.gravityStrengthSupplier.get();
-        this.friction = options.frictionStrengthSupplier.get();
+        this.gravity = options.gravitySupplier.get();
+        this.friction = options.frictionSupplier.get();
         this.hasPhysics = !options.noClip;
-        Color.RGBtoHSB((int) (255 * Math.min(1.0f, colorData.r1)), (int) (255 * Math.min(1.0f, colorData.g1)), (int) (255 * Math.min(1.0f, colorData.b1)), hsv1);
-        Color.RGBtoHSB((int) (255 * Math.min(1.0f, colorData.r2)), (int) (255 * Math.min(1.0f, colorData.g2)), (int) (255 * Math.min(1.0f, colorData.b2)), hsv2);
 
+        colorData.rgbToHsv(hsv1, hsv2);
         if (spriteSet != null) {
             switch (spritePicker) {
                 case FIRST_INDEX, WITH_AGE -> pickSprite(0);
@@ -121,7 +117,7 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
                 return;
             }
         }
-        pickColor(colorData.colorCurveEasing.ease(colorData.getProgress(age, lifetime), 0, 1, 1));
+        pickColor(colorData.getColorCurve().clamped(colorData.getProgress(age, lifetime), 0, 1));
 
         quadSize = scaleData.getValue(age, lifetime);
         quadLength = lengthData != null ? lengthData.getValue(age, lifetime) : quadSize;
