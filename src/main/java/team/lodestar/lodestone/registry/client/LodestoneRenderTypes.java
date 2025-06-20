@@ -151,6 +151,10 @@ public class LodestoneRenderTypes extends RenderStateShard {
             createGenericRenderType("nine_slice", POSITION_TEX, QUADS,
                     builder(token, StateShards.NORMAL_TRANSPARENCY, LodestoneShaders.NINE_SLICE, CULL, LIGHTMAP)));
 
+    public static final RenderTypeProvider ADDITIVE_DISTORTED_NINE_SLICE_TEXTURE = new RenderTypeProvider((token) ->
+            createGenericRenderType("distorted_additive_nine_slice_texture",
+                    builder(token, StateShards.ADDITIVE_TRANSPARENCY, LodestoneShaders.DISTORTED_NINE_SLICE_TEXTURE, CULL, LIGHTMAP, COLOR_WRITE)));
+
     public static LodestoneRenderType createGenericRenderType(String name, LodestoneCompositeStateBuilder builder) {
         return createGenericRenderType(name, POSITION_COLOR_TEX_LIGHTMAP, QUADS, builder);
     }

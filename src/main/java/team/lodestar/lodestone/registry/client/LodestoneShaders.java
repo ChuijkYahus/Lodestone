@@ -34,6 +34,7 @@ public class LodestoneShaders {
     public static ShaderHolder SCROLLING_TRIANGLE_TEXTURE = new ShaderHolder(lodestonePath("shapes/scrolling_triangle_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, "Speed", "LumiTransparency");
 
     public static ShaderHolder NINE_SLICE = new ShaderHolder(lodestonePath("nineslice/nine_slice"), DefaultVertexFormat.POSITION_TEX);
+    public static final ShaderHolder DISTORTED_NINE_SLICE_TEXTURE = new ShaderHolder(lodestonePath("nineslice/distorted/distorted_nine_slice_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP , "Speed", "TimeOffset", "Intensity", "XFrequency", "YFrequency", "UVCoordinates");
 
 
     @SubscribeEvent
@@ -58,6 +59,7 @@ public class LodestoneShaders {
         registerShader(event, SCROLLING_TRIANGLE_TEXTURE);
 
         registerShader(event, NINE_SLICE);
+        registerShader(event, DISTORTED_NINE_SLICE_TEXTURE);
     }
 
     public static void registerShader(RegisterShadersEvent event, ShaderHolder shaderHolder) {
