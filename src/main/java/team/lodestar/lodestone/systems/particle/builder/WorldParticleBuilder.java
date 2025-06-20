@@ -611,4 +611,9 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
     public WorldParticleBuilder modifyTransparencyData(Consumer<GenericParticleData> dataConsumer) {
         return (WorldParticleBuilder) super.modifyTransparencyData(dataConsumer);
     }
+
+    @Override
+    public WorldParticleBuilder setSpritePicker(SimpleParticleOptions.ParticleSpritePicker spritePicker) {
+        return (WorldParticleBuilder) super.setSpritePicker(spritePicker);
+    }
 }

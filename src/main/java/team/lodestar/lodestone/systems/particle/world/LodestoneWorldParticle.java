@@ -23,18 +23,20 @@ import java.util.function.Consumer;
 
 public class LodestoneWorldParticle extends TextureSheetParticle {
 
-    public final ParticleRenderType renderType;
     public final LodestoneParticleBehavior behavior;
-
-    public final RenderHandler.LodestoneRenderLayer renderLayer;
     public final ParticleEngine.MutableSpriteSet spriteSet;
     public final SimpleParticleOptions.ParticleSpritePicker spritePicker;
+
+    public final ParticleRenderType renderType;
+    public final RenderHandler.LodestoneRenderLayer renderLayer;
+
     public final ColorParticleData colorData;
     public final GenericParticleData transparencyData;
     public final GenericParticleData scaleData;
     @Nullable
     public final GenericParticleData lengthData;
     public final SpinParticleData spinData;
+
     public final Collection<Consumer<LodestoneWorldParticle>> tickActors;
     public final Collection<Consumer<LodestoneWorldParticle>> renderActors;
 
@@ -48,11 +50,11 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
 
     public LodestoneWorldParticle(ClientLevel world, WorldParticleOptions options, ParticleEngine.MutableSpriteSet spriteSet, double x, double y, double z, double xd, double yd, double zd) {
         super(world, x, y, z);
-        this.renderType = options.renderType;
         this.behavior = options.behavior;
-        this.renderLayer = options.renderLayer;
         this.spriteSet = spriteSet;
         this.spritePicker = options.spritePicker;
+        this.renderType = options.renderType;
+        this.renderLayer = options.renderLayer;
         this.colorData = options.colorData;
         this.transparencyData = options.transparencyData;
         this.scaleData = options.scaleData;

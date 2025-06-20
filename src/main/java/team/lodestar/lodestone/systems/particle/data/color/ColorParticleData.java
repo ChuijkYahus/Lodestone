@@ -6,6 +6,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import team.lodestar.lodestone.helpers.RandomHelper;
 import team.lodestar.lodestone.systems.easing.Easing;
+import team.lodestar.lodestone.systems.particle.data.*;
 
 import java.awt.*;
 
@@ -29,6 +30,7 @@ public class ColorParticleData implements ColorParticleDataWrapper {
     protected final Easing colorCurve;
 
     protected float coefficientMultiplier = 1;
+    protected boolean locked;
 
     protected ColorParticleData(float r1, float g1, float b1, float r2, float g2, float b2, float colorCoefficient, Easing colorCurve, float coefficientMultiplier) {
         this(r1, g1, b1, r2, g2, b2, colorCoefficient, colorCurve);
@@ -53,6 +55,14 @@ public class ColorParticleData implements ColorParticleDataWrapper {
         return this;
     }
 
+    /**
+     * Locks the data, preventing any modifications to the value and coefficient.
+     */
+    public ColorParticleData lock() {
+        locked = true;
+        return this;
+    }
+
     public Color getStartingColor() {
         return startingColor;
     }
@@ -70,12 +80,16 @@ public class ColorParticleData implements ColorParticleDataWrapper {
     }
 
     public ColorParticleData multiplyCoefficient(float coefficientMultiplier) {
-        this.coefficientMultiplier *= coefficientMultiplier;
+        if (!locked) {
+            this.coefficientMultiplier *= coefficientMultiplier;
+        }
         return this;
     }
 
     public ColorParticleData overrideCoefficientMultiplier(float coefficientMultiplier) {
-        this.coefficientMultiplier = coefficientMultiplier;
+        if (!locked) {
+            this.coefficientMultiplier = coefficientMultiplier;
+        }
         return this;
     }
 

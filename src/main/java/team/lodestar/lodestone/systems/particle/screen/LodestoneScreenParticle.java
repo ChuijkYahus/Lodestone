@@ -13,23 +13,31 @@ import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
 import team.lodestar.lodestone.systems.particle.data.spin.SpinParticleData;
 import team.lodestar.lodestone.systems.particle.render_types.LodestoneScreenParticleRenderType;
 import team.lodestar.lodestone.systems.particle.screen.base.TextureSheetScreenParticle;
+import team.lodestar.lodestone.systems.particle.world.*;
 import team.lodestar.lodestone.systems.particle.world.options.WorldParticleOptions;
 
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class LodestoneScreenParticle extends TextureSheetScreenParticle {
-    private final LodestoneScreenParticleRenderType renderType;
+
     protected final ParticleEngine.MutableSpriteSet spriteSet;
     protected final SimpleParticleOptions.ParticleSpritePicker spritePicker;
+
+    private final LodestoneScreenParticleRenderType renderType;
+
     protected final ColorParticleData colorData;
     protected final GenericParticleData transparencyData;
     protected final GenericParticleData scaleData;
     @Nullable
     protected final GenericParticleData lengthData;
     protected final SpinParticleData spinData;
-    protected final Consumer<LodestoneScreenParticle> actor;
+
+    public final Collection<Consumer<LodestoneScreenParticle>> tickActors;
+    public final Collection<Consumer<LodestoneScreenParticle>> renderActors;
+
     private final boolean tracksStack;
     private final double stackTrackXOffset;
     private final double stackTrackYOffset;
@@ -42,26 +50,27 @@ public class LodestoneScreenParticle extends TextureSheetScreenParticle {
 
     public LodestoneScreenParticle(ClientLevel world, ScreenParticleOptions options, ParticleEngine.MutableSpriteSet spriteSet, double x, double y, double xMotion, double yMotion) {
         super(world, x, y);
-        this.renderType = options.renderType;
         this.spriteSet = spriteSet;
         this.spritePicker = options.spritePicker;
+        this.renderType = options.renderType;
         this.colorData = options.colorData;
         this.transparencyData = options.transparencyData;
         this.scaleData = options.scaleData;
         this.lengthData = options.lengthData != WorldParticleOptions.DEFAULT_GENERIC ? options.lengthData : null;
         this.spinData = options.spinData;
-        this.actor = options.actor;
+        this.tickActors = options.tickActors;
+        this.renderActors = options.renderActors;
         this.tracksStack = options.tracksStack;
         this.stackTrackXOffset = options.stackTrackXOffset;
         this.stackTrackYOffset = options.stackTrackYOffset;
         this.roll = options.spinData.spinOffset + options.spinData.startingValue;
-        this.xMotion = xMotion;
-        this.yMotion = yMotion;
-
         this.setLifetime(options.lifetimeSupplier.get());
         this.lifeDelay = options.lifeDelaySupplier.get();
         this.gravity = options.gravitySupplier.get();
         this.friction = options.frictionSupplier.get();
+        this.xMotion = xMotion;
+        this.yMotion = yMotion;
+
         colorData.rgbToHsv(hsv1, hsv2);
         if (spriteSet != null) {
             switch (spritePicker) {
@@ -70,6 +79,7 @@ public class LodestoneScreenParticle extends TextureSheetScreenParticle {
                 case RANDOM_SPRITE -> pickSprite(random.nextInt(spriteSet.sprites.size()));
             }
         }
+        options.spawnActors.forEach(actor -> actor.accept(this));
         updateTraits();
     }
 
@@ -118,8 +128,8 @@ public class LodestoneScreenParticle extends TextureSheetScreenParticle {
         oRoll = roll;
         roll += spinData.getValue(age, lifetime);
 
-        if (actor != null) {
-            actor.accept(this);
+        if (!tickActors.isEmpty()) {
+            tickActors.forEach(a -> a.accept(this));
         }
     }
 
@@ -132,6 +142,7 @@ public class LodestoneScreenParticle extends TextureSheetScreenParticle {
             x = ScreenParticleHandler.currentItemX + stackTrackXOffset + xMoved;
             y = ScreenParticleHandler.currentItemY + stackTrackYOffset + yMoved;
         }
+        renderActors.forEach(actor -> actor.accept(this));
         super.render(bufferBuilder);
     }
 

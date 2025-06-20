@@ -20,13 +20,16 @@ import java.util.function.*;
 public class WorldParticleOptions extends SimpleParticleOptions implements ParticleOptions {
 
     public final ParticleType<?> type;
+
     public LodestoneParticleBehavior behavior = BillboardParticleBehavior.INSTANCE;
     public ParticleRenderType renderType = LodestoneWorldParticleRenderType.ADDITIVE;
     public RenderHandler.LodestoneRenderLayer renderLayer = RenderHandler.DELAYED_RENDER;
-    public boolean shouldCull;
+
     public final Collection<Consumer<LodestoneWorldParticle>> tickActors = new ArrayList<>();
     public final Collection<Consumer<LodestoneWorldParticle>> spawnActors = new ArrayList<>();
     public final Collection<Consumer<LodestoneWorldParticle>> renderActors = new ArrayList<>();
+
+    public boolean shouldCull;
     public int particleLight = RenderHelper.FULL_BRIGHT;
 
     public boolean noClip = false;

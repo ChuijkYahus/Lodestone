@@ -12,6 +12,7 @@ import team.lodestar.lodestone.systems.particle.render_types.LodestoneScreenPart
 import team.lodestar.lodestone.systems.particle.screen.LodestoneScreenParticle;
 import team.lodestar.lodestone.systems.particle.screen.ScreenParticleHolder;
 import team.lodestar.lodestone.systems.particle.screen.ScreenParticleType;
+import team.lodestar.lodestone.systems.particle.world.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -83,11 +84,6 @@ public class ScreenParticleBuilder extends AbstractParticleBuilder<ScreenParticl
         return this;
     }
 
-    public ScreenParticleBuilder setSpritePicker(SimpleParticleOptions.ParticleSpritePicker spritePicker) {
-        options.spritePicker = spritePicker;
-        return this;
-    }
-
     public ScreenParticleBuilder setRenderType(LodestoneScreenParticleRenderType renderType) {
         options.renderType = renderType;
         return this;
@@ -130,8 +126,33 @@ public class ScreenParticleBuilder extends AbstractParticleBuilder<ScreenParticl
         return this;
     }
 
-    public ScreenParticleBuilder addActor(Consumer<LodestoneScreenParticle> particleActor) {
-        options.actor = particleActor;
+    public ScreenParticleBuilder addTickActor(Consumer<LodestoneScreenParticle> particleActor) {
+        getParticleOptions().tickActors.add(particleActor);
+        return this;
+    }
+    public ScreenParticleBuilder addSpawnActor(Consumer<LodestoneScreenParticle> particleActor) {
+        getParticleOptions().spawnActors.add(particleActor);
+        return this;
+    }
+    public ScreenParticleBuilder addRenderActor(Consumer<LodestoneScreenParticle> particleActor) {
+        getParticleOptions().renderActors.add(particleActor);
+        return this;
+    }
+
+    public ScreenParticleBuilder clearActors() {
+        return clearTickActor().clearSpawnActors().clearRenderActors();
+    }
+
+    public ScreenParticleBuilder clearTickActor() {
+        getParticleOptions().tickActors.clear();
+        return this;
+    }
+    public ScreenParticleBuilder clearSpawnActors() {
+        getParticleOptions().spawnActors.clear();
+        return this;
+    }
+    public ScreenParticleBuilder clearRenderActors() {
+        getParticleOptions().renderActors.clear();
         return this;
     }
 
@@ -292,5 +313,10 @@ public class ScreenParticleBuilder extends AbstractParticleBuilder<ScreenParticl
     @Override
     public ScreenParticleBuilder modifyTransparencyData(Consumer<GenericParticleData> dataConsumer) {
         return (ScreenParticleBuilder) super.modifyTransparencyData(dataConsumer);
+    }
+
+    @Override
+    public ScreenParticleBuilder setSpritePicker(SimpleParticleOptions.ParticleSpritePicker spritePicker) {
+        return (ScreenParticleBuilder) super.setSpritePicker(spritePicker);
     }
 }

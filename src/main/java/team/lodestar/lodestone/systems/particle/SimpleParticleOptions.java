@@ -15,7 +15,7 @@ public abstract class SimpleParticleOptions {
     public static final SpinParticleData DEFAULT_SPIN = SpinParticleData.create(0).build().lock();
     public static final GenericParticleData DEFAULT_GENERIC = GenericParticleData.create(1, 0).build().lock();
 
-    public enum ParticleSpritePicker { //TODO: this kinda sucks, should be a class
+    public enum ParticleSpritePicker {
         FIRST_INDEX, LAST_INDEX, WITH_AGE, WITH_AGE_INVERSE, RANDOM_SPRITE
     }
 
