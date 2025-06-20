@@ -19,7 +19,8 @@
         "client.LevelRendererMixin",
         "client.MultiPlayerGameModeMixin",
         "client.VertexBufferMixin",
-        "client.PostChainMixin"
+        "client.PostChainMixin",
+        "client.ShaderInstanceMixin"
     ],
     "injectors": {
         "defaultRequire": 1
