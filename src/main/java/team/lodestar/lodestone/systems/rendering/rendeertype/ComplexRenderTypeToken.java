@@ -29,6 +29,11 @@ public class ComplexRenderTypeToken extends RenderTypeToken {
     }
 
     @Override
+    protected RenderTypeToken unique() {
+        return new ComplexRenderTypeToken(this).addUniformHandler(this.uniformHandler).addModifier(this.modifier);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (uniformHandler == null && modifier == null) {

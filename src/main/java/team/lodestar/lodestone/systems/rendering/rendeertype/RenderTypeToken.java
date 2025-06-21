@@ -44,6 +44,10 @@ public class RenderTypeToken {
         return new ComplexRenderTypeToken(this).addModifier(modifier);
     }
 
+    protected RenderTypeToken unique() {
+        return new RenderTypeToken(this.identifier, this.texture);
+    }
+
     public UUID getIdentifier() {
         return identifier;
     }

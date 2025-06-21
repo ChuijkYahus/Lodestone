@@ -4,7 +4,6 @@ import team.lodestar.lodestone.*;
 import team.lodestar.lodestone.registry.client.*;
 import team.lodestar.lodestone.systems.rendering.*;
 
-import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
@@ -47,8 +46,10 @@ public class RenderTypeProvider {
         if (builder.getModifier() != null) {
             LodestoneRenderTypes.addRenderTypeModifier(builder.getModifier());
         }
-        var renderType = provider.apply(token);
-        cache.put(token, renderType);
+        // Create a unique token to avoid caching issues with the same token object being used several times
+        RenderTypeToken unique = token.unique();
+        var renderType = provider.apply(unique);
+        cache.put(unique, renderType);
         if (builder.getUniformHandler() != null) {
             LodestoneRenderTypes.addUniformChanges(renderType, builder.getUniformHandler());
         }
@@ -58,7 +59,7 @@ public class RenderTypeProvider {
                     "RenderTypeProvider has been called too often in a short time! This is very dangerous. " +
                             "Current count: {}, Time since last check: {}ms" +
                             "Render Type Provider: {}, Render Type Token: {}",
-                    nuclearRenderTypeCount, System.currentTimeMillis() - nuclearTimeCache, this, token);
+                    nuclearRenderTypeCount, System.currentTimeMillis() - nuclearTimeCache, this, unique);
         }
         return renderType;
     }
