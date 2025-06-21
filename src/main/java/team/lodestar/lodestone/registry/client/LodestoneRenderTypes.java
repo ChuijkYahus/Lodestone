@@ -221,7 +221,7 @@ public class LodestoneRenderTypes extends RenderStateShard {
                     setTextureState(texture);
                 }
                 else if (object instanceof RenderTypeToken token) {
-                    setTextureState(token.get());
+                    setTextureState(new RenderStateShard.TextureStateShard(token.getTexture(), false, false));
                 }
                 else if (object instanceof RenderStateShard.EmptyTextureStateShard shard) {
                     setTextureState(shard);

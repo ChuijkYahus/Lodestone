@@ -7,24 +7,23 @@ import team.lodestar.lodestone.registry.client.*;
 import java.util.*;
 import java.util.function.*;
 
-public class RenderTypeToken implements Supplier<RenderStateShard.EmptyTextureStateShard> {
+public class RenderTypeToken {
 
     private static final HashMap<ResourceLocation, RenderTypeToken> CACHED_TEXTURE_TOKENS = new HashMap<>();
-    private static final HashMap<RenderStateShard.EmptyTextureStateShard, RenderTypeToken> CACHED_STATE_TOKENS = new HashMap<>();
+    private static final HashMap<RenderStateShard.TextureStateShard, RenderTypeToken> CACHED_STATE_TOKENS = new HashMap<>();
 
     private final UUID identifier;
-    private final RenderStateShard.EmptyTextureStateShard texture;
+    private final ResourceLocation texture;
+
+    protected RenderTypeToken(RenderStateShard.TextureStateShard texture) {
+        this(texture.cutoutTexture().orElseThrow());
+    }
 
     protected RenderTypeToken(ResourceLocation texture) {
-        this(new RenderStateShard.TextureStateShard(texture, false, false));
+        this(UUID.randomUUID(), texture);
     }
 
-    protected RenderTypeToken(RenderStateShard.EmptyTextureStateShard texture) {
-        this.identifier = UUID.randomUUID();
-        this.texture = texture;
-    }
-
-    public RenderTypeToken(UUID identifier, RenderStateShard.EmptyTextureStateShard texture) {
+    public RenderTypeToken(UUID identifier, ResourceLocation texture) {
         this.identifier = identifier;
         this.texture = texture;
     }
@@ -33,7 +32,7 @@ public class RenderTypeToken implements Supplier<RenderStateShard.EmptyTextureSt
         return CACHED_TEXTURE_TOKENS.computeIfAbsent(texture, RenderTypeToken::new);
     }
 
-    public static RenderTypeToken createToken(RenderStateShard.EmptyTextureStateShard texture) {
+    public static RenderTypeToken createToken(RenderStateShard.TextureStateShard texture) {
         return CACHED_STATE_TOKENS.computeIfAbsent(texture, RenderTypeToken::new);
     }
 
@@ -49,12 +48,7 @@ public class RenderTypeToken implements Supplier<RenderStateShard.EmptyTextureSt
         return identifier;
     }
 
-    public RenderStateShard.EmptyTextureStateShard getTexture() {
-        return texture;
-    }
-
-    @Override
-    public RenderStateShard.EmptyTextureStateShard get() {
+    public ResourceLocation getTexture() {
         return texture;
     }
 

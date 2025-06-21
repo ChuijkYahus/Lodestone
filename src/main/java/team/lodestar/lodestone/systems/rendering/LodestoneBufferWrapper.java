@@ -16,8 +16,8 @@ public class LodestoneBufferWrapper implements MultiBufferSource {
 
     @Override
     public VertexConsumer getBuffer(RenderType renderType) {
-        if (renderType instanceof RenderType.CompositeRenderType composite) {
-            var key = provider.apply(RenderTypeToken.createToken(composite.state.textureState));
+        if (renderType instanceof RenderType.CompositeRenderType composite && composite.state.textureState instanceof RenderStateShard.TextureStateShard textureState) {
+            var key = provider.apply(RenderTypeToken.createToken(textureState));
             return buffer.getBuffer(key.getRenderType());
         }
         return buffer.getBuffer(renderType);
