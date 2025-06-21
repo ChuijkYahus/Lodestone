@@ -8,11 +8,9 @@ import java.util.function.*;
 
 public class LodestoneRenderTypeBuilder {
     private final RenderTypeProvider provider;
-    private final RenderTypeToken token;
+    private RenderTypeToken token;
     private ShaderUniformHandler uniformHandler;
     private Consumer<LodestoneRenderTypes.LodestoneCompositeStateBuilder> modifier;
-
-    private LodestoneRenderType renderType = null;
 
     public LodestoneRenderTypeBuilder(RenderTypeProvider provider, RenderTypeToken token) {
         this.provider = provider;
@@ -21,33 +19,18 @@ public class LodestoneRenderTypeBuilder {
 
     public LodestoneRenderTypeBuilder withUniformHandler(ShaderUniformHandler uniformHandler) {
         this.uniformHandler = uniformHandler;
+        token = token.addUniformHandler(uniformHandler);
         return this;
     }
 
     public LodestoneRenderTypeBuilder withModifier(Consumer<LodestoneRenderTypes.LodestoneCompositeStateBuilder> modifier) {
         this.modifier = modifier;
+        token = token.addModifier(modifier);
         return this;
     }
 
     public LodestoneRenderType getRenderType() {
-        if (renderType == null) {
-            renderType = createRenderType();
-        }
-        return renderType;
-    }
-
-    protected LodestoneRenderType createRenderType() {
-        if (renderType != null) {
-            throw new IllegalStateException("Render type has already been initialized.");
-        }
-        if (getModifier() != null) {
-            LodestoneRenderTypes.addRenderTypeModifier(getModifier());
-        }
-        LodestoneRenderType renderType = provider.getProvider().apply(getToken());
-        if (getUniformHandler() != null) {
-            LodestoneRenderTypes.addUniformChanges(renderType, getUniformHandler());
-        }
-        return renderType;
+        return provider.createRenderType(token, this);
     }
 
     public RenderTypeProvider getProvider() {

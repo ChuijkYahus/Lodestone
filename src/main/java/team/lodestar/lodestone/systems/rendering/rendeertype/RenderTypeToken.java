@@ -2,6 +2,7 @@ package team.lodestar.lodestone.systems.rendering.rendeertype;
 
 import net.minecraft.client.renderer.*;
 import net.minecraft.resources.*;
+import team.lodestar.lodestone.registry.client.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -31,9 +32,25 @@ public class RenderTypeToken implements Supplier<RenderStateShard.EmptyTextureSt
         return CACHED_STATE_TOKENS.computeIfAbsent(texture, RenderTypeToken::new);
     }
 
+    protected ComplexRenderTypeToken addUniformHandler(ShaderUniformHandler uniformHandler) {
+        return new ComplexRenderTypeToken(texture).addUniformHandler(uniformHandler);
+    }
+
+    protected ComplexRenderTypeToken addModifier(Consumer<LodestoneRenderTypes.LodestoneCompositeStateBuilder> modifier) {
+        return new ComplexRenderTypeToken(texture).addModifier(modifier);
+    }
+
     @Override
     public RenderStateShard.EmptyTextureStateShard get() {
         return texture;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RenderTypeToken that = (RenderTypeToken) o;
+        return Objects.equals(identifier, that.identifier) && Objects.equals(texture, that.texture);
     }
 
     @Override
