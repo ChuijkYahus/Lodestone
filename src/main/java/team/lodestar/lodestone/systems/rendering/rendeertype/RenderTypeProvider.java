@@ -64,9 +64,14 @@ public class RenderTypeProvider {
 
     @Override
     public String toString() {
+        var cacheSample = cache.entrySet().stream()
+                .limit(5)
+                .map(entry -> entry.getKey().getIdentifier() + " -> " + entry.getValue().name)
+                .toList();
+
         return "RenderTypeProvider{" +
                 "provider=" + provider +
-                ", cache=" + cache +
+                ", cache sample=" + cacheSample +
                 '}';
     }
 
