@@ -26,6 +26,10 @@ public class RenderTypeProvider {
         this.provider = provider;
     }
 
+    public LodestoneRenderTypeBuilder apply(RenderTypeToken token) {
+        return new LodestoneRenderTypeBuilder(this, token);
+    }
+
     /**
      * Creates a new {@link LodestoneRenderType} using the provided token and builder.
      * @param token the token to create the render type with
@@ -58,8 +62,12 @@ public class RenderTypeProvider {
         return renderType;
     }
 
-    public LodestoneRenderTypeBuilder apply(RenderTypeToken token) {
-        return new LodestoneRenderTypeBuilder(this, token);
+    @Override
+    public String toString() {
+        return "RenderTypeProvider{" +
+                "provider=" + provider +
+                ", cache=" + cache +
+                '}';
     }
 
     public boolean checkNuclear() {
