@@ -12,14 +12,9 @@ public class ComplexRenderTypeToken extends RenderTypeToken {
     private ShaderUniformHandler uniformHandler;
     private Consumer<LodestoneRenderTypes.LodestoneCompositeStateBuilder> modifier;
 
-    protected ComplexRenderTypeToken(ResourceLocation texture) {
-        super(texture);
+    public ComplexRenderTypeToken(RenderTypeToken token) {
+        super(token.getIdentifier(), token.getTexture());
     }
-
-    protected ComplexRenderTypeToken(RenderStateShard.EmptyTextureStateShard texture) {
-        super(texture);
-    }
-
     @Override
     protected ComplexRenderTypeToken addUniformHandler(ShaderUniformHandler uniformHandler) {
         this.uniformHandler = uniformHandler;

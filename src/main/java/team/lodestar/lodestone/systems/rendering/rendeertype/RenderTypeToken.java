@@ -24,6 +24,11 @@ public class RenderTypeToken implements Supplier<RenderStateShard.EmptyTextureSt
         this.texture = texture;
     }
 
+    public RenderTypeToken(UUID identifier, RenderStateShard.EmptyTextureStateShard texture) {
+        this.identifier = identifier;
+        this.texture = texture;
+    }
+
     public static RenderTypeToken createToken(ResourceLocation texture) {
         return CACHED_TEXTURE_TOKENS.computeIfAbsent(texture, RenderTypeToken::new);
     }
@@ -33,11 +38,19 @@ public class RenderTypeToken implements Supplier<RenderStateShard.EmptyTextureSt
     }
 
     protected ComplexRenderTypeToken addUniformHandler(ShaderUniformHandler uniformHandler) {
-        return new ComplexRenderTypeToken(texture).addUniformHandler(uniformHandler);
+        return new ComplexRenderTypeToken(this).addUniformHandler(uniformHandler);
     }
 
     protected ComplexRenderTypeToken addModifier(Consumer<LodestoneRenderTypes.LodestoneCompositeStateBuilder> modifier) {
-        return new ComplexRenderTypeToken(texture).addModifier(modifier);
+        return new ComplexRenderTypeToken(this).addModifier(modifier);
+    }
+
+    public UUID getIdentifier() {
+        return identifier;
+    }
+
+    public RenderStateShard.EmptyTextureStateShard getTexture() {
+        return texture;
     }
 
     @Override
