@@ -123,7 +123,7 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
     }
     
     public AbstractParticleBuilder<T> multiplyLifeDelay(float multiplier) {
-        return modifyLifeDelay(i -> (int) (i * multiplier));
+        return modifyLifeDelay(l -> (int) (l * multiplier));
     }
 
     public AbstractParticleBuilder<T> modifyLifeDelay(Int2IntFunction modifier) {
@@ -132,7 +132,7 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
     }
 
     public AbstractParticleBuilder<T> multiplyLifetime(float multiplier) {
-        return modifyLifetime(i -> (int) (i * multiplier));
+        return modifyLifetime(l -> (int) (l * multiplier));
     }
 
     public AbstractParticleBuilder<T> modifyLifetime(Int2IntFunction modifier) {
@@ -141,7 +141,7 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
     }
 
     public AbstractParticleBuilder<T> multiplyGravity(float multiplier) {
-        return modifyGravity(i -> (int) (i * multiplier));
+        return modifyGravity(g -> g * multiplier);
     }
 
     public AbstractParticleBuilder<T> modifyGravity(Float2FloatFunction modifier) {
@@ -150,7 +150,7 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
     }
 
     public AbstractParticleBuilder<T> multiplyFriction(float multiplier) {
-        return modifyFriction(i -> (int) (i * multiplier));
+        return modifyFriction(f -> f * multiplier);
     }
 
     public AbstractParticleBuilder<T> modifyFriction(Float2FloatFunction modifier) {
