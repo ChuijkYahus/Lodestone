@@ -25,9 +25,6 @@ public class LodestoneRenderTypeBuilder {
     }
 
     public LodestoneRenderTypeBuilder withModifier(Consumer<LodestoneRenderTypes.LodestoneCompositeStateBuilder> modifier) {
-        if (renderType != null) {
-            throw new IllegalStateException("Cannot add modifier handler after render type has been initialized.");
-        }
         this.modifier = modifier;
         return this;
     }
