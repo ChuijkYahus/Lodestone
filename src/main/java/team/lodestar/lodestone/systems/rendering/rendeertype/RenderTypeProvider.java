@@ -12,8 +12,10 @@ import java.util.function.*;
  * The cache is based on a {@link RenderTypeToken}, which will consider any added uniform handlers and modifiers as a separate token, leading to a different render type.
  */
 public class RenderTypeProvider {
+
     private final Function<RenderTypeToken, LodestoneRenderType> provider;
     private final ConcurrentHashMap<RenderTypeToken, LodestoneRenderType> cache = new ConcurrentHashMap<>();
+
     public RenderTypeProvider(Function<RenderTypeToken, LodestoneRenderType> provider) {
         this.provider = provider;
     }
@@ -32,7 +34,7 @@ public class RenderTypeProvider {
             LodestoneRenderTypes.addRenderTypeModifier(builder.getModifier());
         }
         var renderType = provider.apply(token);
-        cache.putIfAbsent(token, renderType);
+        cache.put(token, renderType);
         if (builder.getUniformHandler() != null) {
             LodestoneRenderTypes.addUniformChanges(renderType, builder.getUniformHandler());
         }

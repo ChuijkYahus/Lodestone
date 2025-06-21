@@ -27,14 +27,30 @@ public abstract class SimpleParticleOptions {
     public GenericParticleData lengthData = DEFAULT_GENERIC;
     public SpinParticleData spinData = DEFAULT_SPIN;
 
-    public Supplier<Integer> lifetimeSupplier = ()->20;
-    public Supplier<Integer> lifeDelaySupplier = ()->0;
-    public Supplier<Float> gravitySupplier = ()->0f;
-    public Supplier<Float> frictionSupplier = ()->1f;
+    public Supplier<Integer> lifetimeSupplier = () -> 20;
+    public Supplier<Integer> lifeDelaySupplier = () -> 0;
+    public Supplier<Float> gravitySupplier = () -> 0f;
+    public Supplier<Float> frictionSupplier = () -> 1f;
 
     public Int2IntFunction lifetimeModifier = i -> i;
     public Int2IntFunction lifeDelayModifier = i -> i;
     public Float2FloatFunction gravityModifier = f -> f;
     public Float2FloatFunction frictionModifier = f -> f;
 
+
+    public int getLifetime() {
+        return lifetimeModifier.apply(lifetimeSupplier.get());
+    }
+
+    public int getLifeDelay() {
+        return lifeDelayModifier.apply(lifeDelaySupplier.get());
+    }
+
+    public float getGravity() {
+        return gravityModifier.apply(gravitySupplier.get());
+    }
+
+    public float getFriction() {
+        return frictionModifier.apply(frictionSupplier.get());
+    }
 }

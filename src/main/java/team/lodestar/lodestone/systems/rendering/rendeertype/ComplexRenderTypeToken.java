@@ -15,6 +15,7 @@ public class ComplexRenderTypeToken extends RenderTypeToken {
     public ComplexRenderTypeToken(RenderTypeToken token) {
         super(token.getIdentifier(), token.getTexture());
     }
+
     @Override
     protected ComplexRenderTypeToken addUniformHandler(ShaderUniformHandler uniformHandler) {
         this.uniformHandler = uniformHandler;

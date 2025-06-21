@@ -67,10 +67,10 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
         this.xd = xd;
         this.yd = yd;
         this.zd = zd;
-        this.setLifetime(options.lifetimeSupplier.get());
-        this.lifeDelay = options.lifeDelaySupplier.get();
-        this.gravity = options.gravitySupplier.get();
-        this.friction = options.frictionSupplier.get();
+        this.setLifetime(options.getLifetime());
+        this.lifeDelay = options.getLifeDelay();
+        this.gravity = options.getGravity();
+        this.friction = options.getFriction();
         this.hasPhysics = !options.noClip;
 
         colorData.rgbToHsv(hsv1, hsv2);

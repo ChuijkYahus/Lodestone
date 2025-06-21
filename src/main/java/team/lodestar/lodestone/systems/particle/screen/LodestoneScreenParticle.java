@@ -64,10 +64,10 @@ public class LodestoneScreenParticle extends TextureSheetScreenParticle {
         this.stackTrackXOffset = options.stackTrackXOffset;
         this.stackTrackYOffset = options.stackTrackYOffset;
         this.roll = options.spinData.spinOffset + options.spinData.startingValue;
-        this.setLifetime(options.lifetimeSupplier.get());
-        this.lifeDelay = options.lifeDelaySupplier.get();
-        this.gravity = options.gravitySupplier.get();
-        this.friction = options.frictionSupplier.get();
+        this.setLifetime(options.getLifetime());
+        this.lifeDelay = options.getLifeDelay();
+        this.gravity = options.getGravity();
+        this.friction = options.getFriction();
         this.xMotion = xMotion;
         this.yMotion = yMotion;
 
