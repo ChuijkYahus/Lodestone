@@ -15,7 +15,7 @@ public class ShaderUniformHandler {
     public static final ShaderUniformHandler LUMITRANSPARENT_DEPTH_FADE = new ShaderUniformHandler().withLumiTransparency().withDepthFade().lock();
 
     private boolean locked;
-    
+
     public ShaderUniformHandler() {
     }
 
@@ -48,5 +48,18 @@ public class ShaderUniformHandler {
     public ShaderUniformHandler lock() {
         this.locked = true;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ShaderUniformHandler that = (ShaderUniformHandler) o;
+        return Objects.equals(uniformChanges, that.uniformChanges);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(uniformChanges);
     }
 }
