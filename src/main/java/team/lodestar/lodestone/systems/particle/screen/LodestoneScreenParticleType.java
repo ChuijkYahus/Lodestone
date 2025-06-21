@@ -11,12 +11,7 @@ public class LodestoneScreenParticleType extends ScreenParticleType<ScreenPartic
         super();
     }
 
-    public static class Factory implements ParticleProvider<ScreenParticleOptions> {
-        public final SpriteSet sprite;
-
-        public Factory(SpriteSet sprite) {
-            this.sprite = sprite;
-        }
+    public record Factory(SpriteSet sprite) implements ParticleProvider<ScreenParticleOptions> {
 
         @Override
         public ScreenParticle createParticle(ClientLevel pLevel, ScreenParticleOptions options, double x, double y, double pXSpeed, double pYSpeed) {

@@ -20,11 +20,9 @@ public class LodestoneRenderType extends RenderType {
     }
 
     public LodestoneRenderType(String pName, VertexFormat pFormat, VertexFormat.Mode pMode, int pBufferSize, boolean pAffectsCrumbling, boolean pSortOnUpload, RenderType.CompositeState pState) {
-        super(pName, pFormat, pMode, pBufferSize, pAffectsCrumbling, pSortOnUpload, () -> {
-            pState.states.forEach(RenderStateShard::setupRenderState);
-        }, () -> {
-            pState.states.forEach(RenderStateShard::clearRenderState);
-        });
+        super(pName, pFormat, pMode, pBufferSize, pAffectsCrumbling, pSortOnUpload,
+                () -> pState.states.forEach(RenderStateShard::setupRenderState),
+                () -> pState.states.forEach(RenderStateShard::clearRenderState));
         this.state = pState;
         this.outline = pState.outlineProperty == RenderType.OutlineProperty.AFFECTS_OUTLINE ? pState.textureState.cutoutTexture().map((p_173270_) -> OUTLINE.apply(p_173270_, pState.cullState)) : Optional.empty();
         this.isOutline = pState.outlineProperty == RenderType.OutlineProperty.IS_OUTLINE;

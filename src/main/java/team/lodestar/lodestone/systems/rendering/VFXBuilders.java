@@ -19,6 +19,7 @@ import org.joml.Vector4f;
 import team.lodestar.lodestone.handlers.RenderHandler;
 import team.lodestar.lodestone.helpers.*;
 import team.lodestar.lodestone.systems.rendering.cube.CubeVertexData;
+import team.lodestar.lodestone.systems.rendering.rendeertype.*;
 import team.lodestar.lodestone.systems.rendering.trail.*;
 
 import javax.annotation.Nullable;
@@ -454,6 +455,9 @@ public class VFXBuilders {
             return this;
         }
 
+        public WorldVFXBuilder setRenderType(RenderTypeProvider.LodestoneRenderTypeKey renderType) {
+            return setRenderType(renderType.getRenderType());
+        }
         public WorldVFXBuilder setRenderType(RenderType renderType) {
             return setRenderTypeRaw(renderType).setFormat(renderType.format()).setVertexConsumer(bufferSource.getBuffer(renderType));
         }

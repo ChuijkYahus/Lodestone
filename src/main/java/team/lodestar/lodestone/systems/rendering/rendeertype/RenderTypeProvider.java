@@ -12,7 +12,7 @@ import java.util.function.*;
 public class RenderTypeProvider {
     private final Function<RenderTypeToken, LodestoneRenderType> function;
     private final Function<RenderTypeToken, LodestoneRenderType> simpleCache;
-    private final ConcurrentHashMap<RenderTypeProviderKey, LodestoneRenderType> complexCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<LodestoneRenderTypeKey, LodestoneRenderType> complexCache = new ConcurrentHashMap<>();
 
     public RenderTypeProvider(Function<RenderTypeToken, LodestoneRenderType> function) {
         this.function = function;
@@ -22,87 +22,79 @@ public class RenderTypeProvider {
     private LodestoneRenderType createRenderType(RenderTypeToken token) {
         return simpleCache.apply(token);
     }
-    private LodestoneRenderType createRenderType(RenderTypeProviderKey key) {
+
+    private LodestoneRenderType createRenderType(LodestoneRenderTypeKey key) {
         if (complexCache.containsKey(key)) {
             return complexCache.get(key);
         }
-        if (key.modifier() != null) {
-            LodestoneRenderTypes.addRenderTypeModifier(key.modifier());
+        if (key.getModifier() != null) {
+            LodestoneRenderTypes.addRenderTypeModifier(key.getModifier());
         }
-        LodestoneRenderType renderType = function.apply(key.token());
-        if (key.uniformHandler() != null) {
-            LodestoneRenderTypes.applyUniformChanges(renderType, key.uniformHandler());
+        LodestoneRenderType renderType = function.apply(key.getToken());
+        if (key.getUniformHandler() != null) {
+            LodestoneRenderTypes.applyUniformChanges(renderType, key.getUniformHandler());
         }
         complexCache.put(key, renderType);
         return renderType;
     }
 
-    public LodestoneRenderType apply(RenderTypeToken token) {
-        return createRenderType(token);
+    public LodestoneRenderTypeKey apply(RenderTypeToken token) {
+        return new LodestoneRenderTypeKey(this, token);
     }
 
-    public LodestoneRenderType apply(RenderTypeToken token, ShaderUniformHandler uniformHandler) {
-        return createRenderType(new RenderTypeProviderKey(token, uniformHandler));
-    }
+    public static class LodestoneRenderTypeKey {
+        private final RenderTypeProvider provider;
+        private final RenderTypeToken token;
+        private ShaderUniformHandler uniformHandler;
+        private Consumer<LodestoneCompositeStateBuilder> modifier;
 
-    public LodestoneRenderType apply(RenderTypeToken token, Consumer<LodestoneCompositeStateBuilder> modifier) {
-        return createRenderType(new RenderTypeProviderKey(token, modifier));
-    }
+        private LodestoneRenderType renderType = null;
 
-    public LodestoneRenderType apply(RenderTypeToken token, ShaderUniformHandler uniformHandler, Consumer<LodestoneCompositeStateBuilder> modifier) {
-        return createRenderType(new RenderTypeProviderKey(token, uniformHandler, modifier));
-    }
-
-    @Deprecated(forRemoval = true)
-    public LodestoneRenderType applyAndCache(RenderTypeToken token) {
-        return apply(token);
-    }
-
-    @Deprecated(forRemoval = true)
-    public LodestoneRenderType applyAndCache(RenderTypeToken token, ShaderUniformHandler uniformHandler) {
-        return apply(token, uniformHandler);
-    }
-
-    @Deprecated(forRemoval = true)
-    public LodestoneRenderType applyWithModifier(RenderTypeToken token, Consumer<LodestoneCompositeStateBuilder> modifier) {
-        return apply(token, modifier);
-    }
-
-    @Deprecated(forRemoval = true)
-    public LodestoneRenderType applyWithModifier(RenderTypeToken token, ShaderUniformHandler uniformHandler, Consumer<LodestoneCompositeStateBuilder> modifier) {
-        return apply(token, uniformHandler, modifier);
-    }
-
-    @Deprecated(forRemoval = true)
-    public LodestoneRenderType applyWithModifierAndCache(RenderTypeToken token, Consumer<LodestoneCompositeStateBuilder> modifier) {
-        return apply(token, modifier);
-    }
-
-    @Deprecated(forRemoval = true)
-    public LodestoneRenderType applyWithModifierAndCache(RenderTypeToken token, ShaderUniformHandler uniformHandler, Consumer<LodestoneCompositeStateBuilder> modifier) {
-        return apply(token, uniformHandler, modifier);
-    }
-
-    public record RenderTypeProviderKey(RenderTypeToken token, ShaderUniformHandler uniformHandler,
-                                        Consumer<LodestoneCompositeStateBuilder> modifier) {
-
-        public RenderTypeProviderKey(RenderTypeToken token) {
-            this(token, null, null);
+        public LodestoneRenderTypeKey(RenderTypeProvider provider, RenderTypeToken token) {
+            this.provider = provider;
+            this.token = token;
         }
 
-        public RenderTypeProviderKey(RenderTypeToken token, ShaderUniformHandler uniformHandler) {
-            this(token, uniformHandler, null);
+        public LodestoneRenderTypeKey withUniformHandler(ShaderUniformHandler uniformHandler) {
+            this.uniformHandler = uniformHandler;
+            return this;
         }
 
-        public RenderTypeProviderKey(RenderTypeToken token, Consumer<LodestoneCompositeStateBuilder> modifier) {
-            this(token, null, modifier);
+        public LodestoneRenderTypeKey withModifier(Consumer<LodestoneCompositeStateBuilder> modifier) {
+            this.modifier = modifier;
+            return this;
         }
+
+        public LodestoneRenderType getRenderType() {
+            if (renderType != null) {
+                return renderType;
+            }
+            renderType = provider.createRenderType(this);
+            return renderType;
+        }
+
+        public RenderTypeProvider getProvider() {
+            return provider;
+        }
+
+        public RenderTypeToken getToken() {
+            return token;
+        }
+
+        public ShaderUniformHandler getUniformHandler() {
+            return uniformHandler;
+        }
+
+        public Consumer<LodestoneCompositeStateBuilder> getModifier() {
+            return modifier;
+        }
+
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            RenderTypeProviderKey that = (RenderTypeProviderKey) o;
+            LodestoneRenderTypeKey that = (LodestoneRenderTypeKey) o;
             return Objects.equals(token, that.token) && Objects.equals(uniformHandler, that.uniformHandler) && Objects.equals(modifier, that.modifier);
         }
 
