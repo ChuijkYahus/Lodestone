@@ -40,7 +40,8 @@ public class RenderTypeProvider {
         if (hasGoneNuclear) {
             return cache.entrySet().iterator().next().getValue();
         }
-        if (cache.containsKey(token)) {
+        final boolean b = cache.containsKey(token);
+        if (b) {
             return cache.get(token);
         }
         if (builder.getModifier() != null) {

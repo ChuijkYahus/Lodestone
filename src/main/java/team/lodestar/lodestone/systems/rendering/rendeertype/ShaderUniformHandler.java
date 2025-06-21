@@ -77,11 +77,36 @@ public class ShaderUniformHandler {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ShaderUniformHandler that = (ShaderUniformHandler) o;
-        return Objects.equals(uniformChanges, that.uniformChanges);
+        boolean isSame;
+        if (uniformChanges.size() != that.uniformChanges.size()) {
+            return false;
+        }
+        for (Map.Entry<String, Float[]> entry : uniformChanges.entrySet()) {
+            Float[] otherValues = that.uniformChanges.get(entry.getKey());
+            if (otherValues == null || otherValues.length != entry.getValue().length) {
+                return false;
+            }
+            isSame = Arrays.equals(entry.getValue(), otherValues);
+            if (!isSame) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(uniformChanges);
+        int result = 1;
+
+        List<Map.Entry<String, Float[]>> entries = new ArrayList<>(uniformChanges.entrySet());
+        entries.sort(Map.Entry.comparingByKey());
+
+        for (Map.Entry<String, Float[]> entry : entries) {
+            int keyHash = entry.getKey().hashCode();
+            int valueHash = Arrays.hashCode(entry.getValue()); // content-based hash
+            result = 31 * result + (keyHash ^ valueHash);
+        }
+
+        return result;
     }
 }

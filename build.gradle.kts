@@ -104,10 +104,6 @@ repositories {
         url = uri("https://dvs1.progwml6.com/files/maven")
     }
     maven {
-        name = "tterrag maven"
-        url = uri("https://maven.tterrag.com/")
-    }
-    maven {
         name = "BlameJared maven"
         url = uri("https://maven.blamejared.com/")
     }
@@ -132,7 +128,7 @@ dependencies {
     compileOnlyApi("top.theillusivec4.curios:curios-neoforge:${property("curios_version")}:api")
     localRuntime("top.theillusivec4.curios:curios-neoforge:${property("curios_version")}")
 
-    //runtimeOnly(("com.sammy.malum:malum:${property("minecraft_version")}-1.7.0.292"))
+//    runtimeOnly(("com.sammy.malum:malum:${property("minecraft_version")}-1.7.4.8"))
 
     compileOnly("maven.modrinth:sodium:mc${property("minecraft_version")}-${property("sodium_version")}-neoforge")
     compileOnly("maven.modrinth:iris:${property("iris_version")}+${property("minecraft_version")}-neoforge")
