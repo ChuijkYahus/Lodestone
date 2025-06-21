@@ -1,21 +1,52 @@
 package team.lodestar.lodestone.systems.rendering.rendeertype;
 
+import com.mojang.datafixers.util.*;
 import net.minecraft.client.renderer.ShaderInstance;
 
-public interface ShaderUniformHandler {
+import java.util.*;
+import java.util.concurrent.*;
 
-    ShaderUniformHandler LUMITRANSPARENT = instance -> {
-        instance.safeGetUniform("LumiTransparency").set(1f);
-    };
+public class ShaderUniformHandler {
 
-    ShaderUniformHandler DEPTH_FADE = instance -> {
-        instance.safeGetUniform("DepthFade").set(1.5f);
-    };
+    public final ConcurrentHashMap<String, Float> uniformChanges = new ConcurrentHashMap<>();
 
-    ShaderUniformHandler LUMITRANSPARENT_DEPTH_FADE = instance -> {
-        instance.safeGetUniform("LumiTransparency").set(1f);
-        instance.safeGetUniform("DepthFade").set(1.5f);
-    };
+    public static final ShaderUniformHandler DEPTH_FADE = new ShaderUniformHandler().withDepthFade().lock();
+    public static final ShaderUniformHandler LUMITRANSPARENT = new ShaderUniformHandler().withLumiTransparency().lock();
+    public static final ShaderUniformHandler LUMITRANSPARENT_DEPTH_FADE = new ShaderUniformHandler().withLumiTransparency().withDepthFade().lock();
 
-    void updateShaderData(ShaderInstance instance);
+    private boolean locked;
+    
+    public ShaderUniformHandler() {
+    }
+
+    public ShaderUniformHandler withLumiTransparency() {
+        return modifyUniform("LumiTransparency", 1f);
+    }
+
+    public ShaderUniformHandler withDepthFade() {
+        return modifyUniform("DepthFade", 1.5f);
+    }
+
+    public ShaderUniformHandler withDepthFade(float value) {
+        return modifyUniform("DepthFade", value);
+    }
+
+    public ShaderUniformHandler modifyUniform(String uniformName, float value) {
+        if (locked) {
+            return this;
+        }
+        uniformChanges.put(uniformName, value);
+        return this;
+    }
+
+    public void updateShaderData(ShaderInstance instance) {
+        for (Map.Entry<String, Float> uniformChange : uniformChanges.entrySet()) {
+            instance.safeGetUniform(uniformChange.getKey()).set(uniformChange.getValue());
+        }
+    }
+
+    public ShaderUniformHandler lock() {
+        this.locked = true;
+        return this;
+    }
 }
