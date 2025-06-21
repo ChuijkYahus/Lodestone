@@ -8,7 +8,7 @@ import java.util.concurrent.*;
 
 public class ShaderUniformHandler {
 
-    public final ConcurrentHashMap<String, Float> uniformChanges = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, Float[]> uniformChanges = new ConcurrentHashMap<>();
 
     public static final ShaderUniformHandler DEPTH_FADE = new ShaderUniformHandler().withDepthFade().lock();
     public static final ShaderUniformHandler LUMITRANSPARENT = new ShaderUniformHandler().withLumiTransparency().lock();
@@ -35,16 +35,29 @@ public class ShaderUniformHandler {
         if (locked) {
             return this;
         }
-        uniformChanges.put(uniformName, value);
+        uniformChanges.merge(uniformName,
+                new Float[]{value},
+                (existing, toAppend) -> {
+                    Float[] newArray = Arrays.copyOf(existing, existing.length + 1);
+                    newArray[existing.length] = toAppend[0];
+                    return newArray;
+                });
         return this;
     }
 
     public void updateShaderData(ShaderInstance instance) {
-        for (Map.Entry<String, Float> uniformChange : uniformChanges.entrySet()) {
-            instance.safeGetUniform(uniformChange.getKey()).set(uniformChange.getValue());
+        for (Map.Entry<String, Float[]> uniformChange : uniformChanges.entrySet()) {
+            instance.safeGetUniform(uniformChange.getKey()).set(toPrimitive(uniformChange.getValue()));
         }
     }
 
+    private float[] toPrimitive(Float[] boxed) {
+        float[] result = new float[boxed.length];
+        for (int i = 0; i < boxed.length; i++) {
+            result[i] = boxed[i];
+        }
+        return result;
+    }
     public ShaderUniformHandler lock() {
         this.locked = true;
         return this;
