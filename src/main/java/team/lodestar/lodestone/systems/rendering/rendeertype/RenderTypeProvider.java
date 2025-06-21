@@ -1,8 +1,10 @@
 package team.lodestar.lodestone.systems.rendering.rendeertype;
 
+import team.lodestar.lodestone.*;
 import team.lodestar.lodestone.registry.client.*;
 import team.lodestar.lodestone.systems.rendering.*;
 
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
@@ -16,6 +18,10 @@ public class RenderTypeProvider {
     private final Function<RenderTypeToken, LodestoneRenderType> provider;
     private final ConcurrentHashMap<RenderTypeToken, LodestoneRenderType> cache = new ConcurrentHashMap<>();
 
+    private boolean hasGoneNuclear;
+    private long nuclearTimeCache = 0;
+    private int nuclearRenderTypeCount = 0;
+
     public RenderTypeProvider(Function<RenderTypeToken, LodestoneRenderType> provider) {
         this.provider = provider;
     }
@@ -27,6 +33,9 @@ public class RenderTypeProvider {
      * @return the created {@link LodestoneRenderType}
      */
     protected LodestoneRenderType createRenderType(RenderTypeToken token, LodestoneRenderTypeBuilder builder) {
+        if (hasGoneNuclear) {
+            return cache.entrySet().iterator().next().getValue();
+        }
         if (cache.containsKey(token)) {
             return cache.get(token);
         }
@@ -38,10 +47,38 @@ public class RenderTypeProvider {
         if (builder.getUniformHandler() != null) {
             LodestoneRenderTypes.addUniformChanges(renderType, builder.getUniformHandler());
         }
+        if (checkNuclear()) {
+            hasGoneNuclear = true;
+            LodestoneLib.LOGGER.warn(
+                    "RenderTypeProvider has been called too often in a short time! This is very dangerous. " +
+                            "Current count: {}, Time since last check: {}ms" +
+                            "Render Type Provider: {}, Render Type Token: {}",
+                    nuclearRenderTypeCount, System.currentTimeMillis() - nuclearTimeCache, this, token);
+        }
         return renderType;
     }
 
     public LodestoneRenderTypeBuilder apply(RenderTypeToken token) {
         return new LodestoneRenderTypeBuilder(this, token);
+    }
+
+    public boolean checkNuclear() {
+        int maxCalls = 1000;
+        long thresholdMillis = 5000;
+        if (nuclearTimeCache == 0) {
+            nuclearTimeCache = System.currentTimeMillis();
+        }
+
+        nuclearRenderTypeCount++;
+
+        long now = System.currentTimeMillis();
+        if (now - nuclearTimeCache > thresholdMillis) {
+            boolean tooOften = nuclearRenderTypeCount > maxCalls;
+            nuclearRenderTypeCount = 0;
+            nuclearTimeCache = now;
+            return tooOften;
+        }
+
+        return false;
     }
 }
