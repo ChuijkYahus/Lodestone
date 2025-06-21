@@ -34,7 +34,7 @@ public class LodestoneShaders {
     public static ShaderHolder SCROLLING_TRIANGLE_TEXTURE = new ShaderHolder(lodestonePath("shapes/scrolling_triangle_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, "Speed", "LumiTransparency");
 
     public static ShaderHolder NINE_SLICE = new ShaderHolder(lodestonePath("nineslice/nine_slice"), DefaultVertexFormat.POSITION_TEX);
-    public static final ShaderHolder DISTORTED_NINE_SLICE_TEXTURE = new ShaderHolder(lodestonePath("nineslice/distorted/distorted_nine_slice_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP , "Speed", "TimeOffset", "Intensity", "XFrequency", "YFrequency", "UVCoordinates");
+    public static ShaderHolder DISTORTED_NINE_SLICE_TEXTURE = new ShaderHolder(lodestonePath("nineslice/distorted/distorted_nine_slice_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP , "Speed", "TimeOffset", "Intensity", "XFrequency", "YFrequency", "UVCoordinates");
 
 
     @SubscribeEvent
