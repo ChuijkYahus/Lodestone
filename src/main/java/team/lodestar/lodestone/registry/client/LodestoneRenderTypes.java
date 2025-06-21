@@ -221,7 +221,7 @@ public class LodestoneRenderTypes extends RenderStateShard {
                     setTextureState(texture);
                 }
                 else if (object instanceof RenderTypeToken token) {
-                    setTextureState(new RenderStateShard.TextureStateShard(token.getTexture(), false, false));
+                    setTextureState(token);
                 }
                 else if (object instanceof RenderStateShard.EmptyTextureStateShard shard) {
                     setTextureState(shard);
@@ -267,6 +267,10 @@ public class LodestoneRenderTypes extends RenderStateShard {
                 }
             }
             return this;
+        }
+
+        public LodestoneCompositeStateBuilder setTextureState(RenderTypeToken token) {
+            return setTextureState(token.getTexture());
         }
 
         public LodestoneCompositeStateBuilder setTextureState(ResourceLocation texture) {
