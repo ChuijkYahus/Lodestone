@@ -31,17 +31,26 @@ public class ShaderUniformHandler {
         return modifyUniform("DepthFade", value);
     }
 
-    public ShaderUniformHandler modifyUniform(String uniformName, float value) {
-        if (locked) {
+    public ShaderUniformHandler modifyUniform(String uniformName, float... values) {
+        if (locked || values == null || values.length == 0) {
             return this;
         }
-        uniformChanges.merge(uniformName,
-                new Float[]{value},
+
+        Float[] newValues = new Float[values.length];
+        for (int i = 0; i < values.length; i++) {
+            newValues[i] = values[i];
+        }
+
+        uniformChanges.merge(
+                uniformName,
+                newValues,
                 (existing, toAppend) -> {
-                    Float[] newArray = Arrays.copyOf(existing, existing.length + 1);
-                    newArray[existing.length] = toAppend[0];
-                    return newArray;
-                });
+                    Float[] combined = Arrays.copyOf(existing, existing.length + toAppend.length);
+                    System.arraycopy(toAppend, 0, combined, existing.length, toAppend.length);
+                    return combined;
+                }
+        );
+
         return this;
     }
 
