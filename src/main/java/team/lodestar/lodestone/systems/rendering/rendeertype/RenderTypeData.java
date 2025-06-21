@@ -1,7 +1,6 @@
 package team.lodestar.lodestone.systems.rendering.rendeertype;
 
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import team.lodestar.lodestone.registry.client.*;
 import team.lodestar.lodestone.systems.rendering.*;
@@ -28,5 +27,9 @@ public class RenderTypeData {
 
     public RenderTypeData(LodestoneRenderType type) {
         this(type.name, type);
+    }
+
+    public LodestoneRenderType createRenderType() {
+        return LodestoneRenderTypes.createGenericRenderType(name, format, mode, LodestoneRenderTypes.builder().copyState(state));
     }
 }

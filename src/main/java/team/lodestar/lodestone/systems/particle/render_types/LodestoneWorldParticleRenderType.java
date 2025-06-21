@@ -12,8 +12,6 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
-import org.lwjgl.opengl.GL11;
-import team.lodestar.lodestone.handlers.*;
 import team.lodestar.lodestone.registry.client.*;
 import team.lodestar.lodestone.systems.rendering.*;
 import team.lodestar.lodestone.systems.rendering.rendeertype.*;
@@ -84,8 +82,8 @@ public class LodestoneWorldParticleRenderType implements ParticleRenderType {
     }
 
     private static LodestoneWorldParticleRenderType addDepthFade(LodestoneWorldParticleRenderType original) {
-        final LodestoneRenderType renderType = LodestoneRenderTypes.copyAndStore(original,
-                original.renderType, original.equals(LUMITRANSPARENT) ? ShaderUniformHandler.LUMITRANSPARENT_DEPTH_FADE : ShaderUniformHandler.DEPTH_FADE);
+        LodestoneRenderType renderType = LodestoneRenderTypes.createCachedCopy(original, original.renderType);
+        LodestoneRenderTypes.addUniformChanges(renderType, original.equals(LUMITRANSPARENT) ? ShaderUniformHandler.LUMITRANSPARENT_DEPTH_FADE : ShaderUniformHandler.DEPTH_FADE);
         return new LodestoneWorldParticleRenderType(renderType, original.shader, original.texture, original.blendFunction);
     }
 }

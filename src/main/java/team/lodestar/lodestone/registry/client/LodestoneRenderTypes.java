@@ -6,7 +6,6 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import team.lodestar.lodestone.handlers.RenderHandler;
@@ -20,7 +19,7 @@ import java.util.function.*;
 import static com.mojang.blaze3d.vertex.DefaultVertexFormat.*;
 import static com.mojang.blaze3d.vertex.VertexFormat.Mode.*;
 
-@SuppressWarnings({"deprecation", "unused"})
+@SuppressWarnings({"deprecation", "unused", "UnusedReturnValue"})
 public class LodestoneRenderTypes extends RenderStateShard {
 
     public static final Runnable TRANSPARENT_FUNCTION = () -> RenderSystem.blendFuncSeparate(
@@ -42,19 +41,10 @@ public class LodestoneRenderTypes extends RenderStateShard {
         super(p_110161_, p_110162_, p_110163_);
     }
 
-    /**
-     * Stores many copies of render types, a copy is a new instance of a render type with the same properties.
-     * It's useful when we want to apply different uniform changes with each separate use of our render type.
-     * Use the {@link #copyAndStore(Object, LodestoneRenderType)} {@link #copy(LodestoneRenderType)} methods to create copies.
-     */
     public static final HashMap<Pair<Object, LodestoneRenderType>, LodestoneRenderType> COPIES = new HashMap<>();
-
-    public static final Function<RenderTypeData, LodestoneRenderType> GENERIC = (data) -> createGenericRenderType(data.name, data.format, data.mode, builder().copyState(data.state));
+    public static final Function<RenderTypeData, LodestoneRenderType> GENERIC = RenderTypeData::createRenderType;
 
     private static Consumer<LodestoneCompositeStateBuilder> MODIFIER;
-    /**
-     * Static, one off Render Types. Should be self-explanatory.
-     */
 
     public static final LodestoneRenderType ADDITIVE_PARTICLE = createGenericRenderType("additive_particle", PARTICLE, QUADS,
             builder(TextureAtlas.LOCATION_PARTICLES, StateShards.ADDITIVE_TRANSPARENCY, LodestoneShaders.PARTICLE, NO_CULL, LIGHTMAP, COLOR_WRITE));
@@ -62,7 +52,7 @@ public class LodestoneRenderTypes extends RenderStateShard {
     public static final LodestoneRenderType ADDITIVE_BLOCK_PARTICLE = createGenericRenderType("additive_block_particle", PARTICLE, QUADS,
             builder(TextureAtlas.LOCATION_BLOCKS, StateShards.ADDITIVE_TRANSPARENCY, LodestoneShaders.PARTICLE, NO_CULL, LIGHTMAP, COLOR_WRITE));
 
-    public static final LodestoneRenderType ADDITIVE_BLOCK = createGenericRenderType("additive_block",
+    public static final LodestoneRenderType ADDITIVE_BLOCK = createGenericRenderType("additive_block", POSITION_COLOR_TEX_LIGHTMAP, QUADS,
             builder(TextureAtlas.LOCATION_BLOCKS, StateShards.ADDITIVE_TRANSPARENCY, LodestoneShaders.LODESTONE_TEXTURE, NO_CULL, LIGHTMAP, COLOR_WRITE));
 
     public static final LodestoneRenderType ADDITIVE_SOLID = createGenericRenderType("additive_solid", POSITION_COLOR_LIGHTMAP, QUADS,
@@ -74,40 +64,35 @@ public class LodestoneRenderTypes extends RenderStateShard {
     public static final LodestoneRenderType TRANSPARENT_BLOCK_PARTICLE = createGenericRenderType("transparent_block_particle", PARTICLE, QUADS,
             builder(TextureAtlas.LOCATION_BLOCKS, StateShards.NORMAL_TRANSPARENCY, LodestoneShaders.PARTICLE, NO_CULL, LIGHTMAP, COLOR_WRITE));
 
-    public static final LodestoneRenderType TRANSPARENT_BLOCK = createGenericRenderType("transparent_block",
+    public static final LodestoneRenderType TRANSPARENT_BLOCK = createGenericRenderType("transparent_block", POSITION_COLOR_TEX_LIGHTMAP, QUADS,
             builder(TextureAtlas.LOCATION_BLOCKS, StateShards.NORMAL_TRANSPARENCY, LodestoneShaders.LODESTONE_TEXTURE, NO_CULL, LIGHTMAP, COLOR_WRITE));
 
     public static final LodestoneRenderType TRANSPARENT_SOLID = createGenericRenderType("transparent_solid", POSITION_COLOR_LIGHTMAP, QUADS,
             builder(StateShards.NORMAL_TRANSPARENCY, POSITION_COLOR_LIGHTMAP_SHADER, NO_CULL, LIGHTMAP, COLOR_WRITE));
 
-    public static final LodestoneRenderType LUMITRANSPARENT_PARTICLE = copyWithUniformChanges("lodestone:lumitransparent_particle", TRANSPARENT_PARTICLE, ShaderUniformHandler.LUMITRANSPARENT);
-    public static final LodestoneRenderType LUMITRANSPARENT_BLOCK_PARTICLE = copyWithUniformChanges("lodestone:lumitransparent_block_particle", TRANSPARENT_BLOCK_PARTICLE, ShaderUniformHandler.LUMITRANSPARENT);
-    public static final LodestoneRenderType LUMITRANSPARENT_BLOCK = copyWithUniformChanges("lodestone:lumitransparent_block", TRANSPARENT_BLOCK, ShaderUniformHandler.LUMITRANSPARENT);
-    public static final LodestoneRenderType LUMITRANSPARENT_SOLID = copyWithUniformChanges("lodestone:lumitransparent_solid", TRANSPARENT_SOLID, ShaderUniformHandler.LUMITRANSPARENT);
+    public static final LodestoneRenderType LUMITRANSPARENT_PARTICLE = addUniformChanges(createCopy("lodestone:lumitransparent_particle", TRANSPARENT_PARTICLE), ShaderUniformHandler.LUMITRANSPARENT);
+    public static final LodestoneRenderType LUMITRANSPARENT_BLOCK_PARTICLE = addUniformChanges(createCopy("lodestone:lumitransparent_block_particle", TRANSPARENT_BLOCK_PARTICLE), ShaderUniformHandler.LUMITRANSPARENT);
+    public static final LodestoneRenderType LUMITRANSPARENT_BLOCK = addUniformChanges(createCopy("lodestone:lumitransparent_block", TRANSPARENT_BLOCK), ShaderUniformHandler.LUMITRANSPARENT);
+    public static final LodestoneRenderType LUMITRANSPARENT_SOLID = addUniformChanges(createCopy("lodestone:lumitransparent_solid", TRANSPARENT_SOLID), ShaderUniformHandler.LUMITRANSPARENT);
 
-    /**
-     * Render Functions. You can create Render Types by statically applying these to your texture. Alternatively, use {@link #GENERIC} if none of the presets suit your needs.
-     * Use {@link RenderTypeProvider#apply(RenderTypeToken)} to create a render type.
-     * Render Types are cached using the texture, Shader Uniform Handler, and Render Type Modifier as keys.
-     */
     public static final RenderTypeProvider TEXTURE = new RenderTypeProvider((token) ->
-            createGenericRenderType("texture",
+            createGenericRenderType("texture", POSITION_COLOR_TEX_LIGHTMAP, QUADS,
                     builder(token, StateShards.NO_TRANSPARENCY, LodestoneShaders.LODESTONE_TEXTURE, CULL, LIGHTMAP)));
 
     public static final RenderTypeProvider CUTOUT_TEXTURE = new RenderTypeProvider((token) ->
-            createGenericRenderType("cutout_texture",
+            createGenericRenderType("cutout_texture", POSITION_COLOR_TEX_LIGHTMAP, QUADS,
                     builder(token, StateShards.NO_TRANSPARENCY, LodestoneShaders.LODESTONE_TEXTURE, CULL, LIGHTMAP)));
 
     public static final RenderTypeProvider TEXTURE_FADE = new RenderTypeProvider((token) ->
-            createGenericRenderType("texture_fade",
+            createGenericRenderType("texture_fade", POSITION_COLOR_TEX_LIGHTMAP, QUADS,
                     builder(token, StateShards.NO_TRANSPARENCY, LodestoneShaders.TEXTURE_FADE, CULL, LIGHTMAP)));
 
     public static final RenderTypeProvider TRANSPARENT_TEXT = new RenderTypeProvider((token) ->
-            LodestoneRenderTypes.createGenericRenderType("transparent_text",
+            LodestoneRenderTypes.createGenericRenderType("transparent_text", POSITION_COLOR_TEX_LIGHTMAP, QUADS,
                     builder(token, StateShards.NORMAL_TRANSPARENCY, LodestoneShaders.LODESTONE_TEXT, LIGHTMAP)));
 
     public static final RenderTypeProvider ADDITIVE_TEXT = new RenderTypeProvider((token) ->
-            LodestoneRenderTypes.createGenericRenderType("additive_text",
+            LodestoneRenderTypes.createGenericRenderType("additive_text", POSITION_COLOR_TEX_LIGHTMAP, QUADS,
                     builder(token, StateShards.ADDITIVE_TRANSPARENCY, LodestoneShaders.LODESTONE_TEXT, LIGHTMAP, COLOR_WRITE)));
 
     public static final RenderTypeProvider TRANSPARENT_TEXTURE = new RenderTypeProvider((token) ->
@@ -153,64 +138,50 @@ public class LodestoneRenderTypes extends RenderStateShard {
                 builder(token, StateShards.ADDITIVE_TRANSPARENCY, shader, CULL, LIGHTMAP, COLOR_WRITE));
     }
 
-    public static LodestoneRenderType createGenericRenderType(String name, LodestoneCompositeStateBuilder builder) {
-        return createGenericRenderType(name, POSITION_COLOR_TEX_LIGHTMAP, QUADS, builder);
-    }
     public static LodestoneRenderType createGenericRenderType(String name, VertexFormat format, VertexFormat.Mode mode, LodestoneCompositeStateBuilder builder) {
         return createGenericRenderType(name, format, mode, builder, null);
     }
-    /**
-     * Creates a custom render type and creates a buffer builder for it.
-     */
+
     public static LodestoneRenderType createGenericRenderType(String name, VertexFormat format, VertexFormat.Mode mode, LodestoneCompositeStateBuilder builder, ShaderUniformHandler handler) {
         if (MODIFIER != null) {
             MODIFIER.accept(builder);
         }
-        LodestoneRenderType type = LodestoneRenderType.createRenderType(name, format, builder.modeOverride != null ? builder.modeOverride : mode, 256, false, true, builder.createCompositeState(true));
+        LodestoneRenderType type = new LodestoneRenderType(name, format, builder.modeOverride != null ? builder.modeOverride : mode, 256, false, true, builder.createCompositeState(true));
         RenderHandler.addRenderType(type);
         if (handler != null) {
-            applyUniformChanges(type, handler);
+            addUniformChanges(type, handler);
         }
         MODIFIER = null;
         return type;
     }
 
-    public static LodestoneRenderType copyWithUniformChanges(LodestoneRenderType type, ShaderUniformHandler handler) {
-        return applyUniformChanges(copy(type), handler);
+    public static LodestoneRenderType createCopy(LodestoneRenderTypeBuilder type) {
+        return createCopy(type.getRenderType());
     }
 
-    public static LodestoneRenderType copyWithUniformChanges(String newName, LodestoneRenderType type, ShaderUniformHandler handler) {
-        return applyUniformChanges(copy(newName, type), handler);
+    public static LodestoneRenderType createCopy(String newName, LodestoneRenderTypeBuilder type) {
+        return createCopy(newName, type.getRenderType());
     }
 
-    /**
-     * Queues shader uniform changes for a render type. When we end batches in {@link RenderHandler}}, we do so one render type at a time.
-     * Prior to ending a batch, we run {@link ShaderUniformHandler#updateShaderData(ShaderInstance)} if one is present for a given render type.
-     */
-    public static LodestoneRenderType applyUniformChanges(LodestoneRenderType type, ShaderUniformHandler handler) {
-        RenderHandler.UNIFORM_HANDLERS.put(type, handler);
-        return type;
-    }
-
-    /**
-     * Creates a copy of a render type.
-     */
-    public static LodestoneRenderType copy(LodestoneRenderType type) {
+    public static LodestoneRenderType createCopy(LodestoneRenderType type) {
         return GENERIC.apply(new RenderTypeData(type));
     }
 
-    public static LodestoneRenderType copy(String newName, LodestoneRenderType type) {
+    public static LodestoneRenderType createCopy(String newName, LodestoneRenderType type) {
         return GENERIC.apply(new RenderTypeData(newName, type));
     }
 
-    /**
-     * Creates a copy of a render type and stores it in the {@link #COPIES} hashmap, with the key being a pair of original render type and copy index.
-     */
-    public static LodestoneRenderType copyAndStore(Object index, LodestoneRenderType type) {
+    public static LodestoneRenderType createCachedCopy(Object index, LodestoneRenderTypeBuilder type) {
+        return createCachedCopy(index, type.getRenderType());
+    }
+
+    public static LodestoneRenderType createCachedCopy(Object index, LodestoneRenderType type) {
         return COPIES.computeIfAbsent(Pair.of(index, type), (p) -> GENERIC.apply(new RenderTypeData(type)));
     }
-    public static LodestoneRenderType copyAndStore(Object index, LodestoneRenderType type, ShaderUniformHandler handler) {
-        return applyUniformChanges(copyAndStore(index, type), handler);
+
+    public static LodestoneRenderType addUniformChanges(LodestoneRenderType type, ShaderUniformHandler handler) {
+        RenderHandler.UNIFORM_HANDLERS.put(type, handler);
+        return type;
     }
 
     public static void addRenderTypeModifier(Consumer<LodestoneCompositeStateBuilder> modifier) {

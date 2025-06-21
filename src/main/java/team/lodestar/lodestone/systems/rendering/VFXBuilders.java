@@ -455,7 +455,7 @@ public class VFXBuilders {
             return this;
         }
 
-        public WorldVFXBuilder setRenderType(RenderTypeProvider.LodestoneRenderTypeKey renderType) {
+        public WorldVFXBuilder setRenderType(LodestoneRenderTypeBuilder renderType) {
             return setRenderType(renderType.getRenderType());
         }
         public WorldVFXBuilder setRenderType(RenderType renderType) {
