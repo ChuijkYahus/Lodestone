@@ -20,9 +20,6 @@ public class LodestoneRenderTypeBuilder {
     }
 
     public LodestoneRenderTypeBuilder withUniformHandler(ShaderUniformHandler uniformHandler) {
-        if (renderType != null) {
-            throw new IllegalStateException("Cannot set uniform handler after render type has been initialized.");
-        }
         this.uniformHandler = uniformHandler;
         return this;
     }
