@@ -13,17 +13,13 @@ public class TrailPointBuilder {
 
     private final List<TrailPoint> trailPoints = new ArrayList<>();
     private Vec3 origin;
-    public final Supplier<Integer> trailLength;
+    protected final int trailLength;
 
-    public TrailPointBuilder(Supplier<Integer> trailLength) {
+    public TrailPointBuilder(int trailLength) {
         this.trailLength = trailLength;
     }
 
     public static TrailPointBuilder create(int trailLength) {
-        return create(() -> trailLength);
-    }
-
-    public static TrailPointBuilder create(Supplier<Integer> trailLength) {
         return new TrailPointBuilder(trailLength);
     }
 
@@ -49,8 +45,12 @@ public class TrailPointBuilder {
         return origin;
     }
 
+    public Integer getTrailLength() {
+        return trailLength;
+    }
+
     public TrailPointBuilder tickTrailPoints() {
-        int lifespan = trailLength.get();
+        int lifespan = trailLength;
         trailPoints.forEach(TrailPoint::tick);
         trailPoints.removeIf(p -> p.getAge() > lifespan);
         return this;
