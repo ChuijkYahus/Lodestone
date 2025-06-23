@@ -4,9 +4,9 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.*;
 
 public class TrailPoint {
-    private Vec3 oldPosition;
-    private Vec3 position;
-    private int age;
+    protected Vec3 oldPosition;
+    protected Vec3 position;
+    protected int age;
 
     public TrailPoint(Vec3 position, int age) {
         this.position = position;
