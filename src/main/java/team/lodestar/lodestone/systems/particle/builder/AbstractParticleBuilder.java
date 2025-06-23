@@ -121,40 +121,57 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
         getParticleOptions().frictionSupplier = supplier;
         return this;
     }
-    
+
     public AbstractParticleBuilder<T> multiplyLifeDelay(float multiplier) {
-        return modifyLifeDelay(l -> (int) (l * multiplier));
+        return modifyLifeDelay(f -> (int) (f * multiplier));
     }
 
     public AbstractParticleBuilder<T> modifyLifeDelay(Int2IntFunction modifier) {
-        getParticleOptions().lifeDelayModifier = getParticleOptions().lifeDelayModifier.andThenInt(modifier);
+        return setLifeDelayModifier(getParticleOptions().lifeDelayModifier.andThenInt(modifier));
+    }
+
+    public AbstractParticleBuilder<T> setLifeDelayModifier(Int2IntFunction modifier) {
+        getParticleOptions().lifeDelayModifier = modifier;
         return this;
     }
 
     public AbstractParticleBuilder<T> multiplyLifetime(float multiplier) {
-        return modifyLifetime(l -> (int) (l * multiplier));
+        return modifyLifetime(f -> (int) (f * multiplier));
     }
 
     public AbstractParticleBuilder<T> modifyLifetime(Int2IntFunction modifier) {
-        getParticleOptions().lifetimeModifier = getParticleOptions().lifetimeModifier.andThenInt(modifier);
+        return setLifetimeModifier(getParticleOptions().lifetimeModifier.andThenInt(modifier));
+    }
+
+    public AbstractParticleBuilder<T> setLifetimeModifier(Int2IntFunction modifier) {
+        getParticleOptions().lifetimeModifier = modifier;
         return this;
     }
 
     public AbstractParticleBuilder<T> multiplyGravity(float multiplier) {
-        return modifyGravity(g -> g * multiplier);
+        return modifyGravity(f -> f * multiplier);
     }
 
     public AbstractParticleBuilder<T> modifyGravity(Float2FloatFunction modifier) {
-        getParticleOptions().gravityModifier = getParticleOptions().gravityModifier.andThenFloat(modifier);
+        return setGravityModifier(getParticleOptions().gravityModifier.andThenFloat(modifier));
+    }
+
+    public AbstractParticleBuilder<T> setGravityModifier(Float2FloatFunction modifier) {
+        getParticleOptions().gravityModifier = modifier;
         return this;
     }
+    
 
     public AbstractParticleBuilder<T> multiplyFriction(float multiplier) {
         return modifyFriction(f -> f * multiplier);
     }
 
     public AbstractParticleBuilder<T> modifyFriction(Float2FloatFunction modifier) {
-        getParticleOptions().frictionModifier = getParticleOptions().frictionModifier.andThenFloat(modifier);
+        return setFrictionModifier(getParticleOptions().frictionModifier.andThenFloat(modifier));
+    }
+    
+    public AbstractParticleBuilder<T> setFrictionModifier(Float2FloatFunction modifier) {
+        getParticleOptions().frictionModifier = modifier;
         return this;
     }
 

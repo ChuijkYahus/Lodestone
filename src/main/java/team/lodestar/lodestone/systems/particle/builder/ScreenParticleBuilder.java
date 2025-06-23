@@ -12,7 +12,6 @@ import team.lodestar.lodestone.systems.particle.render_types.LodestoneScreenPart
 import team.lodestar.lodestone.systems.particle.screen.LodestoneScreenParticle;
 import team.lodestar.lodestone.systems.particle.screen.ScreenParticleHolder;
 import team.lodestar.lodestone.systems.particle.screen.ScreenParticleType;
-import team.lodestar.lodestone.systems.particle.world.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -266,6 +265,11 @@ public class ScreenParticleBuilder extends AbstractParticleBuilder<ScreenParticl
     }
 
     @Override
+    public ScreenParticleBuilder setLifeDelayModifier(Int2IntFunction modifier) {
+        return (ScreenParticleBuilder) super.setLifeDelayModifier(modifier);
+    }
+
+    @Override
     public ScreenParticleBuilder multiplyLifetime(float multiplier) {
         return (ScreenParticleBuilder) super.multiplyLifetime(multiplier);
     }
@@ -273,6 +277,11 @@ public class ScreenParticleBuilder extends AbstractParticleBuilder<ScreenParticl
     @Override
     public ScreenParticleBuilder modifyLifetime(Int2IntFunction modifier) {
         return (ScreenParticleBuilder) super.modifyLifetime(modifier);
+    }
+
+    @Override
+    public ScreenParticleBuilder setLifetimeModifier(Int2IntFunction modifier) {
+        return (ScreenParticleBuilder) super.setLifetimeModifier(modifier);
     }
 
     @Override
@@ -286,6 +295,11 @@ public class ScreenParticleBuilder extends AbstractParticleBuilder<ScreenParticl
     }
 
     @Override
+    public ScreenParticleBuilder setGravityModifier(Float2FloatFunction modifier) {
+        return (ScreenParticleBuilder) super.setGravityModifier(modifier);
+    }
+
+    @Override
     public ScreenParticleBuilder multiplyFriction(float multiplier) {
         return (ScreenParticleBuilder) super.multiplyFriction(multiplier);
     }
@@ -293,6 +307,11 @@ public class ScreenParticleBuilder extends AbstractParticleBuilder<ScreenParticl
     @Override
     public ScreenParticleBuilder modifyFriction(Float2FloatFunction modifier) {
         return (ScreenParticleBuilder) super.modifyFriction(modifier);
+    }
+
+    @Override
+    public ScreenParticleBuilder setFrictionModifier(Float2FloatFunction modifier) {
+        return (ScreenParticleBuilder) super.setFrictionModifier(modifier);
     }
 
     @Override

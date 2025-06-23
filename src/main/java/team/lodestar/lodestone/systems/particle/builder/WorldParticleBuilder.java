@@ -563,6 +563,11 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
     }
 
     @Override
+    public WorldParticleBuilder setLifeDelayModifier(Int2IntFunction modifier) {
+        return (WorldParticleBuilder) super.setLifeDelayModifier(modifier);
+    }
+
+    @Override
     public WorldParticleBuilder multiplyLifetime(float multiplier) {
         return (WorldParticleBuilder) super.multiplyLifetime(multiplier);
     }
@@ -570,6 +575,11 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
     @Override
     public WorldParticleBuilder modifyLifetime(Int2IntFunction modifier) {
         return (WorldParticleBuilder) super.modifyLifetime(modifier);
+    }
+
+    @Override
+    public WorldParticleBuilder setLifetimeModifier(Int2IntFunction modifier) {
+        return (WorldParticleBuilder) super.setLifetimeModifier(modifier);
     }
 
     @Override
@@ -583,6 +593,11 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
     }
 
     @Override
+    public WorldParticleBuilder setGravityModifier(Float2FloatFunction modifier) {
+        return (WorldParticleBuilder) super.setGravityModifier(modifier);
+    }
+
+    @Override
     public WorldParticleBuilder multiplyFriction(float multiplier) {
         return (WorldParticleBuilder) super.multiplyFriction(multiplier);
     }
@@ -590,6 +605,11 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
     @Override
     public WorldParticleBuilder modifyFriction(Float2FloatFunction modifier) {
         return (WorldParticleBuilder) super.modifyFriction(modifier);
+    }
+
+    @Override
+    public WorldParticleBuilder setFrictionModifier(Float2FloatFunction modifier) {
+        return (WorldParticleBuilder) super.setFrictionModifier(modifier);
     }
 
     @Override
