@@ -12,7 +12,6 @@ import team.lodestar.lodestone.systems.particle.render_types.LodestoneScreenPart
 import team.lodestar.lodestone.systems.particle.screen.LodestoneScreenParticle;
 import team.lodestar.lodestone.systems.particle.screen.ScreenParticleHolder;
 import team.lodestar.lodestone.systems.particle.screen.ScreenParticleType;
-
 import java.util.*;
 import java.util.function.*;
 
