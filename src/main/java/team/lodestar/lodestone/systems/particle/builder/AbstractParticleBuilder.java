@@ -130,6 +130,10 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
         return setLifeDelayModifier(getParticleOptions().lifeDelayModifier.andThenInt(modifier));
     }
 
+    public AbstractParticleBuilder<T> setLifeDelayModifier(float multiplier) {
+        return setLifeDelayModifier(f -> (int) (f * multiplier));
+    }
+
     public AbstractParticleBuilder<T> setLifeDelayModifier(Int2IntFunction modifier) {
         getParticleOptions().lifeDelayModifier = modifier;
         return this;
@@ -141,6 +145,10 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
 
     public AbstractParticleBuilder<T> modifyLifetime(Int2IntFunction modifier) {
         return setLifetimeModifier(getParticleOptions().lifetimeModifier.andThenInt(modifier));
+    }
+
+    public AbstractParticleBuilder<T> setLifetimeModifier(float multiplier) {
+        return setLifetimeModifier(f -> (int) (f * multiplier));
     }
 
     public AbstractParticleBuilder<T> setLifetimeModifier(Int2IntFunction modifier) {
@@ -156,11 +164,14 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
         return setGravityModifier(getParticleOptions().gravityModifier.andThenFloat(modifier));
     }
 
+    public AbstractParticleBuilder<T> setGravityModifier(float multiplier) {
+        return setGravityModifier(f -> (int) (f * multiplier));
+    }
+
     public AbstractParticleBuilder<T> setGravityModifier(Float2FloatFunction modifier) {
         getParticleOptions().gravityModifier = modifier;
         return this;
     }
-    
 
     public AbstractParticleBuilder<T> multiplyFriction(float multiplier) {
         return modifyFriction(f -> f * multiplier);
@@ -168,6 +179,10 @@ public abstract class AbstractParticleBuilder<T extends SimpleParticleOptions> {
 
     public AbstractParticleBuilder<T> modifyFriction(Float2FloatFunction modifier) {
         return setFrictionModifier(getParticleOptions().frictionModifier.andThenFloat(modifier));
+    }
+
+    public AbstractParticleBuilder<T> setFrictionModifier(float multiplier) {
+        return setFrictionModifier(f -> (int) (f * multiplier));
     }
     
     public AbstractParticleBuilder<T> setFrictionModifier(Float2FloatFunction modifier) {

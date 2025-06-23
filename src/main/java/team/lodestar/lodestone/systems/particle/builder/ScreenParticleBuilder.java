@@ -264,6 +264,11 @@ public class ScreenParticleBuilder extends AbstractParticleBuilder<ScreenParticl
     }
 
     @Override
+    public ScreenParticleBuilder setLifeDelayModifier(float multiplier) {
+        return (ScreenParticleBuilder) super.setLifeDelayModifier(multiplier);
+    }
+
+    @Override
     public ScreenParticleBuilder setLifeDelayModifier(Int2IntFunction modifier) {
         return (ScreenParticleBuilder) super.setLifeDelayModifier(modifier);
     }
@@ -276,6 +281,11 @@ public class ScreenParticleBuilder extends AbstractParticleBuilder<ScreenParticl
     @Override
     public ScreenParticleBuilder modifyLifetime(Int2IntFunction modifier) {
         return (ScreenParticleBuilder) super.modifyLifetime(modifier);
+    }
+
+    @Override
+    public ScreenParticleBuilder setLifetimeModifier(float multiplier) {
+        return (ScreenParticleBuilder) super.setLifetimeModifier(multiplier);
     }
 
     @Override
@@ -294,6 +304,11 @@ public class ScreenParticleBuilder extends AbstractParticleBuilder<ScreenParticl
     }
 
     @Override
+    public ScreenParticleBuilder setGravityModifier(float multiplier) {
+        return (ScreenParticleBuilder) super.setGravityModifier(multiplier);
+    }
+
+    @Override
     public ScreenParticleBuilder setGravityModifier(Float2FloatFunction modifier) {
         return (ScreenParticleBuilder) super.setGravityModifier(modifier);
     }
@@ -306,6 +321,11 @@ public class ScreenParticleBuilder extends AbstractParticleBuilder<ScreenParticl
     @Override
     public ScreenParticleBuilder modifyFriction(Float2FloatFunction modifier) {
         return (ScreenParticleBuilder) super.modifyFriction(modifier);
+    }
+
+    @Override
+    public ScreenParticleBuilder setFrictionModifier(float multiplier) {
+        return (ScreenParticleBuilder) super.setFrictionModifier(multiplier);
     }
 
     @Override
