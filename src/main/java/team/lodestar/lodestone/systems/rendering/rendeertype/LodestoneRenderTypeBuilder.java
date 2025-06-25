@@ -24,7 +24,7 @@ public class LodestoneRenderTypeBuilder {
             uniformHandler = new ShaderUniformHandler();
             modifier.accept(uniformHandler);
         }
-        return this;
+        return withUniformHandler(uniformHandler);
     }
     public LodestoneRenderTypeBuilder withUniformHandler(ShaderUniformHandler uniformHandler) {
         this.uniformHandler = uniformHandler;
