@@ -41,16 +41,7 @@ public class ShaderUniformHandler {
             newValues[i] = values[i];
         }
 
-        uniformChanges.merge(
-                uniformName,
-                newValues,
-                (existing, toAppend) -> {
-                    Float[] combined = Arrays.copyOf(existing, existing.length + toAppend.length);
-                    System.arraycopy(toAppend, 0, combined, existing.length, toAppend.length);
-                    return combined;
-                }
-        );
-
+        uniformChanges.put(uniformName, newValues);
         return this;
     }
 
