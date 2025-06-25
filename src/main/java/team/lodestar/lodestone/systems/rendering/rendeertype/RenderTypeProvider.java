@@ -78,6 +78,9 @@ public class RenderTypeProvider {
     }
 
     public boolean checkNuclear() {
+        if (cache.size() >= 200) {
+            return true;
+        }
         int maxCalls = 1000;
         long thresholdMillis = 5000;
         if (nuclearTimeCache == 0) {
