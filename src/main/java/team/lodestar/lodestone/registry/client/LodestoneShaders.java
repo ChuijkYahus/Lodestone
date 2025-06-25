@@ -17,24 +17,24 @@ import static team.lodestar.lodestone.LodestoneLib.lodestonePath;
 public class LodestoneShaders {
 
     public static ShaderHolder LODESTONE_TEXTURE = new ShaderHolder(lodestonePath("lodestone_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, "LumiTransparency");
-    public static ShaderHolder DISTORTED_TEXTURE = new ShaderHolder(lodestonePath("distorted_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP , "Speed", "TimeOffset", "Intensity", "XFrequency", "YFrequency", "UVCoordinates");
+    public static ShaderHolder DISTORTED_TEXTURE = new ShaderHolder(lodestonePath("distorted_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP , "LumiTransparency", "Speed", "TimeOffset", "Intensity", "XFrequency", "YFrequency", "UVCoordinates");
     public static ShaderHolder TEXTURE_FADE = new ShaderHolder(lodestonePath("texture_fade"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, "LumiTransparency");
     public static ShaderHolder LODESTONE_TEXT = new ShaderHolder(lodestonePath("lodestone_text"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP);
 
     public static ShaderHolder PARTICLE = new ShaderHolder(lodestonePath("particle/lodestone_particle"), DefaultVertexFormat.PARTICLE, "LumiTransparency", "DepthFade");
 
     public static ShaderHolder SCREEN_PARTICLE = new ShaderHolder(lodestonePath("screen/screen_particle"), DefaultVertexFormat.POSITION_TEX_COLOR);
-    public static ShaderHolder SCREEN_DISTORTED_TEXTURE = new ShaderHolder(lodestonePath("screen/screen_distorted_texture"), DefaultVertexFormat.POSITION_TEX_COLOR , "Speed", "TimeOffset", "Intensity", "XFrequency", "YFrequency", "UVCoordinates");
+    public static ShaderHolder SCREEN_DISTORTED_TEXTURE = new ShaderHolder(lodestonePath("screen/screen_distorted_texture"), DefaultVertexFormat.POSITION_TEX_COLOR , "LumiTransparency", "Speed", "TimeOffset", "Intensity", "XFrequency", "YFrequency", "UVCoordinates");
 
     public static ShaderHolder TRIANGLE_TEXTURE = new ShaderHolder(lodestonePath("shapes/triangle_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, "LumiTransparency");
     public static ShaderHolder TWO_SIDED_TRIANGLE_TEXTURE = new ShaderHolder(lodestonePath("shapes/two_sided_triangle_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, "LumiTransparency");
     public static ShaderHolder ROUNDED_TRIANGLE_TEXTURE = new ShaderHolder(lodestonePath("shapes/rounded_triangle_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, "LumiTransparency");
 
-    public static ShaderHolder SCROLLING_TEXTURE = new ShaderHolder(lodestonePath("shapes/scrolling_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, "Speed", "LumiTransparency");
-    public static ShaderHolder SCROLLING_TRIANGLE_TEXTURE = new ShaderHolder(lodestonePath("shapes/scrolling_triangle_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, "Speed", "LumiTransparency");
+    public static ShaderHolder SCROLLING_TEXTURE = new ShaderHolder(lodestonePath("shapes/scrolling_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, "LumiTransparency", "Speed");
+    public static ShaderHolder SCROLLING_TRIANGLE_TEXTURE = new ShaderHolder(lodestonePath("shapes/scrolling_triangle_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, "LumiTransparency", "Speed");
 
     public static ShaderHolder NINE_SLICE = new ShaderHolder(lodestonePath("nineslice/nine_slice"), DefaultVertexFormat.POSITION_TEX);
-    public static ShaderHolder DISTORTED_NINE_SLICE_TEXTURE = new ShaderHolder(lodestonePath("nineslice/distorted/distorted_nine_slice_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP , "Speed", "TimeOffset", "Intensity", "XFrequency", "YFrequency", "UVCoordinates");
+    public static ShaderHolder DISTORTED_NINE_SLICE_TEXTURE = new ShaderHolder(lodestonePath("nineslice/distorted/distorted_nine_slice_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP , "LumiTransparency", "Speed", "TimeOffset", "Intensity", "XFrequency", "YFrequency", "UVCoordinates");
 
 
     @SubscribeEvent
