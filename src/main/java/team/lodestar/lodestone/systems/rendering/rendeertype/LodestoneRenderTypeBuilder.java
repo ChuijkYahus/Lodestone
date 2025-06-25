@@ -17,6 +17,15 @@ public class LodestoneRenderTypeBuilder {
         this.token = token;
     }
 
+    public LodestoneRenderTypeBuilder withUniformHandler(Consumer<ShaderUniformHandler> modifier) {
+        if (uniformHandler != null) {
+            modifier.accept(uniformHandler);
+        } else {
+            uniformHandler = new ShaderUniformHandler();
+            modifier.accept(uniformHandler);
+        }
+        return this;
+    }
     public LodestoneRenderTypeBuilder withUniformHandler(ShaderUniformHandler uniformHandler) {
         this.uniformHandler = uniformHandler;
         token = token.addUniformHandler(uniformHandler);
