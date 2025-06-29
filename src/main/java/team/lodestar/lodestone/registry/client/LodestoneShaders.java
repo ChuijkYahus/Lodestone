@@ -36,6 +36,7 @@ public class LodestoneShaders {
     public static ShaderHolder NINE_SLICE = new ShaderHolder(lodestonePath("nineslice/nine_slice"), DefaultVertexFormat.POSITION_TEX);
     public static ShaderHolder DISTORTED_NINE_SLICE_TEXTURE = new ShaderHolder(lodestonePath("nineslice/distorted/distorted_nine_slice_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP , "LumiTransparency", "Speed", "TimeOffset", "Intensity", "XFrequency", "YFrequency", "UVCoordinates");
 
+    public static ShaderHolder RADIAL_DISTORTED_SCREEN_LIGHT = new ShaderHolder(lodestonePath("screen/radial_distorted_light"), DefaultVertexFormat.POSITION_TEX_COLOR , "Speed", "TimeOffset", "Intensity", "XFrequency", "YFrequency", "UVCoordinates", "Angle", "LightAngleRange", "LightIntensity");
 
     @SubscribeEvent
     public static void shaderRegistry(RegisterShadersEvent event) {
@@ -60,6 +61,8 @@ public class LodestoneShaders {
 
         registerShader(event, NINE_SLICE);
         registerShader(event, DISTORTED_NINE_SLICE_TEXTURE);
+
+        registerShader(event, RADIAL_DISTORTED_SCREEN_LIGHT);
     }
 
     public static void registerShader(RegisterShadersEvent event, ShaderHolder shaderHolder) {

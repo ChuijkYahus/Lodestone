@@ -1,0 +1,52 @@
+#version 150
+
+#moj_import <lodestone:common_math.glsl>
+
+uniform float GameTime;
+uniform float TimeOffset;
+uniform float Speed;
+uniform float Intensity;
+uniform float XFrequency;
+uniform float YFrequency;
+uniform vec4 UVCoordinates;
+uniform int Angle;
+uniform float LightAngleRange;
+uniform float LightIntensity;
+
+uniform vec4 ColorModulator;
+
+in vec4 vertexColor;
+in vec2 texCoord0;
+
+out vec4 fragColor;
+
+float getLightDirection(vec2 uv, float angle) {
+    vec2 p = uv * 2.0 - 1.0;
+    p = normalize(p);
+    float angleRad = radians(angle - 90.0);
+    float directionalLight = dot(p, vec2(cos(angleRad), sin(angleRad)));
+    return acos(directionalLight);
+}
+
+float remap(float value, float fromMin, float fromMax, float toMin, float toMax) {
+    return toMin + (value - fromMin) * (toMax - toMin) / (fromMax - fromMin);
+}
+
+void main() {
+    float time = GameTime * Speed + TimeOffset;
+    vec2 uv = texCoord0;
+    vec2 uCap = vec2(UVCoordinates.x, UVCoordinates.y);
+    vec2 vCap = vec2(UVCoordinates.z, UVCoordinates.w);
+
+    uv.x += cos(uv.y*XFrequency+time)/Intensity;
+    uv.y += sin(uv.x*YFrequency+time)/Intensity;
+
+    uv.x = clamp(uv.x, uCap.x, uCap.y);
+    uv.y = clamp(uv.y, vCap.x, vCap.y);
+
+    float angle = degrees(getLightDirection(uv, float(Angle)));
+    float range = LightAngleRange * 0.5;
+
+    float v = remap(angle, 0.0, range, LightIntensity, 0.0);
+    fragColor = vec4(mix(vec3(0), vertexColor.rgb*v, step(angle, range)), 1.0);
+}
