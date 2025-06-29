@@ -16,6 +16,7 @@ import team.lodestar.lodestone.systems.rendering.cube.*;
 import team.lodestar.lodestone.systems.rendering.rendeertype.*;
 import team.lodestar.lodestone.systems.rendering.trail.*;
 
+import javax.annotation.*;
 import java.awt.*;
 import java.lang.Math;
 import java.util.*;
@@ -57,13 +58,20 @@ public class VFXBuilders {
             Vector3f normal = normal(stack);
             placeVertex(consumer, stack.last(), builder, normal, x, y, z, u, v);
         }
+
+        default void placeVertex(VertexConsumer consumer, PoseStack.Pose pose, AbstractVFXBuilder builder, float x, float y, float z, float u, float v) {
+            placeVertex(consumer, pose, builder, null, x, y, z, u, v);
+        }
+
         default void placeVertex(VertexConsumer consumer, AbstractVFXBuilder builder, Vector3f normal, float x, float y, float z, float u, float v) {
             placeVertex(consumer, null, builder, normal, x, y, z, u, v);
         }
+
         default void placeVertex(VertexConsumer consumer, AbstractVFXBuilder builder, float x, float y, float z, float u, float v) {
             placeVertex(consumer, builder, null, x, y, z, u, v);
         }
     }
+
 
     public static Vector3f normal(PoseStack stack) {
         return normal(stack.last().normal());
@@ -548,38 +556,38 @@ public class VFXBuilders {
             return supplier;
         }
 
-        public WorldVFXBuilder renderBeam(BlockPos start, BlockPos end, float width) {
-            return renderBeam(start.getCenter(), end.getCenter(), width);
+        public WorldVFXBuilder renderBeam(@Nullable PoseStack.Pose last, BlockPos start, BlockPos end, float width) {
+            return renderBeam(last, start.getCenter(), end.getCenter(), width);
         }
 
-        public WorldVFXBuilder renderBeam(Vec3 start, Vec3 end, float width) {
+        public WorldVFXBuilder renderBeam(@Nullable PoseStack.Pose last, Vec3 start, Vec3 end, float width) {
             Minecraft minecraft = Minecraft.getInstance();
             Vec3 cameraPosition = minecraft.getBlockEntityRenderDispatcher().camera.getPosition();
-            return renderBeam(start, end, width, cameraPosition);
+            return renderBeam(last, start, end, width, cameraPosition);
         }
 
-        public WorldVFXBuilder renderBeam(Vec3 start, Vec3 end, float width, Consumer<WorldVFXBuilder> consumer) {
+        public WorldVFXBuilder renderBeam(@Nullable PoseStack.Pose last, Vec3 start, Vec3 end, float width, Consumer<WorldVFXBuilder> consumer) {
             Minecraft minecraft = Minecraft.getInstance();
             Vec3 cameraPosition = minecraft.getBlockEntityRenderDispatcher().camera.getPosition();
-            return renderBeam(start, end, width, cameraPosition, consumer);
+            return renderBeam(last, start, end, width, cameraPosition, consumer);
         }
 
-        public WorldVFXBuilder renderBeam(Vec3 start, Vec3 end, float width, Vec3 cameraPosition) {
-            return renderBeam(start, end, width, cameraPosition, builder -> {
+        public WorldVFXBuilder renderBeam(@Nullable PoseStack.Pose last, Vec3 start, Vec3 end, float width, Vec3 cameraPosition) {
+            return renderBeam(last, start, end, width, cameraPosition, builder -> {
             });
         }
 
-        public WorldVFXBuilder renderBeam(Vec3 start, Vec3 end, float width, Vec3 cameraPosition, Consumer<WorldVFXBuilder> consumer) {
+        public WorldVFXBuilder renderBeam(@Nullable PoseStack.Pose last, Vec3 start, Vec3 end, float width, Vec3 cameraPosition, Consumer<WorldVFXBuilder> consumer) {
             Vec3 delta = end.subtract(start);
             Vec3 normal = start.subtract(cameraPosition).cross(delta).normalize().multiply(width / 2f, width / 2f, width / 2f);
 
             Vec3[] positions = new Vec3[]{start.subtract(normal), start.add(normal), end.add(normal), end.subtract(normal)};
 
-            supplier.placeVertex(getVertexConsumer(), this, (float) positions[0].x, (float) positions[0].y, (float) positions[0].z, u0, v1);
-            supplier.placeVertex(getVertexConsumer(), this, (float) positions[1].x, (float) positions[1].y, (float) positions[1].z, u1, v1);
+            supplier.placeVertex(getVertexConsumer(), last, this, (float) positions[0].x, (float) positions[0].y, (float) positions[0].z, u0, v1);
+            supplier.placeVertex(getVertexConsumer(), last, this, (float) positions[1].x, (float) positions[1].y, (float) positions[1].z, u1, v1);
             consumer.accept(this);
-            supplier.placeVertex(getVertexConsumer(), this, (float) positions[2].x, (float) positions[2].y, (float) positions[2].z, u1, v0);
-            supplier.placeVertex(getVertexConsumer(), this, (float) positions[3].x, (float) positions[3].y, (float) positions[3].z, u0, v0);
+            supplier.placeVertex(getVertexConsumer(), last, this, (float) positions[2].x, (float) positions[2].y, (float) positions[2].z, u1, v0);
+            supplier.placeVertex(getVertexConsumer(), last, this, (float) positions[3].x, (float) positions[3].y, (float) positions[3].z, u0, v0);
             return this;
         }
 
