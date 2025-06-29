@@ -69,7 +69,7 @@ public class SparkParticleBehavior implements LodestoneParticleBehavior {
                 .setUV(particle.getU0(), particle.getV0(), particle.getU1(), particle.getV1())
                 .setColor(particle.getRed(), particle.getGreen(), particle.getBlue())
                 .setAlpha(particle.getAlpha())
-                .renderBeam(null, movingFrom, movingTo, particle.getQuadSize(partialTicks), Vec3.ZERO);
+                .renderBeam(movingFrom, movingTo, particle.getQuadSize(partialTicks), Vec3.ZERO);
     }
 
     public Vec3 getDirection(LodestoneWorldParticle particle) {

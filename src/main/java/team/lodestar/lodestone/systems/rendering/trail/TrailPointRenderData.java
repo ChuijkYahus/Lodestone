@@ -2,8 +2,8 @@ package team.lodestar.lodestone.systems.rendering.trail;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.world.phys.Vec2;
-import org.joml.Vector4f;
-import team.lodestar.lodestone.systems.rendering.VFXBuilders;
+import org.joml.*;
+import team.lodestar.lodestone.systems.rendering.*;
 
 public class TrailPointRenderData {
 
@@ -26,13 +26,13 @@ public class TrailPointRenderData {
     }
 
     public void renderStart(VertexConsumer vertexConsumer, VFXBuilders.WorldVFXBuilder builder, float u0, float v0, float u1) {
-        builder.getSupplier().placeVertex(vertexConsumer, null, builder, xp, yp, z, u0, v0);
-        builder.getSupplier().placeVertex(vertexConsumer, null, builder, xn, yn, z, u1, v0);
+        builder.getSupplier().placeVertex(vertexConsumer, builder, xp, yp, z, u0, v0);
+        builder.getSupplier().placeVertex(vertexConsumer, builder, xn, yn, z, u1, v0);
     }
 
     public void renderEnd(VertexConsumer vertexConsumer, VFXBuilders.WorldVFXBuilder builder, float u0, float u1, float v1) {
-        builder.getSupplier().placeVertex(vertexConsumer, null, builder, xn, yn, z, u1, v1);
-        builder.getSupplier().placeVertex(vertexConsumer, null, builder, xp, yp, z, u0, v1);
+        builder.getSupplier().placeVertex(vertexConsumer, builder, xn, yn, z, u1, v1);
+        builder.getSupplier().placeVertex(vertexConsumer, builder, xp, yp, z, u0, v1);
     }
 
     public void renderMid(VertexConsumer vertexConsumer, VFXBuilders.WorldVFXBuilder builder, float u0, float v0, float u1, float v1) {

@@ -21,7 +21,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@SuppressWarnings("unused")
 public class RenderHelper {
     public static final int FULL_BRIGHT = 15728880;
 
@@ -40,30 +39,6 @@ public class RenderHelper {
             return compositeRenderType.state.transparencyState;
         }
         return null;
-    }
-
-    public static void vertexPos(VertexConsumer vertexConsumer, Matrix4f last, float x, float y, float z) {
-        vertexConsumer.addVertex(last, x, y, z);
-    }
-
-    public static void vertexPosUV(VertexConsumer vertexConsumer, Matrix4f last, float x, float y, float z, float u, float v) {
-        vertexConsumer.addVertex(last, x, y, z).setUv(u, v);
-    }
-
-    public static void vertexPosUVLight(VertexConsumer vertexConsumer, Matrix4f last, float x, float y, float z, float u, float v, int light) {
-        vertexConsumer.addVertex(last, x, y, z).setUv(u, v).setLight(light);
-    }
-
-    public static void vertexPosColor(VertexConsumer vertexConsumer, Matrix4f last, float x, float y, float z, float r, float g, float b, float a) {
-        vertexConsumer.addVertex(last, x, y, z).setColor(r, g, b, a);
-    }
-
-    public static void vertexPosColorUV(VertexConsumer vertexConsumer, Matrix4f last, float x, float y, float z, float r, float g, float b, float a, float u, float v) {
-        vertexConsumer.addVertex(last, x, y, z).setColor(r, g, b, a).setUv(u, v);
-    }
-
-    public static void vertexPosColorUVLight(VertexConsumer vertexConsumer, Matrix4f last, float x, float y, float z, float r, float g, float b, float a, float u, float v, int light) {
-        vertexConsumer.addVertex(last, x, y, z).setColor(r, g, b, a).setUv(u, v).setLight(light);
     }
 
     public static Vector3f parametricSphere(float u, float v, float r) {
@@ -130,7 +105,7 @@ public class RenderHelper {
      **/
 
     public static void drawSteppedLineBetween(MultiBufferSource buffer, PoseStack ps, List<Vec3> points, float lineWidth, int r, int g, int b, int a) {
-        Vec3 origin = points.get(0);
+        Vec3 origin = points.getFirst();
         for (int i = 1; i < points.size(); i++) {
             Vec3 target = points.get(i);
             drawLineBetween(buffer, ps, origin, target, lineWidth, r, g, b, a);
