@@ -8,6 +8,7 @@ import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import org.apache.commons.io.IOUtils;
 import team.lodestar.lodestone.systems.rendering.IBufferObject;
 import team.lodestar.lodestone.systems.rendering.LodestoneRenderSystem;
+import team.lodestar.lodestone.systems.rendering.shader.LodestoneShader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 import static org.lwjgl.opengl.GL43.*;
 
-public class ComputeProgram implements IBufferObject {
+public class ComputeProgram implements IBufferObject, LodestoneShader {
     private int programId;
     private Shader shader;
     private ResourceLocation shaderLocation;
@@ -31,6 +32,7 @@ public class ComputeProgram implements IBufferObject {
         this.registerBufferObject();
     }
 
+    @Override
     public void register(RegisterShadersEvent event) {
         loadConstraints();
         this.loadShader(event.getResourceProvider());

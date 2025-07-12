@@ -5,6 +5,8 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
+import net.neoforged.neoforge.client.event.RegisterShadersEvent;
+import team.lodestar.lodestone.LodestoneLib;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class ShaderHolder {
+public class ShaderHolder implements LodestoneShader {
 
     public final ResourceLocation shaderLocation;
     public final VertexFormat shaderFormat;
@@ -49,5 +51,16 @@ public class ShaderHolder {
 
     public RenderStateShard.ShaderStateShard getShard() {
         return shard;
+    }
+
+    @Override
+    public void register(RegisterShadersEvent event) {
+        try {
+            ResourceProvider provider = event.getResourceProvider();
+            event.registerShader(this.createInstance(provider), this::setShaderInstance);
+        } catch (IOException e) {
+            LodestoneLib.LOGGER.error("Error registering shader", e);
+            e.printStackTrace();
+        }
     }
 }
