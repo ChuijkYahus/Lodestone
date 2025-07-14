@@ -20,7 +20,6 @@ import javax.annotation.*;
 import java.awt.*;
 import java.lang.Math;
 import java.util.*;
-import java.util.List;
 import java.util.function.*;
 
 public class VFXBuilders {
@@ -591,22 +590,23 @@ public class VFXBuilders {
             return this;
         }
 
-        public WorldVFXBuilder renderTrail(Matrix4f pose, TrailPointBuilder trailPoints, float width) {
-            return renderTrail(pose, trailPoints, f -> width, f -> {
+        public WorldVFXBuilder renderTrail(TrailPointBuilder trailPoints, float width) {
+            return renderTrail(trailPoints, f -> width, f -> {
             });
         }
 
-        public WorldVFXBuilder renderTrail(Matrix4f pose, TrailPointBuilder trailPoints, Function<Float, Float> widthFunc) {
-            return renderTrail(pose, trailPoints, widthFunc, f -> {
+        public WorldVFXBuilder renderTrail(TrailPointBuilder trailPoints, Function<Float, Float> widthFunc) {
+            return renderTrail(trailPoints, widthFunc, f -> {
             });
         }
 
-        public WorldVFXBuilder renderTrail(Matrix4f pose, TrailPointBuilder builder, Function<Float, Float> widthFunc, Consumer<Float> vfxOperator) {
-            java.util.List<TrailPoint> trailPoints = builder.getTrailPoints();
+        public WorldVFXBuilder renderTrail(TrailPointBuilder builder, Function<Float, Float> widthFunc, Consumer<Float> vfxOperator) {
+            var pose = RenderHandler.MODEL_VIEW;
+            var trailPoints = builder.getTrailPoints();
             if (trailPoints.size() < 2) {
                 return this;
             }
-            List<Vector4f> positions = usePartialTicks ? builder.build(pose, partialTicks) : builder.build(pose);
+            var positions = usePartialTicks ? builder.build(pose, partialTicks) : builder.build(pose);
             positions.getLast().set(TrailPoint.getMatrixPosition(builder.getOrigin(), pose));
             int count = trailPoints.size() - 1;
             float increment = 1.0F / count;

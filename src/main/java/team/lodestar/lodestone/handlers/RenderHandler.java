@@ -36,8 +36,7 @@ public class RenderHandler {
     public static LodestoneRenderLayer DELAYED_RENDER = new LodestoneRenderLayer(BUFFERS, PARTICLE_BUFFERS);
     public static LodestoneRenderLayer LATE_DELAYED_RENDER = new LodestoneRenderLayer(LATE_BUFFERS, LATE_PARTICLE_BUFFERS);
 
-    public static Matrix4f MAIN_PROJ;
-    public static Matrix4f MATRIX4F;
+    public static Matrix4f MODEL_VIEW;
 
     public static float FOG_NEAR;
     public static float FOG_FAR;
@@ -55,6 +54,10 @@ public class RenderHandler {
         }
     }
 
+    public static void cacheModelViewMatrix(Matrix4f modelViewMatrix) {
+        MODEL_VIEW = new Matrix4f(modelViewMatrix);
+    }
+
     public static void endBatches() {
         copyDepthBuffer(LODESTONE_DEPTH_CACHE);
         endBatches(DELAYED_RENDER);
@@ -64,8 +67,16 @@ public class RenderHandler {
     public static void endBatches(LodestoneRenderLayer renderLayer) {
         beginBufferedRendering();
         renderBufferedParticles(renderLayer, true);
+        Matrix4f cache = null;
+        if (MODEL_VIEW != null) {
+            cache = new Matrix4f(RenderSystem.getModelViewMatrix());
+            RenderSystem.getModelViewMatrix().set(new PoseStack().last().pose());
+        }
         renderBufferedBatches(renderLayer, true);
         renderBufferedBatches(renderLayer, false);
+        if (cache != null) {
+            RenderSystem.getModelViewMatrix().set(cache);
+        }
         renderBufferedParticles(renderLayer, false);
         endBufferedRendering();
     }
