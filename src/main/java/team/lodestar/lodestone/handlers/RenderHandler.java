@@ -7,9 +7,11 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.*;
 import net.minecraft.client.renderer.*;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL30C;
 import team.lodestar.lodestone.helpers.RenderHelper;
 import team.lodestar.lodestone.systems.rendering.rendeertype.ShaderUniformHandler;
@@ -17,7 +19,7 @@ import team.lodestar.lodestone.systems.rendering.shader.ExtendedShaderInstance;
 
 import java.util.*;
 
-import static team.lodestar.lodestone.systems.rendering.StateShards.NORMAL_TRANSPARENCY;
+import static team.lodestar.lodestone.systems.rendering.StateShards.ADDITIVE_TRANSPARENCY;
 
 /**
  * A handler responsible for all the backend rendering processes.
@@ -30,7 +32,9 @@ public class RenderHandler {
     public static final SequencedMap<RenderType, ByteBufferBuilder> LATE_BUFFERS = new LinkedHashMap<>();
     public static final SequencedMap<RenderType, ByteBufferBuilder> LATE_PARTICLE_BUFFERS = new LinkedHashMap<>();
     public static final HashMap<RenderType, ShaderUniformHandler> UNIFORM_HANDLERS = new HashMap<>();
-    public static final Collection<RenderType> TRANSPARENT_RENDER_TYPES = new ArrayList<>();
+
+    public static final Collection<RenderType> ADDITIVE_RENDER_TYPES = new ArrayList<>();
+    public static final Collection<RenderType> OTHER_RENDER_TYPES = new ArrayList<>();
 
     public static RenderTarget LODESTONE_DEPTH_CACHE;
     public static LodestoneRenderLayer DELAYED_RENDER = new LodestoneRenderLayer(BUFFERS, PARTICLE_BUFFERS);
@@ -66,18 +70,26 @@ public class RenderHandler {
 
     public static void endBatches(LodestoneRenderLayer renderLayer) {
         beginBufferedRendering();
-        renderBufferedParticles(renderLayer, true);
-        Matrix4f cache = null;
+        renderNonAdditives(renderLayer.getParticleTarget());
+        Matrix4f modelViewMatrix = RenderSystem.getModelViewMatrix();
         if (MODEL_VIEW != null) {
-            cache = new Matrix4f(RenderSystem.getModelViewMatrix());
-            RenderSystem.getModelViewMatrix().set(new PoseStack().last().pose());
+            Matrix4f pose = new PoseStack().last().pose();
+            Vec3 position = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+            float x = (float) position.x;
+            float y = (float) position.y;
+            float z = (float) position.z;
+            Vector4f p = new Vector4f(x, y, z, 0).mul(MODEL_VIEW);
+            pose.translate(-p.x, -p.y, -p.z);
+            modelViewMatrix.set(pose);
+
         }
-        renderBufferedBatches(renderLayer, true);
-        renderBufferedBatches(renderLayer, false);
-        if (cache != null) {
-            RenderSystem.getModelViewMatrix().set(cache);
-        }
-        renderBufferedParticles(renderLayer, false);
+        //This Renders the scarf
+        renderNonAdditives(renderLayer.getTarget());
+
+        //We don't care about this stuff right now
+        renderAdditives(renderLayer.getTarget());
+        modelViewMatrix.set(MODEL_VIEW);
+        renderAdditives(renderLayer.getParticleTarget());
         endBufferedRendering();
     }
 
@@ -123,22 +135,15 @@ public class RenderHandler {
         RenderSystem.setShaderFogColor(FOG_RED, FOG_GREEN, FOG_BLUE);
     }
 
-    public static void renderBufferedParticles(LodestoneRenderLayer renderLayer, boolean transparentOnly) {
-        renderBufferedBatches(renderLayer.getParticleTarget(), renderLayer.getParticleBuffers(), transparentOnly);
+    public static void renderAdditives(MultiBufferSource.BufferSource target) {
+        renderBufferedBatches(target, ADDITIVE_RENDER_TYPES);
+    }
+    public static void renderNonAdditives(MultiBufferSource.BufferSource target) {
+        renderBufferedBatches(target, OTHER_RENDER_TYPES);
     }
 
-    public static void renderBufferedBatches(LodestoneRenderLayer renderLayer, boolean transparentOnly) {
-        renderBufferedBatches(renderLayer.getTarget(), renderLayer.getBuffers(), transparentOnly);
-    }
-
-    private static void renderBufferedBatches(MultiBufferSource.BufferSource bufferSource, SequencedMap<RenderType, ByteBufferBuilder> buffer, boolean transparentOnly) {
-        if (transparentOnly) {
-            endBatches(bufferSource, TRANSPARENT_RENDER_TYPES);
-        } else {
-            Collection<RenderType> nonTransparentRenderTypes = new ArrayList<>(buffer.keySet());
-            nonTransparentRenderTypes.removeIf(TRANSPARENT_RENDER_TYPES::contains);
-            endBatches(bufferSource, nonTransparentRenderTypes);
-        }
+    private static void renderBufferedBatches(MultiBufferSource.BufferSource bufferSource, Collection<RenderType> renderTypes) {
+        endBatches(bufferSource, renderTypes);
     }
 
     public static void endBatches(MultiBufferSource.BufferSource source, Collection<RenderType> renderTypes) {
@@ -167,13 +172,16 @@ public class RenderHandler {
 
     //TODO: offer some actual option here to decide if particle or not
     public static void addRenderType(RenderType renderType) {
-        final boolean isParticle = renderType.name.contains("particle");
+        boolean isParticle = renderType.name.contains("particle");
         SequencedMap<RenderType, ByteBufferBuilder> buffers = isParticle ? PARTICLE_BUFFERS : BUFFERS;
         SequencedMap<RenderType, ByteBufferBuilder> lateBuffers = isParticle ? LATE_PARTICLE_BUFFERS : LATE_BUFFERS;
         buffers.put(renderType, new ByteBufferBuilder(786432));
         lateBuffers.put(renderType, new ByteBufferBuilder(786432));
-        if (NORMAL_TRANSPARENCY.equals(RenderHelper.getTransparencyShard(renderType))) {
-            TRANSPARENT_RENDER_TYPES.add(renderType);
+        if (ADDITIVE_TRANSPARENCY.equals(RenderHelper.getTransparencyShard(renderType))) {
+            ADDITIVE_RENDER_TYPES.add(renderType);
+        }
+        else {
+            OTHER_RENDER_TYPES.add(renderType);
         }
     }
 
