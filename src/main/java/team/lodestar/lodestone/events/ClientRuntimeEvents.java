@@ -72,9 +72,6 @@ public class ClientRuntimeEvents {
         if (event.getStage().equals(RenderLevelStageEvent.Stage.AFTER_WEATHER)) {
             RenderHandler.endBatches();
         }
-
-
-        poseStack.popPose();
     }
 
     @SubscribeEvent

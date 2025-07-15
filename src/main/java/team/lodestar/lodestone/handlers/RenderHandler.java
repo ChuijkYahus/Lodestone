@@ -69,18 +69,16 @@ public class RenderHandler {
     }
 
     public static void endBatches(LodestoneRenderLayer renderLayer) {
+        Matrix4f modelViewMatrix = RenderSystem.getModelViewMatrix();
         beginBufferedRendering();
         renderNonAdditives(renderLayer.getParticleTarget());
-        Matrix4f modelViewMatrix = RenderSystem.getModelViewMatrix();
-        if (MODEL_VIEW != null) {
-            MODEL_VIEW = new Matrix4f(modelViewMatrix);
-            modelViewMatrix.set(new Matrix4f());
-        }
-        //This Renders the scarf
-        renderNonAdditives(renderLayer.getTarget());
 
-        //We don't care about this stuff right now
+        cacheModelViewMatrix(new Matrix4f(modelViewMatrix));
+        modelViewMatrix.set(new Matrix4f());
+
+        renderNonAdditives(renderLayer.getTarget());
         renderAdditives(renderLayer.getTarget());
+
         modelViewMatrix.set(MODEL_VIEW);
         renderAdditives(renderLayer.getParticleTarget());
         endBufferedRendering();
