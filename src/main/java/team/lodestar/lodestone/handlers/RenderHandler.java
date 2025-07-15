@@ -73,15 +73,8 @@ public class RenderHandler {
         renderNonAdditives(renderLayer.getParticleTarget());
         Matrix4f modelViewMatrix = RenderSystem.getModelViewMatrix();
         if (MODEL_VIEW != null) {
-            Matrix4f pose = new PoseStack().last().pose();
-            Vec3 position = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-            float x = (float) position.x;
-            float y = (float) position.y;
-            float z = (float) position.z;
-            Vector4f p = new Vector4f(x, y, z, 0).mul(MODEL_VIEW);
-            pose.translate(-p.x, -p.y, -p.z);
-            modelViewMatrix.set(pose);
-
+            MODEL_VIEW = new Matrix4f(modelViewMatrix);
+            modelViewMatrix.set(new Matrix4f());
         }
         //This Renders the scarf
         renderNonAdditives(renderLayer.getTarget());

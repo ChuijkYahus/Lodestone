@@ -23,26 +23,6 @@ import java.util.Iterator;
 
 public class WorldEventHandler {
 
-    public static class ClientOnly {
-        public static void renderWorldEvents(PoseStack stack, float partialTicks) {
-
-            if (Minecraft.getInstance().level != null) {
-                var worldData = Minecraft.getInstance().level.getData(LodestoneAttachmentTypes.WORLD_EVENT_DATA);
-
-                for (WorldEventInstance instance : worldData.activeWorldEvents) {
-                    WorldEventRenderer<WorldEventInstance> renderer = LodestoneWorldEventRenderers.RENDERERS.get(instance.type);
-                    if (renderer != null) {
-                        if (renderer.canRender(instance)) {
-                            NeoForge.EVENT_BUS.post(new WorldEventRenderEvent(instance, renderer, stack, RenderHandler.DELAYED_RENDER.getTarget(), partialTicks));
-                            renderer.render(instance, stack, RenderHandler.DELAYED_RENDER.getTarget(), partialTicks);
-                        }
-                    }
-                }
-
-            }
-        }
-    }
-
     public static <T extends WorldEventInstance> T addWorldEvent(Level level, T instance) {
         return addWorldEvent(level, true, instance);
     }
