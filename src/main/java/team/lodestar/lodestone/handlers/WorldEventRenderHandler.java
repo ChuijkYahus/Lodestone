@@ -2,8 +2,8 @@ package team.lodestar.lodestone.handlers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 import team.lodestar.lodestone.events.types.worldevent.WorldEventRenderEvent;
@@ -23,8 +23,9 @@ public class WorldEventRenderHandler {
             WorldEventRenderer<WorldEventInstance> renderer = LodestoneWorldEventRenderers.RENDERERS.get(instance.type);
             if (renderer != null) {
                 if (renderer.canRender(instance)) {
-                    NeoForge.EVENT_BUS.post(new WorldEventRenderEvent(instance, renderer, poseStack, RenderHandler.DELAYED_RENDER.getTarget(), partialTicks));
-                    renderer.render(instance, poseStack, RenderHandler.DELAYED_RENDER.getTarget(), partialTicks);
+                    MultiBufferSource.BufferSource target = LodestoneRenderHandler.DEFERRED_RENDER.getTarget();
+                    NeoForge.EVENT_BUS.post(new WorldEventRenderEvent(instance, renderer, poseStack, target, partialTicks));
+                    renderer.render(instance, poseStack, target, partialTicks);
                 }
             }
         }

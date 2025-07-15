@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.*;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -48,12 +47,12 @@ public class ClientRuntimeEvents {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void renderFog(ViewportEvent.RenderFog event) {
-        RenderHandler.cacheFogData(event);
+        LodestoneRenderHandler.cacheFogData(event);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void fogColors(ViewportEvent.ComputeFogColor event) {
-        RenderHandler.cacheFogData(event);
+        LodestoneRenderHandler.cacheFogColors(event);
     }
 
     /**
@@ -70,7 +69,7 @@ public class ClientRuntimeEvents {
         }
 
         if (event.getStage().equals(RenderLevelStageEvent.Stage.AFTER_WEATHER)) {
-            RenderHandler.endBatches();
+            LodestoneRenderHandler.render();
         }
     }
 

@@ -9,7 +9,6 @@ import net.minecraft.world.level.block.state.*;
 import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.shapes.*;
 import org.joml.*;
-import team.lodestar.lodestone.handlers.*;
 import team.lodestar.lodestone.helpers.*;
 import team.lodestar.lodestone.helpers.block.*;
 import team.lodestar.lodestone.systems.particle.*;
@@ -20,6 +19,7 @@ import team.lodestar.lodestone.systems.particle.world.*;
 import team.lodestar.lodestone.systems.particle.world.behaviors.*;
 import team.lodestar.lodestone.systems.particle.world.options.*;
 import team.lodestar.lodestone.systems.particle.world.type.*;
+import team.lodestar.lodestone.systems.rendering.buffer.LodestoneRenderLayer;
 
 import java.lang.*;
 import java.lang.Math;
@@ -163,7 +163,7 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
         return this;
     }
 
-    public WorldParticleBuilder setRenderTarget(RenderHandler.LodestoneRenderLayer renderLayer) {
+    public WorldParticleBuilder setRenderTarget(LodestoneRenderLayer renderLayer) {
         getParticleOptions().renderLayer = renderLayer;
         return this;
     }

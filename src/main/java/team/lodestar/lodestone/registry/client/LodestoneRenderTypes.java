@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
-import team.lodestar.lodestone.handlers.RenderHandler;
+import team.lodestar.lodestone.handlers.LodestoneRenderHandler;
 import team.lodestar.lodestone.systems.rendering.*;
 import team.lodestar.lodestone.systems.rendering.rendeertype.*;
 import team.lodestar.lodestone.systems.rendering.shader.ShaderHolder;
@@ -147,7 +147,6 @@ public class LodestoneRenderTypes extends RenderStateShard {
             MODIFIER.accept(builder);
         }
         LodestoneRenderType type = new LodestoneRenderType(name, format, builder.modeOverride != null ? builder.modeOverride : mode, 256, false, true, builder.createCompositeState(true));
-        RenderHandler.addRenderType(type);
         if (handler != null) {
             addUniformChanges(type, handler);
         }
@@ -180,7 +179,7 @@ public class LodestoneRenderTypes extends RenderStateShard {
     }
 
     public static LodestoneRenderType addUniformChanges(LodestoneRenderType type, ShaderUniformHandler handler) {
-        RenderHandler.UNIFORM_HANDLERS.put(type, handler);
+        LodestoneRenderHandler.DEFERRED_UNIFORMS.put(type, handler);
         return type;
     }
 

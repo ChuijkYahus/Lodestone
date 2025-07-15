@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.*;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.*;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
 import net.minecraft.core.*;
 import net.minecraft.resources.*;
@@ -13,6 +14,7 @@ import org.joml.*;
 import team.lodestar.lodestone.handlers.*;
 import team.lodestar.lodestone.helpers.*;
 import team.lodestar.lodestone.systems.rendering.cube.*;
+import team.lodestar.lodestone.systems.rendering.buffer.LodestoneRenderLayer;
 import team.lodestar.lodestone.systems.rendering.rendeertype.*;
 import team.lodestar.lodestone.systems.rendering.trail.*;
 
@@ -381,13 +383,20 @@ public class VFXBuilders {
         }
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public static class WorldVFXBuilder extends AbstractVFXBuilder {
 
-        protected MultiBufferSource bufferSource = RenderHandler.DELAYED_RENDER.getTarget();
+        private final Minecraft minecraft = Minecraft.getInstance();
+
+        @Nonnull
+        protected LodestoneRenderLayer renderLayer = LodestoneRenderHandler.DEFERRED_RENDER;
+
+        protected MultiBufferSource bufferSource;
         protected RenderType renderType;
         protected VertexConsumer vertexConsumer;
         protected boolean usePartialTicks;
         protected float partialTicks;
+
 
         @Override
         public WorldVFXBuilder setColor(int rgba) {
@@ -499,21 +508,12 @@ public class VFXBuilders {
             return (WorldVFXBuilder) super.setFormat(format);
         }
 
-        public WorldVFXBuilder replaceBufferSource(RenderHandler.LodestoneRenderLayer renderLayer) {
-            return replaceBufferSource(renderLayer.getTarget());
-        }
-
-        public WorldVFXBuilder replaceBufferSource(MultiBufferSource bufferSource) {
-            this.bufferSource = bufferSource;
-            return this;
-        }
-
         public WorldVFXBuilder setRenderType(LodestoneRenderTypeBuilder renderType) {
             return setRenderType(renderType.getRenderType());
         }
 
         public WorldVFXBuilder setRenderType(RenderType renderType) {
-            return setRenderTypeRaw(renderType).setFormat(renderType.format()).setVertexConsumer(bufferSource.getBuffer(renderType));
+            return setRenderTypeRaw(renderType).setFormat(renderType.format()).setVertexConsumer(getBufferSource().getBuffer(renderType));
         }
 
         public WorldVFXBuilder setRenderTypeRaw(RenderType renderType) {
@@ -528,9 +528,26 @@ public class VFXBuilders {
 
         public VertexConsumer getVertexConsumer() {
             if (vertexConsumer == null) {
-                setVertexConsumer(bufferSource.getBuffer(renderType));
+                setVertexConsumer(getBufferSource().getBuffer(renderType));
             }
             return vertexConsumer;
+        }
+
+        public WorldVFXBuilder replaceBufferSource(LodestoneRenderLayer renderLayer) {
+            this.renderLayer = renderLayer;
+            return this;
+        }
+
+        public WorldVFXBuilder replaceBufferSource(MultiBufferSource bufferSource) {
+            this.bufferSource = bufferSource;
+            return this;
+        }
+
+        protected MultiBufferSource getBufferSource() {
+            if (bufferSource == null) {
+                replaceBufferSource(renderLayer.getTarget());
+            }
+            return bufferSource;
         }
 
         public WorldVFXBuilder usePartialTicks(float partialTicks) {
@@ -539,15 +556,18 @@ public class VFXBuilders {
             return this;
         }
 
-        public MultiBufferSource getBufferSource() {
-            return bufferSource;
+        @SuppressWarnings({"DataFlowIssue", "deprecation"})
+        public WorldVFXBuilder setLightLevel(BlockPos pos) {
+            ClientLevel level = minecraft.level;
+            int light = level.hasChunkAt(pos) ? LevelRenderer.getLightColor(level, pos) : 0;
+            return setLight(light);
         }
 
-        public RenderType getRenderType() {
+        protected RenderType getRenderType() {
             return renderType;
         }
 
-        public VertexFormat getFormat() {
+        protected VertexFormat getFormat() {
             return format;
         }
 
@@ -555,20 +575,27 @@ public class VFXBuilders {
             return supplier;
         }
 
+        protected Vec3 getCameraPosition() {
+            return minecraft.getBlockEntityRenderDispatcher().camera.getPosition();
+        }
+
+        protected Matrix4f getOffsetViewMatrix() {
+            var pose = new Matrix4f(LodestoneRenderHandler.MODEL_VIEW);
+            var cameraPosition = getCameraPosition().toVector3f();
+            pose.translate(cameraPosition.mul(-1));
+            return pose;
+        }
+
         public WorldVFXBuilder renderBeam(@Nullable PoseStack.Pose last, BlockPos start, BlockPos end, float width) {
-            return renderBeam(last, start.getCenter(), end.getCenter(), width);
+            return renderBeam(last, start.getCenter(), end.getCenter(), width, getCameraPosition());
         }
 
         public WorldVFXBuilder renderBeam(@Nullable PoseStack.Pose last, Vec3 start, Vec3 end, float width) {
-            Minecraft minecraft = Minecraft.getInstance();
-            Vec3 cameraPosition = minecraft.getBlockEntityRenderDispatcher().camera.getPosition();
-            return renderBeam(last, start, end, width, cameraPosition);
+            return renderBeam(last, start, end, width, getCameraPosition());
         }
 
         public WorldVFXBuilder renderBeam(@Nullable PoseStack.Pose last, Vec3 start, Vec3 end, float width, Consumer<WorldVFXBuilder> consumer) {
-            Minecraft minecraft = Minecraft.getInstance();
-            Vec3 cameraPosition = minecraft.getBlockEntityRenderDispatcher().camera.getPosition();
-            return renderBeam(last, start, end, width, cameraPosition, consumer);
+            return renderBeam(last, start, end, width, getCameraPosition(), consumer);
         }
 
         public WorldVFXBuilder renderBeam(@Nullable PoseStack.Pose last, Vec3 start, Vec3 end, float width, Vec3 cameraPosition) {
@@ -601,11 +628,12 @@ public class VFXBuilders {
         }
 
         public WorldVFXBuilder renderTrail(TrailPointBuilder builder, Function<Float, Float> widthFunc, Consumer<Float> vfxOperator) {
-            var pose = RenderHandler.MODEL_VIEW;
             var trailPoints = builder.getTrailPoints();
             if (trailPoints.size() < 2) {
                 return this;
             }
+            replaceBufferSource(renderLayer.getTrailTarget());
+            var pose = getOffsetViewMatrix();
             var positions = usePartialTicks ? builder.build(pose, partialTicks) : builder.build(pose);
             positions.getLast().set(TrailPoint.getMatrixPosition(builder.getOrigin(), pose));
             int count = trailPoints.size() - 1;
@@ -618,14 +646,16 @@ public class VFXBuilders {
                 Vector4f next = positions.get(i + 1);
                 renderData[i] = new TrailPointRenderData(current, RenderHelper.perpendicularTrailPoints(previous, next, width));
             }
-            renderData[0] = new TrailPointRenderData(positions.get(0),
-                    RenderHelper.perpendicularTrailPoints(positions.get(0), positions.get(1), widthFunc.apply(0f)));
-            renderData[count] = new TrailPointRenderData(positions.get(count),
-                    RenderHelper.perpendicularTrailPoints(positions.get(count - 1), positions.get(count), widthFunc.apply(1f)));
-            return renderPoints(renderData, u0, v0, u1, v1, vfxOperator);
+            Vector4f first = positions.get(0);
+            Vector4f second = positions.get(1);
+            Vector4f secondToLast = positions.get(count - 1);
+            Vector4f last = positions.get(count);
+            renderData[0] = new TrailPointRenderData(first, RenderHelper.perpendicularTrailPoints(first, second, widthFunc.apply(0f)));
+            renderData[count] = new TrailPointRenderData(last, RenderHelper.perpendicularTrailPoints(secondToLast, last, widthFunc.apply(1f)));
+            return renderConnectedPoints(renderData, u0, v0, u1, v1, vfxOperator);
         }
 
-        public WorldVFXBuilder renderPoints(TrailPointRenderData[] points, float u0, float v0, float u1, float v1, Consumer<Float> vfxOperator) {
+        public WorldVFXBuilder renderConnectedPoints(TrailPointRenderData[] points, float u0, float v0, float u1, float v1, Consumer<Float> vfxOperator) {
             int count = points.length - 1;
             float increment = 1.0F / count;
             vfxOperator.accept(0f);
@@ -640,7 +670,7 @@ public class VFXBuilders {
             return this;
         }
 
-        public WorldVFXBuilder drawCube(PoseStack poseStack, CubeVertexData cubeVertexData) {
+        public WorldVFXBuilder renderCube(PoseStack poseStack, CubeVertexData cubeVertexData) {
             Vector3f[] topVertices = cubeVertexData.topVertices();
             Vector3f[] bottomVertices = cubeVertexData.bottomVertices();
             Collection<Vector3f[]> offsetMap = cubeVertexData.offsetMap();
@@ -652,14 +682,14 @@ public class VFXBuilders {
             return this;
         }
 
-        public WorldVFXBuilder drawCubeSides(PoseStack poseStack, CubeVertexData cubeVertexData, Direction... directions) {
+        public WorldVFXBuilder renderCubeSides(PoseStack poseStack, CubeVertexData cubeVertexData, Direction... directions) {
             for (Direction direction : directions) {
-                drawCubeSide(poseStack, cubeVertexData, direction);
+                renderCubeSide(poseStack, cubeVertexData, direction);
             }
             return this;
         }
 
-        public WorldVFXBuilder drawCubeSide(PoseStack poseStack, CubeVertexData cubeVertexData, Direction direction) {
+        public WorldVFXBuilder renderCubeSide(PoseStack poseStack, CubeVertexData cubeVertexData, Direction direction) {
             Vector3f[] vertices = cubeVertexData.getVerticesByDirection(direction);
             renderQuad(poseStack, vertices);
             return this;

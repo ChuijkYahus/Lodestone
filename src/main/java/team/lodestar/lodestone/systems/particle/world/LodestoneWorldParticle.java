@@ -7,7 +7,6 @@ import net.minecraft.client.particle.*;
 import net.minecraft.util.*;
 import net.minecraft.world.phys.*;
 import team.lodestar.lodestone.config.ClientConfig;
-import team.lodestar.lodestone.handlers.RenderHandler;
 import team.lodestar.lodestone.systems.particle.SimpleParticleOptions;
 import team.lodestar.lodestone.systems.particle.data.GenericParticleData;
 import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
@@ -15,6 +14,7 @@ import team.lodestar.lodestone.systems.particle.data.spin.SpinParticleData;
 import team.lodestar.lodestone.systems.particle.world.options.WorldParticleOptions;
 import team.lodestar.lodestone.systems.particle.render_types.LodestoneWorldParticleRenderType;
 import team.lodestar.lodestone.systems.particle.world.behaviors.*;
+import team.lodestar.lodestone.systems.rendering.buffer.LodestoneRenderLayer;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -28,7 +28,7 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
     public final SimpleParticleOptions.ParticleSpritePicker spritePicker;
 
     public final ParticleRenderType renderType;
-    public final RenderHandler.LodestoneRenderLayer renderLayer;
+    public final LodestoneRenderLayer renderLayer;
 
     public final ColorParticleData colorData;
     public final GenericParticleData transparencyData;
