@@ -528,18 +528,20 @@ public class VFXBuilders {
 
         public VertexConsumer getVertexConsumer() {
             if (vertexConsumer == null) {
-                setVertexConsumer(getBufferSource().getBuffer(renderType));
+                setVertexConsumer(getBufferSource().getBuffer(getRenderType()));
             }
             return vertexConsumer;
         }
 
         public WorldVFXBuilder replaceBufferSource(LodestoneRenderLayer renderLayer) {
             this.renderLayer = renderLayer;
+            this.vertexConsumer = null;
             return this;
         }
 
         public WorldVFXBuilder replaceBufferSource(MultiBufferSource bufferSource) {
             this.bufferSource = bufferSource;
+            this.vertexConsumer = null;
             return this;
         }
 
@@ -582,8 +584,7 @@ public class VFXBuilders {
         protected Matrix4f getOffsetViewMatrix() {
             var pose = new Matrix4f(LodestoneRenderHandler.MODEL_VIEW);
             var cameraPosition = getCameraPosition().toVector3f();
-            pose.translate(cameraPosition.mul(-1));
-            return pose;
+            return pose.translate(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
         }
 
         public WorldVFXBuilder renderBeam(@Nullable PoseStack.Pose last, BlockPos start, BlockPos end, float width) {
@@ -632,7 +633,6 @@ public class VFXBuilders {
             if (trailPoints.size() < 2) {
                 return this;
             }
-            replaceBufferSource(renderLayer.getTrailTarget());
             var pose = getOffsetViewMatrix();
             var positions = usePartialTicks ? builder.build(pose, partialTicks) : builder.build(pose);
             positions.getLast().set(TrailPoint.getMatrixPosition(builder.getOrigin(), pose));
@@ -656,6 +656,7 @@ public class VFXBuilders {
         }
 
         public WorldVFXBuilder renderConnectedPoints(TrailPointRenderData[] points, float u0, float v0, float u1, float v1, Consumer<Float> vfxOperator) {
+            replaceBufferSource(renderLayer.getTrailTarget());
             int count = points.length - 1;
             float increment = 1.0F / count;
             vfxOperator.accept(0f);

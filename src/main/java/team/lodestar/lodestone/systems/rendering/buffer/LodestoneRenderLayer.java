@@ -21,13 +21,13 @@ public class LodestoneRenderLayer {
         //Trails are already mapped to screen coordinates by lodestone, we clear the model view matrix here to prevent messing things up
         LodestoneRenderHandler.clearModelViewMatrix();
 
-        trailTarget.endBatches(true);
         trailTarget.endBatches(false);
+        trailTarget.endBatches(true);
 
         LodestoneRenderHandler.restoreModelViewMatrix();
 
-        target.endBatches(false);
-        particleTarget.endBatches(false);
+        target.endBatches(true);
+        particleTarget.endBatches(true);
    }
 
     public LodestoneBufferSource getTarget() {
