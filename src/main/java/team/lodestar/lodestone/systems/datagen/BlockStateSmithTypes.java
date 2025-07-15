@@ -1,11 +1,13 @@
 package team.lodestar.lodestone.systems.datagen;
 
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.properties.*;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
 import team.lodestar.lodestone.systems.datagen.statesmith.BlockStateSmith;
 import team.lodestar.lodestone.systems.datagen.statesmith.ModularBlockStateSmith;
 
@@ -210,6 +212,15 @@ public class BlockStateSmithTypes {
         String name = provider.getBlockName(block);
         String particleTextureName = name.replace("_wall", "").replace("_sign", "") + "_planks";
         provider.getVariantBuilder(block).forAllStates(s -> ConfiguredModel.builder().modelFile(provider.models().sign(name, provider.getBlockTexture(particleTextureName))).build());
+    });
+
+    /**
+     * Generates a potted plant block model and state.
+     */
+    public static BlockStateSmith<FlowerPotBlock> POTTED_PLANT = new BlockStateSmith<>(FlowerPotBlock.class, ItemModelSmithTypes.NO_DATAGEN, (block, provider) -> {
+        String name = provider.getBlockName(block);
+        ResourceLocation texture = provider.getBlockTexture(name.replace("potted_", ""));
+        provider.simpleBlock(block, provider.models().withExistingParent(name, ResourceLocation.withDefaultNamespace("block/flower_pot_cross")).texture("plant", texture));
     });
 
 }
