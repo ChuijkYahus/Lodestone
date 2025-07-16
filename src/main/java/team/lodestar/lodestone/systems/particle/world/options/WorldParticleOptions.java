@@ -3,7 +3,6 @@ package team.lodestar.lodestone.systems.particle.world.options;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.network.*;
 import team.lodestar.lodestone.handlers.*;
 import team.lodestar.lodestone.helpers.*;
 import team.lodestar.lodestone.systems.particle.SimpleParticleOptions;
@@ -11,6 +10,7 @@ import team.lodestar.lodestone.systems.particle.render_types.*;
 import team.lodestar.lodestone.systems.particle.world.*;
 import team.lodestar.lodestone.systems.particle.world.behaviors.*;
 import team.lodestar.lodestone.systems.particle.world.type.*;
+import team.lodestar.lodestone.systems.rendering.buffer.LodestoneRenderLayer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +23,7 @@ public class WorldParticleOptions extends SimpleParticleOptions implements Parti
 
     public LodestoneParticleBehavior behavior = BillboardParticleBehavior.INSTANCE;
     public ParticleRenderType renderType = LodestoneWorldParticleRenderType.ADDITIVE;
-    public RenderHandler.LodestoneRenderLayer renderLayer = RenderHandler.DELAYED_RENDER;
+    public LodestoneRenderLayer renderLayer = LodestoneRenderHandler.DEFERRED_RENDER;
 
     public final Collection<Consumer<LodestoneWorldParticle>> tickActors = new ArrayList<>();
     public final Collection<Consumer<LodestoneWorldParticle>> spawnActors = new ArrayList<>();

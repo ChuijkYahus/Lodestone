@@ -13,7 +13,7 @@ public class GameRendererMixin {
 
     @Inject(method = "resize", at = @At(value = "HEAD"))
     public void lodestone$injectionResizeListener(int width, int height, CallbackInfo ci) {
-        RenderHandler.resize(width, height);
+        LodestoneRenderHandler.resize(width, height);
         PostProcessHandler.resize(width, height);
     }
 }

@@ -4,19 +4,16 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.*;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.event.GameShuttingDownEvent;
-import net.neoforged.neoforge.event.level.*;
 import team.lodestar.lodestone.LodestoneLib;
 import team.lodestar.lodestone.handlers.*;
 import team.lodestar.lodestone.handlers.screenparticle.ScreenParticleHandler;
 import team.lodestar.lodestone.registry.client.LodestoneOBJModels;
-import team.lodestar.lodestone.systems.easing.*;
 import team.lodestar.lodestone.systems.rendering.LodestoneRenderSystem;
 
 
@@ -50,12 +47,12 @@ public class ClientRuntimeEvents {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void renderFog(ViewportEvent.RenderFog event) {
-        RenderHandler.cacheFogData(event);
+        LodestoneRenderHandler.cacheFogData(event);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void fogColors(ViewportEvent.ComputeFogColor event) {
-        RenderHandler.cacheFogData(event);
+        LodestoneRenderHandler.cacheFogColors(event);
     }
 
     /**
@@ -65,22 +62,15 @@ public class ClientRuntimeEvents {
     public static void renderStages(RenderLevelStageEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
         Camera camera = minecraft.gameRenderer.getMainCamera();
-        Vec3 cameraPos = camera.getPosition();
         float partial = event.getPartialTick().getGameTimeDeltaPartialTick(false);
         PoseStack poseStack = event.getPoseStack();
-        poseStack.pushPose();
-        poseStack.translate(-cameraPos.x(), -cameraPos.y(), -cameraPos.z());
-
         if (event.getStage().equals(RenderLevelStageEvent.Stage.AFTER_SKY)) {
-            WorldEventHandler.ClientOnly.renderWorldEvents(poseStack, partial);
+            WorldEventRenderHandler.renderWorldEvents(minecraft.level, poseStack, camera, partial);
         }
 
         if (event.getStage().equals(RenderLevelStageEvent.Stage.AFTER_WEATHER)) {
-            RenderHandler.endBatches();
+            LodestoneRenderHandler.render();
         }
-
-
-        poseStack.popPose();
     }
 
     @SubscribeEvent

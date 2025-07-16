@@ -1,7 +1,5 @@
 package team.lodestar.lodestone.mixin.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.*;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
 import net.minecraft.core.BlockPos;
@@ -10,12 +8,9 @@ import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Slice;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import team.lodestar.lodestone.handlers.RenderHandler;
+import team.lodestar.lodestone.handlers.LodestoneRenderHandler;
 import team.lodestar.lodestone.systems.postprocess.PostProcessHandler;
 import team.lodestar.lodestone.systems.sound.ExtendedSoundType;
 
@@ -50,9 +45,9 @@ public class LevelRendererMixin {
     public void lodestone$injectionBeforeTransparencyChainProcess(CallbackInfo ci) {
         PostProcessHandler.copyDepthBuffer();
     }
-
-    @Inject(method = "renderLevel", at = @At(value = "HEAD"))
-    private void lodestoneLevelRendererPoseStackGrabber(DeltaTracker pDeltaTracker, boolean pRenderBlockOutline, Camera pCamera, GameRenderer pGameRenderer, LightTexture pLightTexture, Matrix4f pFrustumMatrix, Matrix4f pProjectionMatrix, CallbackInfo ci) {
-        RenderHandler.MAIN_PROJ = pProjectionMatrix;
+    @ModifyVariable(method = "renderLevel", at = @At(value = "HEAD"), index = 6, argsOnly = true)
+    public Matrix4f lodestone$cacheBlockModelViewMatrix(Matrix4f frustumMatrix) {
+        LodestoneRenderHandler.cacheModelViewMatrix(frustumMatrix);
+        return frustumMatrix;
     }
 }
