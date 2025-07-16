@@ -17,13 +17,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class ExtendedShaderInstance extends ShaderInstance {
+public class ExtendedShaderInstance extends ShaderInstance {
 
-    protected final Map<String, Consumer<Uniform>> defaultUniformData;
+    protected final ShaderHolder shaderHolder;
 
-    public ExtendedShaderInstance(ResourceProvider pResourceProvider, ResourceLocation location, VertexFormat pVertexFormat) throws IOException {
-        super(pResourceProvider, location, pVertexFormat);
-        defaultUniformData = new HashMap<>();
+    protected final Map<String, Consumer<Uniform>> defaultUniformData = new HashMap<>();
+
+    public ExtendedShaderInstance(ResourceProvider pResourceProvider, ShaderHolder shaderHolder) throws IOException {
+        super(pResourceProvider, shaderHolder.getShaderLocation(), shaderHolder.getShaderFormat());
+        this.shaderHolder = shaderHolder;
     }
 
     public void setUniformDefaults() {
@@ -33,7 +35,9 @@ public abstract class ExtendedShaderInstance extends ShaderInstance {
         }
     }
 
-    public abstract ShaderHolder getShaderHolder();
+    public ShaderHolder getShaderHolder() {
+        return shaderHolder;
+    }
 
     public Map<String, Consumer<Uniform>> getDefaultUniformData() {
         return defaultUniformData;
@@ -47,7 +51,7 @@ public abstract class ExtendedShaderInstance extends ShaderInstance {
 
         JsonObject jsonobject = GsonHelper.convertToJsonObject(pJson, "uniform");
         String uniformName = GsonHelper.getAsString(jsonobject, "name");
-        if (getShaderHolder().uniformsToCache.contains(uniformName)) {
+        if (getShaderHolder().cachedUniforms.contains(uniformName)) {
             Uniform uniform = uniforms.getLast();
 
             Consumer<Uniform> consumer;

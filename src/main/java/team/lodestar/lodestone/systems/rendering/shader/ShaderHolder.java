@@ -7,39 +7,46 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import team.lodestar.lodestone.LodestoneLib;
-import team.lodestar.lodestone.registry.client.LodestoneShaders;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
 public class ShaderHolder implements LodestoneShader {
 
-    public final ResourceLocation shaderLocation;
-    public final VertexFormat shaderFormat;
+    protected final ResourceLocation shaderLocation;
+    protected final VertexFormat shaderFormat;
 
     protected ExtendedShaderInstance shaderInstance;
-    public Collection<String> uniformsToCache;
+    protected Collection<String> cachedUniforms;
+
     private final RenderStateShard.ShaderStateShard shard = new RenderStateShard.ShaderStateShard(getInstance());
 
-    public ShaderHolder(ResourceLocation shaderLocation, VertexFormat shaderFormat, String... uniformsToCache) {
+    public ShaderHolder(ResourceLocation shaderLocation, VertexFormat shaderFormat, String... cachedUniforms) {
         this.shaderLocation = shaderLocation;
         this.shaderFormat = shaderFormat;
-        this.uniformsToCache = new ArrayList<>(List.of(uniformsToCache));
+        this.cachedUniforms = List.of(cachedUniforms);
     }
 
     public ExtendedShaderInstance createInstance(ResourceProvider provider) throws IOException {
-        ShaderHolder shaderHolder = this;
-        ExtendedShaderInstance shaderInstance = new ExtendedShaderInstance(provider, shaderLocation, shaderFormat) {
-            @Override
-            public ShaderHolder getShaderHolder() {
-                return shaderHolder;
-            }
-        };
-        this.shaderInstance = shaderInstance;
+        return shaderInstance = new ExtendedShaderInstance(provider, this);
+    }
+
+    public ResourceLocation getShaderLocation() {
+        return shaderLocation;
+    }
+
+    public VertexFormat getShaderFormat() {
+        return shaderFormat;
+    }
+
+    public ExtendedShaderInstance getShaderInstance() {
         return shaderInstance;
+    }
+
+    public Collection<String> getCachedUniforms() {
+        return cachedUniforms;
     }
 
     public Supplier<ShaderInstance> getInstance() {
