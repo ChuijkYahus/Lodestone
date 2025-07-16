@@ -19,18 +19,16 @@ public class ShaderHolder implements LodestoneShader {
     protected final VertexFormat shaderFormat;
 
     protected ExtendedShaderInstance shaderInstance;
-    protected Collection<String> cachedUniforms;
 
-    private final RenderStateShard.ShaderStateShard shard = new RenderStateShard.ShaderStateShard(getInstance());
+    protected RenderStateShard.ShaderStateShard shard;
 
-    public ShaderHolder(ResourceLocation shaderLocation, VertexFormat shaderFormat, String... cachedUniforms) {
+    public ShaderHolder(ResourceLocation shaderLocation, VertexFormat shaderFormat) {
         this.shaderLocation = shaderLocation;
         this.shaderFormat = shaderFormat;
-        this.cachedUniforms = List.of(cachedUniforms);
     }
 
     public ExtendedShaderInstance createInstance(ResourceProvider provider) throws IOException {
-        return shaderInstance = new ExtendedShaderInstance(provider, this);
+        return new ExtendedShaderInstance(provider, this);
     }
 
     public ResourceLocation getShaderLocation() {
@@ -45,12 +43,8 @@ public class ShaderHolder implements LodestoneShader {
         return shaderInstance;
     }
 
-    public Collection<String> getCachedUniforms() {
-        return cachedUniforms;
-    }
-
-    public Supplier<ShaderInstance> getInstance() {
-        return () -> shaderInstance;
+    public Supplier<ShaderInstance> supplyShaderInstance() {
+        return this::getShaderInstance;
     }
 
     public void setShaderInstance(ShaderInstance reloadedShaderInstance) {
@@ -58,6 +52,9 @@ public class ShaderHolder implements LodestoneShader {
     }
 
     public RenderStateShard.ShaderStateShard getShard() {
+        if (shard == null) {
+            shard = new RenderStateShard.ShaderStateShard(supplyShaderInstance());
+        }
         return shard;
     }
 
@@ -65,7 +62,7 @@ public class ShaderHolder implements LodestoneShader {
     public void register(RegisterShadersEvent event) {
         try {
             ResourceProvider provider = event.getResourceProvider();
-            event.registerShader(this.createInstance(provider), this::setShaderInstance);
+            event.registerShader(createInstance(provider), this::setShaderInstance);
         } catch (IOException e) {
             LodestoneLib.LOGGER.error("Error registering shader", e);
             e.printStackTrace();

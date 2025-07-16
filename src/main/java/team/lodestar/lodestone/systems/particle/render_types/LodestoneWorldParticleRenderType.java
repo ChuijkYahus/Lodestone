@@ -49,7 +49,7 @@ public class LodestoneWorldParticleRenderType implements ParticleRenderType {
     protected final Runnable blendFunction;
 
     public LodestoneWorldParticleRenderType(LodestoneRenderType renderType, ShaderHolder shaderHolder, ResourceLocation texture, GlStateManager.SourceFactor srcAlpha, GlStateManager.DestFactor dstAlpha) {
-        this(renderType, shaderHolder.getInstance(), texture, srcAlpha, dstAlpha);
+        this(renderType, shaderHolder.supplyShaderInstance(), texture, srcAlpha, dstAlpha);
     }
 
     public LodestoneWorldParticleRenderType(LodestoneRenderType renderType, Supplier<ShaderInstance> shader, ResourceLocation texture, GlStateManager.SourceFactor srcAlpha, GlStateManager.DestFactor dstAlpha) {
@@ -57,7 +57,7 @@ public class LodestoneWorldParticleRenderType implements ParticleRenderType {
     }
 
     public LodestoneWorldParticleRenderType(LodestoneRenderType renderType, ShaderHolder shaderHolder, ResourceLocation texture, Runnable blendFunction) {
-        this(renderType, shaderHolder.getInstance(), texture, blendFunction);
+        this(renderType, shaderHolder.supplyShaderInstance(), texture, blendFunction);
     }
 
     public LodestoneWorldParticleRenderType(LodestoneRenderType renderType, Supplier<ShaderInstance> shader, ResourceLocation texture, Runnable blendFunction) {

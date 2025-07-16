@@ -1,5 +1,6 @@
 package team.lodestar.lodestone.systems.rendering.shader;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.shaders.Uniform;
@@ -11,13 +12,31 @@ import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraft.util.GsonHelper;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class ExtendedShaderInstance extends ShaderInstance {
+
+    private static final Set<String> EXCLUDED_UNIFORMS = Set.of(
+            "ModelViewMat",
+            "ProjMat",
+            "TextureMat",
+            "ScreenSize",
+            "ColorModulator",
+            "Light0_Direction",
+            "Light1_Direction",
+            "GlintAlpha",
+            "FogStart",
+            "FogEnd",
+            "FogColor",
+            "FogShape",
+            "LineWidth",
+            "GameTime",
+            "ChunkOffset"
+    );
 
     protected final ShaderHolder shaderHolder;
 
@@ -26,6 +45,11 @@ public class ExtendedShaderInstance extends ShaderInstance {
     public ExtendedShaderInstance(ResourceProvider pResourceProvider, ShaderHolder shaderHolder) throws IOException {
         super(pResourceProvider, shaderHolder.getShaderLocation(), shaderHolder.getShaderFormat());
         this.shaderHolder = shaderHolder;
+        var jsonLocation = shaderHolder.getShaderLocation().withPath(p -> "shaders/core/" + p + ".json");
+        try (Reader reader = pResourceProvider.openAsReader(jsonLocation)) {
+            JsonObject shaderJson = GsonHelper.parse(reader);
+            parseDefaultUniformValues(shaderJson);
+        }
     }
 
     public void setUniformDefaults() {
@@ -43,20 +67,22 @@ public class ExtendedShaderInstance extends ShaderInstance {
         return defaultUniformData;
     }
 
-    //TODO: this method sucks!!! Instead of having the shader holder define a list of uniforms to cache, we should instead be checking against a list of common uniforms that are present in most shaders and simply the default
-    // Any Uniform that isn't a default minecraft uniform should be cached unless specified otherwise
-    @Override
-    public void parseUniformNode(JsonElement pJson) throws ChainedJsonException {
-        super.parseUniformNode(pJson);
-
-        JsonObject jsonobject = GsonHelper.convertToJsonObject(pJson, "uniform");
-        String uniformName = GsonHelper.getAsString(jsonobject, "name");
-        if (getShaderHolder().cachedUniforms.contains(uniformName)) {
-            Uniform uniform = uniforms.getLast();
+    public void parseDefaultUniformValues(JsonObject shaderJson) {
+        var shaderUniforms = GsonHelper.getAsJsonArray(shaderJson, "uniforms", null);
+        if (shaderUniforms == null) {
+            return;
+        }
+        for (JsonElement uniformJson : shaderUniforms) {
+            JsonObject uniformObject = GsonHelper.convertToJsonObject(uniformJson, "uniform");
+            var uniformName = GsonHelper.getAsString(uniformObject, "name");
+            if (EXCLUDED_UNIFORMS.contains(uniformName)) {
+                return;
+            }
+            Uniform uniform = uniformMap.get(uniformName);
 
             Consumer<Uniform> consumer;
             if (uniform.getType() <= 3) {
-                final IntBuffer buffer = uniform.getIntBuffer();
+                IntBuffer buffer = uniform.getIntBuffer();
                 buffer.position(0);
                 int[] array = new int[uniform.getCount()];
                 for (int i = 0; i < uniform.getCount(); i++) {
@@ -67,7 +93,7 @@ public class ExtendedShaderInstance extends ShaderInstance {
                     buffer.put(array);
                 };
             } else {
-                final FloatBuffer buffer = uniform.getFloatBuffer();
+                FloatBuffer buffer = uniform.getFloatBuffer();
                 buffer.position(0);
                 float[] array = new float[uniform.getCount()];
                 for (int i = 0; i < uniform.getCount(); i++) {
