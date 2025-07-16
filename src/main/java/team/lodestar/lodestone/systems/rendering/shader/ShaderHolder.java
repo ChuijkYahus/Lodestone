@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
+import team.lodestar.lodestone.registry.client.LodestoneShaders;
 
 import java.io.IOException;
 import java.util.ArrayList;

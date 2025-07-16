@@ -19,29 +19,28 @@ import java.util.function.Consumer;
 
 public abstract class ExtendedShaderInstance extends ShaderInstance {
 
-    protected Map<String, Consumer<Uniform>> defaultUniformData;
+    protected final Map<String, Consumer<Uniform>> defaultUniformData;
 
     public ExtendedShaderInstance(ResourceProvider pResourceProvider, ResourceLocation location, VertexFormat pVertexFormat) throws IOException {
         super(pResourceProvider, location, pVertexFormat);
+        defaultUniformData = new HashMap<>();
     }
 
     public void setUniformDefaults() {
         for (Map.Entry<String, Consumer<Uniform>> defaultDataEntry : getDefaultUniformData().entrySet()) {
-            final Uniform t = uniformMap.get(defaultDataEntry.getKey());
+            Uniform t = uniformMap.get(defaultDataEntry.getKey());
             defaultDataEntry.getValue().accept(t);
-            float f = 0;
         }
     }
 
     public abstract ShaderHolder getShaderHolder();
 
     public Map<String, Consumer<Uniform>> getDefaultUniformData() {
-        if (defaultUniformData == null) {
-            defaultUniformData = new HashMap<>();
-        }
         return defaultUniformData;
     }
 
+    //TODO: this method sucks!!! Instead of having the shader holder define a list of uniforms to cache, we should instead be checking against a list of common uniforms that are present in most shaders and simply the default
+    // Any Uniform that isn't a default minecraft uniform should be cached unless specified otherwise
     @Override
     public void parseUniformNode(JsonElement pJson) throws ChainedJsonException {
         super.parseUniformNode(pJson);
@@ -49,7 +48,7 @@ public abstract class ExtendedShaderInstance extends ShaderInstance {
         JsonObject jsonobject = GsonHelper.convertToJsonObject(pJson, "uniform");
         String uniformName = GsonHelper.getAsString(jsonobject, "name");
         if (getShaderHolder().uniformsToCache.contains(uniformName)) {
-            Uniform uniform = uniforms.get(uniforms.size() - 1);
+            Uniform uniform = uniforms.getLast();
 
             Consumer<Uniform> consumer;
             if (uniform.getType() <= 3) {
