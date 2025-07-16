@@ -5,6 +5,8 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
+import net.neoforged.neoforge.client.event.RegisterShadersEvent;
+import team.lodestar.lodestone.LodestoneLib;
 import team.lodestar.lodestone.registry.client.LodestoneShaders;
 
 import java.io.IOException;
