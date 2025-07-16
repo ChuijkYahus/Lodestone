@@ -1,9 +1,13 @@
 package team.lodestar.lodestone.mixin.client;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.preprocessor.GlslPreprocessor;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.FileUtil;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -14,23 +18,64 @@ import net.minecraft.util.GsonHelper;
 import net.neoforged.neoforge.client.ClientHooks;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import team.lodestar.lodestone.LodestoneLib;
 import team.lodestar.lodestone.systems.rendering.shader.IShaderInstance;
 import team.lodestar.lodestone.systems.rendering.shader.LodestoneProgram;
+import team.lodestar.lodestone.systems.rendering.shader.SamplerType;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Mixin(ShaderInstance.class)
 public class ShaderInstanceMixin implements IShaderInstance {
     private LodestoneProgram geometryProgram;
+
+    @Unique
+    private Map<String, SamplerType> samplerTypeMap = Maps.newHashMap();
+
+    @Redirect(method = "parseSamplerNode", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"))
+    private boolean samplerDimension(List<String> samplerNames, Object s, @Local JsonElement json) {
+        String name = s.toString();
+        if (json.getAsJsonObject().has("type")) {
+            String type1 = json.getAsJsonObject().get("type").getAsString();
+            SamplerType type = SamplerType.fromString(type1);
+            if (type == null) {
+                LodestoneLib.LOGGER.warn("Unknown sampler type: " + type1);
+            } else {
+                samplerTypeMap.put(name, type);
+            }
+        }
+        return samplerNames.add(name);
+    }
+
+    @Redirect(method = "apply", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;bindTexture(I)V"))
+    private void bindTex(int textureBinding, @Local String s) {
+        if (samplerTypeMap.containsKey(s)) {
+            SamplerType type = samplerTypeMap.get(s);
+            bindTexture(type.getGlType(), textureBinding);
+        } else {
+            RenderSystem.bindTexture(textureBinding);
+        }
+    }
+
+    private void bindTexture(int samplerType, int texture) {
+        GlStateManager.TextureState activeTexture = GlStateManager.TEXTURES[GlStateManager.activeTexture];
+        if (texture != activeTexture.binding) {
+            activeTexture.binding = texture;
+            GL11.glBindTexture(samplerType, texture);
+        }
+    }
 
     @Inject(method = "<init>(Lnet/minecraft/server/packs/resources/ResourceProvider;Lnet/minecraft/resources/ResourceLocation;Lcom/mojang/blaze3d/vertex/VertexFormat;)V",
             at = @At(
@@ -40,8 +85,6 @@ public class ShaderInstanceMixin implements IShaderInstance {
             )
     )
     private void lodestone$setGeometryProgram(ResourceProvider resourceProvider, ResourceLocation shaderLocation, VertexFormat vertexFormat, CallbackInfo ci, @Local(ordinal = 0) JsonObject json) throws IOException {
-        LodestoneLib.LOGGER.info("Hello Lodestone: " + shaderLocation.toString());
-        LodestoneLib.LOGGER.info("Shader JSON: " + json.toString());
         if (json.has("geometry")) {
             String geometry = GsonHelper.getAsString(json, "geometry");
             this.geometryProgram = lodestone$getOrCreate(resourceProvider, LodestoneProgram.Type.GEOMETRY, geometry);

@@ -19,14 +19,15 @@ public class ShaderStorageBufferObject implements IBufferObject {
 
 
     public ShaderStorageBufferObject(Usage usage, int bindingIndex) {
+        this(usage, bindingIndex, glGenBuffers());
+    }
+
+    public ShaderStorageBufferObject(Usage usage, int bindingIndex, int bufferId) {
         this.usage = usage;
         this.bindingIndex = bindingIndex;
-        LodestoneRenderSystem.wrap(() -> {
-            this.bufferId = glGenBuffers();
-            LodestoneRenderSystem.glBindBuffer(GL_SHADER_STORAGE_BUFFER, this.bufferId);
-            LodestoneRenderSystem.bindBufferBase(GL_SHADER_STORAGE_BUFFER, bindingIndex, this.bufferId);
-
-        });
+        this.bufferId = bufferId;
+        LodestoneRenderSystem.glBindBuffer(GL_SHADER_STORAGE_BUFFER, this.bufferId);
+        LodestoneRenderSystem.bindBufferBase(GL_SHADER_STORAGE_BUFFER, bindingIndex, this.bufferId);
         this.registerBufferObject();
     }
 
@@ -34,11 +35,9 @@ public class ShaderStorageBufferObject implements IBufferObject {
         int size = floatBuffer.remaining();
         if(floatBuffer.remaining() > SystemDetails.getMaxShaderStorageBlockSize())
             throw new RuntimeException("Buffer size exceeds maximum shader storage block size");
-        LodestoneRenderSystem.wrap(() -> {
-            glBindBuffer(GL_SHADER_STORAGE_BUFFER, this.bufferId);
-            glBufferData(GL_SHADER_STORAGE_BUFFER, floatBuffer, this.usage.getGlEnum());
-            glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-        });
+        LodestoneRenderSystem.glBindBuffer(GL_SHADER_STORAGE_BUFFER, this.bufferId);
+        glBufferData(GL_SHADER_STORAGE_BUFFER, floatBuffer, this.usage.getGlEnum());
+        LodestoneRenderSystem.glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
         this.floatBuffer = floatBuffer;
     }
 

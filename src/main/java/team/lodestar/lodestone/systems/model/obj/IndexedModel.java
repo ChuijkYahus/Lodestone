@@ -117,19 +117,23 @@ public abstract class IndexedModel {
             this.modelBuffer = new VertexBuffer(VertexBuffer.Usage.DYNAMIC);
         }
         this.modelBuffer.bind();
-        this.createMesh(poseStack, Tesselator.getInstance(), renderType);
+        this.meshData = this.createMesh(poseStack, renderType);
         this.modelBuffer.upload(this.meshData);
         VertexBuffer.unbind();
     }
 
-    public void createMesh(PoseStack poseStack, Tesselator tesselator, RenderType renderType) {
-        BufferBuilder bufferBuilder = tesselator.begin(renderType.mode(), renderType.format());
+    public MeshData createMesh(PoseStack poseStack, RenderType renderType) {
+        return this.createMesh(poseStack, renderType.format(), renderType.mode());
+    }
+
+    public MeshData createMesh(PoseStack poseStack, VertexFormat vertexFormat, VertexFormat.Mode mode) {
+        BufferBuilder bufferBuilder = Tesselator.getInstance().begin(mode, vertexFormat);
         for (IndexedMesh mesh : this.meshes) {
             for (Vertex vertex : mesh.getVertices(this)) {
-                vertex.supplyVertexData(bufferBuilder, renderType.format(), poseStack);
+                vertex.supplyVertexData(bufferBuilder, vertexFormat, poseStack);
             }
         }
-        this.meshData = bufferBuilder.buildOrThrow();
+        return bufferBuilder.buildOrThrow();
     }
 
     public VertexBuffer getModelBuffer() {

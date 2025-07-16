@@ -69,6 +69,11 @@ public class ComputeProgram implements IBufferObject, LodestoneShader {
         LodestoneRenderSystem.bindBufferBase(GL_SHADER_STORAGE_BUFFER, bindingIndex, ssbo.getId());
     }
 
+    public void bindSSBO(String name, ShaderStorageBufferObject ssbo, int bindingIndex) {
+        this.ssbos.put(name, ssbo);
+        LodestoneRenderSystem.bindBufferBase(GL_SHADER_STORAGE_BUFFER, bindingIndex, ssbo.getId());
+    }
+
     private void attachShader(Shader shader) {
         glAttachShader(this.programId, shader.getId());
     }
