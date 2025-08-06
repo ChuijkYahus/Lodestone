@@ -39,9 +39,7 @@ public abstract class PostProcessor {
             Pair.of("upVector", u -> u.set(MC.gameRenderer.getMainCamera().getUpVector())),
             Pair.of("leftVector", u -> u.set(MC.gameRenderer.getMainCamera().getLeftVector())),
             Pair.of("invViewMat", u -> {
-                Matrix4f invertedViewMatrix = PostProcessor.viewModelMatrix;
-                invertedViewMatrix.invert();
-                u.set(invertedViewMatrix);
+                u.set(PostProcessor.viewModelMatrix.invert(new Matrix4f()));
             }),
             Pair.of("invProjMat", u -> {
                 Matrix4f invertedProjectionMatrix = new Matrix4f(RenderSystem.getProjectionMatrix());
