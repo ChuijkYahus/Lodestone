@@ -7,10 +7,10 @@ uniform mat4 ProjMat;
 
 uniform vec3 CameraPos;
 
-out vec3 localPos;
+out vec3 worldPos;
 
 void main() {
-    localPos = CameraPos - Position;
+    worldPos = Position + CameraPos;
     vec4 pos = ModelViewMat * vec4(Position, 1.0);
     gl_Position = ProjMat * pos;
 }

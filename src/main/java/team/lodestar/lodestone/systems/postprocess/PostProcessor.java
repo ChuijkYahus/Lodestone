@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.systems.rendering.LodestoneRenderSystem;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,18 +39,13 @@ public abstract class PostProcessor {
             Pair.of("lookVector", u -> u.set(MC.gameRenderer.getMainCamera().getLookVector())),
             Pair.of("upVector", u -> u.set(MC.gameRenderer.getMainCamera().getUpVector())),
             Pair.of("leftVector", u -> u.set(MC.gameRenderer.getMainCamera().getLeftVector())),
-            Pair.of("invViewMat", u -> {
-                u.set(PostProcessor.viewModelMatrix.invert(new Matrix4f()));
-            }),
-            Pair.of("invProjMat", u -> {
-                Matrix4f invertedProjectionMatrix = new Matrix4f(RenderSystem.getProjectionMatrix());
-                invertedProjectionMatrix.invert();
-                u.set(invertedProjectionMatrix);
-            }),
+            Pair.of("invViewMat", u -> u.set(PostProcessor.viewModelMatrix.invert(new Matrix4f()))),
+            Pair.of("invProjMat", u -> u.set(RenderSystem.getProjectionMatrix().invert(new Matrix4f()))),
             Pair.of("nearPlaneDistance", u -> u.set(GameRenderer.PROJECTION_Z_NEAR)),
             Pair.of("farPlaneDistance", u -> u.set(MC.gameRenderer.getDepthFar())),
             Pair.of("fov", u -> u.set((float) Math.toRadians(MC.gameRenderer.getFov(MC.gameRenderer.getMainCamera(), MC.getTimer().getGameTimeDeltaPartialTick(false), true)))),
-            Pair.of("aspectRatio", u -> u.set((float) MC.getWindow().getWidth() / (float) MC.getWindow().getHeight()))
+            Pair.of("aspectRatio", u -> u.set((float) MC.getWindow().getWidth() / (float) MC.getWindow().getHeight())),
+            Pair.of("bobOffset", u -> u.set(PostProcessor.viewModelMatrix.invert(new Matrix4f()).transformPosition(LodestoneRenderSystem.getViewBobOffset(), new Vector3f())))
     );
 
     /**

@@ -26,11 +26,16 @@ import static org.lwjgl.opengl.GL42.glBindImageTexture;
 
 public class VolumeTexture extends AbstractTexture {
     private int width, height, depth;
+    private boolean shouldReload = true;
+    private boolean initialized = false;
 
     public VolumeTexture(int size) {
-        this.width = size;
-        this.height = size;
-        this.depth = size;
+        this(size, size, size);
+    }
+
+    public VolumeTexture(int size, boolean shouldReload) {
+        this(size);
+        this.shouldReload = shouldReload;
     }
 
     public VolumeTexture(int width, int height, int depth) {
@@ -39,9 +44,19 @@ public class VolumeTexture extends AbstractTexture {
         this.depth = depth;
     }
 
+    public VolumeTexture(int width, int height, int depth, boolean shouldReload) {
+        this(width, height, depth);
+        this.shouldReload = shouldReload;
+    }
+
     @Override
     public void load(@NotNull ResourceManager resourceManager) {
-        createEmpty(true, InternalTextureFormat.RGBA16F);
+        if (!this.initialized) {
+            this.createEmpty(true, InternalTextureFormat.RGBA16F);
+            this.initialized = true;
+        } else if (this.shouldReload) {
+            createEmpty(true, InternalTextureFormat.RGBA16F);
+        }
     }
 
     public void createEmpty(boolean linear, InternalTextureFormat format) {

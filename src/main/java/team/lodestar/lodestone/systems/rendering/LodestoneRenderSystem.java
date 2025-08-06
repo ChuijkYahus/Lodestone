@@ -2,6 +2,8 @@ package team.lodestar.lodestone.systems.rendering;
 
 import com.mojang.blaze3d.pipeline.RenderCall;
 import com.mojang.blaze3d.systems.RenderSystem;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -13,6 +15,10 @@ import static org.lwjgl.opengl.GL43.*;
 
 public class LodestoneRenderSystem extends RenderSystem {
     private static final List<IBufferObject> bufferObjects = new ArrayList<>();
+
+    private static final Vector3f viewBobOffset = new Vector3f();
+
+
     public static void wrap(RenderCall renderCall) {
         if (!RenderSystem.isOnRenderThread()) {
             RenderSystem.recordRenderCall(renderCall);
@@ -56,5 +62,13 @@ public class LodestoneRenderSystem extends RenderSystem {
 
     public static void unmapBuffer(int target) {
         wrap(() -> glUnmapBuffer(target));
+    }
+
+    public static void setViewBobOffset(float x, float y, float z) {
+        LodestoneRenderSystem.viewBobOffset.set(x, y, z);
+    }
+
+    public static Vector3fc getViewBobOffset() {
+        return LodestoneRenderSystem.viewBobOffset;
     }
 }
