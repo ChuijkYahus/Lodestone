@@ -13,6 +13,7 @@ in DATA {
 } data_in[];
 
 out vec4 vertexColor;
+out float vertexDistance;
 out vec2 texCoord;
 flat out vec2 size;
 
@@ -27,6 +28,7 @@ void main() {
     for (int i = 0; i < gl_VerticesIn; i++) {
         gl_Position = gl_in[i].gl_Position;
         vertexColor = data_in[i].vertexColor;
+        vertexDistance = data_in[i].vertexDistance;
         texCoord = data_in[i].texCoord0;
         EmitVertex();
     }

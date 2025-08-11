@@ -13,8 +13,6 @@ uniform int Angle;
 uniform float LightAngleRange;
 uniform float LightIntensity;
 
-uniform vec4 ColorModulator;
-
 in vec4 vertexColor;
 in vec2 texCoord0;
 

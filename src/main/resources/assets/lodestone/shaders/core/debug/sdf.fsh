@@ -1,9 +1,7 @@
 #version 150
 
-uniform sampler2D Sampler0;
 uniform sampler3D VolumeTexture;
 uniform vec3 CameraPos;
-uniform float GameTime;
 uniform vec2 ScreenSize;
 
 uniform mat4 ModelViewMat;

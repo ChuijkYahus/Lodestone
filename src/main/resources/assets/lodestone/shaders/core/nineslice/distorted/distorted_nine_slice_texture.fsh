@@ -13,8 +13,12 @@ uniform float YFrequency;
 uniform vec4 UVCoordinates;
 
 uniform vec4 ColorModulator;
+uniform float FogStart;
+uniform float FogEnd;
+uniform vec4 FogColor;
 
 in vec4 vertexColor;
+in float vertexDistance;
 in vec2 texCoord;
 flat in vec2 size;
 
@@ -56,5 +60,9 @@ void main() {
         discard;
     }
     vec4 color = transformColor(textureColor, LumiTransparency, vertexColor, ColorModulator);
-    fragColor = color;
+    vec4 fog = applyFog(color, FogStart, FogEnd, FogColor, vertexDistance);
+    if (fog.a == 0.0) {
+        discard;
+    }
+    fragColor = fog;
 }
