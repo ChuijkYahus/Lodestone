@@ -1,5 +1,4 @@
 #version 400 core
-#extension GL_EXT_geometry_shader4 : enable
 
 layout (triangles) in;
 layout(triangle_strip, max_vertices = 3) out;
@@ -25,7 +24,7 @@ void main() {
 
     size = round(size);
 
-    for (int i = 0; i < gl_VerticesIn; i++) {
+    for (int i = 0; i < gl_in.length(); i++) {
         gl_Position = gl_in[i].gl_Position;
         vertexColor = data_in[i].vertexColor;
         vertexDistance = data_in[i].vertexDistance;
