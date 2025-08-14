@@ -1,7 +1,8 @@
-package team.lodestar.lodestone.systems.rendering.vertexconsumer;
+package team.lodestar.lodestone.systems.rendering.vertexconsumer.offset;
 
 import com.mojang.blaze3d.vertex.*;
 import org.jetbrains.annotations.*;
+import team.lodestar.lodestone.systems.rendering.vertexconsumer.*;
 
 /**
  * A {@link VertexConsumer} that forwards all calls to multiple other {@link VertexConsumer}s.
@@ -9,16 +10,16 @@ import org.jetbrains.annotations.*;
  * This implementation also allows for an offset to be applied to the UV coordinates
  */
 @SuppressWarnings("unused")
-public class UVOffsetVertexConsumer extends MultiVertexConsumer {
+public class UVOffsetMultiVertexConsumer extends MultiVertexConsumer {
 
     protected float uOffset;
     protected float vOffset;
 
-    public UVOffsetVertexConsumer(VertexConsumer... consumers) {
+    public UVOffsetMultiVertexConsumer(VertexConsumer... consumers) {
         super(consumers);
     }
 
-    public UVOffsetVertexConsumer setOffset(float uOffset, float vOffset) {
+    public UVOffsetMultiVertexConsumer setOffset(float uOffset, float vOffset) {
         this.uOffset = uOffset;
         this.vOffset = vOffset;
         return this;
