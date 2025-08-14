@@ -16,49 +16,49 @@ public class MultiVertexConsumer implements VertexConsumer {
     }
 
     @Override
-    public @NotNull VertexConsumer addVertex(float v, float v1, float v2) {
+    public @NotNull VertexConsumer addVertex(float x, float y, float z) {
         for (VertexConsumer consumer : consumers) {
-            consumer.addVertex(v, v1, v2);
+            consumer.addVertex(x, y, z);
         }
         return this;
     }
 
     @Override
-    public @NotNull VertexConsumer setColor(int i, int i1, int i2, int i3) {
+    public @NotNull VertexConsumer setColor(int red, int green, int blue, int alpha) {
         for (VertexConsumer consumer : consumers) {
-            consumer.setColor(i, i1, i2, i3);
+            consumer.setColor(red, green, blue, alpha);
         }
         return this;
     }
 
     @Override
-    public @NotNull VertexConsumer setUv(float v, float v1) {
+    public @NotNull VertexConsumer setUv(float u, float v) {
         for (VertexConsumer consumer : consumers) {
-            consumer.setUv(v, v1);
+            consumer.setUv(u, v);
         }
         return this;
     }
 
     @Override
-    public @NotNull VertexConsumer setUv1(int i, int i1) {
+    public @NotNull VertexConsumer setUv1(int u, int v) {
         for (VertexConsumer consumer : consumers) {
-            consumer.setUv1(i, i1);
+            consumer.setUv1(u, v);
         }
         return this;
     }
 
     @Override
-    public @NotNull VertexConsumer setUv2(int i, int i1) {
+    public @NotNull VertexConsumer setUv2(int u, int v) {
         for (VertexConsumer consumer : consumers) {
-            consumer.setUv2(i, i1);
+            consumer.setUv2(u, v);
         }
         return this;
     }
 
     @Override
-    public @NotNull VertexConsumer setNormal(float v, float v1, float v2) {
+    public @NotNull VertexConsumer setNormal(float normalX, float normalY, float normalZ) {
         for (VertexConsumer consumer : consumers) {
-            consumer.setNormal(v, v1, v2);
+            consumer.setNormal(normalX, normalY, normalZ);
         }
         return this;
     }
