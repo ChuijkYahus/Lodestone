@@ -9,10 +9,11 @@ public class LodestoneVertexFormats {
 
     public static final VertexFormat POSITION_TEX_NORMAL_TANGENT_BITANGENT = VertexFormat.builder()
             .add("Position", VertexFormatElement.POSITION) // 3 floats
+            .add("Color", VertexFormatElement.COLOR) // 4 bytes
             .add("UV0", VertexFormatElement.UV0) // 2 floats
             .add("Normal", VertexFormatElement.NORMAL) // 3 bytes
             .add("Tangent", TANGENT) // 3 bytes
             .add("Bitangent", BITANGENT) // 3 bytes
-            .padding(3)
+            .padding(1) //31 total, we add one
             .build();
 }
