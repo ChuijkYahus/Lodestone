@@ -15,7 +15,7 @@ public class LodestoneShaderRegistry {
     public LodestoneShaderRegistry(String modId) {
         this.modId = modId;
     }
-    
+
     public ShaderHolder register(String id, VertexFormat format) {
         return register(new ShaderHolder(ResourceLocation.fromNamespaceAndPath(modId, id), format));
     }
