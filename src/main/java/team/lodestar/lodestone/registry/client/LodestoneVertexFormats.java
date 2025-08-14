@@ -7,7 +7,8 @@ public class LodestoneVertexFormats {
     public static VertexFormatElement TANGENT = VertexFormatElement.register(VertexFormatElement.findNextId(),0, VertexFormatElement.Type.BYTE, VertexFormatElement.Usage.NORMAL, 3);
     public static VertexFormatElement BITANGENT = VertexFormatElement.register(VertexFormatElement.findNextId(),0, VertexFormatElement.Type.BYTE, VertexFormatElement.Usage.NORMAL, 3);
 
-    public static final VertexFormat POSITION_TEX_NORMAL_TANGENT_BITANGENT = VertexFormat.builder()
+    //Scary!!
+    public static final VertexFormat POSITION_COLOR_TEX_LIGHTMAP_NORMAL_TANGENT_BITANGENT = VertexFormat.builder()
             .add("Position", VertexFormatElement.POSITION) // 3 floats 3*4
             .add("Color", VertexFormatElement.COLOR) // 4 bytes 4*1
             .add("UV0", VertexFormatElement.UV0) // 2 floats 2*4
