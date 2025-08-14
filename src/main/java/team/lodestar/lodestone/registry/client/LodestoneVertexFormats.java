@@ -14,6 +14,6 @@ public class LodestoneVertexFormats {
             .add("Normal", VertexFormatElement.NORMAL) // 3 bytes
             .add("Tangent", TANGENT) // 3 bytes
             .add("Bitangent", BITANGENT) // 3 bytes
-            .padding(1) //31 total, we add one
+            .padding(3) //33 total, we add three
             .build();
 }
