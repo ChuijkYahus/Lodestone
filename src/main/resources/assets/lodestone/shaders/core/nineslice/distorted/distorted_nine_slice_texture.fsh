@@ -17,8 +17,8 @@ uniform float FogStart;
 uniform float FogEnd;
 uniform vec4 FogColor;
 
-in vec4 vertexColor;
 in float vertexDistance;
+in vec4 vertexColor;
 in vec2 texCoord;
 flat in vec2 size;
 
