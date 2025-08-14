@@ -9,6 +9,7 @@ import java.util.concurrent.*;
 public class ShaderUniformHandler {
 
     public final ConcurrentHashMap<String, Float[]> uniformChanges = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, Integer> samplerChanges = new ConcurrentHashMap<>();
 
     public static final ShaderUniformHandler DEPTH_FADE = new ShaderUniformHandler().withDepthFade().lock();
     public static final ShaderUniformHandler LUMITRANSPARENT = new ShaderUniformHandler().withLumiTransparency().lock();
@@ -45,9 +46,20 @@ public class ShaderUniformHandler {
         return this;
     }
 
+    public ShaderUniformHandler setSamplerTexture(String samplerName, int textureId) {
+        if (locked) {
+            return this;
+        }
+        samplerChanges.put(samplerName, textureId);
+        return this;
+    }
+
     public void updateShaderData(ShaderInstance instance) {
         for (Map.Entry<String, Float[]> uniformChange : uniformChanges.entrySet()) {
             instance.safeGetUniform(uniformChange.getKey()).set(toPrimitive(uniformChange.getValue()));
+        }
+        for (Map.Entry<String, Integer> samplerChange : samplerChanges.entrySet()) {
+            instance.safeGetUniform(samplerChange.getKey()).set(samplerChange.getValue());
         }
     }
 
@@ -58,6 +70,7 @@ public class ShaderUniformHandler {
         }
         return result;
     }
+
     public ShaderUniformHandler lock() {
         this.locked = true;
         return this;
@@ -72,12 +85,25 @@ public class ShaderUniformHandler {
         if (uniformChanges.size() != that.uniformChanges.size()) {
             return false;
         }
+        if (samplerChanges.size() != that.samplerChanges.size()) {
+            return false;
+        }
         for (Map.Entry<String, Float[]> entry : uniformChanges.entrySet()) {
             Float[] otherValues = that.uniformChanges.get(entry.getKey());
             if (otherValues == null || otherValues.length != entry.getValue().length) {
                 return false;
             }
             isSame = Arrays.equals(entry.getValue(), otherValues);
+            if (!isSame) {
+                return false;
+            }
+        }
+        for (Map.Entry<String, Integer> entry : samplerChanges.entrySet()) {
+            Integer otherValues = that.samplerChanges.get(entry.getKey());
+            if (otherValues == null) {
+                return false;
+            }
+            isSame = entry.getValue().equals(otherValues);
             if (!isSame) {
                 return false;
             }
@@ -89,12 +115,21 @@ public class ShaderUniformHandler {
     public int hashCode() {
         int result = 1;
 
-        List<Map.Entry<String, Float[]>> entries = new ArrayList<>(uniformChanges.entrySet());
-        entries.sort(Map.Entry.comparingByKey());
+        List<Map.Entry<String, Float[]>> uniform = new ArrayList<>(uniformChanges.entrySet());
+        uniform.sort(Map.Entry.comparingByKey());
 
-        for (Map.Entry<String, Float[]> entry : entries) {
+        ArrayList<Map.Entry<String, Integer>> sampler = new ArrayList<>(samplerChanges.entrySet());
+        sampler.sort(Map.Entry.comparingByKey());
+
+        for (Map.Entry<String, Float[]> entry : uniform) {
             int keyHash = entry.getKey().hashCode();
-            int valueHash = Arrays.hashCode(entry.getValue()); // content-based hash
+            int valueHash = Arrays.hashCode(entry.getValue());
+            result = 31 * result + (keyHash ^ valueHash);
+        }
+
+        for (Map.Entry<String, Integer> entry : sampler) {
+            int keyHash = entry.getKey().hashCode();
+            int valueHash = Objects.hashCode(entry.getValue());
             result = 31 * result + (keyHash ^ valueHash);
         }
 
