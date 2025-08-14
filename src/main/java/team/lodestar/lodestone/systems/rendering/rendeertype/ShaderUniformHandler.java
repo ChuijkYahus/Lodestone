@@ -59,7 +59,7 @@ public class ShaderUniformHandler {
             instance.safeGetUniform(uniformChange.getKey()).set(toPrimitive(uniformChange.getValue()));
         }
         for (Map.Entry<String, Integer> samplerChange : samplerChanges.entrySet()) {
-            instance.safeGetUniform(samplerChange.getKey()).set(samplerChange.getValue());
+            instance.setSampler(samplerChange.getKey(), samplerChange.getValue());
         }
     }
 
