@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.RenderType;
 import org.jetbrains.annotations.NotNull;
 import team.lodestar.lodestone.handlers.LodestoneRenderHandler;
 import team.lodestar.lodestone.systems.rendering.LodestoneRenderType;
+import team.lodestar.lodestone.systems.rendering.rendeertype.*;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -34,6 +35,10 @@ public class LodestoneBufferSource extends MultiBufferSource.BufferSource {
         for (RenderType type : renderTypes) {
             endBatch(type);
         }
+    }
+
+    public @NotNull VertexConsumer getBuffer(@NotNull LodestoneRenderTypeBuilder renderTypeBuilder) {
+        return getBuffer(renderTypeBuilder.getRenderType());
     }
 
     @Override
