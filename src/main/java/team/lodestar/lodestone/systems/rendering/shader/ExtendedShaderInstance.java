@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ChainedJsonException;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraft.util.GsonHelper;
+import team.lodestar.lodestone.*;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -76,10 +77,15 @@ public class ExtendedShaderInstance extends ShaderInstance {
             JsonObject uniformObject = GsonHelper.convertToJsonObject(uniformJson, "uniform");
             var uniformName = GsonHelper.getAsString(uniformObject, "name");
             if (EXCLUDED_UNIFORMS.contains(uniformName)) {
-                return;
+                continue;
             }
             Uniform uniform = uniformMap.get(uniformName);
-
+            if (uniform == null) {
+                LodestoneLib.LOGGER.warn(
+                        "Shader json {} has a uniform {} that is not present in the shader instance uniform map. This may cause issues.",
+                        shaderHolder.getShaderLocation(), uniformName);
+                continue;
+            }
             Consumer<Uniform> consumer;
             if (uniform.getType() <= 3) {
                 IntBuffer buffer = uniform.getIntBuffer();

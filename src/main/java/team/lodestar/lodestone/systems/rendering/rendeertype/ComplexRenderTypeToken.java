@@ -58,9 +58,9 @@ public class ComplexRenderTypeToken extends RenderTypeToken {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         ComplexRenderTypeToken that = (ComplexRenderTypeToken) o;
-        boolean equals = Objects.equals(uniformHandler, that.uniformHandler);
-        boolean equals1 = Objects.equals(modifier, that.modifier);
-        return equals && equals1;
+        boolean equalUniform = Objects.equals(uniformHandler, that.uniformHandler);
+        boolean equalModifier = Objects.equals(modifier, that.modifier);
+        return equalUniform && equalModifier;
     }
 
     @Override
