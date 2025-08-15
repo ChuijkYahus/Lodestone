@@ -79,35 +79,28 @@ public class ShaderUniformHandler {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ShaderUniformHandler that = (ShaderUniformHandler) o;
-        boolean isSame;
-        if (uniformChanges.size() != that.uniformChanges.size()) {
+        if (!(o instanceof ShaderUniformHandler that)) {
             return false;
         }
-        if (samplerChanges.size() != that.samplerChanges.size()) {
+        if (uniformChanges.size() != that.uniformChanges.size()) {
             return false;
         }
         for (Map.Entry<String, Float[]> entry : uniformChanges.entrySet()) {
             Float[] otherValues = that.uniformChanges.get(entry.getKey());
-            if (otherValues == null || otherValues.length != entry.getValue().length) {
+            if (!Arrays.equals(entry.getValue(), otherValues)) {
                 return false;
             }
-            isSame = Arrays.equals(entry.getValue(), otherValues);
-            if (!isSame) {
-                return false;
-            }
+        }
+
+        if (samplerChanges.size() != that.samplerChanges.size()) {
+            return false;
         }
         for (Map.Entry<String, Integer> entry : samplerChanges.entrySet()) {
-            Integer otherValues = that.samplerChanges.get(entry.getKey());
-            if (otherValues == null) {
-                return false;
-            }
-            isSame = entry.getValue().equals(otherValues);
-            if (!isSame) {
+            if (!Objects.equals(entry.getValue(), that.samplerChanges.get(entry.getKey()))) {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -115,26 +108,19 @@ public class ShaderUniformHandler {
     public int hashCode() {
         int result = 1;
 
-        if (!uniformChanges.isEmpty()) {
-            List<Map.Entry<String, Float[]>> uniform = new ArrayList<>(uniformChanges.entrySet());
-            uniform.sort(Map.Entry.comparingByKey());
-            for (Map.Entry<String, Float[]> entry : uniform) {
-                int keyHash = entry.getKey().hashCode();
-                int valueHash = Arrays.hashCode(entry.getValue());
-                result = 31 * result + (keyHash ^ valueHash);
-            }
-        }
-        if (!samplerChanges.isEmpty()) {
-            List<Map.Entry<String, Integer>> sampler = new ArrayList<>(samplerChanges.entrySet());
-            sampler.sort(Map.Entry.comparingByKey());
-            for (Map.Entry<String, Integer> entry : sampler) {
-                int keyHash = entry.getKey().hashCode();
-                int valueHash = Objects.hashCode(entry.getValue());
-                result = 31 * result + (keyHash ^ valueHash);
-            }
+        List<String> uniformKeys = new ArrayList<>(uniformChanges.keySet());
+        Collections.sort(uniformKeys);
+        for (String key : uniformKeys) {
+            result = 31 * result + key.hashCode();
+            result = 31 * result + Arrays.hashCode(uniformChanges.get(key));
         }
 
-
+        List<String> samplerKeys = new ArrayList<>(samplerChanges.keySet());
+        Collections.sort(samplerKeys);
+        for (String key : samplerKeys) {
+            result = 31 * result + key.hashCode();
+            result = 31 * result + Objects.hashCode(samplerChanges.get(key));
+        }
 
         return result;
     }
