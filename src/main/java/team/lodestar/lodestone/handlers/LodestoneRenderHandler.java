@@ -133,7 +133,10 @@ public class LodestoneRenderHandler {
         if (optional.isPresent()) {
             ShaderInstance shader = optional.get();
             if (renderType instanceof LodestoneRenderType lodestoneRenderType) {
-                lodestoneRenderType.getUniformHandler().updateShaderData(shader);
+                var handler = lodestoneRenderType.getUniformHandler();
+                if (handler != null) {
+                    handler.updateShaderData(shader);
+                }
             }
             shader.setSampler("SceneDepthBuffer", LodestoneRenderHandler.LODESTONE_DEPTH_CACHE.getDepthTextureId());
             shader.setSampler("SceneDiffuseBuffer", Minecraft.getInstance().getMainRenderTarget().getColorTextureId());

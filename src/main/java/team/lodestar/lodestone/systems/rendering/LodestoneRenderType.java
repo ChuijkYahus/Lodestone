@@ -84,7 +84,7 @@ public class LodestoneRenderType extends RenderType {
         return renderType.state.transparencyState.equals(StateShards.ADDITIVE_TRANSPARENCY);
     }
 
-    public ShaderUniformHandler getUniformHandler() {
+    public @Nullable ShaderUniformHandler getUniformHandler() {
         return uniformHandler;
     }
 
