@@ -1,17 +1,6 @@
 {
-  "blend": {
-    "func": "add",
-    "srcrgb": "srcalpha",
-    "dstrgb": "1-srcalpha"
-  },
   "vertex": "lodestone:particle/lodestone_particle",
   "fragment": "lodestone:particle/lodestone_particle",
-  "attributes": [
-    "Position",
-    "UV0",
-    "Color",
-    "UV2"
-  ],
   "samplers": [
     { "name": "Sampler0" },
     { "name": "Sampler2" },
