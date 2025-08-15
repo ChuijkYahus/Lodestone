@@ -6,6 +6,7 @@ import net.minecraft.client.*;
 import net.minecraft.client.renderer.*;
 import team.lodestar.lodestone.handlers.*;
 import team.lodestar.lodestone.registry.client.*;
+import team.lodestar.lodestone.registry.client.LodestoneRenderTypes.*;
 import team.lodestar.lodestone.systems.rendering.rendeertype.*;
 
 import javax.annotation.*;
@@ -37,6 +38,8 @@ public class LodestoneRenderType extends RenderType {
         this.uniformHandler = uniformHandler;
     }
 
+    // Constructors for copying and modifying render types
+    // They are a bit ugly but alas
     protected LodestoneRenderType(String name, LodestoneRenderType original) {
         this(name, original.format, original.mode, original.bufferSize, original.affectsCrumbling, original.sortOnUpload, original.state, original.uniformHandler);
     }
@@ -49,6 +52,14 @@ public class LodestoneRenderType extends RenderType {
         this(name, original.format, original.mode, original.bufferSize, original.affectsCrumbling, original.sortOnUpload, original.state, new ShaderUniformHandler(original.uniformHandler).accept(uniformHandler));
     }
 
+    protected LodestoneRenderType(String name, LodestoneRenderType original, ShaderUniformHandler uniformHandler, Consumer<LodestoneCompositeStateBuilder> modifier) {
+        this(name, original.format, original.mode, original.bufferSize, original.affectsCrumbling, original.sortOnUpload, LodestoneRenderTypes.builder(original.state).accepts(modifier).createCompositeState(), uniformHandler);
+    }
+
+    protected LodestoneRenderType(String name, LodestoneRenderType original, Consumer<ShaderUniformHandler> uniformHandler, Consumer<LodestoneCompositeStateBuilder> modifier) {
+        this(name, original.format, original.mode, original.bufferSize, original.affectsCrumbling, original.sortOnUpload, LodestoneRenderTypes.builder(original.state).accepts(modifier).createCompositeState(), new ShaderUniformHandler(original.uniformHandler).accept(uniformHandler));
+    }
+
     public LodestoneRenderType copy(Object key) {
         return this.copies.computeIfAbsent(key, k -> new LodestoneRenderType(this.name, this));
     }
@@ -59,6 +70,14 @@ public class LodestoneRenderType extends RenderType {
 
     public LodestoneRenderType copy(Object key, Consumer<ShaderUniformHandler> uniformHandler) {
         return this.copies.computeIfAbsent(key, k -> new LodestoneRenderType(this.name, this, uniformHandler));
+    }
+
+    public LodestoneRenderType copy(Object key, ShaderUniformHandler uniformHandler, Consumer<LodestoneCompositeStateBuilder> modifier) {
+        return this.copies.computeIfAbsent(key, k -> new LodestoneRenderType(this.name, this, uniformHandler, modifier));
+    }
+
+    public LodestoneRenderType copy(Object key, Consumer<ShaderUniformHandler> uniformHandler, Consumer<LodestoneCompositeStateBuilder> modifier) {
+        return this.copies.computeIfAbsent(key, k -> new LodestoneRenderType(this.name, this, uniformHandler, modifier));
     }
 
     public static boolean isAdditive(LodestoneRenderType renderType) {

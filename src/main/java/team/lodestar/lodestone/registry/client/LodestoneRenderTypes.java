@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.util.*;
+import team.lodestar.lodestone.*;
 import team.lodestar.lodestone.systems.rendering.*;
 import team.lodestar.lodestone.systems.rendering.rendeertype.*;
 import team.lodestar.lodestone.systems.rendering.shader.ShaderHolder;
@@ -156,7 +157,8 @@ public class LodestoneRenderTypes extends RenderStateShard {
             complex.getModifier().accept(builder);
         }
         var renderTypeMode = builder.modeOverride != null ? builder.modeOverride : mode;
-        return new LodestoneRenderType(name, format, renderTypeMode, 256, false, true, builder.createCompositeState(true), uniformHandler);
+        var compositeState = builder.createCompositeState();
+        return new LodestoneRenderType(name, format, renderTypeMode, 256, false, true, compositeState, uniformHandler);
     }
 
     public static LodestoneCompositeStateBuilder builder(Object... objects) {
@@ -179,64 +181,57 @@ public class LodestoneRenderTypes extends RenderStateShard {
             return this;
         }
 
-        public LodestoneCompositeStateBuilder copyState(RenderType.CompositeState state) {
-            for (RenderStateShard renderStateShard : state.states) {
-                setStateShards(renderStateShard);
-            }
+        public LodestoneCompositeStateBuilder accepts(Consumer<LodestoneCompositeStateBuilder> modifier) {
+            modifier.accept(this);
             return this;
         }
 
         public LodestoneCompositeStateBuilder setStateShards(Object... objects) {
             for (Object object : objects) {
-                if (object instanceof ResourceLocation texture) {
-                    setTextureState(texture);
-                }
-                else if (object instanceof RenderTypeToken token) {
-                    setTextureState(token);
-                }
-                else if (object instanceof RenderStateShard.EmptyTextureStateShard shard) {
-                    setTextureState(shard);
-                }
-                else if (object instanceof ShaderHolder shaderHolder) {
-                    setShaderState(shaderHolder);
-                }
-                else if (object instanceof RenderStateShard.ShaderStateShard shard) {
-                    setShaderState(shard);
-                }
-                else if (object instanceof RenderStateShard.TransparencyStateShard shard) {
-                    setTransparencyState(shard);
-                }
-                else if (object instanceof RenderStateShard.DepthTestStateShard shard) {
-                    setDepthTestState(shard);
-                }
-                else if (object instanceof RenderStateShard.CullStateShard shard) {
-                    setCullState(shard);
-                }
-                else if (object instanceof RenderStateShard.LightmapStateShard shard) {
-                    setLightmapState(shard);
-                }
-                else if (object instanceof RenderStateShard.OverlayStateShard shard) {
-                    setOverlayState(shard);
-                }
-                else if (object instanceof RenderStateShard.LayeringStateShard shard) {
-                    setLayeringState(shard);
-                }
-                else if (object instanceof RenderStateShard.OutputStateShard shard) {
-                    setOutputState(shard);
-                }
-                else if (object instanceof RenderStateShard.TexturingStateShard shard) {
-                    setTexturingState(shard);
-                }
-                else if (object instanceof RenderStateShard.WriteMaskStateShard shard) {
-                    setWriteMaskState(shard);
-                }
-                else if (object instanceof RenderStateShard.LineStateShard shard) {
-                    setLineState(shard);
-                }
-                else if (object instanceof RenderStateShard.ColorLogicStateShard shard) {
-                    setColorLogicState(shard);
+                if (object instanceof RenderType.CompositeState state) {
+                    copyState(state);
                 }
             }
+
+            for (Object object : objects) {
+                switch (object) {
+                    case ResourceLocation texture -> setTextureState(texture);
+                    case RenderTypeToken token -> setTextureState(token);
+                    case EmptyTextureStateShard shard -> setTextureState(shard);
+                    case ShaderHolder shaderHolder -> setShaderState(shaderHolder);
+                    case ShaderStateShard shard -> setShaderState(shard);
+                    case TransparencyStateShard shard -> setTransparencyState(shard);
+                    case DepthTestStateShard shard -> setDepthTestState(shard);
+                    case CullStateShard shard -> setCullState(shard);
+                    case LightmapStateShard shard -> setLightmapState(shard);
+                    case OverlayStateShard shard -> setOverlayState(shard);
+                    case LayeringStateShard shard -> setLayeringState(shard);
+                    case OutputStateShard shard -> setOutputState(shard);
+                    case TexturingStateShard shard -> setTexturingState(shard);
+                    case WriteMaskStateShard shard -> setWriteMaskState(shard);
+                    case LineStateShard shard -> setLineState(shard);
+                    case ColorLogicStateShard shard -> setColorLogicState(shard);
+                    case null -> LodestoneLib.LOGGER.warn("Null object passed for composite state, ignoring.");
+                    default -> LodestoneLib.LOGGER.warn("Unsupported object passed for composite state: {}, {}", object.getClass().getName(), object);
+                }
+            }
+            return this;
+        }
+
+        public LodestoneCompositeStateBuilder copyState(RenderType.CompositeState state) {
+            setTextureState(state.textureState);
+            setShaderState(state.shaderState);
+            setTransparencyState(state.transparencyState);
+            setDepthTestState(state.depthTestState);
+            setCullState(state.cullState);
+            setLightmapState(state.lightmapState);
+            setOverlayState(state.overlayState);
+            setLayeringState(state.layeringState);
+            setOutputState(state.outputState);
+            setTexturingState(state.texturingState);
+            setWriteMaskState(state.writeMaskState);
+            setLineState(state.lineState);
+            setColorLogicState(state.colorLogicState);
             return this;
         }
 
@@ -250,6 +245,10 @@ public class LodestoneRenderTypes extends RenderStateShard {
 
         public LodestoneCompositeStateBuilder setShaderState(ShaderHolder shaderHolder) {
             return setShaderState(shaderHolder.getShard());
+        }
+
+        public RenderType.CompositeState createCompositeState() {
+            return super.createCompositeState(true);
         }
 
         @Override
