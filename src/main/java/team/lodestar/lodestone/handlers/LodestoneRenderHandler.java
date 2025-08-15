@@ -10,6 +10,7 @@ import net.neoforged.neoforge.client.event.*;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL30C;
 import team.lodestar.lodestone.helpers.RenderHelper;
+import team.lodestar.lodestone.systems.rendering.*;
 import team.lodestar.lodestone.systems.rendering.buffer.LodestoneRenderLayer;
 import team.lodestar.lodestone.systems.rendering.rendeertype.ShaderUniformHandler;
 import team.lodestar.lodestone.systems.rendering.shader.ExtendedShaderInstance;
@@ -131,9 +132,8 @@ public class LodestoneRenderHandler {
         Optional<ShaderInstance> optional = RenderHelper.getShader(renderType);
         if (optional.isPresent()) {
             ShaderInstance shader = optional.get();
-            if (LodestoneRenderHandler.DEFERRED_UNIFORMS.containsKey(renderType)) {
-                ShaderUniformHandler handler = LodestoneRenderHandler.DEFERRED_UNIFORMS.get(renderType);
-                handler.updateShaderData(shader);
+            if (renderType instanceof LodestoneRenderType lodestoneRenderType) {
+                lodestoneRenderType.getUniformHandler().updateShaderData(shader);
             }
             shader.setSampler("SceneDepthBuffer", LodestoneRenderHandler.LODESTONE_DEPTH_CACHE.getDepthTextureId());
             shader.setSampler("SceneDiffuseBuffer", Minecraft.getInstance().getMainRenderTarget().getColorTextureId());
