@@ -1,17 +1,6 @@
 {
-  "blend": {
-    "func": "add",
-    "srcrgb": "srcalpha",
-    "dstrgb": "1-srcalpha"
-  },
   "vertex": "lodestone:texture_fade",
   "fragment": "lodestone:texture_fade",
-  "attributes": [
-    "Position",
-    "Color",
-    "UV0",
-    "UV2"
-  ],
   "samplers": [
     { "name": "Sampler0" },
     { "name": "Sampler2" },

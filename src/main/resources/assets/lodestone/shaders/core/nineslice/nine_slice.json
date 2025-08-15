@@ -1,9 +1,4 @@
 {
-  "blend": {
-    "func": "add",
-    "srcrgb": "srcalpha",
-    "dstrgb": "1-srcalpha"
-  },
   "vertex": "lodestone:nineslice/nine_slice",
   "geometry": "lodestone:nineslice/nine_slice",
   "fragment": "lodestone:nineslice/nine_slice",
