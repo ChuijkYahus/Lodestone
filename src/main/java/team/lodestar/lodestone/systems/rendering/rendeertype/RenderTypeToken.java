@@ -7,6 +7,11 @@ import team.lodestar.lodestone.registry.client.*;
 import java.util.*;
 import java.util.function.*;
 
+/**
+ * A token representing a render type
+ * Currently does not support a definition without a texture
+ * Each unique token will create a unique render type and as such tokens are cached depending on the texture.
+ */
 public class RenderTypeToken {
 
     private static final HashMap<ResourceLocation, RenderTypeToken> CACHED_TEXTURE_TOKENS = new HashMap<>();
@@ -36,11 +41,15 @@ public class RenderTypeToken {
         return CACHED_STATE_TOKENS.computeIfAbsent(texture, RenderTypeToken::new);
     }
 
-    protected ComplexRenderTypeToken addUniformHandler(ShaderUniformHandler uniformHandler) {
+    public ComplexRenderTypeToken addUniformHandler(ShaderUniformHandler uniformHandler) {
         return new ComplexRenderTypeToken(this).addUniformHandler(uniformHandler);
     }
 
-    protected ComplexRenderTypeToken addModifier(Consumer<LodestoneRenderTypes.LodestoneCompositeStateBuilder> modifier) {
+    public ComplexRenderTypeToken addUniformHandler(Consumer<ShaderUniformHandler> uniformHandler) {
+        return new ComplexRenderTypeToken(this).addUniformHandler(uniformHandler);
+    }
+
+    public ComplexRenderTypeToken addModifier(Consumer<LodestoneRenderTypes.LodestoneCompositeStateBuilder> modifier) {
         return new ComplexRenderTypeToken(this).addModifier(modifier);
     }
 

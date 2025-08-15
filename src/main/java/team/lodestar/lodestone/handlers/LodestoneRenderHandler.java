@@ -23,8 +23,6 @@ import java.util.*;
  */
 public class LodestoneRenderHandler {
 
-    public static final HashMap<RenderType, ShaderUniformHandler> DEFERRED_UNIFORMS = new HashMap<>();
-
     public static RenderTarget LODESTONE_DEPTH_CACHE;
 
     public static LodestoneRenderLayer DEFERRED_RENDER = new LodestoneRenderLayer();

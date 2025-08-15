@@ -17,13 +17,24 @@ public class ComplexRenderTypeToken extends RenderTypeToken {
     }
 
     @Override
-    protected ComplexRenderTypeToken addUniformHandler(ShaderUniformHandler uniformHandler) {
+    public ComplexRenderTypeToken addUniformHandler(ShaderUniformHandler uniformHandler) {
         this.uniformHandler = uniformHandler;
         return this;
     }
 
     @Override
-    protected ComplexRenderTypeToken addModifier(Consumer<LodestoneRenderTypes.LodestoneCompositeStateBuilder> modifier) {
+    public ComplexRenderTypeToken addUniformHandler(Consumer<ShaderUniformHandler> modifier) {
+        if (uniformHandler != null) {
+            modifier.accept(uniformHandler);
+        } else {
+            addUniformHandler(new ShaderUniformHandler());
+            modifier.accept(this.uniformHandler);
+        }
+        return this;
+    }
+
+    @Override
+    public ComplexRenderTypeToken addModifier(Consumer<LodestoneRenderTypes.LodestoneCompositeStateBuilder> modifier) {
         this.modifier = modifier;
         return this;
     }
@@ -31,6 +42,14 @@ public class ComplexRenderTypeToken extends RenderTypeToken {
     @Override
     protected RenderTypeToken unique() {
         return new ComplexRenderTypeToken(this).addUniformHandler(this.uniformHandler).addModifier(this.modifier);
+    }
+
+    public ShaderUniformHandler getUniformHandler() {
+        return uniformHandler;
+    }
+
+    public Consumer<LodestoneRenderTypes.LodestoneCompositeStateBuilder> getModifier() {
+        return modifier;
     }
 
     @Override

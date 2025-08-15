@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.ShaderInstance;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.*;
 
 public class ShaderUniformHandler {
 
@@ -18,6 +19,22 @@ public class ShaderUniformHandler {
     private boolean locked;
 
     public ShaderUniformHandler() {
+    }
+
+    public ShaderUniformHandler(ShaderUniformHandler original) {
+        this.locked = original.locked;
+        for (Map.Entry<String, Float[]> entry : original.uniformChanges.entrySet()) {
+            this.uniformChanges.put(entry.getKey(), Arrays.copyOf(entry.getValue(), entry.getValue().length));
+        }
+        this.samplerChanges.putAll(original.samplerChanges);
+    }
+
+    public ShaderUniformHandler accept(Consumer<ShaderUniformHandler> modifier) {
+        if (locked) {
+            return this;
+        }
+        modifier.accept(this);
+        return this;
     }
 
     public ShaderUniformHandler withLumiTransparency() {

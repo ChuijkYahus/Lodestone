@@ -8,11 +8,15 @@ import team.lodestar.lodestone.handlers.*;
 import team.lodestar.lodestone.registry.client.*;
 import team.lodestar.lodestone.systems.rendering.rendeertype.*;
 
+import javax.annotation.*;
 import java.util.*;
+import java.util.function.*;
 
 import static net.minecraft.client.renderer.RenderType.CompositeRenderType.OUTLINE;
 
 public class LodestoneRenderType extends RenderType {
+
+    public final HashMap<Object, LodestoneRenderType> copies = new HashMap<>();
 
     public final RenderType.CompositeState state;
     private final RenderType outline;
@@ -20,7 +24,9 @@ public class LodestoneRenderType extends RenderType {
 
     private final boolean isAdditive;
 
-    public LodestoneRenderType(String pName, VertexFormat pFormat, VertexFormat.Mode pMode, int pBufferSize, boolean pAffectsCrumbling, boolean pSortOnUpload, RenderType.CompositeState pState) {
+    private final ShaderUniformHandler uniformHandler;
+
+    public LodestoneRenderType(String pName, VertexFormat pFormat, VertexFormat.Mode pMode, int pBufferSize, boolean pAffectsCrumbling, boolean pSortOnUpload, RenderType.CompositeState pState, @Nullable ShaderUniformHandler uniformHandler) {
         super(pName, pFormat, pMode, pBufferSize, pAffectsCrumbling, pSortOnUpload,
                 () -> pState.states.forEach(RenderStateShard::setupRenderState),
                 () -> pState.states.forEach(RenderStateShard::clearRenderState));
@@ -28,10 +34,39 @@ public class LodestoneRenderType extends RenderType {
         this.outline = pState.outlineProperty == RenderType.OutlineProperty.AFFECTS_OUTLINE ? pState.textureState.cutoutTexture().map((p_173270_) -> OUTLINE.apply(p_173270_, pState.cullState)).orElse(null) : null;
         this.isOutline = pState.outlineProperty == RenderType.OutlineProperty.IS_OUTLINE;
         this.isAdditive = isAdditive(this);
+        this.uniformHandler = uniformHandler;
+    }
+
+    protected LodestoneRenderType(String name, LodestoneRenderType original) {
+        this(name, original.format, original.mode, original.bufferSize, original.affectsCrumbling, original.sortOnUpload, original.state, original.uniformHandler);
+    }
+
+    protected LodestoneRenderType(String name, LodestoneRenderType original, ShaderUniformHandler uniformHandler) {
+        this(name, original.format, original.mode, original.bufferSize, original.affectsCrumbling, original.sortOnUpload, original.state, uniformHandler);
+    }
+
+    protected LodestoneRenderType(String name, LodestoneRenderType original, Consumer<ShaderUniformHandler> uniformHandler) {
+        this(name, original.format, original.mode, original.bufferSize, original.affectsCrumbling, original.sortOnUpload, original.state, new ShaderUniformHandler(original.uniformHandler).accept(uniformHandler));
+    }
+
+    public LodestoneRenderType copy(Object key) {
+        return this.copies.computeIfAbsent(key, k -> new LodestoneRenderType(this.name, this));
+    }
+
+    public LodestoneRenderType copy(Object key, ShaderUniformHandler uniformHandler) {
+        return this.copies.computeIfAbsent(key, k -> new LodestoneRenderType(this.name, this, uniformHandler));
+    }
+
+    public LodestoneRenderType copy(Object key, Consumer<ShaderUniformHandler> uniformHandler) {
+        return this.copies.computeIfAbsent(key, k -> new LodestoneRenderType(this.name, this, uniformHandler));
     }
 
     public static boolean isAdditive(LodestoneRenderType renderType) {
         return renderType.state.transparencyState.equals(StateShards.ADDITIVE_TRANSPARENCY);
+    }
+
+    public ShaderUniformHandler getUniformHandler() {
+        return uniformHandler;
     }
 
     @Override

@@ -32,27 +32,20 @@ public class RenderTypeProvider {
     /**
      * Creates a new {@link LodestoneRenderType} using the provided token and builder.
      * @param token the token to create the render type with
-     * @param builder the builder containing additional properties for the render type
      * @return the created {@link LodestoneRenderType}
      */
-    protected LodestoneRenderType createRenderType(RenderTypeToken token, LodestoneRenderTypeBuilder builder) {
+    protected LodestoneRenderType createRenderType(RenderTypeToken token) {
         if (hasGoneNuclear) {
             return cache.entrySet().iterator().next().getValue();
         }
-        final boolean b = cache.containsKey(token);
-        if (b) {
+        if (cache.containsKey(token)) {
             return cache.get(token);
         }
-        if (builder.getModifier() != null) {
-            LodestoneRenderTypes.addRenderTypeModifier(builder.getModifier());
-        }
-        // Create a unique token to avoid caching issues with the same token object being used several times
+        // TODO: test if we need this
+        // We regenerate the token, which creates a new UUID and ensures that each RenderTypeToken stored in our cache is unique
         RenderTypeToken unique = token.unique();
         var renderType = provider.apply(unique);
         cache.put(unique, renderType);
-        if (builder.getUniformHandler() != null) {
-            LodestoneRenderTypes.addUniformChanges(renderType, builder.getUniformHandler());
-        }
         if (checkNuclear()) {
             hasGoneNuclear = true;
             LodestoneLib.LOGGER.warn(
@@ -71,10 +64,7 @@ public class RenderTypeProvider {
                 .map(entry -> entry.getKey().getIdentifier() + " -> " + entry.getValue().name)
                 .toList();
 
-        return "RenderTypeProvider{" +
-                "provider=" + provider +
-                ", cache sample=" + cacheSample +
-                '}';
+        return "RenderTypeProvider{" + "provider=" + provider + ", cache sample=" + cacheSample + '}';
     }
 
     public boolean checkNuclear() {
