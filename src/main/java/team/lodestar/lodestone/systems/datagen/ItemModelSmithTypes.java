@@ -38,12 +38,12 @@ public class ItemModelSmithTypes {
 
     public static Function<String, ItemModelSmith> AFFIXED_BLOCK_TEXTURE_ITEM = Util.memoize((affix) -> new ItemModelSmith(((item, provider) -> {
         String name = provider.getItemName(item);
-        return provider.getBuilder(name).parent(new ModelFile.UncheckedModelFile(provider.modLoc("block/" + name + affix)));
+        return provider.createGenericModel(item, GENERATED, provider.getBlockTexture(name + affix));
     })));
 
     public static Function<String, ItemModelSmith> AFFIXED_BLOCK_MODEL_ITEM = Util.memoize((affix) -> new ItemModelSmith(((item, provider) -> {
         String name = provider.getItemName(item);
-        return provider.createGenericModel(item, GENERATED, provider.getBlockTexture(name + affix));
+        return provider.getBuilder(name).parent(new ModelFile.UncheckedModelFile(provider.modLoc("block/" + name + affix)));
     })));
 
     public static ItemModelSmith CROSS_MODEL_ITEM = new ItemModelSmith(((item, provider) -> provider.createGenericModel(item, GENERATED, provider.getBlockTextureFromCache("cross"))));
