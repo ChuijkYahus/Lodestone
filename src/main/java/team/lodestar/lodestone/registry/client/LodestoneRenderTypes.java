@@ -154,7 +154,9 @@ public class LodestoneRenderTypes extends RenderStateShard {
         ShaderUniformHandler uniformHandler = null;
         if (token instanceof ComplexRenderTypeToken complex) {
             uniformHandler = complex.getUniformHandler();
-            complex.getModifier().accept(builder);
+            if (complex.getModifier() != null) {
+                complex.getModifier().accept(builder);
+            }
         }
         var renderTypeMode = builder.modeOverride != null ? builder.modeOverride : mode;
         var compositeState = builder.createCompositeState();
