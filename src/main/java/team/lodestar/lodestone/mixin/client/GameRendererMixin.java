@@ -1,7 +1,11 @@
 package team.lodestar.lodestone.mixin.client;
 
+import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.client.Camera;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -11,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import team.lodestar.lodestone.handlers.*;
 import team.lodestar.lodestone.systems.postprocess.PostProcessHandler;
 import team.lodestar.lodestone.systems.rendering.LodestoneRenderSystem;
+import team.lodestar.lodestone.systems.rendering.renderpass.RenderPassHandler;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
@@ -19,15 +24,28 @@ public class GameRendererMixin {
     public void lodestone$injectionResizeListener(int width, int height, CallbackInfo ci) {
         LodestoneRenderHandler.resize(width, height);
         PostProcessHandler.resize(width, height);
+        RenderPassHandler.resize(width, height);
+    }
+
+    @Inject(
+            method = "renderLevel",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lorg/joml/Matrix4f;rotation(Lorg/joml/Quaternionfc;)Lorg/joml/Matrix4f;",
+                    shift = At.Shift.AFTER
+            )
+    )
+    private void lodestone$beforeRenderLevel(DeltaTracker deltaTracker, CallbackInfo ci, @Local Camera camera, @Local Matrix4f viewMat, @Local Matrix4f projMat) {
+        RenderPassHandler.render(deltaTracker, camera, (GameRenderer) (Object) this, new Matrix4f(viewMat), new Matrix4f(projMat));
     }
 
     @ModifyArgs(method = "bobView", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;translate(FFF)V"))
-    public void extractViewBob(Args args) {
+    public void lodestone$extractViewBob(Args args) {
         LodestoneRenderSystem.setViewBobOffset(-(float) args.get(0), -(float) args.get(1), -(float) args.get(2));
     }
 
     @Inject(method = "renderLevel", at = @At("HEAD"))
-    public void clearViewBob(CallbackInfo ci) {
+    public void lodestone$clearViewBob(CallbackInfo ci) {
         if (!Minecraft.getInstance().options.bobView().get()) {
             LodestoneRenderSystem.setViewBobOffset(0, 0, 0);
         }
