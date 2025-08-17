@@ -1,5 +1,9 @@
 package team.lodestar.lodestone.helpers;
 
+import com.mojang.blaze3d.pipeline.TextureTarget;
+import net.minecraft.client.Minecraft;
+import team.lodestar.lodestone.systems.texture.CustomizableTextureTarget;
+
 import java.nio.ByteBuffer;
 
 public class TextureHelper {
@@ -53,5 +57,13 @@ public class TextureHelper {
         if (width % xSlices != 0 || height % ySlices != 0) {
             throw new IllegalArgumentException("Image dimensions must be a multiple of the texture dimensions");
         }
+    }
+
+    public static TextureTarget generateTextureTarget(boolean depth) {
+        return new TextureTarget(Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), depth, Minecraft.ON_OSX);
+    }
+
+    public static CustomizableTextureTarget generateHDRTextureTarget(boolean depth) {
+        return new CustomizableTextureTarget(Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), depth);
     }
 }
