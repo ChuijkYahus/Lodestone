@@ -31,11 +31,11 @@ public class GameRendererMixin {
             method = "renderLevel",
             at = @At(
                     value = "INVOKE",
-                    target = "Lorg/joml/Matrix4f;rotation(Lorg/joml/Quaternionfc;)Lorg/joml/Matrix4f;",
-                    shift = At.Shift.AFTER
+                    target = "Lnet/minecraft/client/renderer/LevelRenderer;prepareCullFrustum(Lnet/minecraft/world/phys/Vec3;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V",
+                    shift = At.Shift.BEFORE
             )
     )
-    private void lodestone$beforeRenderLevel(DeltaTracker deltaTracker, CallbackInfo ci, @Local Camera camera, @Local Matrix4f viewMat, @Local Matrix4f projMat) {
+    private void lodestone$beforeRenderLevel(DeltaTracker deltaTracker, CallbackInfo ci, @Local Camera camera, @Local(ordinal = 0) Matrix4f projMat, @Local(ordinal = 1) Matrix4f viewMat) {
         RenderPassHandler.render(deltaTracker, camera, (GameRenderer) (Object) this, new Matrix4f(viewMat), new Matrix4f(projMat));
     }
 
