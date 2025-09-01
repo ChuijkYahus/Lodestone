@@ -1,6 +1,7 @@
 #version 150
 
 in vec2 texCoord;
+in vec4 vertexColor;
 
 uniform sampler2D Sampler0;
 uniform vec2 Size;
@@ -29,5 +30,5 @@ vec2 sliceUV(vec2 uv, vec2 size) {
 void main() {
     vec2 uv = sliceUV(texCoord, Size);
     vec4 texture = texture(Sampler0, uv);
-    fragColor = texture;
+    fragColor = texture * vertexColor;
 }
