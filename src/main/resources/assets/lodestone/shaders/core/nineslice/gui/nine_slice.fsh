@@ -1,9 +1,9 @@
 #version 150
 
 in vec2 texCoord;
-flat in vec2 size;
 
 uniform sampler2D Sampler0;
+uniform vec2 Size;
 
 out vec4 fragColor;
 
@@ -27,7 +27,7 @@ vec2 sliceUV(vec2 uv, vec2 size) {
 }
 
 void main() {
-    vec2 uv = sliceUV(texCoord, size);
+    vec2 uv = sliceUV(texCoord, Size);
     vec4 texture = texture(Sampler0, uv);
     fragColor = texture;
 }
