@@ -56,8 +56,8 @@ public class CubeMapTexture extends AbstractTexture {
                         }
                         int texFormat = this.alpha ? GL_RGBA : GL_RGB;
                         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, texFormat, width.get(), height.get(), 0, texFormat, GL_UNSIGNED_BYTE, image);
-                        this.width = width.get();
-                        this.height = height.get();
+                        this.width = width.get(0);
+                        this.height = height.get(0);
                         STBImage.stbi_image_free(image);
                     }
 

@@ -10,6 +10,7 @@ import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.helpers.StateShardHelper;
 import team.lodestar.lodestone.systems.postprocess.PostProcessor;
 
 public class PhysicallyBasedBloomPostProcessor extends PostProcessor {
@@ -21,10 +22,7 @@ public class PhysicallyBasedBloomPostProcessor extends PostProcessor {
     private boolean forceDisabled;
 
     public PhysicallyBasedBloomPostProcessor() {
-        this.bloomOutput = new RenderStateShard.OutputStateShard("bloomTarget",
-                () -> { if (this.bloomTarget != null) this.bloomTarget.bindWrite(false);},
-                () -> Minecraft.getInstance().getMainRenderTarget().bindWrite(false)
-        );
+        this.bloomOutput = StateShardHelper.createOutputState("bloomTarget", () -> { if (this.bloomTarget != null) this.bloomTarget.bindWrite(false); });
         this.setActive(false);
     }
     @Override
