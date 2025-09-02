@@ -107,10 +107,6 @@ public class LodestoneScreenParticle extends TextureSheetScreenParticle {
         setColor(r, g, b);
     }
 
-    public float getCurve(float multiplier) {
-        return Mth.clamp((age * multiplier) / (float) lifetime, 0, 1);
-    }
-
     protected void updateTraits() {
         if (scaleData.getProgress(age, lifetime) > 0.8f || transparencyData.getProgress(age, lifetime) > 0.8f) {
             if (alpha <= 0 || getQuadSize(0) <= 0 || getQuadLength(0) <= 0) {
