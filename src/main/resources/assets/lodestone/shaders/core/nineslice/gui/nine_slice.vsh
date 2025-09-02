@@ -10,7 +10,7 @@ uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
 
 out vec2 texCoord;
-out vec4 vertexColor
+out vec4 vertexColor;
 
 void main() {
     vec4 vsPos = ModelViewMat * vec4(Position, 1.0);
