@@ -47,21 +47,6 @@ public class BlockStateHelper {
     }
 
     /**
-     * Updates a blockstate at a given position with the client. Also syncs block entities.
-     */
-    public static void updateState(Level level, BlockPos pos) {
-        updateState(level.getBlockState(pos), level, pos);
-    }
-
-    /**
-     * Updates a blockstate at a given position with the client. Also syncs block entities.
-     */
-    public static void updateState(BlockState state, Level level, BlockPos pos) {
-        level.sendBlockUpdated(pos, state, state, 2);
-        level.blockEntityChanged(pos);
-    }
-
-    /**
      * Updates a blockstate at a given position with the client and notifies its neighbours. Also syncs block entities.
      */
     public static void updateAndNotifyState(Level level, BlockPos pos) {
@@ -75,5 +60,20 @@ public class BlockStateHelper {
         updateState(state, level, pos);
         state.updateNeighbourShapes(level, pos, 2);
         level.updateNeighbourForOutputSignal(pos, state.getBlock());
+    }
+
+    /**
+     * Updates a blockstate at a given position with the client. Also syncs block entities.
+     */
+    public static void updateState(Level level, BlockPos pos) {
+        updateState(level.getBlockState(pos), level, pos);
+    }
+
+    /**
+     * Updates a blockstate at a given position with the client. Also syncs block entities.
+     */
+    public static void updateState(BlockState state, Level level, BlockPos pos) {
+        level.sendBlockUpdated(pos, state, state, 2);
+        level.blockEntityChanged(pos);
     }
 }

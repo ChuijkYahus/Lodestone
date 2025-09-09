@@ -1,6 +1,7 @@
 package team.lodestar.lodestone.systems.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.*;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -44,6 +45,12 @@ public class LodestoneEntityBlock<T extends LodestoneBlockEntity> extends Block 
         this.blockEntityType = type;
         this.ticker = (l, p, s, t) -> {
             t.triggerLevelConsumers();
+            if (l instanceof ServerLevel level) {
+                t.serverTick(level);
+            }
+            else {
+                t.clientTick(l);
+            }
             t.tick();
         };
         return this;

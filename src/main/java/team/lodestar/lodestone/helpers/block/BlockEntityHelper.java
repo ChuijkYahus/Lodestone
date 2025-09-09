@@ -16,6 +16,7 @@ import java.util.stream.Stream;
  */
 @SuppressWarnings("unused")
 public class BlockEntityHelper {
+
     /**
      * Returns a list of block entities within a range, with a predicate for conditional checks.
      */

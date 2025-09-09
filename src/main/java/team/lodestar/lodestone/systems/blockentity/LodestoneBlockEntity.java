@@ -5,6 +5,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.*;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -96,6 +97,15 @@ public class LodestoneBlockEntity extends BlockEntity {
 
     }
 
+    public void serverTick(ServerLevel level) {
+
+    }
+
+    public void clientTick(Level level) {
+
+    }
+
+    @Deprecated
     public void tick() {
     }
 
