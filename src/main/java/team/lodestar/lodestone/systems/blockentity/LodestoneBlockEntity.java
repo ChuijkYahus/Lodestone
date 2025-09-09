@@ -112,6 +112,10 @@ public class LodestoneBlockEntity extends BlockEntity {
     public void commonTick(Level level) {
     }
 
+    public void notifyObservers() {
+        getBlockState().updateNeighbourShapes(level, worldPosition, 2);
+    }
+
     /**
      * Call from {@link LodestoneBlockEntity#loadAdditional(CompoundTag, HolderLookup.Provider)} for anything tied to the entity being initialized/updated that requires a non-null level
      */
