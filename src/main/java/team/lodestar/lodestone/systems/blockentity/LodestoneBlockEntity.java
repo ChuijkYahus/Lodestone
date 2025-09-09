@@ -105,8 +105,7 @@ public class LodestoneBlockEntity extends BlockEntity {
 
     }
 
-    @Deprecated
-    public void tick() {
+    public void commonTick(Level level) {
     }
 
     /**
