@@ -90,7 +90,9 @@ public class LodestoneBlockEntityInventory extends ItemStackHandler {
     public void onContentsChanged(int slot) {
         updateInventoryCaches();
         if (autoSync) {
-            BlockStateHelper.updateState(blockEntity.getLevel(), blockEntity.getBlockPos());
+            if (blockEntity.getLevel() instanceof ServerLevel level) {
+                level.blockEntityChanged(blockEntity.getBlockPos());
+            }
         }
         if (contentsChangeBehavior != null) {
             contentsChangeBehavior.run();
