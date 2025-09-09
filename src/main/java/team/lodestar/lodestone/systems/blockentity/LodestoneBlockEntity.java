@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.Nullable;
+import team.lodestar.lodestone.helpers.block.*;
 import team.lodestar.lodestone.systems.block.LodestoneEntityBlock;
 
 import javax.annotation.Nonnull;
@@ -104,6 +105,10 @@ public class LodestoneBlockEntity extends BlockEntity {
     }
 
     public void commonTick(Level level) {
+    }
+
+    public void setDirty() {
+        BlockStateHelper.updateState(level, worldPosition);
     }
 
     public void notifyObservers() {
