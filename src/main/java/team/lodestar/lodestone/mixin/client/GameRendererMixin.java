@@ -31,8 +31,7 @@ public class GameRendererMixin {
             method = "renderLevel",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/renderer/LevelRenderer;prepareCullFrustum(Lnet/minecraft/world/phys/Vec3;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V",
-                    shift = At.Shift.BEFORE
+                    target = "Lorg/joml/Quaternionf;conjugate(Lorg/joml/Quaternionf;)Lorg/joml/Quaternionf;"
             )
     )
     private void lodestone$beforeRenderLevel(DeltaTracker deltaTracker, CallbackInfo ci, @Local Camera camera, @Local(ordinal = 0) Matrix4f projMat, @Local(ordinal = 1) Matrix4f viewMat) {
