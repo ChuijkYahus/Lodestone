@@ -4,8 +4,7 @@ import com.mojang.blaze3d.platform.*;
 import com.mojang.blaze3d.systems.*;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.util.*;
@@ -17,6 +16,7 @@ import team.lodestar.lodestone.systems.rendering.shader.ShaderHolder;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.function.Supplier;
 
 import static com.mojang.blaze3d.vertex.DefaultVertexFormat.*;
 import static com.mojang.blaze3d.vertex.VertexFormat.Mode.*;
@@ -200,6 +200,7 @@ public class LodestoneRenderTypes extends RenderStateShard {
                     case ResourceLocation texture -> setTextureState(texture);
                     case RenderTypeToken token -> setTextureState(token);
                     case EmptyTextureStateShard shard -> setTextureState(shard);
+                    case ShaderInstance shaderInstance -> setShaderState(shaderInstance);
                     case ShaderHolder shaderHolder -> setShaderState(shaderHolder);
                     case ShaderStateShard shard -> setShaderState(shard);
                     case TransparencyStateShard shard -> setTransparencyState(shard);
@@ -243,6 +244,10 @@ public class LodestoneRenderTypes extends RenderStateShard {
 
         public LodestoneCompositeStateBuilder setTextureState(ResourceLocation texture) {
             return setTextureState(new RenderStateShard.TextureStateShard(texture, false, false));
+        }
+
+        public LodestoneCompositeStateBuilder setShaderState(ShaderInstance shaderInstance) {
+            return setShaderState(new ShaderStateShard(() -> shaderInstance));
         }
 
         public LodestoneCompositeStateBuilder setShaderState(ShaderHolder shaderHolder) {
