@@ -721,10 +721,16 @@ public class VFXBuilders {
         }
 
         public WorldVFXBuilder renderQuad(PoseStack stack, Vector3f[] positions) {
-            supplier.placeVertex(getVertexConsumer(), stack, this, positions[0].x(), positions[0].y(), positions[0].z(), u0, v1);
-            supplier.placeVertex(getVertexConsumer(), stack, this, positions[1].x(), positions[1].y(), positions[1].z(), u1, v1);
-            supplier.placeVertex(getVertexConsumer(), stack, this, positions[2].x(), positions[2].y(), positions[2].z(), u1, v0);
-            supplier.placeVertex(getVertexConsumer(), stack, this, positions[3].x(), positions[3].y(), positions[3].z(), u0, v0);
+            var consumer = getVertexConsumer();
+            supplier.placeVertex(consumer, stack, this, positions[0].x(), positions[0].y(), positions[0].z(), u0, v1);
+            supplier.placeVertex(consumer, stack, this, positions[1].x(), positions[1].y(), positions[1].z(), u1, v1);
+            supplier.placeVertex(consumer, stack, this, positions[2].x(), positions[2].y(), positions[2].z(), u1, v0);
+            supplier.placeVertex(consumer, stack, this, positions[3].x(), positions[3].y(), positions[3].z(), u0, v0);
+            return this;
+        }
+
+        public WorldVFXBuilder placeVertex(PoseStack stack, float x, float y, float z) {
+            supplier.placeVertex(getVertexConsumer(), stack.last(), this, x, y, z, u0, v1);
             return this;
         }
 
