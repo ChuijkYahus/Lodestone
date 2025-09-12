@@ -29,7 +29,7 @@ public class LodestoneRenderTypes extends RenderStateShard {
             GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
     public static final Runnable ADDITIVE_FUNCTION = () -> RenderSystem.blendFunc(
-            GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
+            GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
 
     public static final EmptyTextureStateShard NO_TEXTURE = RenderStateShard.NO_TEXTURE;
     public static final LightmapStateShard LIGHTMAP = RenderStateShard.LIGHTMAP;
