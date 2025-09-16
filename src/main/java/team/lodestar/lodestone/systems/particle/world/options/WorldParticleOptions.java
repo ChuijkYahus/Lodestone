@@ -29,7 +29,6 @@ public class WorldParticleOptions extends SimpleParticleOptions implements Parti
     public final Collection<Consumer<LodestoneWorldParticle>> spawnActors = new ArrayList<>();
     public final Collection<Consumer<LodestoneWorldParticle>> renderActors = new ArrayList<>();
 
-    public boolean shouldCull;
     public int particleLight = RenderHelper.FULL_BRIGHT;
 
     public boolean noClip = false;

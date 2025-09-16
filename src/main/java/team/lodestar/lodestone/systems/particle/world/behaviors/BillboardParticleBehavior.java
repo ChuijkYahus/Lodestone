@@ -11,7 +11,7 @@ public class BillboardParticleBehavior implements LodestoneParticleBehavior {
 
     public static final BillboardParticleBehavior INSTANCE = new BillboardParticleBehavior();
 
-    protected BillboardParticleBehavior() {
+    private BillboardParticleBehavior() {
     }
 
     @Override

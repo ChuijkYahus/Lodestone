@@ -33,10 +33,10 @@ public class VecHelper {
      */
     public static Vec3 radialOffset(Vec3 pos, float distance, float current, float total) {
         double angle = current / total * (Math.PI * 2);
-        double dx2 = (distance * Math.cos(angle));
-        double dz2 = (distance * Math.sin(angle));
+        double dx2 = distance * Math.cos(angle % 6.28f);
+        double dz2 = distance * Math.sin(angle % 6.28f);
 
-        Vec3 vector = new Vec3(dx2, 0, dz2);
+        var vector = new Vec3(dx2, 0, dz2);
         double x = vector.x * distance;
         double z = vector.z * distance;
         return pos.add(new Vec3(x, 0, z));
@@ -48,22 +48,22 @@ public class VecHelper {
      *
      * @param pos      - Defines the center of the circle
      * @param distance - Defines the radius of your circle
-     * @param total    - Defines the total amount of points in the circle
+     * @param totalPoints    - Defines the total amount of points in the circle
      * @param gameTime - Defines the current game time value
      * @param timePerRotation     - Defines the total time for one position to complete a full rotation cycle
      */
-    public static ArrayList<Vec3> rotatingRadialOffsets(Vec3 pos, float distance, float total, float gameTime, float timePerRotation) {
-        return rotatingRadialOffsets(pos, distance, distance, total, gameTime, timePerRotation);
+    public static ArrayList<Vec3> rotatingRadialOffsets(Vec3 pos, float distance, float totalPoints, float gameTime, float timePerRotation) {
+        return rotatingRadialOffsets(pos, distance, distance, totalPoints, gameTime, timePerRotation);
     }
 
     /**
      * Returns an array list of positions on the perimeter of a sphere around a given Vec3 position.
      * These positions constantly rotate around the center of the circle based on gameTime.
      */
-    public static ArrayList<Vec3> rotatingRadialOffsets(Vec3 pos, float distanceX, float distanceZ, float total, float gameTime, float timePerRotation) {
+    public static ArrayList<Vec3> rotatingRadialOffsets(Vec3 pos, float distanceX, float distanceZ, float totalPoints, float gameTime, float timePerRotation) {
         ArrayList<Vec3> positions = new ArrayList<>();
-        for (int i = 0; i < total; i++) {
-            positions.add(rotatingRadialOffset(pos, distanceX, distanceZ, i, total, gameTime, timePerRotation));
+        for (int i = 0; i < totalPoints; i++) {
+            positions.add(rotatingRadialOffset(pos, distanceX, distanceZ, i, totalPoints, gameTime, timePerRotation));
         }
         return positions;
     }
@@ -72,21 +72,21 @@ public class VecHelper {
      * Returns a single position on the perimeter of a circle around a given Vec3 position.
      * These positions constantly rotate around the center of the circle based on gameTime
      */
-    public static Vec3 rotatingRadialOffset(Vec3 pos, float distance, float current, float total, float gameTime, float timePerRotation) {
-        return rotatingRadialOffset(pos, distance, distance, current, total, gameTime, timePerRotation);
+    public static Vec3 rotatingRadialOffset(Vec3 pos, float distance, float currentPoint, float totalPoints, float gameTime, float timePerRotation) {
+        return rotatingRadialOffset(pos, distance, distance, currentPoint, totalPoints, gameTime, timePerRotation);
     }
 
     /**
      * Returns a single position on the perimeter of a circle around a given Vec3 position.
      * These positions constantly rotate around the center of the circle based on gameTime
      */
-    public static Vec3 rotatingRadialOffset(Vec3 pos, float distanceX, float distanceZ, float current, float total, float gameTime, float timePerRotation) {
-        double angle = current / total * (Math.PI * 2);
+    public static Vec3 rotatingRadialOffset(Vec3 pos, float distanceX, float distanceZ, float currentPoint, float totalPoints, float gameTime, float timePerRotation) {
+        double angle = currentPoint / totalPoints * (Math.PI * 2);
         angle += ((gameTime % timePerRotation) / timePerRotation) * (Math.PI * 2);
-        double dx2 = (distanceX * Math.cos(angle));
-        double dz2 = (distanceZ * Math.sin(angle));
+        double dx2 = distanceX * Math.cos(angle % 6.28f);
+        double dz2 = distanceZ * Math.sin(angle % 6.28f);
 
-        Vec3 vector2f = new Vec3(dx2, 0, dz2);
+        var vector2f = new Vec3(dx2, 0, dz2);
         double x = vector2f.x * distanceX;
         double z = vector2f.z * distanceZ;
         return pos.add(x, 0, z);
@@ -97,12 +97,12 @@ public class VecHelper {
         double d0 = 0.5625D;
         var random = level.random;
         for (Direction direction : Direction.values()) {
-            BlockPos blockpos = pos.relative(direction);
-            if (!level.getBlockState(blockpos).isSolidRender(level, blockpos)) {
-                Direction.Axis direction$axis = direction.getAxis();
-                double d1 = direction$axis == Direction.Axis.X ? 0.5D + d0 * (double) direction.getStepX() : (double) random.nextFloat();
-                double d2 = direction$axis == Direction.Axis.Y ? 0.5D + d0 * (double) direction.getStepY() : (double) random.nextFloat();
-                double d3 = direction$axis == Direction.Axis.Z ? 0.5D + d0 * (double) direction.getStepZ() : (double) random.nextFloat();
+            var relative = pos.relative(direction);
+            if (!level.getBlockState(relative).isSolidRender(level, relative)) {
+                var axis = direction.getAxis();
+                double d1 = axis == Direction.Axis.X ? 0.5D + d0 * (double) direction.getStepX() : (double) random.nextFloat();
+                double d2 = axis == Direction.Axis.Y ? 0.5D + d0 * (double) direction.getStepY() : (double) random.nextFloat();
+                double d3 = axis == Direction.Axis.Z ? 0.5D + d0 * (double) direction.getStepZ() : (double) random.nextFloat();
                 arrayList.add(new Vec3((double) pos.getX() + d1, (double) pos.getY() + d2, (double) pos.getZ() + d3));
             }
         }

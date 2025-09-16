@@ -15,6 +15,9 @@ public class SparkParticleBehavior implements LodestoneParticleBehavior {
 
     private static final VFXBuilders.WorldVFXBuilder SPARK_BUILDER = VFXBuilders.createWorld().setFormat(DefaultVertexFormat.PARTICLE);
 
+    public static final Vec3 UP = new Vec3(0, 1, 0);
+    public static final Vec3 DOWN = new Vec3(0, -1, 0);
+
     protected Vec3 forcedDirection;
     protected float lengthCenter;
 

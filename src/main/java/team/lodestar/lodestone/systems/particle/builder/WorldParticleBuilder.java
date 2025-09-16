@@ -181,19 +181,6 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
         return this;
     }
 
-    public WorldParticleBuilder enableCull() {
-        return setShouldCull(true);
-    }
-
-    public WorldParticleBuilder disableCull() {
-        return setShouldCull(false);
-    }
-
-    public WorldParticleBuilder setShouldCull(boolean shouldCull) {
-        getParticleOptions().shouldCull = shouldCull;
-        return this;
-    }
-
     public WorldParticleBuilder setRandomMotion(double maxSpeed) {
         return setRandomMotion(maxSpeed, maxSpeed, maxSpeed);
     }
@@ -302,6 +289,10 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
         return this;
     }
 
+    public WorldParticleBuilder spawn(Level level, Vec3 pos) {
+        return spawn(level, pos.x, pos.y, pos.z);
+    }
+
     public WorldParticleBuilder spawn(Level level, double x, double y, double z) {
         double yaw = RANDOM.nextFloat() * Math.PI * 2, pitch = RANDOM.nextFloat() * Math.PI - Math.PI / 2, xSpeed = RANDOM.nextFloat() * maxXSpeed, ySpeed = RANDOM.nextFloat() * maxYSpeed, zSpeed = RANDOM.nextFloat() * maxZSpeed;
         this.xMotion += Math.sin(yaw) * Math.cos(pitch) * xSpeed;
@@ -314,6 +305,10 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
 
         level.addParticle(getParticleOptions(), forceSpawn, x + xPos, y + yPos, z + zPos, xMotion, yMotion, zMotion);
         return this;
+    }
+
+    public WorldParticleBuilder repeat(Level level, Vec3 pos, int n) {
+        return repeat(level, pos.x, pos.y, pos.z, n);
     }
 
     public WorldParticleBuilder repeat(Level level, double x, double y, double z, int n) {
@@ -421,30 +416,6 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
 
     public WorldParticleBuilder repeatRandomFace(Level level, BlockPos pos, int n) {
         for (int i = 0; i < n; i++) spawnAtRandomFace(level, pos);
-        return this;
-    }
-
-    public WorldParticleBuilder createCircle(Level level, double x, double y, double z, double distance, double currentCount, double totalCount) {
-        double xSpeed = RANDOM.nextFloat() * maxXSpeed, ySpeed = RANDOM.nextFloat() * maxYSpeed, zSpeed = RANDOM.nextFloat() * maxZSpeed;
-        double theta = (Math.PI * 2) / totalCount;
-        double finalAngle = (currentCount / totalCount) + (theta * currentCount);
-        double dx2 = (distance * Math.cos(finalAngle));
-        double dz2 = (distance * Math.sin(finalAngle));
-
-        Vector3d vector2f = new Vector3d(dx2, 0, dz2);
-        this.xMotion = vector2f.x * xSpeed;
-        this.zMotion = vector2f.z * zSpeed;
-
-        double yaw2 = RANDOM.nextFloat() * Math.PI * 2, pitch2 = RANDOM.nextFloat() * Math.PI - Math.PI / 2, xDist = RANDOM.nextFloat() * maxXOffset, yDist = RANDOM.nextFloat() * maxYOffset, zDist = RANDOM.nextFloat() * maxZOffset;
-        double xPos = Math.sin(yaw2) * Math.cos(pitch2) * xDist;
-        double yPos = Math.sin(pitch2) * yDist;
-        double zPos = Math.cos(yaw2) * Math.cos(pitch2) * zDist;
-        level.addParticle(getParticleOptions(), forceSpawn, x + xPos + dx2, y + yPos, z + zPos + dz2, xMotion, ySpeed, zMotion);
-        return this;
-    }
-
-    public WorldParticleBuilder repeatCircle(Level level, double x, double y, double z, double distance, int times) {
-        for (int i = 0; i < times; i++) createCircle(level, x, y, z, distance, i, times);
         return this;
     }
 
