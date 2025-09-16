@@ -1,11 +1,11 @@
 package team.lodestar.lodestone.systems.blockentity;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.*;
+import net.minecraft.sounds.*;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -33,8 +33,6 @@ import java.util.function.Consumer;
  */
 public class LodestoneBlockEntity extends BlockEntity {
 
-    private final Collection<Consumer<Level>> loadWithLevel = new ArrayList<>();
-
     public LodestoneBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
@@ -47,12 +45,6 @@ public class LodestoneBlockEntity extends BlockEntity {
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        loadWithLevel(this::update);
     }
 
     public void onBreak(@Nullable Player player) {
@@ -107,27 +99,26 @@ public class LodestoneBlockEntity extends BlockEntity {
     public void commonTick(Level level) {
     }
 
+
+    public void playSound(SoundEvent soundEvent) {
+        playSound(soundEvent, 1);
+    }
+
+    public void playSound(SoundEvent soundEvent, float volume) {
+        playSound(soundEvent, volume, 1);
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    public void playSound(SoundEvent soundEvent, float volume, float pitch) {
+        level.playSound(null, worldPosition, soundEvent, SoundSource.BLOCKS, 1, 1f);
+    }
+
     public void setDirty() {
         BlockStateHelper.updateState(level, worldPosition);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     public void notifyObservers() {
         getBlockState().updateNeighbourShapes(level, worldPosition, 2);
-    }
-
-    /**
-     * Call from {@link LodestoneBlockEntity#loadAdditional(CompoundTag, HolderLookup.Provider)} for anything tied to the entity being initialized/updated that requires a non-null level
-     */
-    public void loadWithLevel(Consumer<Level> levelConsumer) {
-        loadWithLevel.add(levelConsumer);
-    }
-
-    public final void triggerLevelConsumers() {
-        if (level != null && !loadWithLevel.isEmpty()) {
-            for (Consumer<Level> levelConsumer : loadWithLevel) {
-                levelConsumer.accept(level);
-            }
-            loadWithLevel.clear();
-        }
     }
 }
