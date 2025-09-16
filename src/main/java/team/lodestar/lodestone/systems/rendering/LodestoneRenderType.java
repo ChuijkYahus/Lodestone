@@ -61,23 +61,38 @@ public class LodestoneRenderType extends RenderType {
     }
 
     public LodestoneRenderType copy(Object key) {
-        return this.copies.computeIfAbsent(key, k -> new LodestoneRenderType(this.name, this));
+        if (!copies.containsKey(key)) {
+            copies.put(key, new LodestoneRenderType(name, this));
+        }
+        return copies.get(key);
     }
 
     public LodestoneRenderType copy(Object key, ShaderUniformHandler uniformHandler) {
-        return this.copies.computeIfAbsent(key, k -> new LodestoneRenderType(this.name, this, uniformHandler));
+        if (!copies.containsKey(key)) {
+            copies.put(key, new LodestoneRenderType(name, this, uniformHandler));
+        }
+        return copies.get(key);
     }
 
     public LodestoneRenderType copy(Object key, Consumer<ShaderUniformHandler> uniformHandler) {
-        return this.copies.computeIfAbsent(key, k -> new LodestoneRenderType(this.name, this, uniformHandler));
+        if (!copies.containsKey(key)) {
+            copies.put(key, new LodestoneRenderType(name, this, uniformHandler));
+        }
+        return copies.get(key);
     }
 
     public LodestoneRenderType copy(Object key, ShaderUniformHandler uniformHandler, Consumer<LodestoneCompositeStateBuilder> modifier) {
-        return this.copies.computeIfAbsent(key, k -> new LodestoneRenderType(this.name, this, uniformHandler, modifier));
+        if (!copies.containsKey(key)) {
+            copies.put(key, new LodestoneRenderType(name, this, uniformHandler, modifier));
+        }
+        return copies.get(key);
     }
 
     public LodestoneRenderType copy(Object key, Consumer<ShaderUniformHandler> uniformHandler, Consumer<LodestoneCompositeStateBuilder> modifier) {
-        return this.copies.computeIfAbsent(key, k -> new LodestoneRenderType(this.name, this, uniformHandler, modifier));
+        if (!copies.containsKey(key)) {
+            copies.put(key, new LodestoneRenderType(name, this, uniformHandler, modifier));
+        }
+        return copies.get(key);
     }
 
     public static boolean isAdditive(LodestoneRenderType renderType) {
