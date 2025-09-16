@@ -3,6 +3,7 @@ package team.lodestar.lodestone.systems.rendering.rendeertype;
 import com.mojang.datafixers.util.*;
 import net.minecraft.client.renderer.ShaderInstance;
 
+import javax.annotation.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
@@ -21,7 +22,10 @@ public class ShaderUniformHandler {
     public ShaderUniformHandler() {
     }
 
-    public ShaderUniformHandler(ShaderUniformHandler original) {
+    public ShaderUniformHandler(@Nullable ShaderUniformHandler original) {
+        if (original == null) {
+            return;
+        }
         this.locked = original.locked;
         for (Map.Entry<String, Float[]> entry : original.uniformChanges.entrySet()) {
             this.uniformChanges.put(entry.getKey(), Arrays.copyOf(entry.getValue(), entry.getValue().length));
