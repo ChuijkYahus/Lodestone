@@ -44,7 +44,6 @@ public class LodestoneEntityBlock<T extends LodestoneBlockEntity> extends Block 
     public LodestoneEntityBlock<T> setBlockEntity(Supplier<BlockEntityType<T>> type) {
         this.blockEntityType = type;
         this.ticker = (l, p, s, t) -> {
-            t.triggerLevelConsumers();
             if (l instanceof ServerLevel level) {
                 t.serverTick(level);
             }
