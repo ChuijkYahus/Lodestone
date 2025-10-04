@@ -11,6 +11,7 @@ import java.util.Objects;
  * @param uvIndex
  */
 public record IndexedVertex(int positionIndex, int normalIndex, int uvIndex) {
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

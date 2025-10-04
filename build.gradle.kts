@@ -24,6 +24,11 @@ tasks.named<Wrapper>("wrapper") {
     distributionType = Wrapper.DistributionType.BIN
 }
 
+tasks.withType<Javadoc>().configureEach {
+    isFailOnError = false
+    (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
+}
+
 val localRuntime: Configuration by configurations.creating
 configurations.runtimeClasspath {
     extendsFrom(localRuntime)
