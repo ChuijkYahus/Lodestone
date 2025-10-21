@@ -8,28 +8,28 @@ import net.minecraft.world.item.*;
 import org.jetbrains.annotations.*;
 
 public class LodestoneAttribute extends Attribute {
-    private final ResourceLocation id;
-    private final boolean isBase;
+
+    private final ResourceLocation baseId;
+
     private final boolean forcePercentage;
 
     public static LodestoneAttributeBuilder create(ResourceLocation id, double defaultValue) {
         return new LodestoneAttributeBuilder(id, defaultValue);
     }
-    protected LodestoneAttribute(ResourceLocation id, double defaultValue, boolean isBase, boolean forcePercentage) {
+    protected LodestoneAttribute(ResourceLocation id, ResourceLocation baseId, double defaultValue, boolean forcePercentage) {
         super("attribute.name." + id.getNamespace() + "." + id.getPath(), defaultValue);
-        this.id = id;
-        this.isBase = isBase;
+        this.baseId = baseId;
         this.forcePercentage = forcePercentage;
     }
 
     @Override
     @Nullable
     public ResourceLocation getBaseId() {
-        return isBase ? id : null;
+        return baseId;
     }
 
     @Override
-    public MutableComponent toValueComponent(@Nullable AttributeModifier.Operation op, double value, TooltipFlag flag) {
+    public @NotNull MutableComponent toValueComponent(@Nullable AttributeModifier.Operation op, double value, TooltipFlag flag) {
         if (forcePercentage) {
             return Component.translatable("neoforge.value.percent", FORMAT.format(value * 100));
         }

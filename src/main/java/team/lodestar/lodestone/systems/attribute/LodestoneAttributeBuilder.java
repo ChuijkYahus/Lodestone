@@ -8,8 +8,10 @@ public class LodestoneAttributeBuilder {
     public final double defaultValue;
     public final double minValue;
     public final double maxValue;
-    public boolean isBase;
+
+    public ResourceLocation baseId;
     public boolean forcePercentage;
+
     public boolean syncable;
     public Attribute.Sentiment sentiment = Attribute.Sentiment.POSITIVE;
 
@@ -25,7 +27,10 @@ public class LodestoneAttributeBuilder {
     }
 
     public LodestoneAttributeBuilder setAsBaseAttribute() {
-        this.isBase = true;
+        return setAsBaseAttribute(ResourceLocation.withDefaultNamespace("base_" + id.getPath()));
+    }
+    public LodestoneAttributeBuilder setAsBaseAttribute(ResourceLocation baseId) {
+        this.baseId = baseId;
         return this;
     }
 
@@ -46,8 +51,8 @@ public class LodestoneAttributeBuilder {
 
     public Attribute build() {
         if (minValue < maxValue) {
-            return new LodestoneRangedAttribute(id, defaultValue, minValue, maxValue, isBase, forcePercentage).setSyncable(syncable).setSentiment(sentiment);
+            return new LodestoneRangedAttribute(id, baseId, defaultValue, minValue, maxValue, forcePercentage).setSyncable(syncable).setSentiment(sentiment);
         }
-        return new LodestoneAttribute(id, defaultValue, isBase, forcePercentage).setSyncable(syncable).setSentiment(sentiment);
+        return new LodestoneAttribute(id, baseId, defaultValue, forcePercentage).setSyncable(syncable).setSentiment(sentiment);
     }
 }
