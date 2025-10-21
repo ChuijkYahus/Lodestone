@@ -29,6 +29,24 @@ public class LodestoneItemProperties extends Item.Properties {
         this.tab = null;
     }
 
+    public static Item.Properties mergeAttributes(Item.Properties properties, ItemAttributeModifiers attributes) {
+        DataComponentMap.Builder components = properties.components;
+        if (components != null && components.build().has(DataComponents.ATTRIBUTE_MODIFIERS)) {
+            ItemAttributeModifiers existing = components.build().get(DataComponents.ATTRIBUTE_MODIFIERS);
+            var builder = ItemAttributeModifiers.builder();
+            if (existing != null) {
+                for (ItemAttributeModifiers.Entry entry : existing.modifiers()) {
+                    builder.add(entry.attribute(), entry.modifier(), entry.slot());
+                }
+            }
+            for (ItemAttributeModifiers.Entry entry : attributes.modifiers()) {
+                builder.add(entry.attribute(), entry.modifier(), entry.slot());
+            }
+            return properties.attributes(builder.build());
+        }
+        return properties.attributes(attributes);
+    }
+
     @SuppressWarnings("DataFlowIssue")
     public LodestoneItemProperties mergeAttributes(ItemAttributeModifiers attributes) {
         if (components != null && components.build().has(DataComponents.ATTRIBUTE_MODIFIERS)) {
