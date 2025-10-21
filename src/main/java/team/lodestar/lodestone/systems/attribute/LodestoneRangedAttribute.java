@@ -9,24 +9,23 @@ import net.minecraft.world.item.*;
 import javax.annotation.*;
 
 public class LodestoneRangedAttribute extends RangedAttribute {
-    private final ResourceLocation id;
-    private final boolean isBase;
+    private final ResourceLocation baseId;
     private final boolean forcePercentage;
 
     public static LodestoneAttributeBuilder create(ResourceLocation id, double defaultValue, double min, double max) {
         return new LodestoneAttributeBuilder(id, defaultValue, min, max);
     }
-    protected LodestoneRangedAttribute(ResourceLocation id, double defaultValue, double min, double max, boolean isBase, boolean forcePercentage) {
+    protected LodestoneRangedAttribute(ResourceLocation id, double defaultValue, double min, double max, ResourceLocation baseId, boolean forcePercentage) {
         super("attribute.name." + id.getNamespace() + "." + id.getPath(), defaultValue, min, max);
         this.id = id;
-        this.isBase = isBase;
+        this.baseId = baseId;
         this.forcePercentage = forcePercentage;
     }
 
     @Override
     @Nullable
     public ResourceLocation getBaseId() {
-        return isBase ? id : null;
+        return baseId;
     }
 
     @Override
