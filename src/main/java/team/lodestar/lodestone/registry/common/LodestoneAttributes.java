@@ -1,7 +1,10 @@
 package team.lodestar.lodestone.registry.common;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -26,6 +29,19 @@ public class LodestoneAttributes {
     public static DeferredHolder<Attribute, Attribute> registerAttribute(DeferredRegister<Attribute> registry, LodestoneAttributeBuilder builder) {
         return registry.register(builder.id.getPath(), builder::build);
     }
+
+    public static ResourceLocation getBaseId(Holder<Attribute> attribute) {
+        return attribute.value().getBaseId();
+    }
+
+    public static AttributeModifier createBaseModifier(Holder<Attribute> attribute, double amount, AttributeModifier.Operation operation) {
+        ResourceLocation baseId = getBaseId(attribute);
+        if (baseId == null) {
+            throw new IllegalArgumentException("No Base Id defined for attribute: " + attribute);
+        }
+        return new AttributeModifier(baseId, amount, operation);
+    }
+
 
     @SubscribeEvent
     public static void modifyEntityAttributes(EntityAttributeModificationEvent event) {
