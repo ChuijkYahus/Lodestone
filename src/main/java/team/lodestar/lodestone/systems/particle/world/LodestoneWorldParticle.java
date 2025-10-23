@@ -37,6 +37,7 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
     public final GenericParticleData lengthData;
     public final SpinParticleData spinData;
 
+    public final Collection<Consumer<LodestoneWorldParticle>> spawnActors;
     public final Collection<Consumer<LodestoneWorldParticle>> tickActors;
     public final Collection<Consumer<LodestoneWorldParticle>> renderActors;
 
@@ -60,6 +61,7 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
         this.scaleData = options.scaleData;
         this.lengthData = options.lengthData != WorldParticleOptions.DEFAULT_GENERIC ? options.lengthData : null;
         this.spinData = options.spinData;
+        this.spawnActors = options.spawnActors;
         this.tickActors = options.tickActors;
         this.renderActors = options.renderActors;
         this.particleLight = options.particleLight;
@@ -81,7 +83,9 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
                 case RANDOM_SPRITE -> pickSprite(random.nextInt(spriteSet.sprites.size()));
             }
         }
-        options.spawnActors.forEach(actor -> actor.accept(this));
+        if (lifeDelay == 0) {
+            options.spawnActors.forEach(actor -> actor.accept(this));
+        }
         updateTraits();
     }
 
@@ -148,6 +152,10 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
     public void tick() {
         if (lifeDelay > 0) {
             lifeDelay--;
+            spawnActors.forEach(actor -> actor.accept(this));
+            xo = x;
+            yo = y;
+            zo = z;
             return;
         }
         updateTraits();
@@ -280,10 +288,6 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
 
     public void setParticleSpeed(Vec3 speed) {
         setParticleSpeed(speed.x, speed.y, speed.z);
-    }
-
-    public int getLifetime() {
-        return lifetime;
     }
 
     public int getAge() {
