@@ -75,7 +75,7 @@ public abstract class NetworkedParticleEffectType<T extends NetworkedParticleEff
         return createEffect().at(target);
     }
 
-    protected ParticleEffectBuilder<T> createEffect() {
+    public ParticleEffectBuilder<T> createEffect() {
         return new ParticleEffectBuilder<>(this);
     }
 

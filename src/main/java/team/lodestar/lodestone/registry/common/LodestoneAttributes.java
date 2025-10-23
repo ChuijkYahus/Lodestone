@@ -32,18 +32,6 @@ public class LodestoneAttributes {
         return registry.register(builder.id.getPath(), builder::build);
     }
 
-    public static ResourceLocation getBaseId(Holder<Attribute> attribute) {
-        return attribute.value().getBaseId();
-    }
-
-    public static AttributeModifier createBaseModifier(Holder<Attribute> attribute, double amount, AttributeModifier.Operation operation) {
-        ResourceLocation baseId = getBaseId(attribute);
-        if (baseId == null) {
-            throw new IllegalArgumentException("No Base Id defined for attribute: " + attribute);
-        }
-        return new AttributeModifier(baseId, amount, operation);
-    }
-
 
     @SubscribeEvent
     public static void modifyEntityAttributes(EntityAttributeModificationEvent event) {
