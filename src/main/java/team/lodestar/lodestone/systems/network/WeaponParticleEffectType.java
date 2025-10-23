@@ -338,7 +338,7 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
             Vec3 effectPosition = getEffectPosition(effectDirection);
             at(effectPosition);
             if (color == null) {
-                color(NetworkedParticleEffectColorData.fromColor(ColorParticleData.createGrayParticleColor(level.getRandom())));
+                color(ColorParticleData.createGrayParticleColor(level.getRandom()));
             }
             customData((T) getCustomData()
                     .withDirection(effectDirection)
@@ -351,7 +351,6 @@ public abstract class WeaponParticleEffectType<T extends WeaponParticleEffectTyp
             updateData(level);
             return (WeaponParticleEffectBuilder<T>)super.spawn(level);
         }
-
 
         @Override
         public WeaponParticleEffectBuilder<T> at(BlockPos position) {
