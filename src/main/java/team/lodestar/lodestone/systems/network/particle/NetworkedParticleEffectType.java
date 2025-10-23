@@ -146,6 +146,9 @@ public abstract class NetworkedParticleEffectType<T extends NetworkedParticleEff
         }
 
         public ParticleEffectBuilder<T> spawn(ServerLevel level) {
+            if (position == null) {
+                return spawn(PacketDistributor::sendToAllPlayers);
+            }
             return spawn(p -> PacketDistributor.sendToPlayersTrackingChunk(level, new ChunkPos(position.getAsBlockPos()), p));
         }
 
