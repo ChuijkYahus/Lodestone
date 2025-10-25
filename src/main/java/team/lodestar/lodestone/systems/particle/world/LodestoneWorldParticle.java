@@ -282,6 +282,16 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
         setPos(pos.x, pos.y, pos.z);
     }
 
+    public Vec3 getOldParticlePosition() {
+        return new Vec3(xo, yo, zo);
+    }
+
+    public void setOldParticlePosition(Vec3 pos) {
+        xo = pos.x;
+        yo = pos.y;
+        zo = pos.z;
+    }
+
     public Vec3 getParticleSpeed() {
         return new Vec3(getXMotion(), getYMotion(), getZMotion());
     }
