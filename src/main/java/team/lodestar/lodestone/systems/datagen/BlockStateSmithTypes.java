@@ -222,5 +222,4 @@ public class BlockStateSmithTypes {
         ResourceLocation texture = provider.getBlockTexture(name.replace("potted_", ""));
         provider.simpleBlock(block, provider.models().withExistingParent(name, ResourceLocation.withDefaultNamespace("block/flower_pot_cross")).texture("plant", texture));
     });
-
 }
