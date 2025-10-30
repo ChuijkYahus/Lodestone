@@ -15,12 +15,14 @@ import team.lodestar.lodestone.systems.item.tools.LodestoneShovelItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import static team.lodestar.lodestone.registry.common.LodestoneAttributes.BASE_MAGIC_DAMAGE;
+
 public class MagicShovelItem extends LodestoneShovelItem {
 
     public MagicShovelItem(Tier tier, float attackDamage, float attackSpeed, float magicDamage, LodestoneItemProperties properties) {
         super(tier, attackDamage, attackSpeed, properties.mergeAttributes(
                 ItemAttributeModifiers.builder()
-                        .add(LodestoneAttributes.MAGIC_DAMAGE, new AttributeModifier(LodestoneAttributes.MAGIC_DAMAGE.getId(), magicDamage, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+                        .add(LodestoneAttributes.MAGIC_DAMAGE, new AttributeModifier(BASE_MAGIC_DAMAGE, magicDamage, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
                         .build()));
     }
 }
