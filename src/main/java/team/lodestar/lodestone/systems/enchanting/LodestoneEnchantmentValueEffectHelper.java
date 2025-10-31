@@ -20,15 +20,15 @@ public class LodestoneEnchantmentValueEffectHelper {
     private static final RandomSource FAKE_ASS_RANDOM_SOURCE = RandomSource.create();
 
     public static float getAccurateAttackDamage(LivingEntity entity, ItemStack stack) {
-        return getAccurateValue(entity, stack, DataComponents.DAMAGE, Attributes.ATTACK_DAMAGE);
+        return getComponentValue(entity, stack, DataComponents.DAMAGE, Attributes.ATTACK_DAMAGE);
     }
 
-    public static float getAccurateValue(LivingEntity entity, ItemStack stack, DataComponentType<?> component, Holder<Attribute> base) {
+    public static float getComponentValue(LivingEntity entity, ItemStack stack, DataComponentType<?> component, Holder<Attribute> base) {
         float baseValue = (float) entity.getAttributeValue(base);
-        return getAccurateValue(stack, component, baseValue);
+        return getComponentValue(stack, component, baseValue);
     }
 
-    public static float getAccurateValue(ItemStack item, DataComponentType<?> component, float baseValue) {
+    public static float getComponentValue(ItemStack item, DataComponentType<?> component, float baseValue) {
         return getComponentValue(item, null, component, baseValue);
     }
 
