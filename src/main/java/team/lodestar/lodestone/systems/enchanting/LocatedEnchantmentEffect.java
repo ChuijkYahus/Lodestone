@@ -8,15 +8,29 @@ import java.util.function.*;
 
 public class LocatedEnchantmentEffect<T extends EnchantmentEntityEffect> {
     private final T effect;
+    private final Holder<Enchantment> enchantment;
     private final int level;
 
-    public LocatedEnchantmentEffect(T effect, int level) {
+    public LocatedEnchantmentEffect(T effect, Holder<Enchantment> enchantment, int level) {
         this.effect = effect;
+        this.enchantment = enchantment;
         this.level = level;
     }
 
     public boolean isPresent() {
         return effect != null;
+    }
+
+    public T getEffect() {
+        return effect;
+    }
+
+    public Holder<Enchantment> getEnchantment() {
+        return enchantment;
+    }
+
+    public int getLevel() {
+        return level;
     }
 
     public float getValue(Function<T, LevelBasedValue> valueGetter, float fallback) {
@@ -27,7 +41,7 @@ public class LocatedEnchantmentEffect<T extends EnchantmentEntityEffect> {
     public static class EmptyEnchantmentEffect<T extends EnchantmentEntityEffect> extends LocatedEnchantmentEffect<T> {
 
         public EmptyEnchantmentEffect() {
-            super(null, -1);
+            super(null, null, -1);
         }
 
         @Override
