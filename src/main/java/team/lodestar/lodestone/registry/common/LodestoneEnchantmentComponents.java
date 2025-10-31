@@ -23,14 +23,14 @@ public class LodestoneEnchantmentComponents {
             );
 
     public static final LootContextParamSet ENCHANTED_ENTITY = LootContextParamSets.register(
-            "enchmod_enchanted_entity",
+            "lodestone_enchanted_entity",
             builder -> builder.required(LootContextParams.THIS_ENTITY)
                     .required(LootContextParams.ENCHANTMENT_LEVEL)
                     .required(LootContextParams.ORIGIN)
                     .optional(LootContextParams.TOOL)
     );
     public static final LootContextParamSet ENCHANTED_DAMAGE = LootContextParamSets.register(
-            "enchmod_enchanted_damage",
+            "lodestone_enchanted_damage",
             builder -> builder.required(LootContextParams.THIS_ENTITY)
                     .required(LootContextParams.ENCHANTMENT_LEVEL)
                     .required(LootContextParams.ORIGIN)
@@ -40,7 +40,7 @@ public class LodestoneEnchantmentComponents {
                     .optional(LootContextParams.TOOL)
     );
 
-    private static Supplier<DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>>> valueEffect(
+    public static Supplier<DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>>> valueEffect(
             String name) {
         return ENCHANTMENT_COMPONENTS.register(name, () ->
                 DataComponentType.<List<ConditionalEffect<EnchantmentValueEffect>>>builder()
@@ -49,7 +49,7 @@ public class LodestoneEnchantmentComponents {
         );
     }
 
-    private static Supplier<DataComponentType<List<ConditionalEffect<EnchantmentEntityEffect>>>> entityEffect(
+    public static Supplier<DataComponentType<List<ConditionalEffect<EnchantmentEntityEffect>>>> entityEffect(
             String name) {
         return ENCHANTMENT_COMPONENTS.register(name, () ->
                 DataComponentType.<List<ConditionalEffect<EnchantmentEntityEffect>>>builder()
@@ -58,7 +58,7 @@ public class LodestoneEnchantmentComponents {
         );
     }
 
-    private static Supplier<DataComponentType<List<TargetedConditionalEffect<EnchantmentEntityEffect>>>> targetedEffect(
+    public static Supplier<DataComponentType<List<TargetedConditionalEffect<EnchantmentEntityEffect>>>> targetedEffect(
             String name) {
         return ENCHANTMENT_COMPONENTS.register(name, () ->
                 DataComponentType.<List<TargetedConditionalEffect<EnchantmentEntityEffect>>>builder()
