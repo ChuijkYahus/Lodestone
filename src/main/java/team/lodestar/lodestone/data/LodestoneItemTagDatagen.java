@@ -3,6 +3,7 @@ package team.lodestar.lodestone.data;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.tags.*;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -26,8 +27,21 @@ public class LodestoneItemTagDatagen extends LodestoneItemTagsProvider {
         return "Malum Item Tags";
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void addTags(@NotNull HolderLookup.Provider provider) {
+        tag(ENCHANTMENT_HOLDER).add(Items.BOOK, Items.ENCHANTED_BOOK);
+
+        tag(MELEE_ENCHANTABLE).addTags(ItemTags.SWORD_ENCHANTABLE, AXE_ENCHANTABLE, ItemTags.TRIDENT_ENCHANTABLE, ItemTags.MACE_ENCHANTABLE, KNIFE_ENCHANTABLE);
+        tag(RANGED_ENCHANTABLE).addTags(ItemTags.CROSSBOW_ENCHANTABLE, ItemTags.BOW_ENCHANTABLE);
+        tag(WEAPON_ENCHANTABLE).addTags(MELEE_ENCHANTABLE, RANGED_ENCHANTABLE);
+        tag(SHIELD_ENCHANTABLE).add(Items.SHIELD);
+        tag(AXE_ENCHANTABLE).addTags(ItemTags.AXES);
+        tag(KNIFE_ENCHANTABLE).addTags(FD_KNIVES, C_KNIVES);
+
+        tag(FD_KNIVES);
+        tag(C_KNIVES);
+
         tag(NUGGETS_COPPER);
         tag(INGOTS_COPPER).add(Items.COPPER_INGOT);
         tag(NUGGETS_LEAD);

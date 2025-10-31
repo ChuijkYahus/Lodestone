@@ -13,7 +13,7 @@ import team.lodestar.lodestone.systems.particle.world.type.LodestoneTerrainParti
 import team.lodestar.lodestone.systems.particle.world.type.LodestoneWorldParticleType;
 
 @EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
-public class ClientSetupEvents {
+public class ClientModEvents {
 
     @SubscribeEvent
     public static void registerParticleFactory(RegisterParticleProvidersEvent event) {

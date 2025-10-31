@@ -11,7 +11,7 @@ import team.lodestar.lodestone.registry.common.LodestoneCommandArgumentTypes;
 import team.lodestar.lodestone.systems.item.*;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
-public class SetupEvents {
+public class ModEvents {
 
     @SubscribeEvent
     public static void registerCommon(FMLCommonSetupEvent event) {
