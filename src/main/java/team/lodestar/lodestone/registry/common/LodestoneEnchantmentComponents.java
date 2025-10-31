@@ -40,27 +40,27 @@ public class LodestoneEnchantmentComponents {
                     .optional(LootContextParams.TOOL)
     );
 
-    public static Supplier<DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>>> valueEffect(
+    public static Supplier<DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>>> valueEffect(DeferredRegister<DataComponentType<?>> registry,
             String name) {
-        return ENCHANTMENT_COMPONENTS.register(name, () ->
+        return registry.register(name, () ->
                 DataComponentType.<List<ConditionalEffect<EnchantmentValueEffect>>>builder()
                         .persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, LootContextParamSets.ENCHANTED_ITEM).listOf())
                         .build()
         );
     }
 
-    public static Supplier<DataComponentType<List<ConditionalEffect<EnchantmentEntityEffect>>>> entityEffect(
+    public static Supplier<DataComponentType<List<ConditionalEffect<EnchantmentEntityEffect>>>> entityEffect(DeferredRegister<DataComponentType<?>> registry,
             String name) {
-        return ENCHANTMENT_COMPONENTS.register(name, () ->
+        return registry.register(name, () ->
                 DataComponentType.<List<ConditionalEffect<EnchantmentEntityEffect>>>builder()
                         .persistent(ConditionalEffect.codec(EnchantmentEntityEffect.CODEC, ENCHANTED_ENTITY).listOf())
                         .build()
         );
     }
 
-    public static Supplier<DataComponentType<List<TargetedConditionalEffect<EnchantmentEntityEffect>>>> targetedEffect(
+    public static Supplier<DataComponentType<List<TargetedConditionalEffect<EnchantmentEntityEffect>>>> targetedEffect(DeferredRegister<DataComponentType<?>> registry,
             String name) {
-        return ENCHANTMENT_COMPONENTS.register(name, () ->
+        return registry.register(name, () ->
                 DataComponentType.<List<TargetedConditionalEffect<EnchantmentEntityEffect>>>builder()
                         .persistent(TargetedConditionalEffect.codec(EnchantmentEntityEffect.CODEC, ENCHANTED_DAMAGE).listOf())
                         .build()
