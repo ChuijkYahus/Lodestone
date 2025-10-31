@@ -17,6 +17,10 @@ public class LodestoneEntityEnchantmentEffectFilter<T extends EnchantmentEntityE
         return new LodestoneEntityEnchantmentEffectFilter<>(effectClass);
     }
 
+    public static LodestoneEntityEnchantmentEffectFilter<EnchantmentEntityEffect> byRegistry(Holder<MapCodec<? extends EnchantmentEntityEffect>> effectType) {
+        return byRegistry(effectType.value());
+    }
+
     public static LodestoneEntityEnchantmentEffectFilter<EnchantmentEntityEffect> byRegistry(MapCodec<? extends EnchantmentEntityEffect> effectType) {
         return new LodestoneEntityEnchantmentEffectFilter<>(EnchantmentEntityEffect.class, effectType);
     }
