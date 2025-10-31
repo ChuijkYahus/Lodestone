@@ -23,7 +23,7 @@ public class LodestoneEnchantmentEntityEffectHelper {
             LodestoneEnchantmentDataHelper.runIterationOnItem(item, filter.getEnchantmentFilter(), (enchantment, enchantmentLevel) -> {
                 var componentMap = enchantment.value().effects();
                 var matchingEffect = findEnchantmentEffect(item, componentMap, filter);
-                matchingEffect.ifPresent(t -> result.set(new LocatedEnchantmentEffect<>(t, enchantmentLevel)));
+                matchingEffect.ifPresent(t -> result.set(new LocatedEnchantmentEffect<>(t, enchantment, enchantmentLevel)));
             }, () -> result.get() != null);
         } catch (Exception ignored) {
             return result.get();
