@@ -1,6 +1,5 @@
 package team.lodestar.lodestone.systems.enchanting;
 
-import net.minecraft.core.*;
 import net.minecraft.core.component.*;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.*;
@@ -24,7 +23,12 @@ public class LodestoneEnchantmentEntityEffectHelper {
             LodestoneEnchantmentDataHelper.runIterationOnItem(item, filter.getEnchantmentFilter(), (enchantment, enchantmentLevel) -> {
                 var componentMap = enchantment.value().effects();
                 var matchingEffect = findEnchantmentEffect(item, componentMap, filter);
-                matchingEffect.ifPresent(entityEffect -> result.set(new LocatedEnchantmentEffect<>(entityEffect, enchantment, enchantmentLevel)));
+                if (matchingEffect.isEmpty()) {
+                    result.set(new LocatedEnchantmentEffect.EmptyEnchantmentEffect<>());
+                }
+                else {
+                    result.set(new LocatedEnchantmentEffect<>(matchingEffect.get(), enchantmentLevel));
+                }
 
             }, () -> result.get() != null);
         } catch (Exception ignored) {
@@ -109,11 +113,4 @@ public class LodestoneEnchantmentEntityEffectHelper {
         return values;
     }
 
-    public record LocatedEnchantmentEffect<T extends EnchantmentEntityEffect>(T effect, Holder<Enchantment> enchantment, int level) {
-
-        public float getValue(Function<T, LevelBasedValue> valueGetter) {
-            LevelBasedValue value = valueGetter.apply(effect);
-            return value.calculate(level);
-        }
-    }
 }
