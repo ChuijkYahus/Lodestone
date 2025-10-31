@@ -17,24 +17,18 @@ public class LodestoneEnchantmentEntityEffectHelper {
         return findEnchantmentEffect(item, filter).isPresent();
     }
 
-    public static <T extends EnchantmentEntityEffect> Optional<LocatedEnchantmentEffect<T>> findEnchantmentEffect(ItemStack item, LodestoneEntityEnchantmentEffectFilter<T> filter) {
-        AtomicReference<LocatedEnchantmentEffect<T>> result = new AtomicReference<>(null);
+    public static <T extends EnchantmentEntityEffect> LocatedEnchantmentEffect<T> findEnchantmentEffect(ItemStack item, LodestoneEntityEnchantmentEffectFilter<T> filter) {
+        AtomicReference<LocatedEnchantmentEffect<T>> result = new AtomicReference<>(new LocatedEnchantmentEffect.EmptyEnchantmentEffect<>());
         try {
             LodestoneEnchantmentDataHelper.runIterationOnItem(item, filter.getEnchantmentFilter(), (enchantment, enchantmentLevel) -> {
                 var componentMap = enchantment.value().effects();
                 var matchingEffect = findEnchantmentEffect(item, componentMap, filter);
-                if (matchingEffect.isEmpty()) {
-                    result.set(new LocatedEnchantmentEffect.EmptyEnchantmentEffect<>());
-                }
-                else {
-                    result.set(new LocatedEnchantmentEffect<>(matchingEffect.get(), enchantmentLevel));
-                }
-
+                matchingEffect.ifPresent(t -> result.set(new LocatedEnchantmentEffect<>(t, enchantmentLevel)));
             }, () -> result.get() != null);
         } catch (Exception ignored) {
-            return Optional.empty();
+            return result.get();
         }
-        return Optional.ofNullable(result.get());
+        return result.get();
     }
 
     public static <T extends EnchantmentEntityEffect> Optional<T> findEnchantmentEffect(ItemStack item, DataComponentMap map, LodestoneEntityEnchantmentEffectFilter<T> filter) {

@@ -15,6 +15,10 @@ public class LocatedEnchantmentEffect<T extends EnchantmentEntityEffect> {
         this.level = level;
     }
 
+    public boolean isPresent() {
+        return effect != null;
+    }
+
     public float getValue(Function<T, LevelBasedValue> valueGetter, float fallback) {
         LevelBasedValue value = valueGetter.apply(effect);
         return value.calculate(level);
