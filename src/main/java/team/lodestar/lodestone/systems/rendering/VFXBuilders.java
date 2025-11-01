@@ -4,8 +4,10 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.*;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.*;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.texture.*;
 import net.minecraft.core.*;
 import net.minecraft.resources.*;
 import net.minecraft.util.*;
@@ -337,9 +339,18 @@ public class VFXBuilders {
             return shader;
         }
 
-        public ScreenVFXBuilder setShaderTexture(ResourceLocation texture) {
+        public ScreenVFXBuilder setTexture(ResourceLocation texture) {
             this.texture = texture;
             return this;
+        }
+
+        public ScreenVFXBuilder setSprite(ResourceLocation location) {
+            var sprite = Minecraft.getInstance().getGuiSprites().getSprite(location);
+            this.u0 = sprite.getU0();
+            this.v0 = sprite.getV0();
+            this.u1 = sprite.getU1();
+            this.v1 = sprite.getV1();
+            return setTexture(sprite.atlasLocation());
         }
 
         public final ScreenVFXBuilder updateVertexFormat() {
@@ -366,6 +377,14 @@ public class VFXBuilders {
         public ScreenVFXBuilder setZLevel(int z) {
             this.zLevel = z;
             return this;
+        }
+
+        public ScreenVFXBuilder blitSprite(GuiGraphics graphics) {
+            return blit(graphics.pose());
+        }
+
+        public ScreenVFXBuilder blit(GuiGraphics graphics) {
+            return blit(graphics.pose());
         }
 
         public ScreenVFXBuilder blit(PoseStack stack) {
