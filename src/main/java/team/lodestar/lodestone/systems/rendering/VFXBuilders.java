@@ -379,10 +379,6 @@ public class VFXBuilders {
             return this;
         }
 
-        public ScreenVFXBuilder blitSprite(GuiGraphics graphics) {
-            return blit(graphics.pose());
-        }
-
         public ScreenVFXBuilder blit(GuiGraphics graphics) {
             return blit(graphics.pose());
         }
