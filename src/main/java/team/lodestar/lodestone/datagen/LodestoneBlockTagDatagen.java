@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.data;
+package team.lodestar.lodestone.datagen;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;

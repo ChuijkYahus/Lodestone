@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.data;
+package team.lodestar.lodestone.datagen;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.entity.ai.attributes.Attribute;

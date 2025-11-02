@@ -1,10 +1,9 @@
-package team.lodestar.lodestone.data;
+package team.lodestar.lodestone.datagen;
 
 import net.minecraft.core.*;
 import net.minecraft.core.HolderLookup.*;
 import net.minecraft.data.*;
 import net.minecraft.data.tags.*;
-import net.minecraft.tags.*;
 import net.minecraft.world.damagesource.*;
 import net.neoforged.neoforge.common.data.*;
 import team.lodestar.lodestone.*;
