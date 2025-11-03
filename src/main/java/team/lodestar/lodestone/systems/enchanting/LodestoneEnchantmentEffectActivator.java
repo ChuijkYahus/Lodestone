@@ -100,7 +100,7 @@ public class LodestoneEnchantmentEffectActivator<T> {
      * @return The total value of the enchantment value effect provided by the given item.
      */
     public float countValue(ItemStack enchantedItem, Entity target) {
-        return countValue(enchantedItem, target, 0f);
+        return modifyValue(enchantedItem, target, 0f);
     }
 
     /**
@@ -111,7 +111,7 @@ public class LodestoneEnchantmentEffectActivator<T> {
      * @param baseValue     The base value to modify.
      * @return The total value of the enchantment value effect provided by the given item.
      */
-    public float countValue(ItemStack enchantedItem, Entity target, float baseValue) {
+    public float modifyValue(ItemStack enchantedItem, Entity target, float baseValue) {
         MutableFloat value = new MutableFloat(baseValue);
         applyEffects((effect, entity, enchantmentLevel) -> {
             if (effect instanceof EnchantmentValueEffect valueEffect) {
