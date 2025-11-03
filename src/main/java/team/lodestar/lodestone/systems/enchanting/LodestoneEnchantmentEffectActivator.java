@@ -23,17 +23,20 @@ public class LodestoneEnchantmentEffectActivator<T> {
 
     /**
      * Creates an effect activator for non-targeted conditional effects.
+     *
      * @param componentType The data component type to activate.
-     * @param level A {@link ServerLevel} instance.
+     * @param level         A {@link ServerLevel} instance.
      * @return The created effect activator.
      */
     public static <T> LodestoneEnchantmentEffectActivator<T> createEffectActivator(DataComponentType<List<ConditionalEffect<T>>> componentType, ServerLevel level) {
         return new LodestoneEnchantmentEffectActivator<>(Either.left(componentType), level);
     }
+
     /**
      * Creates an effect activator for targeted conditional effects.
+     *
      * @param componentType The data component type to activate.
-     * @param level A {@link ServerLevel} instance.
+     * @param level         A {@link ServerLevel} instance.
      * @return The created effect activator.
      */
     public static <T> LodestoneEnchantmentEffectActivator<T> createTargetedEffectActivator(DataComponentType<List<TargetedConditionalEffect<T>>> componentType, ServerLevel level) {
@@ -90,13 +93,26 @@ public class LodestoneEnchantmentEffectActivator<T> {
     }
 
     /**
-     * Counts the value provided by all {@link EnchantmentValueEffect} instances on the given item for the given target.
+     * Modifies the value provided using all {@link EnchantmentValueEffect} instances on the given item for the given target.
+     *
      * @param enchantedItem The enchanted item.
-     * @param target The entity the item belongs to.
+     * @param target        The entity the item belongs to.
      * @return The total value of the enchantment value effect provided by the given item.
      */
     public float countValue(ItemStack enchantedItem, Entity target) {
-        MutableFloat value = new MutableFloat(0);
+        return countValue(enchantedItem, target, 0f);
+    }
+
+    /**
+     * Modifies the value provided using all {@link EnchantmentValueEffect} instances on the given item for the given target.
+     *
+     * @param enchantedItem The enchanted item.
+     * @param target        The entity the item belongs to.
+     * @param baseValue     The base value to modify.
+     * @return The total value of the enchantment value effect provided by the given item.
+     */
+    public float countValue(ItemStack enchantedItem, Entity target, float baseValue) {
+        MutableFloat value = new MutableFloat(baseValue);
         applyEffects((effect, entity, enchantmentLevel) -> {
             if (effect instanceof EnchantmentValueEffect valueEffect) {
                 value.setValue(valueEffect.process(enchantmentLevel, level.getRandom(), value.getValue()));
@@ -106,12 +122,24 @@ public class LodestoneEnchantmentEffectActivator<T> {
     }
 
     /**
-     * Counts the value provided by all {@link EnchantmentValueEffect} instances on the given item for the given target.
+     * Modifies the value provided using all {@link EnchantmentValueEffect} instances on the given item for the given target.
+     *
      * @param target The entity the item belongs to.
      * @return The total value of the enchantment value effect based on all items influencing the target entity.
      */
     public float countValue(LivingEntity target) {
-        MutableFloat value = new MutableFloat(0);
+        return modifyValue(target, 0f);
+    }
+
+    /**
+     * Modifies the value provided using all {@link EnchantmentValueEffect} instances on the given item for the given target.
+     *
+     * @param target    The entity the item belongs to.
+     * @param baseValue The base value to modify.
+     * @return The total value of the enchantment value effect based on all items influencing the target entity.
+     */
+    public float modifyValue(LivingEntity target, float baseValue) {
+        MutableFloat value = new MutableFloat(baseValue);
         applyEffects((effect, entity, enchantmentLevel) -> {
             if (effect instanceof EnchantmentValueEffect valueEffect) {
                 value.setValue(valueEffect.process(enchantmentLevel, level.getRandom(), value.getValue()));
@@ -122,9 +150,10 @@ public class LodestoneEnchantmentEffectActivator<T> {
 
     /**
      * Triggers enchantment effects present on a specified item.
-     * @param acceptor The effect acceptor
+     *
+     * @param acceptor      The effect acceptor
      * @param enchantedItem The enchanted item.
-     * @param target The entity to affect. In case of targeted effects, this ends up being the victim.
+     * @param target        The entity to affect. In case of targeted effects, this ends up being the victim.
      */
     public void applyEffects(EnchantmentEffectAcceptor<T> acceptor, ItemStack enchantedItem, Entity target) {
         if (contextSupplier == null) {
@@ -160,8 +189,9 @@ public class LodestoneEnchantmentEffectActivator<T> {
 
     /**
      * Triggers all enchantment effects available to the given entity.
+     *
      * @param acceptor The effect acceptor.
-     * @param target The entity to affect. In case of targeted effects, this ends up being the victim.
+     * @param target   The entity to affect. In case of targeted effects, this ends up being the victim.
      */
     public void applyEffects(EnchantmentEffectAcceptor<T> acceptor, LivingEntity target) {
         if (contextSupplier == null) {
