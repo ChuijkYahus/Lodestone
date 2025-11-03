@@ -15,6 +15,7 @@ import org.apache.commons.lang3.mutable.*;
 
 import javax.annotation.*;
 import java.util.*;
+import java.util.concurrent.atomic.*;
 
 /**
  * A helper class to activate enchantment effects in a more convenient way than through the use of {@link EnchantmentHelper}.
@@ -148,6 +149,19 @@ public class LodestoneEnchantmentEffectActivator<T> {
         return value.getValue();
     }
 
+    /**
+     * Checks whether the given item has any effect instance of the type handled by this activator.
+     * @param enchantedItem The enchanted item.
+     * @param target The entity the item belongs to.
+     * @return True if at least one effect is present, false otherwise.
+     */
+    public boolean hasEffect(ItemStack enchantedItem, Entity target) {
+        AtomicBoolean hasEffect = new AtomicBoolean(false);
+        applyEffects((effect, entity, enchantmentLevel) -> {
+            hasEffect.set(true);
+        }, enchantedItem, target);
+        return hasEffect.get();
+    }
     /**
      * Triggers enchantment effects present on a specified item.
      *
