@@ -2,6 +2,7 @@
   "vertex": "lodestone:screen/screen_generic",
   "fragment": "lodestone:screen/radial_distorted_light",
   "samplers": [
+    { "name": "Sampler0" }
   ],
   "uniforms": [
     { "name": "GameTime", "type": "float", "count": 1, "values": [ 0.0 ] },
@@ -15,6 +16,7 @@
     { "name": "UVCoordinates", "type": "float", "count": 4, "values": [ 0.0, 1.0, 0.0, 1.0 ] },
     { "name": "Angle", "type": "int", "count": 1, "values": [ 0 ] },
     { "name": "LightAngleRange", "type": "float", "count": 1, "values": [ 60.0 ] },
-    { "name": "LightIntensity", "type": "float", "count": 1, "values": [ 0.5 ] }
+    { "name": "LightIntensity", "type": "float", "count": 1, "values": [ 0.5 ] },
+    { "name": "LumiTransparency", "type": "float", "count": 1, "values": [ 0.0 ] }
   ]
 }
