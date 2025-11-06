@@ -43,14 +43,14 @@ void main() {
     vec2 uCap = vec2(UVCoordinates.x, UVCoordinates.y);
     vec2 vCap = vec2(UVCoordinates.z, UVCoordinates.w);
 
+    uv.x = floor(uv.x* Width)/ Width;
+    uv.y = floor(uv.y* Height)/ Height;
+
     uv.x += cos(uv.y*XFrequency+time)/Intensity;
     uv.y += sin(uv.x*YFrequency+time)/Intensity;
 
     uv.x = clamp(uv.x, uCap.x, uCap.y);
     uv.y = clamp(uv.y, vCap.x, vCap.y);
-
-    uv.x = floor(uv.x* Width)/ Width;
-    uv.y = floor(uv.y* Height)/ Height;
 
     float angle = degrees(getLightDirection(uv, float(Angle)));
     float range = LightAngleRange * 0.5;
