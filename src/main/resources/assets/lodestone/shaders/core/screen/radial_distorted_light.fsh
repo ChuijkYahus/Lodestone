@@ -11,6 +11,9 @@ uniform float Intensity;
 uniform float XFrequency;
 uniform float YFrequency;
 uniform vec4 UVCoordinates;
+
+uniform vec4 ColorModulator;
+
 uniform int Angle;
 uniform float LightAngleRange;
 uniform float LightIntensity;
