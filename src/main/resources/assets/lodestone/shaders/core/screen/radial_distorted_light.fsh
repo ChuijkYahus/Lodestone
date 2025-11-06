@@ -17,6 +17,8 @@ uniform vec4 ColorModulator;
 uniform int Angle;
 uniform float LightAngleRange;
 uniform float LightIntensity;
+uniform float Width;
+uniform float Height;
 
 in vec4 vertexColor;
 in vec2 texCoord0;
@@ -46,6 +48,9 @@ void main() {
 
     uv.x = clamp(uv.x, uCap.x, uCap.y);
     uv.y = clamp(uv.y, vCap.x, vCap.y);
+
+    uv.x = floor(uv.x* Width)/ Width;
+    uv.y = floor(uv.y* Height)/ Height;
 
     float angle = degrees(getLightDirection(uv, float(Angle)));
     float range = LightAngleRange * 0.5;
