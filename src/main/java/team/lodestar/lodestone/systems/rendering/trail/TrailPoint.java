@@ -9,6 +9,7 @@ public class TrailPoint {
     protected int age;
 
     public TrailPoint(Vec3 position, int age) {
+        this.oldPosition = position;
         this.position = position;
         this.age = age;
     }

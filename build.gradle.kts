@@ -140,7 +140,7 @@ dependencies {
     compileOnlyApi("top.theillusivec4.curios:curios-neoforge:${property("curios_version")}:api")
     localRuntime("top.theillusivec4.curios:curios-neoforge:${property("curios_version")}")
 
-//    runtimeOnly(("com.sammy.malum:malum:${property("minecraft_version")}-1.7.4.51"))
+//    runtimeOnly(("com.sammy.malum:malum:${property("minecraft_version")}-1.8.1.108"))
 
     compileOnly("maven.modrinth:sodium:mc${property("minecraft_version")}-${property("sodium_version")}-neoforge")
     compileOnly("maven.modrinth:iris:${property("iris_version")}+${property("minecraft_version")}-neoforge")
