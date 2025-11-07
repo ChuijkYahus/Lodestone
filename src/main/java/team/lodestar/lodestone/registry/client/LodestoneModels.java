@@ -13,16 +13,14 @@ import team.lodestar.lodestone.systems.model.obj.ObjModel;
 import java.util.ArrayList;
 import java.util.List;
 
-@EventBusSubscriber(modid = LodestoneLib.LODESTONE, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = LodestoneLib.LODESTONE, value = Dist.CLIENT)
 public class LodestoneModels {
     public static List<IRenderableModel> MODELS = new ArrayList<>();
 
     public static final ObjModel SUZANNE = register(ObjModel.Builder.of(LodestoneLib.lodestonePath("models/suzanne.obj"))
             .build()
     );
-
-    public static final BedrockGeometryModel book = register(new BedrockGeometryModel(LodestoneLib.lodestonePath("models/book3.geo.json")));
-
+    
     public static <T extends IRenderableModel> T register(T model) {
         MODELS.add(model);
         return model;
