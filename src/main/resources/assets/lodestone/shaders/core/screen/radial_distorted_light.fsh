@@ -4,6 +4,8 @@
 
 uniform sampler2D Sampler0;
 uniform float LumiTransparency;
+uniform float Width;
+uniform float Height;
 uniform float GameTime;
 uniform float TimeOffset;
 uniform float Speed;
@@ -17,8 +19,6 @@ uniform vec4 ColorModulator;
 uniform int Angle;
 uniform float LightAngleRange;
 uniform float LightIntensity;
-uniform float Width;
-uniform float Height;
 
 in vec4 vertexColor;
 in vec2 texCoord0;
@@ -43,8 +43,12 @@ void main() {
     vec2 uCap = vec2(UVCoordinates.x, UVCoordinates.y);
     vec2 vCap = vec2(UVCoordinates.z, UVCoordinates.w);
 
-    uv.x = floor(uv.x* Width)/ Width;
-    uv.y = floor(uv.y* Height)/ Height;
+    if (Width > 0.0){
+        uv.x = floor(uv.x* Width)/ Width;
+    }
+    if (Height > 0.0){
+        uv.y = floor(uv.y* Height)/ Height;
+    }
 
     uv.x += cos(uv.y*XFrequency+time)/Intensity;
     uv.y += sin(uv.x*YFrequency+time)/Intensity;
