@@ -1,19 +1,21 @@
 package team.lodestar.lodestone.events;
 
-import net.minecraft.server.level.*;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.*;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
-import net.neoforged.neoforge.event.level.*;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import net.neoforged.neoforge.network.*;
 import team.lodestar.lodestone.handlers.*;
-import team.lodestar.lodestone.network.*;
-import team.lodestar.lodestone.systems.easing.*;
+import team.lodestar.lodestone.systems.enchanting.*;
 
 @EventBusSubscriber
-public class RuntimeEvents {
+public class GameEvents {
+
+    @SubscribeEvent
+    public static void modifyAttributes(ItemAttributeModifierEvent event) {
+        LodestoneSlotBasedEnchantmentAttributeEffect.modifyAttributes(event);
+    }
 
     @SubscribeEvent
     public static void onIncomingDamage(LivingIncomingDamageEvent event) {

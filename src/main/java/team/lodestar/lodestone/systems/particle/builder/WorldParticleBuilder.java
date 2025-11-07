@@ -260,10 +260,10 @@ public class WorldParticleBuilder extends AbstractParticleBuilder<WorldParticleO
     }
 
     public WorldParticleBuilder clearActors() {
-        return clearTickActor().clearSpawnActors().clearRenderActors();
+        return clearTickActors().clearSpawnActors().clearRenderActors();
     }
 
-    public WorldParticleBuilder clearTickActor() {
+    public WorldParticleBuilder clearTickActors() {
         getParticleOptions().tickActors.clear();
         return this;
     }

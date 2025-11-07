@@ -2,6 +2,8 @@
 
 #moj_import <lodestone:common_math.glsl>
 
+uniform sampler2D Sampler0;
+uniform float LumiTransparency;
 uniform float GameTime;
 uniform float TimeOffset;
 uniform float Speed;
@@ -9,9 +11,14 @@ uniform float Intensity;
 uniform float XFrequency;
 uniform float YFrequency;
 uniform vec4 UVCoordinates;
+
+uniform vec4 ColorModulator;
+
 uniform int Angle;
 uniform float LightAngleRange;
 uniform float LightIntensity;
+uniform float Width;
+uniform float Height;
 
 in vec4 vertexColor;
 in vec2 texCoord0;
@@ -36,6 +43,9 @@ void main() {
     vec2 uCap = vec2(UVCoordinates.x, UVCoordinates.y);
     vec2 vCap = vec2(UVCoordinates.z, UVCoordinates.w);
 
+    uv.x = floor(uv.x* Width)/ Width;
+    uv.y = floor(uv.y* Height)/ Height;
+
     uv.x += cos(uv.y*XFrequency+time)/Intensity;
     uv.y += sin(uv.x*YFrequency+time)/Intensity;
 
@@ -46,5 +56,13 @@ void main() {
     float range = LightAngleRange * 0.5;
 
     float v = remap(angle, 0.0, range, LightIntensity, 0.0);
-    fragColor = vec4(mix(vec3(0), vertexColor.rgb*v, step(angle, range)), 1.0);
+
+    vec4 textureColor = texture(Sampler0, uv);
+    if (textureColor.a == 0) {
+        discard;
+    }
+    vec4 color = transformColor(textureColor, LumiTransparency, vertexColor, ColorModulator);
+    color *= vec4(vec3(v), 1.0);
+    color.a *= step(angle, range);
+    fragColor = color;
 }

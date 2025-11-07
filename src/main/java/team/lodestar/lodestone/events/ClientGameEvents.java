@@ -19,7 +19,7 @@ import team.lodestar.lodestone.systems.rendering.renderpass.RenderPassHandler;
 
 
 @EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.GAME)
-public class ClientRuntimeEvents {
+public class ClientGameEvents {
 
     @SubscribeEvent
     public static void clientTick(ClientTickEvent.Post event) {

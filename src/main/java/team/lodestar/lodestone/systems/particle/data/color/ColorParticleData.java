@@ -128,7 +128,11 @@ public class ColorParticleData implements ColorParticleDataWrapper {
     }
 
     public static ColorParticleData createGrayParticleColor(RandomSource random) {
-        int brightness = (int) (255 * RandomHelper.randomBetween(random, 0.6f, 1f));
+        return createGrayParticleColor(random, 0.6f, 1f);
+    }
+
+    public static ColorParticleData createGrayParticleColor(RandomSource random, float min, float max) {
+        int brightness = (int) (255 * RandomHelper.randomBetween(random, min, max));
         Color color = new Color(brightness, brightness, brightness);
         return ColorParticleData.create(color, color.darker()).setEasing(Easing.SINE_IN_OUT).build();
     }

@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#minecraft:enchantable/sword",
+    "#lodestone:enchantable/axe",
+    "#minecraft:enchantable/trident",
+    "#minecraft:enchantable/mace",
+    "#lodestone:enchantable/knife"
+  ]
+}
