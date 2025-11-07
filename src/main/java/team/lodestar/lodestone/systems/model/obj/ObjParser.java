@@ -1,5 +1,6 @@
 package team.lodestar.lodestone.systems.model.obj;
 
+import net.minecraft.server.packs.resources.Resource;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import team.lodestar.lodestone.systems.model.LodestoneParser;
@@ -21,7 +22,8 @@ public class ObjParser extends LodestoneParser<ObjModel> {
     private static final String FACE = "f ";
 
     @Override
-    public void parse(InputStream inputStream, ObjModel model) throws IOException {
+    public void parse(Resource resource, ObjModel model) throws IOException {
+        InputStream inputStream = resource.open();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         Builder builder = new Builder(model);
 

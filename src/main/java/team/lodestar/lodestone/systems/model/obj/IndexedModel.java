@@ -1,19 +1,16 @@
 package team.lodestar.lodestone.systems.model.obj;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import org.joml.Matrix4f;
-import team.lodestar.lodestone.systems.rendering.IVertexBuffer;
+import team.lodestar.lodestone.systems.model.IRenderableModel;
 import team.lodestar.lodestone.systems.model.obj.data.*;
 import team.lodestar.lodestone.systems.model.obj.modifier.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class IndexedModel {
+public abstract class IndexedModel implements IRenderableModel {
     protected List<Vertex> vertices;
     protected List<IndexedMesh> meshes;
     protected List<Integer> bakedIndices;
@@ -29,32 +26,6 @@ public abstract class IndexedModel {
         this.meshes = new ArrayList<>();
         this.bakedIndices = new ArrayList<>();
     }
-
-    public void render(PoseStack poseStack, RenderType renderType, MultiBufferSource.BufferSource bufferSource) {
-        VertexConsumer vertexConsumer = bufferSource.getBuffer(renderType);
-        this.render(poseStack, vertexConsumer, renderType);
-    }
-
-    public void render(PoseStack poseStack, VertexConsumer vertexConsumer, RenderType renderType) {
-        for (IndexedMesh mesh : this.meshes) {
-            if (mesh.isCompatibleWith(renderType.mode())) {
-                for (Vertex vertex : mesh.getVertices(this)) {
-                    vertex.supplyVertexData(vertexConsumer, renderType.format(), poseStack);
-                }
-            }
-        }
-    }
-
-    public void renderInstanced(PoseStack poseStack, Matrix4f frustrumMatrix, Matrix4f projectionMatrix, RenderType renderType, int instances) {
-        this.createMeshBuffer(poseStack, renderType);
-        this.modelBuffer.bind();
-        renderType.setupRenderState();
-        IVertexBuffer.cast(this.modelBuffer).drawWithShaderInstanced(frustrumMatrix, projectionMatrix, RenderSystem.getShader(), instances);
-        renderType.clearRenderState();
-        VertexBuffer.unbind();
-    }
-
-    public abstract void loadModel();
 
     public void applyModifiers() {
         if (modifiers != null) {
@@ -76,14 +47,6 @@ public abstract class IndexedModel {
 
     public List<Integer> getBakedIndices() {
         return this.bakedIndices;
-    }
-
-    public ResourceLocation getModelId() {
-        return this.modelId;
-    }
-
-    public ResourceLocation getAssetLocation() {
-        return ResourceLocation.fromNamespaceAndPath(modelId.getNamespace(), "models/" + modelId.getPath() + ".obj");
     }
 
     public void bakeIndices(VertexFormat.Mode mode, boolean triangulate) {
@@ -112,20 +75,23 @@ public abstract class IndexedModel {
         }
     }
 
-    public void createMeshBuffer(PoseStack poseStack, RenderType renderType) {
-        if (this.modelBuffer == null) {
-            this.modelBuffer = new VertexBuffer(VertexBuffer.Usage.DYNAMIC);
+    @Override
+    public ResourceLocation getModelLocation() {
+        return this.modelId;
+    }
+
+    @Override
+    public void render(PoseStack poseStack, VertexConsumer vertexConsumer, RenderType renderType) {
+        for (IndexedMesh mesh : this.meshes) {
+            if (mesh.isCompatibleWith(renderType.mode())) {
+                for (Vertex vertex : mesh.getVertices(this)) {
+                    vertex.supplyVertexData(vertexConsumer, renderType.format(), poseStack);
+                }
+            }
         }
-        this.modelBuffer.bind();
-        this.meshData = this.createMesh(poseStack, renderType);
-        this.modelBuffer.upload(this.meshData);
-        VertexBuffer.unbind();
     }
 
-    public MeshData createMesh(PoseStack poseStack, RenderType renderType) {
-        return this.createMesh(poseStack, renderType.format(), renderType.mode());
-    }
-
+    @Override
     public MeshData createMesh(PoseStack poseStack, VertexFormat vertexFormat, VertexFormat.Mode mode) {
         BufferBuilder bufferBuilder = Tesselator.getInstance().begin(mode, vertexFormat);
         for (IndexedMesh mesh : this.meshes) {
@@ -136,10 +102,17 @@ public abstract class IndexedModel {
         return bufferBuilder.buildOrThrow();
     }
 
+    @Override
     public VertexBuffer getModelBuffer() {
         return this.modelBuffer;
     }
 
+    @Override
+    public void setModelBuffer(VertexBuffer modelBuffer) {
+        this.modelBuffer = modelBuffer;
+    }
+
+    @Override
     public void cleanup() {
         if (this.modelBuffer != null) {
             this.modelBuffer.close();

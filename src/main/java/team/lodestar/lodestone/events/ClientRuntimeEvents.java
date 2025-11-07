@@ -13,7 +13,7 @@ import net.neoforged.neoforge.event.GameShuttingDownEvent;
 import team.lodestar.lodestone.LodestoneLib;
 import team.lodestar.lodestone.handlers.*;
 import team.lodestar.lodestone.handlers.screenparticle.ScreenParticleHandler;
-import team.lodestar.lodestone.registry.client.LodestoneOBJModels;
+import team.lodestar.lodestone.registry.client.LodestoneModels;
 import team.lodestar.lodestone.systems.rendering.LodestoneRenderSystem;
 import team.lodestar.lodestone.systems.rendering.renderpass.RenderPassHandler;
 
@@ -84,7 +84,7 @@ public class ClientRuntimeEvents {
     @SubscribeEvent
     public static void shutdownEvent(GameShuttingDownEvent event) {
         LodestoneRenderSystem.wrap(() -> {
-            LodestoneOBJModels.cleanup();
+            LodestoneModels.cleanup();
             LodestoneRenderSystem.destroyBufferObjects();
             RenderPassHandler.close();
             LodestoneLib.LOGGER.info("Shutting down Lodestone");
