@@ -41,5 +41,5 @@ void main() {
 
     float depthFade = applyDepthFade(sceneViewSpace.z, viewSpacePos.z, DepthFade);
 
-    fragColor = vec4(blend(fog.rgb, sceneColor.rgb, depthFade), 1.0);
+    fragColor = vec4(blend(fog.rgb, sceneColor.rgb, depthFade), color.a);
 }

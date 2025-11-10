@@ -17,7 +17,7 @@ import java.util.List;
 
 import static team.lodestar.lodestone.LodestoneLib.lodestonePath;
 
-@EventBusSubscriber(value = Dist.CLIENT, modid = LodestoneLib.LODESTONE, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(value = Dist.CLIENT, modid = LodestoneLib.LODESTONE)
 public class LodestoneShaders {
     private static final LodestoneShaderRegistry SHADERS = new LodestoneShaderRegistry(LodestoneLib.LODESTONE);
 
