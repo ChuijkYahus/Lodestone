@@ -81,10 +81,6 @@ public class LodestoneRenderTypes extends RenderStateShard {
             createGenericRenderType(token, "cutout_texture", POSITION_COLOR_TEX_LIGHTMAP,
                     QUADS, builder(token, StateShards.NO_TRANSPARENCY, LodestoneShaders.LODESTONE_TEXTURE, CULL, LIGHTMAP)));
 
-    public static final RenderTypeProvider TEXTURE_FADE = new RenderTypeProvider((token) ->
-            createGenericRenderType(token, "texture_fade", POSITION_COLOR_TEX_LIGHTMAP,
-                    QUADS, builder(token, StateShards.NO_TRANSPARENCY, LodestoneShaders.TEXTURE_FADE, CULL, LIGHTMAP)));
-
     public static final RenderTypeProvider TRANSPARENT_TEXT = new RenderTypeProvider((token) ->
             createGenericRenderType(token, "transparent_text", POSITION_COLOR_TEX_LIGHTMAP,
                     QUADS, builder(token, StateShards.NORMAL_TRANSPARENCY, LodestoneShaders.LODESTONE_TEXT, LIGHTMAP)));
@@ -127,6 +123,16 @@ public class LodestoneRenderTypes extends RenderStateShard {
     public static final RenderTypeProvider ADDITIVE_DISTORTED_NINE_SLICE_TEXTURE = new RenderTypeProvider((token) ->
             createAdditiveRenderType("additive_distorted_nine_slice_texture", token, LodestoneShaders.DISTORTED_NINE_SLICE_TEXTURE));
 
+    /**
+     * A render type that fades out the texture's alpha channel based on depth proximity.
+     */
+    public static final RenderTypeProvider TEXTURE_FADE = new RenderTypeProvider((token) ->
+            createGenericRenderType(token, "texture_fade", POSITION_COLOR_TEX_LIGHTMAP,
+                    QUADS, builder(token, StateShards.NORMAL_TRANSPARENCY, LodestoneShaders.TEXTURE_FADE, CULL, LIGHTMAP)));
+
+    /**
+     * Who knows what this one might do.
+     */
     public static final RenderTypeProvider DEBUG_SDF = new RenderTypeProvider((token) ->
             createGenericRenderType(token, "debug_sdf", POSITION,
                     QUADS, builder(token, LodestoneShaders.DEBUG_SDF, CULL)));
