@@ -3,7 +3,9 @@
 #moj_import <lodestone:common_math.glsl>
 
 in vec3 Position;
+in vec4 Color;
 in vec2 UV0;
+in ivec2 UV2;
 
 uniform sampler2D Sampler2;
 
@@ -13,7 +15,10 @@ uniform int FogShape;
 
 out DATA {
     vec3 localVertexPos;
-    vec2 uv;
+    vec4 vertexColor;
+    float vertexDistance;
+    vec2 texCoord0;
+    vec2 texCoord2;
 } data_out;
 
 void main() {
@@ -21,5 +26,8 @@ void main() {
     gl_Position = ProjMat * vsPos;
 
     data_out.localVertexPos = Position;
-    data_out.uv = UV0;
+    data_out.vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+    data_out.vertexDistance = fogDistance(vsPos.xyz, FogShape);
+    data_out.texCoord0 = UV0;
+    data_out.texCoord2 = UV2;
 }

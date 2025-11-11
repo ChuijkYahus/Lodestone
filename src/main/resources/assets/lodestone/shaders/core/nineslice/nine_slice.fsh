@@ -1,9 +1,19 @@
 #version 150
 
-in vec2 texCoord;
-flat in vec2 size;
+#moj_import <lodestone:common_math.glsl>
 
 uniform sampler2D Sampler0;
+uniform float LumiTransparency;
+
+uniform vec4 ColorModulator;
+uniform float FogStart;
+uniform float FogEnd;
+uniform vec4 FogColor;
+
+in float vertexDistance;
+in vec4 vertexColor;
+in vec2 texCoord;
+flat in vec2 size;
 
 out vec4 fragColor;
 
@@ -29,5 +39,11 @@ vec2 sliceUV(vec2 uv, vec2 size) {
 void main() {
     vec2 uv = sliceUV(texCoord, size);
     vec4 texture = texture(Sampler0, uv);
-    fragColor = texture;
+
+    vec4 color = transformColor(texture, LumiTransparency, vertexColor, ColorModulator);
+    vec4 fog = applyFog(color, FogStart, FogEnd, FogColor, vertexDistance);
+    if (fog.a == 0.0) {
+        discard;
+    }
+    fragColor = fog;
 }
