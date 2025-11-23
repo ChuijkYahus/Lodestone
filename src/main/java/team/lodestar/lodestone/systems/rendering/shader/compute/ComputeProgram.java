@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import org.apache.commons.io.IOUtils;
+import team.lodestar.lodestone.LodestoneLib;
 import team.lodestar.lodestone.systems.rendering.IBufferObject;
 import team.lodestar.lodestone.systems.rendering.LodestoneRenderSystem;
 import team.lodestar.lodestone.systems.rendering.shader.LodestoneShader;
@@ -39,6 +40,11 @@ public class ComputeProgram implements IBufferObject, LodestoneShader {
     }
 
     private void loadShader(ResourceProvider provider) {
+        var version = SystemDetails.getOpenglVersion(); // [4.6.0]
+        if (version[0] < 4 || (version[0] == 4 && version[1] < 3)) {
+            LodestoneLib.LOGGER.warn("Compute shaders are not supported on this system (OpenGL {}.{})", version[0], version[1]);
+            return;
+        }
         this.destroy();
         try {
             this.programId = ProgramManager.createProgram();
