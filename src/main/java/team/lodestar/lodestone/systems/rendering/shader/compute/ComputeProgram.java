@@ -40,7 +40,7 @@ public class ComputeProgram implements IBufferObject, LodestoneShader {
     }
 
     private void loadShader(ResourceProvider provider) {
-        var version = SystemDetails.getOpenglVersion(); // [4.6.0]
+        var version = SystemDetails.getOpenglVersion();
         if (version[0] < 4 || (version[0] == 4 && version[1] < 3)) {
             LodestoneLib.LOGGER.warn("Compute shaders are not supported on this system (OpenGL {}.{})", version[0], version[1]);
             return;
