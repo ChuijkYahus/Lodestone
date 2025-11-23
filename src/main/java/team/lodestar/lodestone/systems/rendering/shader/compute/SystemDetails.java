@@ -40,13 +40,11 @@ public class SystemDetails {
 
     public static int[] getOpenglVersion() {
         init();
-        String version = getVersion(); // 4.6.0 NVIDIA 576.52
-        LodestoneLib.LOGGER.info(version);
+        String version = getVersion();
         String[] parts = version.split(" ")[0].split("\\.");
         return new int[] {
                 Integer.parseInt(parts[0]),
-                Integer.parseInt(parts[1]),
-                Integer.parseInt(parts[2])
+                Integer.parseInt(parts[1])
         };
     }
 
