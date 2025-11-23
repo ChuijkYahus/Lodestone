@@ -15,15 +15,19 @@ public record CubeVertexData(Vector3f[] bottomVertices, Vector3f[] topVertices, 
         return makeCubePositions(scale, scale);
     }
 
-    public static CubeVertexData makeCubePositions(float xScale, float yScale) {
-        float xOffset = xScale / 2f;
-        float yOffset = yScale / 2f;
+    public static CubeVertexData makeCubePositions(float hScale, float vScale) {
+        float xOffset = hScale / 2f;
+        float yOffset = vScale / 2f;
         return makeCubePositions(-xOffset, xOffset, -yOffset, yOffset);
     }
 
-    public static CubeVertexData makeCubePositions(float xStart, float xEnd, float yStart, float yEnd) {
-        Vector3f[] bottomVertices = new Vector3f[]{new Vector3f(xStart, yStart, xStart), new Vector3f(xStart, yStart, xEnd), new Vector3f(xEnd, yStart, xEnd), new Vector3f(xEnd, yStart, xStart)};
-        Vector3f[] topVertices = new Vector3f[]{new Vector3f(xStart, yEnd, xStart), new Vector3f(xStart, yEnd, xEnd), new Vector3f(xEnd, yEnd, xEnd), new Vector3f(xEnd, yEnd, xStart)};
+    public static CubeVertexData makeCubePositions(float hStart, float hEnd, float vStart, float vEnd) {
+        return makeCubePositions(hStart, hEnd, vStart, vEnd, hStart, hEnd);
+    }
+
+    public static CubeVertexData makeCubePositions(float xStart, float xEnd, float yStart, float yEnd, float zStart, float zEnd) {
+        Vector3f[] bottomVertices = new Vector3f[]{new Vector3f(xStart, yStart, zStart), new Vector3f(xStart, yStart, zEnd), new Vector3f(xEnd, yStart, zEnd), new Vector3f(xEnd, yStart, zStart)};
+        Vector3f[] topVertices = new Vector3f[]{new Vector3f(xStart, yEnd, zStart), new Vector3f(xStart, yEnd, zEnd), new Vector3f(xEnd, yEnd, zEnd), new Vector3f(xEnd, yEnd, zStart)};
         List<Vector3f[]> offsetMap = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             int index = (i*3+3) % 4; //this weird and specific numbering is to tie the vertices to horizontal directions

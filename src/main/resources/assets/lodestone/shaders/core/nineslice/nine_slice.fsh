@@ -4,6 +4,8 @@
 
 uniform sampler2D Sampler0;
 uniform float LumiTransparency;
+uniform float Width;
+uniform float Height;
 
 uniform vec4 ColorModulator;
 uniform float FogStart;
@@ -37,7 +39,15 @@ vec2 sliceUV(vec2 uv, vec2 size) {
 }
 
 void main() {
-    vec2 uv = sliceUV(texCoord, size);
+    vec2 uv = texCoord;
+    if (Width > 0.0){
+        uv.x = floor(uv.x* Width)/ Width;
+    }
+    if (Height > 0.0){
+        uv.y = floor(uv.y* Height)/ Height;
+    }
+    uv = sliceUV(uv, size);
+
     vec4 texture = texture(Sampler0, uv);
 
     vec4 color = transformColor(texture, LumiTransparency, vertexColor, ColorModulator);
