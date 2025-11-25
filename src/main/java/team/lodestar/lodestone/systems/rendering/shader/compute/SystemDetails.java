@@ -12,6 +12,7 @@ import static org.lwjgl.opengl.GL43.*;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = LodestoneLib.LODESTONE, bus = EventBusSubscriber.Bus.MOD)
 public class SystemDetails {
+    private static boolean initialized = false;
     private static String VENDOR;
     private static String RENDERER;
     private static String VERSION;
@@ -23,30 +24,47 @@ public class SystemDetails {
     private static int MAX_SHADER_STORAGE_BLOCK_SIZE = -1;
 
     public static String getVendor() {
+        init();
         return VENDOR;
     }
 
     public static String getRenderer() {
+        init();
         return RENDERER;
     }
 
     public static String getVersion() {
+        init();
         return VERSION;
     }
 
+    public static int[] getOpenglVersion() {
+        init();
+        String version = getVersion();
+        String[] parts = version.split(" ")[0].split("\\.");
+        return new int[] {
+                Integer.parseInt(parts[0]),
+                Integer.parseInt(parts[1])
+        };
+    }
+
     public static String getShadingLanguageVersion() {
+        init();
         return SHADING_LANGUAGE_VERSION;
     }
 
     public static boolean isComputeSupported() {
+        init();
         return COMPUTE_SUPPORTED;
     }
 
     public static boolean isSsboSupported() {
+        init();
         return SSBO_SUPPORTED;
     }
 
     public static int getMaxSsboBindings() {
+        init();
         return MAX_SSBO_BINDINGS;
     }
 
@@ -54,8 +72,7 @@ public class SystemDetails {
         return MAX_SHADER_STORAGE_BLOCK_SIZE;
     }
 
-    @SubscribeEvent
-    public static void fetchDeviceData(RegisterShadersEvent event) {
+    private static void fetchDeviceData() {
         VENDOR = glGetString(GL_VENDOR);
         RENDERER = glGetString(GL_RENDERER);
         VERSION = glGetString(GL_VERSION);
@@ -67,5 +84,16 @@ public class SystemDetails {
         SSBO_SUPPORTED = caps.OpenGL43 || caps.GL_ARB_shader_storage_buffer_object;
         MAX_SSBO_BINDINGS = SSBO_SUPPORTED ? glGetInteger(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS) : 0;
         MAX_SHADER_STORAGE_BLOCK_SIZE = SSBO_SUPPORTED ? glGetInteger(GL_MAX_SHADER_STORAGE_BLOCK_SIZE) : 0;
+    }
+
+    public static void init() {
+        if (initialized) return;
+        fetchDeviceData();
+        initialized = true;
+    }
+
+    @SubscribeEvent
+    public static void fetchDeviceData(RegisterShadersEvent event) {
+        init();
     }
 }
