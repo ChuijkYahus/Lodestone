@@ -12,7 +12,7 @@ import team.lodestar.lodestone.systems.particle.world.type.LodestoneItemCrumbsPa
 import team.lodestar.lodestone.systems.particle.world.type.LodestoneTerrainParticleType;
 import team.lodestar.lodestone.systems.particle.world.type.LodestoneWorldParticleType;
 
-@EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(value = Dist.CLIENT)
 public class ClientModEvents {
 
     @SubscribeEvent

@@ -699,6 +699,10 @@ public class VFXBuilders {
         }
 
         public WorldVFXBuilder renderCubeSides(PoseStack poseStack, CubeVertexData cubeVertexData, Direction... directions) {
+            return renderCubeSides(poseStack, cubeVertexData, Arrays.asList(directions));
+        }
+
+        public WorldVFXBuilder renderCubeSides(PoseStack poseStack, CubeVertexData cubeVertexData, Collection<Direction> directions) {
             for (Direction direction : directions) {
                 renderCubeSide(poseStack, cubeVertexData, direction);
             }

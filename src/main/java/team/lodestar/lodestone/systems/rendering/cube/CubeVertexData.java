@@ -41,7 +41,7 @@ public record CubeVertexData(Vector3f[] bottomVertices, Vector3f[] topVertices, 
             return topVertices;
         }
         if (direction.equals(Direction.DOWN)) {
-            return bottomVertices;
+            return new Vector3f[]{bottomVertices[3], bottomVertices[2], bottomVertices[1], bottomVertices[0]};
         }
         return getVerticesByIndex(direction.get2DDataValue());
     }

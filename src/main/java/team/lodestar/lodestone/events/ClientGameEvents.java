@@ -18,7 +18,7 @@ import team.lodestar.lodestone.systems.rendering.LodestoneRenderSystem;
 import team.lodestar.lodestone.systems.rendering.renderpass.RenderPassHandler;
 
 
-@EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(value = Dist.CLIENT)
 public class ClientGameEvents {
 
     @SubscribeEvent
