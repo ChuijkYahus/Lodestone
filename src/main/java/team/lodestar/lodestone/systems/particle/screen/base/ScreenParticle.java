@@ -1,6 +1,6 @@
 package team.lodestar.lodestone.systems.particle.screen.base;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.RandomSource;
 import net.neoforged.api.distmarker.Dist;
@@ -97,7 +97,7 @@ public abstract class ScreenParticle {
         }
     }
 
-    public abstract void render(BufferBuilder bufferBuilder);
+    public abstract void render(BufferBuilder bufferBuilder, PoseStack poseStack);
 
     public abstract LodestoneScreenParticleRenderType getRenderType();
 

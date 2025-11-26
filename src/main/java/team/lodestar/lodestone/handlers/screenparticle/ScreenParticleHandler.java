@@ -15,6 +15,7 @@ import team.lodestar.lodestone.systems.particle.screen.ScreenParticleItemStackRe
 import team.lodestar.lodestone.systems.particle.screen.ScreenParticleType;
 import team.lodestar.lodestone.systems.particle.screen.base.ScreenParticle;
 
+import javax.annotation.*;
 import java.util.*;
 
 /**
@@ -36,7 +37,6 @@ public class ScreenParticleHandler {
     public static ScreenParticleHolder cachedItemParticles = null;
     public static int currentItemX, currentItemY;
 
-    public static final Tesselator TESSELATOR = new Tesselator();
     public static boolean canSpawnParticles;
 
     public static boolean renderingHotbar;
@@ -68,7 +68,7 @@ public class ScreenParticleHandler {
                 return;
             }
             if (!stack.isEmpty()) {
-                List<ParticleEmitterHandler.ItemParticleSupplier> emitters = ParticleEmitterHandler.EMITTERS.get(stack.getItem());
+                var emitters = ParticleEmitterHandler.EMITTERS.get(stack.getItem());
                 if (emitters != null) {
                     final Matrix4f pose = poseStack.last().pose();
                     int xOffset = (int) (8 + pose.m30());
@@ -81,13 +81,12 @@ public class ScreenParticleHandler {
                         int poseOffsetY = (int) pose.m31();
                         currentItemX += poseOffsetX;
                         currentItemY += poseOffsetY;
-                    }
-                    else if (!renderingHotbar && minecraft.screen instanceof AbstractContainerScreen<?> containerScreen) {
+                    } else if (!renderingHotbar && minecraft.screen instanceof AbstractContainerScreen<?> containerScreen) {
                         //currentItemX += containerScreen.getGuiLeft();
                         //currentItemY += containerScreen.getGuiTop();
                     }
                     for (ParticleEmitterHandler.ItemParticleSupplier emitter : emitters) {
-                        renderParticles(spawnAndPullParticles(minecraft.level, emitter, stack, false));
+                        spawnAndPullParticles(minecraft.level, emitter, stack, false).render();
                         cachedItemParticles = spawnAndPullParticles(minecraft.level, emitter, stack, true);
                     }
                 }
@@ -128,24 +127,9 @@ public class ScreenParticleHandler {
 
     public static void renderItemStackLate() {
         if (cachedItemParticles != null) {
-            renderParticles(cachedItemParticles);
+            cachedItemParticles.render();
             cachedItemParticles = null;
         }
-    }
-
-    public static void renderParticles(ScreenParticleHolder screenParticleTarget) {
-        if (false) {//TODO ClientConfig.ENABLE_SCREEN_PARTICLES.getConfigValue()
-            return;
-        }
-        screenParticleTarget.particles.forEach((renderType, particles) -> {
-            if (!particles.isEmpty()) {
-                var builder = renderType.begin(TESSELATOR, Minecraft.getInstance().getTextureManager());
-                for (ScreenParticle next : particles) {
-                    next.render(builder);
-                }
-                renderType.end(builder);
-            }
-        });
     }
 
     public static void clearParticles() {

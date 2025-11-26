@@ -1,12 +1,12 @@
 package team.lodestar.lodestone.systems.particle.screen.base;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -25,7 +25,7 @@ public abstract class QuadScreenParticle extends ScreenParticle {
     }
 
     @Override
-    public void render(BufferBuilder bufferBuilder) {
+    public void render(BufferBuilder bufferBuilder, @Nullable PoseStack poseStack) {
         float partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
         float width = getQuadSize(partialTicks) * 10;
         float length = getQuadLength(partialTicks) * 10;
@@ -35,6 +35,13 @@ public abstract class QuadScreenParticle extends ScreenParticle {
         float v1 = getV1();
         Vector3f[] vectors = getVertices(partialTicks, width, length);
         float quadZ = getQuadZPosition();
+        if (poseStack != null) {
+            var pose = poseStack.last();
+            bufferBuilder.addVertex(pose, vectors[0].x(), vectors[0].y(), quadZ).setUv(u1, v1).setColor(this.rCol, this.gCol, this.bCol, this.alpha);
+            bufferBuilder.addVertex(pose, vectors[1].x(), vectors[1].y(), quadZ).setUv(u1, v0).setColor(this.rCol, this.gCol, this.bCol, this.alpha);
+            bufferBuilder.addVertex(pose, vectors[2].x(), vectors[2].y(), quadZ).setUv(u0, v0).setColor(this.rCol, this.gCol, this.bCol, this.alpha);
+            bufferBuilder.addVertex(pose, vectors[3].x(), vectors[3].y(), quadZ).setUv(u0, v1).setColor(this.rCol, this.gCol, this.bCol, this.alpha);
+        }
         bufferBuilder.addVertex(vectors[0].x(), vectors[0].y(), quadZ).setUv(u1, v1).setColor(this.rCol, this.gCol, this.bCol, this.alpha);
         bufferBuilder.addVertex(vectors[1].x(), vectors[1].y(), quadZ).setUv(u1, v0).setColor(this.rCol, this.gCol, this.bCol, this.alpha);
         bufferBuilder.addVertex(vectors[2].x(), vectors[2].y(), quadZ).setUv(u0, v0).setColor(this.rCol, this.gCol, this.bCol, this.alpha);

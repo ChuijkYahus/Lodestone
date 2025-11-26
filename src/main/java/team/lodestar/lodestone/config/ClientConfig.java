@@ -12,6 +12,9 @@ public class ClientConfig extends LodestoneConfig {
     public static ConfigValueHolder<Boolean> DELAYED_PARTICLE_RENDERING = new ConfigValueHolder<>(LODESTONE, "client/graphics/particle", builder ->
             builder.comment("Should particles render on the delayed buffer? This means they will properly render after clouds & water do, but could cause issues with mods like sodium.")
                     .define("buffer_particles", true));
+    public static ConfigValueHolder<Boolean> ENABLE_SCREEN_PARTICLES = new ConfigValueHolder<>(LODESTONE, "client/graphics/particle", builder ->
+            builder.comment("Should screen particles be visible?")
+                    .define("screen_particles", true));
 
     public static ConfigValueHolder<Double> FIRE_OVERLAY_OFFSET = new ConfigValueHolder<>(LODESTONE, "client/graphics/fire", builder ->
             builder.comment("Downwards offset of Minecraft's first-person fire overlay. Higher numbers cause it to visually display lower and free up more screen space.")
@@ -19,9 +22,6 @@ public class ClientConfig extends LodestoneConfig {
     public static ConfigValueHolder<Double> SCREENSHAKE_INTENSITY = new ConfigValueHolder<>(LODESTONE, "client/screenshake", builder ->
             builder.comment("Intensity of screenshake. Higher numbers increase amplitude. Disable to turn off screenshake.")
                     .defineInRange("screenshake_intensity", 1d, 0d, 5d));
-    public static ConfigValueHolder<Boolean> ENABLE_SCREEN_PARTICLES = new ConfigValueHolder<>(LODESTONE, "client/screen_particles", builder ->
-            builder.comment("Are screen particles enabled?")
-                    .define("enable_screen_particles", true));
 
     public static ConfigValueHolder<Double> LOD_DISTANCE_MULTIPLIER = new ConfigValueHolder<>(LODESTONE, "client/model", builder ->
             builder.comment("Multiplier for the distance at which model levels of detail are rendered. Higher numbers increase the distance at which detailed models are rendered.")

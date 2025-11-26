@@ -1,6 +1,6 @@
 package team.lodestar.lodestone.systems.particle.screen;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.util.FastColor;
@@ -130,7 +130,7 @@ public class LodestoneScreenParticle extends TextureSheetScreenParticle {
     }
 
     @Override
-    public void render(BufferBuilder bufferBuilder) {
+    public void render(BufferBuilder bufferBuilder, @Nullable PoseStack poseStack) {
         if (lifeDelay > 0) {
             return;
         }
@@ -139,7 +139,7 @@ public class LodestoneScreenParticle extends TextureSheetScreenParticle {
             y = ScreenParticleHandler.currentItemY + stackTrackYOffset + yMoved;
         }
         renderActors.forEach(actor -> actor.accept(this));
-        super.render(bufferBuilder);
+        super.render(bufferBuilder, poseStack);
     }
 
     @Override
