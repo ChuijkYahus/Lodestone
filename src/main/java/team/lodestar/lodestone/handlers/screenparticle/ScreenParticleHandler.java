@@ -70,27 +70,28 @@ public class ScreenParticleHandler {
             if (!stack.isEmpty()) {
                 var emitters = ParticleEmitterHandler.EMITTERS.get(stack.getItem());
                 if (emitters != null) {
-                    final Matrix4f pose = poseStack.last().pose();
-                    int xOffset = (int) (8 + pose.m30());
-                    int yOffset = (int) (8 + pose.m31());
-                    currentItemX = x + xOffset;
-                    currentItemY = y + yOffset;
-
+                    var pose = poseStack.last().pose();
+                    currentItemX = x + 8;
+                    currentItemY = y + 8;
                     if (currentItemX == 8 && currentItemY == 8) {
                         int poseOffsetX = (int) pose.m30();
                         int poseOffsetY = (int) pose.m31();
                         currentItemX += poseOffsetX;
                         currentItemY += poseOffsetY;
-                    } else if (!renderingHotbar && minecraft.screen instanceof AbstractContainerScreen<?> containerScreen) {
-                        //currentItemX += containerScreen.getGuiLeft();
-                        //currentItemY += containerScreen.getGuiTop();
                     }
                     for (ParticleEmitterHandler.ItemParticleSupplier emitter : emitters) {
-                        spawnAndPullParticles(minecraft.level, emitter, stack, false).render();
+                        spawnAndPullParticles(minecraft.level, emitter, stack, false).render(poseStack);
                         cachedItemParticles = spawnAndPullParticles(minecraft.level, emitter, stack, true);
                     }
                 }
             }
+        }
+    }
+
+    public static void renderItemStackLate(PoseStack poseStack) {
+        if (cachedItemParticles != null) {
+            cachedItemParticles.render(poseStack);
+            cachedItemParticles = null;
         }
     }
 
@@ -123,13 +124,6 @@ public class ScreenParticleHandler {
             }
         }
         ITEM_STACK_CACHE.put(cacheKey, currentStack);
-    }
-
-    public static void renderItemStackLate() {
-        if (cachedItemParticles != null) {
-            cachedItemParticles.render();
-            cachedItemParticles = null;
-        }
     }
 
     @Deprecated

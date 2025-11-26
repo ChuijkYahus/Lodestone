@@ -105,34 +105,61 @@ sourceSets {
 }
 
 repositories {
+    flatDir {
+        dirs("lib")
+    }
     mavenLocal()
     mavenCentral()
-    maven {
-        name = "OctoStudios"
-        url = uri("https://maven.octo-studios.com/releases")
-    }
-    maven {
-        name = "JEI maven"
-        url = uri("https://dvs1.progwml6.com/files/maven")
-    }
-    maven {
+    maven { //Our Stuff
         name = "BlameJared maven"
         url = uri("https://maven.blamejared.com/")
     }
-    maven {
+    maven { //Curios
+        name = "Curios maven"
+        url = uri("https://maven.theillusivec4.top/")
+    }
+    maven { //JEI
+        name = "JEI maven"
+        url = uri("https://dvs1.progwml6.com/files/maven")
+    }
+
+    maven { //Curse Maven, Generic
         name = "Curse Maven"
         url = uri("https://cursemaven.com")
         content {
             includeGroup("curse.maven")
         }
     }
-    maven {
-        name = "Curios maven"
-        url = uri("https://maven.theillusivec4.top/")
+    maven { //ParchmentMC Maven, Generic
+        name = "ParchmentMC"
+        url = uri("https://maven.parchmentmc.org")
+        content {
+            includeGroup("org.parchmentmc.data")
+        }
     }
-    maven {
+    maven { //Mod Maven, Generic
+        name = "ModMaven"
+        url = uri("https://modmaven.dev")
+    }
+    maven { //Modrinth Maven, Generic
         name = "Modrinth maven"
         url = uri("https://api.modrinth.com/maven")
+    }
+
+    maven { //KubeJS
+        url = uri("https://maven.latvian.dev/releases")
+        content {
+            includeGroup("dev.latvian.mods")
+            includeGroup("dev.latvian.apps")
+        }
+    }
+    maven { //KubeJS Dependencies
+        name = "jitpack"
+        url = uri("https://jitpack.io")
+        content {
+            includeGroup("io.github")
+            includeGroup("com.github.rtyley")
+        }
     }
 }
 
@@ -140,7 +167,11 @@ dependencies {
     compileOnlyApi("top.theillusivec4.curios:curios-neoforge:${property("curios_version")}:api")
     localRuntime("top.theillusivec4.curios:curios-neoforge:${property("curios_version")}")
 
-//    runtimeOnly(("com.sammy.malum:malum:${property("minecraft_version")}-1.8.1.108"))
+//    implementation("curse.maven:architectury-api-419699:5786327")
+//    implementation("curse.maven:octo-lib-916747:6932487")
+//    implementation("curse.maven:immersive-ui-1021685:6886575")
+
+    runtimeOnly(("com.sammy.malum:malum:${property("minecraft_version")}-1.8.1.133"))
 
     compileOnly("maven.modrinth:sodium:mc${property("minecraft_version")}-${property("sodium_version")}-neoforge")
     compileOnly("maven.modrinth:iris:${property("iris_version")}+${property("minecraft_version")}-neoforge")
