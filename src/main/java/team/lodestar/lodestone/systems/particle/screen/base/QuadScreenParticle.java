@@ -42,10 +42,12 @@ public abstract class QuadScreenParticle extends ScreenParticle {
             bufferBuilder.addVertex(pose, vectors[2].x(), vectors[2].y(), quadZ).setUv(u0, v0).setColor(this.rCol, this.gCol, this.bCol, this.alpha);
             bufferBuilder.addVertex(pose, vectors[3].x(), vectors[3].y(), quadZ).setUv(u0, v1).setColor(this.rCol, this.gCol, this.bCol, this.alpha);
         }
-        bufferBuilder.addVertex(vectors[0].x(), vectors[0].y(), quadZ).setUv(u1, v1).setColor(this.rCol, this.gCol, this.bCol, this.alpha);
-        bufferBuilder.addVertex(vectors[1].x(), vectors[1].y(), quadZ).setUv(u1, v0).setColor(this.rCol, this.gCol, this.bCol, this.alpha);
-        bufferBuilder.addVertex(vectors[2].x(), vectors[2].y(), quadZ).setUv(u0, v0).setColor(this.rCol, this.gCol, this.bCol, this.alpha);
-        bufferBuilder.addVertex(vectors[3].x(), vectors[3].y(), quadZ).setUv(u0, v1).setColor(this.rCol, this.gCol, this.bCol, this.alpha);
+        else {
+            bufferBuilder.addVertex(vectors[0].x(), vectors[0].y(), quadZ).setUv(u1, v1).setColor(this.rCol, this.gCol, this.bCol, this.alpha);
+            bufferBuilder.addVertex(vectors[1].x(), vectors[1].y(), quadZ).setUv(u1, v0).setColor(this.rCol, this.gCol, this.bCol, this.alpha);
+            bufferBuilder.addVertex(vectors[2].x(), vectors[2].y(), quadZ).setUv(u0, v0).setColor(this.rCol, this.gCol, this.bCol, this.alpha);
+            bufferBuilder.addVertex(vectors[3].x(), vectors[3].y(), quadZ).setUv(u0, v1).setColor(this.rCol, this.gCol, this.bCol, this.alpha);
+        }
     }
 
     private Vector3f @NotNull [] getVertices(float partialTicks, float width, float length) {
