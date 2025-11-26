@@ -36,11 +36,11 @@ public class ScreenParticleHolder {
     }
 
     public void render() {
-
+        render((PoseStack) null);
     }
 
     public void render(GuiGraphics graphics) {
-
+        render(graphics.pose());
     }
 
     public void render(@Nullable PoseStack poseStack) {

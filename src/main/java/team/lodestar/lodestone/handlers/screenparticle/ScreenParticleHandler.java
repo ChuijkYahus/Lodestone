@@ -132,6 +132,16 @@ public class ScreenParticleHandler {
         }
     }
 
+    @Deprecated
+    protected static void renderParticles(ScreenParticleHolder screenParticleTarget) {
+        screenParticleTarget.render();
+    }
+
+    @Deprecated
+    protected static void renderParticles(ScreenParticleHolder screenParticleTarget, @Nullable PoseStack poseStack) {
+        screenParticleTarget.render(poseStack);
+    }
+
     public static void clearParticles() {
         ITEM_PARTICLES.values().forEach(ScreenParticleHandler::clearParticles);
     }
