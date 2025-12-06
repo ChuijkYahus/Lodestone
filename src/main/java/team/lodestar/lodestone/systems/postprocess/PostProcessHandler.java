@@ -6,7 +6,9 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import team.lodestar.lodestone.systems.asset.ReloadListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +17,11 @@ import java.util.List;
  * Handles world-space post-processing.
  * Based on vanilla {@link net.minecraft.client.renderer.PostChain} system, but allows the shader to access the world depth buffer.
  */
-@EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(value = Dist.CLIENT)
 public class PostProcessHandler {
     private static final List<PostProcessor> instances = new ArrayList<>();
-
     private static boolean didCopyDepth = false;
+    private static final ReloadListener reloadListener = new ReloadListener(() -> instances.forEach(PostProcessor::init));
 
     /**
      * Add an {@link PostProcessor} for it to be handled automatically.
@@ -57,5 +59,10 @@ public class PostProcessHandler {
 
             didCopyDepth = false; // reset for next frame
         }
+    }
+
+    @SubscribeEvent
+    public static void onClientSetup(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(reloadListener);
     }
 }

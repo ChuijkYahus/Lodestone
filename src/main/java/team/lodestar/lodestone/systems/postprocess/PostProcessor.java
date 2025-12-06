@@ -113,7 +113,7 @@ public abstract class PostProcessor {
         }
     }
 
-    public final void copyDepthBuffer() {
+    public void copyDepthBuffer() {
         if (isActive) {
             if (postChain == null || tempDepthBuffer == null) return;
 
@@ -138,7 +138,7 @@ public abstract class PostProcessor {
         defaultUniforms.forEach(pair -> pair.getSecond().accept(pair.getFirst()));
     }
 
-    public final void applyPostProcess() {
+    public void applyPostProcess() {
         if (isActive) {
             if (!initialized)
                 init();
