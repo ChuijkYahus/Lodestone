@@ -1,9 +1,9 @@
 package team.lodestar.lodestone.systems.network.particle;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -29,7 +29,7 @@ public class NetworkedParticleEffectPayload extends OneSidedPayloadData {
         this.extraData = extraData;
     }
 
-    public NetworkedParticleEffectPayload(FriendlyByteBuf buf) {
+    public NetworkedParticleEffectPayload(RegistryFriendlyByteBuf buf) {
         this.effect = getEffectType(buf.readUtf());
         this.positionData = effect.getPositionCodec().isPresent() ? effect.getPositionCodec().get().decode(buf) : null;
         this.colorData = effect.getColorCodec().isPresent() ? effect.getColorCodec().get().decode(buf) : null;
@@ -38,7 +38,7 @@ public class NetworkedParticleEffectPayload extends OneSidedPayloadData {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public void serialize(FriendlyByteBuf buf) {
+    public void serialize(RegistryFriendlyByteBuf buf) {
         buf.writeUtf(effect.id);
         if (effect.getPositionCodec().isPresent()) {
             if (positionData == null) {

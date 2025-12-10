@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -18,7 +19,7 @@ public class UpdateWorldEventPayload extends OneSidedPayloadData {
     private final UUID uuid;
     private final CompoundTag eventData;
 
-    public UpdateWorldEventPayload(FriendlyByteBuf byteBuf) {
+    public UpdateWorldEventPayload(RegistryFriendlyByteBuf byteBuf) {
         this(byteBuf.readUUID(), byteBuf.readNbt());
     }
 
@@ -47,7 +48,7 @@ public class UpdateWorldEventPayload extends OneSidedPayloadData {
     }
 
     @Override
-    public void serialize(FriendlyByteBuf byteBuf) {
+    public void serialize(RegistryFriendlyByteBuf byteBuf) {
         byteBuf.writeUUID(uuid);
         byteBuf.writeNbt(eventData);
     }

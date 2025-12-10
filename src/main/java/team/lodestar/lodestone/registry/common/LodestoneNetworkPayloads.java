@@ -19,14 +19,14 @@ import team.lodestar.lodestone.systems.network.particle.NetworkedParticleEffectP
 
 import java.util.HashMap;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber()
 public class LodestoneNetworkPayloads {
 
-    public static final PayloadRegistryHelper LODESTONE_CHANNEL = new PayloadRegistryHelper(LodestoneLib.LODESTONE);
+    public static final LodestonePayloadRegistryHelper LODESTONE_CHANNEL = new LodestonePayloadRegistryHelper(LodestoneLib.LODESTONE);
 
     @SubscribeEvent
-    public static void register(final RegisterPayloadHandlersEvent event) {
-        final PayloadRegistrar registrar = event.registrar("1");
+    public static void register(RegisterPayloadHandlersEvent event) {
+        var registrar = event.registrar("1");
 
         LODESTONE_CHANNEL.playToClient(registrar, "totem_of_undying", TotemOfUndyingPayload.class, TotemOfUndyingPayload::new);
         LODESTONE_CHANNEL.playToClient(registrar, "sync_world_event", SyncWorldEventPayload.class, SyncWorldEventPayload::new);
@@ -36,50 +36,50 @@ public class LodestoneNetworkPayloads {
 
     }
 
+    //TODO: This was all written as a way to ignore the Codec-ification of packets.
+    // By now, I think Codec based packets are pretty cool. Having some support for that would be nice.
     /**
      * Network channels function as a database of payload types.
      * Payload Data that extends {@link LodestoneNetworkPayloadData} will use a resource location to first figure out which channel they belong to using the namespace, and the payload type using the path.
      * Lodestone payload data is designed to be extended, see {@link OneSidedPayloadData} and {@link TwoSidedPayloadData}.
      */
-    public static class PayloadRegistryHelper {
+    public record LodestonePayloadRegistryHelper(String namespace) {
 
         public static final HashMap<Class<? extends LodestoneNetworkPayloadData>, CustomPacketPayload.Type<? extends LodestoneNetworkPayloadData>> PAYLOAD_TO_TYPE = new HashMap<>();
 
-        public final String namespace;
-
-        public PayloadRegistryHelper(String namespace) {
-            this.namespace = namespace;
-        }
-
         public <T extends OneSidedPayloadData> void playToClient(PayloadRegistrar registrar, String name, Class<T> clazz, PayloadDataSupplier<T> decoder) {
-            CustomPacketPayload.Type<T> type = createPayloadType(clazz, name);
-            registrar.playToClient(type, createCodec(decoder), OneSidedPayloadData::handle);
+            var type = createPayloadType(clazz, name);
+            var codec = createStreamCodec(decoder);
+            registrar.playToClient(type, codec, OneSidedPayloadData::handle);
         }
 
         public <T extends OneSidedPayloadData> void playToServer(PayloadRegistrar registrar, String name, Class<T> clazz, PayloadDataSupplier<T> decoder) {
-            CustomPacketPayload.Type<T> type = createPayloadType(clazz, name);
-            registrar.playToServer(type, createCodec(decoder), OneSidedPayloadData::handle);
+            var type = createPayloadType(clazz, name);
+            var codec = createStreamCodec(decoder);
+            registrar.playToServer(type, codec, OneSidedPayloadData::handle);
         }
 
         public <T extends TwoSidedPayloadData> void playBidirectional(PayloadRegistrar registrar, String name, Class<T> clazz, PayloadDataSupplier<T> decoder) {
-            CustomPacketPayload.Type<T> type = createPayloadType(clazz, name);
-            registrar.playBidirectional(type, createCodec(decoder), new DirectionalPayloadHandler<>(
+            var type = createPayloadType(clazz, name);
+
+            var codec = createStreamCodec(decoder);
+            registrar.playBidirectional(type, codec, new DirectionalPayloadHandler<>(
                     TwoSidedPayloadData::handleClient,
                     TwoSidedPayloadData::handleServer));
         }
 
-        public <T extends LodestoneNetworkPayloadData> StreamCodec<FriendlyByteBuf, T> createCodec(PayloadDataSupplier<T> supplier) {
-            return StreamCodec.ofMember(encodePacket(), decodePacket(supplier));
+        public <T extends LodestoneNetworkPayloadData> StreamCodec<RegistryFriendlyByteBuf, T> createStreamCodec(PayloadDataSupplier<T> supplier) {
+            return StreamCodec.ofMember(serializePayload(), deserializePayload(supplier));
         }
 
-        public final <B extends FriendlyByteBuf, T extends LodestoneNetworkPayloadData> StreamMemberEncoder<B, T> encodePacket() {
+        public <B extends RegistryFriendlyByteBuf, T extends LodestoneNetworkPayloadData> StreamMemberEncoder<B, T> serializePayload() {
             return LodestoneNetworkPayloadData::serialize;
         }
 
-        public final <B extends FriendlyByteBuf, T extends LodestoneNetworkPayloadData> StreamDecoder<B, T> decodePacket(PayloadDataSupplier<T> supplier) {
+        public <B extends RegistryFriendlyByteBuf, T extends LodestoneNetworkPayloadData> StreamDecoder<B, T> deserializePayload(PayloadDataSupplier<T> supplier) {
             return byteBuf -> {
                 try {
-                    return supplier.createPayload(byteBuf);
+                    return supplier.deserializePayload(byteBuf);
                 } catch (Exception e) {
                     throw new RuntimeException("Couldn't decode payload type from channel " + namespace, e);
                 }
@@ -95,6 +95,6 @@ public class LodestoneNetworkPayloads {
     }
 
     public interface PayloadDataSupplier<T extends LodestoneNetworkPayloadData> {
-        T createPayload(FriendlyByteBuf byteBuf);
+        T deserializePayload(RegistryFriendlyByteBuf byteBuf);
     }
 }

@@ -1,6 +1,7 @@
 package team.lodestar.lodestone.network;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -14,7 +15,7 @@ public class ScreenshakePayload extends OneSidedPayloadData {
 
     public final ScreenshakeInstance instance;
 
-    public ScreenshakePayload(FriendlyByteBuf byteBuf) {
+    public ScreenshakePayload(RegistryFriendlyByteBuf byteBuf) {
         this(ScreenshakeInstance.STREAM_CODEC.decode(byteBuf));
     }
 
@@ -35,7 +36,7 @@ public class ScreenshakePayload extends OneSidedPayloadData {
     }
 
     @Override
-    public void serialize(FriendlyByteBuf byteBuf) {
+    public void serialize(RegistryFriendlyByteBuf byteBuf) {
         ScreenshakeInstance.STREAM_CODEC.encode(byteBuf, instance);
     }
 }

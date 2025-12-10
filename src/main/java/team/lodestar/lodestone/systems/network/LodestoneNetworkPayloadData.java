@@ -9,8 +9,8 @@ public abstract class LodestoneNetworkPayloadData implements CustomPacketPayload
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {
-        return LodestoneNetworkPayloads.PayloadRegistryHelper.PAYLOAD_TO_TYPE.get(getClass());
+        return LodestoneNetworkPayloads.LodestonePayloadRegistryHelper.PAYLOAD_TO_TYPE.get(getClass());
     }
 
-    public abstract void serialize(FriendlyByteBuf byteBuf);
+    public abstract void serialize(RegistryFriendlyByteBuf byteBuf);
 }
