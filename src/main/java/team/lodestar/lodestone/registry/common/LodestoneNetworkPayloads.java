@@ -1,5 +1,6 @@
 package team.lodestar.lodestone.registry.common;
 
+import io.netty.buffer.ByteBufUtil;
 import net.minecraft.network.*;
 import net.minecraft.network.codec.*;
 import net.minecraft.network.protocol.common.custom.*;
