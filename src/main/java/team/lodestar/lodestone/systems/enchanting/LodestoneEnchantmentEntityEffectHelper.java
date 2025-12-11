@@ -47,7 +47,7 @@ public class LodestoneEnchantmentEntityEffectHelper {
     }
 
     public static <T extends EnchantmentEntityEffect> List<T> getEntityEffects(ItemStack item, DataComponentMap map, LodestoneEntityEnchantmentEffectFilter<T> filter) {
-        return LodestoneEnchantmentDataHelper.getMatchingEffects(item, map, filter.getClassFilter(), filter.asCondition());
+        return LodestoneEnchantmentDataHelper.getMatchingEffects(item, filter.getComparisonBroker(item), map, filter.getClassFilter(), filter.asCondition());
     }
 
     /**

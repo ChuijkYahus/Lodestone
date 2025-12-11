@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.*;
 import com.mojang.serialization.*;
 import net.minecraft.core.*;
 import net.minecraft.core.component.*;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.item.enchantment.effects.*;
 
@@ -30,6 +31,8 @@ public class LodestoneEntityEnchantmentEffectFilter<T extends EnchantmentEntityE
     private final MapCodec<? extends EnchantmentEntityEffect> typeFilter;
     @Nullable
     private Holder<Enchantment> enchantmentFilter;
+    @Nullable
+    private ItemStack comparisonBroker;
 
     public LodestoneEntityEnchantmentEffectFilter(Class<T> classFilter) {
         this(classFilter, null);
@@ -45,6 +48,11 @@ public class LodestoneEntityEnchantmentEffectFilter<T extends EnchantmentEntityE
         return this;
     }
 
+    public LodestoneEntityEnchantmentEffectFilter<T> withComparisonBroker(ItemStack comparisonBroker) {
+        this.comparisonBroker = comparisonBroker;
+        return this;
+    }
+
     protected Either<Predicate<TypedDataComponent<?>>, Predicate<T>> asCondition() {
         return Either.right(e -> (typeFilter == null || e.codec().equals(typeFilter)));
     }
@@ -56,5 +64,10 @@ public class LodestoneEntityEnchantmentEffectFilter<T extends EnchantmentEntityE
     @Nullable
     public Holder<Enchantment> getEnchantmentFilter() {
         return enchantmentFilter;
+    }
+
+    @Nullable
+    public ItemStack getComparisonBroker(ItemStack fallback) {
+        return comparisonBroker != null ? comparisonBroker : fallback;
     }
 }
