@@ -147,13 +147,13 @@ public class LodestoneEnchantmentDataHelper {
         }
         for (ConditionalEffect<?> conditionalEffect : conditionalEffects) {
             Optional<LootItemCondition> requirements = conditionalEffect.requirements();
-            if (requirements.isEmpty() || matches(effectHolder, requirements.get())) {
+            if (requirements.isEmpty() || matches(comparisonBroker, requirements.get())) {
                 effects.addAll(getEffects(effectHolder, comparisonBroker, conditionalEffect.effect(), type));
             }
         }
         for (TargetedConditionalEffect<?> conditionalEffect : targetedConditionalEffects) {
             Optional<LootItemCondition> requirements = conditionalEffect.requirements();
-            if (requirements.isEmpty() || matches(effectHolder, requirements.get())) {
+            if (requirements.isEmpty() || matches(comparisonBroker, requirements.get())) {
                 effects.addAll(getEffects(effectHolder, comparisonBroker, conditionalEffect.effect(), type));
             }
         }
