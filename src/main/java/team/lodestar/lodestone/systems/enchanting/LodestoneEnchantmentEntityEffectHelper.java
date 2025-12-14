@@ -40,7 +40,10 @@ public class LodestoneEnchantmentEntityEffectHelper {
             //TODO: This should cycle through the many effects found and display just one at a given time.
             // Example use case: Wind Up has a stronger duration when used on a tool. Axes are both a tool and a melee weapon and as such wind-up is multi purpose there
             // We arrive at a situation where we have 2 separate effects and so we will sort through them
-            LodestoneLib.LOGGER.warn("Cannot isolate an enchantment effect instance.");
+            var effect = effects.getFirst();
+            if (effects.stream().allMatch(e -> e.equals(effect))) {
+                return Optional.of(effect);
+            }
             return Optional.empty();
         }
         return Optional.of(effects.getFirst());
