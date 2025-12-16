@@ -13,6 +13,7 @@ import org.apache.commons.lang3.mutable.*;
 
 import javax.annotation.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class LodestoneEnchantmentValueEffectHelper {
 
@@ -49,6 +50,28 @@ public class LodestoneEnchantmentValueEffectHelper {
         } catch (Exception ignored) {
         }
         return mutable.getValue();
+    }
+
+    public static <T> Optional<T> findSpecialComponent(ItemStack stack, DataComponentType<T> componentType) {
+        return findSpecialComponent(stack, null, componentType);
+    }
+    public static <T> Optional<T> findSpecialComponent(ItemStack stack, @Nullable Holder<Enchantment> filter, DataComponentType<T> componentType) {
+        AtomicReference<T> result = new AtomicReference<>();
+        try {
+            LodestoneEnchantmentDataHelper.runIterationOnItem(stack, filter, (enchantment, enchantmentLevel) -> {
+                var componentMap = enchantment.value().effects();
+                T special = getSpecialComponent(componentMap, componentType);
+                if (special != null) {
+                    result.set(special);
+                }
+            });
+        } catch (Exception ignored) {
+        }
+        return Optional.ofNullable(result.get());
+    }
+
+    public static <T> T getSpecialComponent(DataComponentMap map, DataComponentType<T> type) {
+        return map.get(type);
     }
 
     public static List<EnchantmentValueEffect> getValueEffects(ItemStack item, DataComponentMap map, DataComponentType<?> type) {

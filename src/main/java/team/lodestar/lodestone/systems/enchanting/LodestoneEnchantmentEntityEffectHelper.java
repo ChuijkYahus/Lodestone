@@ -1,5 +1,6 @@
 package team.lodestar.lodestone.systems.enchanting;
 
+import com.mojang.datafixers.util.Either;
 import net.minecraft.core.component.*;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.*;
@@ -23,7 +24,8 @@ public class LodestoneEnchantmentEntityEffectHelper {
             LodestoneEnchantmentDataHelper.runIterationOnItem(item, filter.getEnchantmentFilter(), (enchantment, enchantmentLevel) -> {
                 var componentMap = enchantment.value().effects();
                 var matchingEffect = findEnchantmentEffect(item, componentMap, filter);
-                matchingEffect.ifPresent(t -> result.set(new LocatedEnchantmentEffect<>(t, enchantment, enchantmentLevel)));
+                Optional<T> resultingEffect = matchingEffect.map(o -> o, filter::breakDeadlock);
+                resultingEffect.ifPresent(t -> result.set(new LocatedEnchantmentEffect<>(t, enchantment, enchantmentLevel)));
             }, () -> result.get() != null);
         } catch (Exception ignored) {
             return result.get();
@@ -31,22 +33,19 @@ public class LodestoneEnchantmentEntityEffectHelper {
         return result.get();
     }
 
-    public static <T extends EnchantmentEntityEffect> Optional<T> findEnchantmentEffect(ItemStack item, DataComponentMap map, LodestoneEntityEnchantmentEffectFilter<T> filter) {
+    public static <T extends EnchantmentEntityEffect> Either<Optional<T>, List<T>> findEnchantmentEffect(ItemStack item, DataComponentMap map, LodestoneEntityEnchantmentEffectFilter<T> filter) {
         List<T> effects = getEntityEffects(item, map, filter);
         if (effects.isEmpty()) {
-            return Optional.empty();
+            return Either.left(Optional.empty());
         }
         if (effects.size() > 1) {
-            //TODO: This should cycle through the many effects found and display just one at a given time.
-            // Example use case: Wind Up has a stronger duration when used on a tool. Axes are both a tool and a melee weapon and as such wind-up is multi purpose there
-            // We arrive at a situation where we have 2 separate effects and so we will sort through them
             var effect = effects.getFirst();
             if (effects.stream().allMatch(e -> e.equals(effect))) {
-                return Optional.of(effect);
+                return Either.left(Optional.of(effect));
             }
-            return Optional.empty();
+            return Either.right(effects);
         }
-        return Optional.of(effects.getFirst());
+        return Either.left(Optional.of(effects.getFirst()));
     }
 
     public static <T extends EnchantmentEntityEffect> List<T> getEntityEffects(ItemStack item, DataComponentMap map, LodestoneEntityEnchantmentEffectFilter<T> filter) {
