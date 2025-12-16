@@ -52,29 +52,6 @@ public class LodestoneEnchantmentValueEffectHelper {
         return mutable.getValue();
     }
 
-    public static <T> LocatedEnchantmentEffect<T> findSpecialComponent(ItemStack stack, DataComponentType<T> componentType) {
-        return findSpecialComponent(stack, null, componentType);
-    }
-
-    public static <T> LocatedEnchantmentEffect<T> findSpecialComponent(ItemStack stack, @Nullable Holder<Enchantment> filter, DataComponentType<T> componentType) {
-        AtomicReference<LocatedEnchantmentEffect<T>> result = new AtomicReference<>();
-        try {
-            LodestoneEnchantmentDataHelper.runIterationOnItem(stack, filter, (enchantment, enchantmentLevel) -> {
-                var componentMap = enchantment.value().effects();
-                T special = getSpecialComponent(componentMap, componentType);
-                if (special != null) {
-                    result.set(new LocatedEnchantmentEffect<>(special, enchantment, enchantmentLevel));
-                }
-            });
-        } catch (Exception ignored) {
-        }
-        return result.get();
-    }
-
-    public static <T> T getSpecialComponent(DataComponentMap map, DataComponentType<T> type) {
-        return map.get(type);
-    }
-
     public static List<EnchantmentValueEffect> getValueEffects(ItemStack item, DataComponentMap map, DataComponentType<?> type) {
         return LodestoneEnchantmentDataHelper.getMatchingEffects(item, map, EnchantmentValueEffect.class, Either.left(e -> e.type().equals(type)));
     }

@@ -15,6 +15,7 @@ import javax.annotation.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.RecordComponent;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
 
 /**
@@ -62,6 +63,27 @@ public class LodestoneEnchantmentDataHelper {
                 }
             }
         }
+    }
+
+
+
+    public static <T> LocatedEnchantmentEffect<T> findSpecialComponent(ItemStack stack, DataComponentType<T> componentType) {
+        return findSpecialComponent(stack, null, componentType);
+    }
+
+    public static <T> LocatedEnchantmentEffect<T> findSpecialComponent(ItemStack stack, @Nullable Holder<Enchantment> filter, DataComponentType<T> componentType) {
+        AtomicReference<LocatedEnchantmentEffect<T>> result = new AtomicReference<>(new LocatedEnchantmentEffect.EmptyEnchantmentEffect<>());
+        try {
+            LodestoneEnchantmentDataHelper.runIterationOnItem(stack, filter, (enchantment, enchantmentLevel) -> {
+                var componentMap = enchantment.value().effects();
+                T special = componentMap.get(componentType);
+                if (special != null) {
+                    result.set(new LocatedEnchantmentEffect<>(special, enchantment, enchantmentLevel));
+                }
+            });
+        } catch (Exception ignored) {
+        }
+        return result.get();
     }
 
     /**

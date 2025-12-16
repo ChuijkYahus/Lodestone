@@ -4,6 +4,7 @@ import net.minecraft.core.*;
 import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.item.enchantment.effects.*;
 
+import java.util.Optional;
 import java.util.function.*;
 
 public class LocatedEnchantmentEffect<T> {
@@ -36,6 +37,10 @@ public class LocatedEnchantmentEffect<T> {
     public float getValue(Function<T, LevelBasedValue> valueGetter, float fallback) {
         LevelBasedValue value = valueGetter.apply(effect);
         return value.calculate(level);
+    }
+
+    public <M> Optional<M> map(Function<T, M> mapper) {
+        return isPresent() ? Optional.ofNullable(mapper.apply(getEffect())) : Optional.empty();
     }
 
     public static class EmptyEnchantmentEffect<T> extends LocatedEnchantmentEffect<T> {
