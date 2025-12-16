@@ -12,6 +12,8 @@ import net.minecraft.world.item.enchantment.effects.*;
 import net.minecraft.world.level.storage.loot.predicates.*;
 
 import javax.annotation.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.RecordComponent;
 import java.util.*;
 import java.util.function.*;
 
@@ -60,6 +62,63 @@ public class LodestoneEnchantmentDataHelper {
                 }
             }
         }
+    }
+
+    /**
+     * Finds all {@link LevelBasedValue} instances stored on an object through the use of reflection
+     *
+     * @param effectOrComponent The enchantment effect or component to sieve through
+     * @return All {@link LevelBasedValue} instances stored on an object in order of definition
+     */
+    public static List<LevelBasedValue> findEntityEffectValues(Object effectOrComponent) {
+        var values = new ArrayList<LevelBasedValue>();
+        var clazz = effectOrComponent.getClass();
+
+        record Accessor(Class<?> type, Supplier<Object> getter) {
+        }
+
+        List<Accessor> accessors = new ArrayList<>();
+
+        if (clazz.isRecord()) {
+            for (RecordComponent component : clazz.getRecordComponents()) {
+                var accessor = component.getAccessor();
+                accessors.add(
+                        new Accessor(component.getType(), () -> {
+                            try {
+                                return accessor.invoke(effectOrComponent);
+                            } catch (Exception e) {
+                                throw new RuntimeException("Failed to access record: " + component.getName(), e);
+                            }
+                        })
+                );
+            }
+        } else {
+            // Enchantment Components generally don't use classes but let's just be safe
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+                accessors.add(
+                        new Accessor(field.getType(), () -> {
+                            try {
+                                return field.get(effectOrComponent);
+                            } catch (Exception e) {
+                                throw new RuntimeException("Failed to access field: " + field.getName(), e);
+                            }
+                        })
+                );
+            }
+        }
+
+        for (Accessor accessor : accessors) {
+            Object object = accessor.getter.get();
+            if (object instanceof LevelBasedValue value) {
+                values.add(value);
+            } else if (object instanceof Optional<?> optional) {
+                if (optional.isPresent() && optional.get() instanceof LevelBasedValue value) {
+                    values.add(value);
+                }
+            }
+        }
+        return values;
     }
 
     /**
