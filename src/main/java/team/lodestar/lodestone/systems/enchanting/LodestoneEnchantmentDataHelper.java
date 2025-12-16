@@ -70,7 +70,7 @@ public class LodestoneEnchantmentDataHelper {
      * @param effectOrComponent The enchantment effect or component to sieve through
      * @return All {@link LevelBasedValue} instances stored on an object in order of definition
      */
-    public static List<LevelBasedValue> findEntityEffectValues(Object effectOrComponent) {
+    public static List<LevelBasedValue> findLevelBasedValues(Object effectOrComponent) {
         var values = new ArrayList<LevelBasedValue>();
         var clazz = effectOrComponent.getClass();
 
