@@ -6,7 +6,7 @@ import net.minecraft.world.item.enchantment.effects.*;
 
 import java.util.function.*;
 
-public class LocatedEnchantmentEffect<T extends EnchantmentEntityEffect> {
+public class LocatedEnchantmentEffect<T> {
     private final T effect;
     private final Holder<Enchantment> enchantment;
     private final int level;
@@ -38,7 +38,7 @@ public class LocatedEnchantmentEffect<T extends EnchantmentEntityEffect> {
         return value.calculate(level);
     }
 
-    public static class EmptyEnchantmentEffect<T extends EnchantmentEntityEffect> extends LocatedEnchantmentEffect<T> {
+    public static class EmptyEnchantmentEffect<T> extends LocatedEnchantmentEffect<T> {
 
         public EmptyEnchantmentEffect() {
             super(null, null, -1);
