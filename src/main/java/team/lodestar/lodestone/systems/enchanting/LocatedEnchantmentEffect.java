@@ -43,6 +43,10 @@ public class LocatedEnchantmentEffect<T> {
         return isPresent() ? Optional.ofNullable(mapper.apply(getEffect())) : Optional.empty();
     }
 
+    public <M> Optional<M> map(BiFunction<T, Integer, M> mapper) {
+        return isPresent() ? Optional.ofNullable(mapper.apply(getEffect(), level)) : Optional.empty();
+    }
+
     public static class EmptyEnchantmentEffect<T> extends LocatedEnchantmentEffect<T> {
 
         public EmptyEnchantmentEffect() {
