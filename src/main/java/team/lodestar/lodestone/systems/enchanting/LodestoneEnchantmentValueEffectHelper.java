@@ -14,7 +14,6 @@ import org.apache.commons.lang3.mutable.*;
 import javax.annotation.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiFunction;
 
 public class LodestoneEnchantmentValueEffectHelper {
 
@@ -53,27 +52,23 @@ public class LodestoneEnchantmentValueEffectHelper {
         return mutable.getValue();
     }
 
-    public static <T> Optional<T> findSpecialComponent(ItemStack stack, DataComponentType<T> componentType) {
-        return findSpecialComponent(stack, componentType, (c, l) -> c);
+    public static <T> LocatedEnchantmentEffect<T> findSpecialComponent(ItemStack stack, DataComponentType<T> componentType) {
+        return findSpecialComponent(stack, null, componentType);
     }
 
-    public static <T, M> Optional<M> findSpecialComponent(ItemStack stack, DataComponentType<T> componentType, BiFunction<T, Integer, M> getter) {
-        return findSpecialComponent(stack, null, componentType, getter);
-    }
-
-    public static <T, M> Optional<M> findSpecialComponent(ItemStack stack, @Nullable Holder<Enchantment> filter, DataComponentType<T> componentType, BiFunction<T, Integer, M> getter) {
-        AtomicReference<M> result = new AtomicReference<>();
+    public static <T> LocatedEnchantmentEffect<T> findSpecialComponent(ItemStack stack, @Nullable Holder<Enchantment> filter, DataComponentType<T> componentType) {
+        AtomicReference<LocatedEnchantmentEffect<T>> result = new AtomicReference<>();
         try {
             LodestoneEnchantmentDataHelper.runIterationOnItem(stack, filter, (enchantment, enchantmentLevel) -> {
                 var componentMap = enchantment.value().effects();
                 T special = getSpecialComponent(componentMap, componentType);
                 if (special != null) {
-                    result.set(getter.apply(special, enchantmentLevel));
+                    result.set(new LocatedEnchantmentEffect<>(special, enchantment, enchantmentLevel));
                 }
             });
         } catch (Exception ignored) {
         }
-        return Optional.ofNullable(result.get());
+        return result.get();
     }
 
     public static <T> T getSpecialComponent(DataComponentMap map, DataComponentType<T> type) {
