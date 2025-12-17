@@ -49,6 +49,7 @@ public class LodestoneEnchantmentEffectActivator<T> {
     private final ServerLevel level;
 
     private ContextSupplier contextSupplier;
+    private EnchantmentTarget targetLimit;
 
     private LodestoneEnchantmentEffectActivator(Either<DataComponentType<List<ConditionalEffect<T>>>, DataComponentType<List<TargetedConditionalEffect<T>>>> componentType, ServerLevel level) {
         this.componentType = componentType;
@@ -73,6 +74,11 @@ public class LodestoneEnchantmentEffectActivator<T> {
 
     public LodestoneEnchantmentEffectActivator<T> setContext(ContextSupplier contextSupplier) {
         this.contextSupplier = contextSupplier;
+        return this;
+    }
+
+    public LodestoneEnchantmentEffectActivator<T> setTargetLimit(EnchantmentTarget targetLimit) {
+        this.targetLimit = targetLimit;
         return this;
     }
 
@@ -183,6 +189,9 @@ public class LodestoneEnchantmentEffectActivator<T> {
             });
             componentType.ifRight(componentType -> {
                 for (TargetedConditionalEffect<T> effect : enchantment.value().getEffects(componentType)) {
+                    if (targetLimit == null || effect.enchanted() != targetLimit) {
+                        continue;
+                    }
                     if (effect.matches(context)) {
                         DamageSource source = context.getParam(LootContextParams.DAMAGE_SOURCE);
                         Entity entity = switch (effect.affected()) {
@@ -221,6 +230,9 @@ public class LodestoneEnchantmentEffectActivator<T> {
             });
             componentType.ifRight(componentType -> {
                 for (TargetedConditionalEffect<T> effect : enchantment.value().getEffects(componentType)) {
+                    if (targetLimit == null || effect.enchanted() != targetLimit) {
+                        continue;
+                    }
                     if (effect.matches(context)) {
                         DamageSource source = context.getParam(LootContextParams.DAMAGE_SOURCE);
                         Entity entity = switch (effect.affected()) {
