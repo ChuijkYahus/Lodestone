@@ -209,12 +209,12 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
         return quadLength;
     }
 
-    public Vector3f getTravelledDistance() {
-        return travelledDistance;
+    public Vec3 getTravelledDistance() {
+        return new Vec3(travelledDistance);
     }
 
-    public Vector3f getInterpolatedTravelledDistance() {
-        return oldTravelledDistance.lerp(travelledDistance, partialTicksCache);
+    public Vec3 getInterpolatedTravelledDistance() {
+        return new Vec3(oldTravelledDistance.lerp(travelledDistance, partialTicksCache));
     }
 
     @Override
