@@ -189,7 +189,7 @@ public class LodestoneEnchantmentEffectActivator<T> {
             });
             componentType.ifRight(componentType -> {
                 for (TargetedConditionalEffect<T> effect : enchantment.value().getEffects(componentType)) {
-                    if (targetLimit == null || effect.enchanted() != targetLimit) {
+                    if (targetLimit != null && effect.enchanted() != targetLimit) {
                         continue;
                     }
                     if (effect.matches(context)) {
@@ -230,7 +230,7 @@ public class LodestoneEnchantmentEffectActivator<T> {
             });
             componentType.ifRight(componentType -> {
                 for (TargetedConditionalEffect<T> effect : enchantment.value().getEffects(componentType)) {
-                    if (targetLimit == null || effect.enchanted() != targetLimit) {
+                    if (targetLimit != null && effect.enchanted() != targetLimit) {
                         continue;
                     }
                     if (effect.matches(context)) {
