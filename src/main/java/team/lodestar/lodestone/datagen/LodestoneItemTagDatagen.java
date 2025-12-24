@@ -31,7 +31,7 @@ public class LodestoneItemTagDatagen extends LodestoneItemTagsProvider {
 
     @Override
     public String getName() {
-        return "Malum Item Tags";
+        return "Lodestone Item Tags";
     }
 
     @SuppressWarnings("unchecked")
@@ -69,21 +69,5 @@ public class LodestoneItemTagDatagen extends LodestoneItemTagsProvider {
         tag(INGOTS_TIN);
         tag(NUGGETS_COBALT);
         tag(INGOTS_COBALT);
-    }
-
-    public void copyTagsFromBlockProperties(Set<DeferredHolder<Block, ? extends Block>> blocks) {
-        var blockList = blocks.stream().map(DeferredHolder::get).sorted(Comparator.comparingInt((Block b) -> BuiltInRegistries.BLOCK.getId(b))).toList();
-        for (Block block : blockList) {
-            var item = block.asItem();
-            if (item.equals(Items.AIR)) {
-                continue;
-            }
-            var properties = (LodestoneBlockProperties) block.properties();
-            var data = properties.getDatagenData();
-            for (TagKey<Block> tag : data.getTags()) {
-                var itemTag = TagKey.create(Registries.ITEM, tag.location());
-                tag(itemTag).add(item);
-            }
-        }
     }
 }

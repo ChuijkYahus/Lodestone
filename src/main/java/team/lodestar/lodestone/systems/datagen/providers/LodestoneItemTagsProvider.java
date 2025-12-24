@@ -46,4 +46,19 @@ public abstract class LodestoneItemTagsProvider extends ItemTagsProvider {
             }
         }
     }
+    public void copyTagsFromBlockProperties(Set<DeferredHolder<Block, ? extends Block>> blocks) {
+        var blockList = blocks.stream().map(DeferredHolder::get).sorted(Comparator.comparingInt((Block b) -> BuiltInRegistries.BLOCK.getId(b))).toList();
+        for (Block block : blockList) {
+            var item = block.asItem();
+            if (item.equals(Items.AIR)) {
+                continue;
+            }
+            var properties = (LodestoneBlockProperties) block.properties();
+            var data = properties.getDatagenData();
+            for (TagKey<Block> tag : data.getTags()) {
+                var itemTag = TagKey.create(Registries.ITEM, tag.location());
+                tag(itemTag).add(item);
+            }
+        }
+    }
 }
