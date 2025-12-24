@@ -1,16 +1,24 @@
 package team.lodestar.lodestone.datagen;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.*;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.systems.block.LodestoneBlockProperties;
+import team.lodestar.lodestone.systems.datagen.LodestoneDatagenBlockData;
 import team.lodestar.lodestone.systems.datagen.providers.*;
 
+import java.util.Comparator;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static team.lodestar.lodestone.registry.common.tag.LodestoneItemTags.*;
@@ -61,5 +69,21 @@ public class LodestoneItemTagDatagen extends LodestoneItemTagsProvider {
         tag(INGOTS_TIN);
         tag(NUGGETS_COBALT);
         tag(INGOTS_COBALT);
+    }
+
+    public void copyTagsFromBlockProperties(Set<DeferredHolder<Block, ? extends Block>> blocks) {
+        var blockList = blocks.stream().map(DeferredHolder::get).sorted(Comparator.comparingInt((Block b) -> BuiltInRegistries.BLOCK.getId(b))).toList();
+        for (Block block : blockList) {
+            var item = block.asItem();
+            if (item.equals(Items.AIR)) {
+                continue;
+            }
+            var properties = (LodestoneBlockProperties) block.properties();
+            var data = properties.getDatagenData();
+            for (TagKey<Block> tag : data.getTags()) {
+                var itemTag = TagKey.create(Registries.ITEM, tag.location());
+                tag(itemTag).add(item);
+            }
+        }
     }
 }
