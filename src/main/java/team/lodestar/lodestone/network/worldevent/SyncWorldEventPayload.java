@@ -19,9 +19,10 @@ public class SyncWorldEventPayload extends OneSidedPayloadData {
     private final boolean start;
     private final CompoundTag eventData;
 
-    public SyncWorldEventPayload(FriendlyByteBuf byteBuf) {
+    public SyncWorldEventPayload(RegistryFriendlyByteBuf byteBuf) {
         this(byteBuf.readResourceLocation(), byteBuf.readBoolean(), byteBuf.readNbt());
     }
+
     public SyncWorldEventPayload(WorldEventInstance instance, boolean start) {
         this(instance.type.id, start, instance.serializeNBT());
     }
@@ -41,7 +42,7 @@ public class SyncWorldEventPayload extends OneSidedPayloadData {
     }
 
     @Override
-    public void serialize(FriendlyByteBuf byteBuf) {
+    public void serialize(RegistryFriendlyByteBuf byteBuf) {
         byteBuf.writeResourceLocation(type);
         byteBuf.writeBoolean(start);
         byteBuf.writeNbt(eventData);

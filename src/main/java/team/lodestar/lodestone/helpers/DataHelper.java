@@ -147,6 +147,24 @@ public class DataHelper {
         }
         return arrayList;
     }
+    public static int approach(int value, int limit, int stepSize) {
+        stepSize = Math.abs(stepSize);
+        return value < limit ? Math.clamp(value + stepSize, value, limit) : Math.clamp(value - stepSize, limit, value);
+    }
+
+    public static float approach(float a, float b, float amount) {
+        if (Math.abs(a - b) < amount) {
+            return b;
+        }
+        return (a > b) ? a - amount : a + amount;
+    }
+
+    public static double approach(double a, double b, double amount) {
+        if (Math.abs(a - b) < amount) {
+            return b;
+        }
+        return (a > b) ? a - amount : a + amount;
+    }
 
     public static float distSqr(float... a) {
         float d = 0.0F;

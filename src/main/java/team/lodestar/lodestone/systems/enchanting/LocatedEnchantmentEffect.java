@@ -4,9 +4,10 @@ import net.minecraft.core.*;
 import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.item.enchantment.effects.*;
 
+import java.util.Optional;
 import java.util.function.*;
 
-public class LocatedEnchantmentEffect<T extends EnchantmentEntityEffect> {
+public class LocatedEnchantmentEffect<T> {
     private final T effect;
     private final Holder<Enchantment> enchantment;
     private final int level;
@@ -38,7 +39,15 @@ public class LocatedEnchantmentEffect<T extends EnchantmentEntityEffect> {
         return value.calculate(level);
     }
 
-    public static class EmptyEnchantmentEffect<T extends EnchantmentEntityEffect> extends LocatedEnchantmentEffect<T> {
+    public <M> Optional<M> map(Function<T, M> mapper) {
+        return isPresent() ? Optional.ofNullable(mapper.apply(getEffect())) : Optional.empty();
+    }
+
+    public <M> Optional<M> map(BiFunction<T, Integer, M> mapper) {
+        return isPresent() ? Optional.ofNullable(mapper.apply(getEffect(), level)) : Optional.empty();
+    }
+
+    public static class EmptyEnchantmentEffect<T> extends LocatedEnchantmentEffect<T> {
 
         public EmptyEnchantmentEffect() {
             super(null, null, -1);

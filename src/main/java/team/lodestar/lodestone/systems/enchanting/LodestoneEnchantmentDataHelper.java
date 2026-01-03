@@ -12,7 +12,10 @@ import net.minecraft.world.item.enchantment.effects.*;
 import net.minecraft.world.level.storage.loot.predicates.*;
 
 import javax.annotation.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.RecordComponent;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
 
 /**
@@ -23,8 +26,9 @@ public class LodestoneEnchantmentDataHelper {
 
     /**
      * A modified version of {@link EnchantmentHelper#runIterationOnItem(ItemStack, EquipmentSlot, LivingEntity, EnchantmentHelper.EnchantmentInSlotVisitor)}
-     * @param stack The enchanted stack to run enchantment logic on
-     * @param filter The enchantment to limit the search to
+     *
+     * @param stack   The enchanted stack to run enchantment logic on
+     * @param filter  The enchantment to limit the search to
      * @param visitor The enchantment consumer to run
      */
     public static void runIterationOnItem(ItemStack stack, @Nullable Holder<Enchantment> filter, EnchantmentHelper.EnchantmentVisitor visitor) {
@@ -33,9 +37,10 @@ public class LodestoneEnchantmentDataHelper {
 
     /**
      * A modified version of {@link EnchantmentHelper#runIterationOnItem(ItemStack, EquipmentSlot, LivingEntity, EnchantmentHelper.EnchantmentInSlotVisitor)}
-     * @param stack The enchanted stack to run enchantment logic on
-     * @param filter The enchantment to limit the search to
-     * @param visitor The enchantment consumer to run
+     *
+     * @param stack          The enchanted stack to run enchantment logic on
+     * @param filter         The enchantment to limit the search to
+     * @param visitor        The enchantment consumer to run
      * @param breakCondition A condition which determines if we should keep iterating
      */
     @SuppressWarnings("DataFlowIssue")
@@ -60,17 +65,112 @@ public class LodestoneEnchantmentDataHelper {
         }
     }
 
+
+
+    public static <T> LocatedEnchantmentEffect<T> findSpecialComponent(ItemStack stack, DataComponentType<T> componentType) {
+        return findSpecialComponent(stack, null, componentType);
+    }
+
+    public static <T> LocatedEnchantmentEffect<T> findSpecialComponent(ItemStack stack, @Nullable Holder<Enchantment> filter, DataComponentType<T> componentType) {
+        AtomicReference<LocatedEnchantmentEffect<T>> result = new AtomicReference<>(new LocatedEnchantmentEffect.EmptyEnchantmentEffect<>());
+        try {
+            LodestoneEnchantmentDataHelper.runIterationOnItem(stack, filter, (enchantment, enchantmentLevel) -> {
+                var componentMap = enchantment.value().effects();
+                T special = componentMap.get(componentType);
+                if (special != null) {
+                    result.set(new LocatedEnchantmentEffect<>(special, enchantment, enchantmentLevel));
+                }
+            });
+        } catch (Exception ignored) {
+        }
+        return result.get();
+    }
+
+    /**
+     * Finds all {@link LevelBasedValue} instances stored on an object through the use of reflection
+     *
+     * @param effectOrComponent The enchantment effect or component to sieve through
+     * @return All {@link LevelBasedValue} instances stored on an object in order of definition
+     */
+    public static List<LevelBasedValue> findLevelBasedValues(Object effectOrComponent) {
+        var values = new ArrayList<LevelBasedValue>();
+        var clazz = effectOrComponent.getClass();
+
+        record Accessor(Class<?> type, Supplier<Object> getter) {
+        }
+
+        List<Accessor> accessors = new ArrayList<>();
+
+        if (clazz.isRecord()) {
+            for (RecordComponent component : clazz.getRecordComponents()) {
+                var accessor = component.getAccessor();
+                accessors.add(
+                        new Accessor(component.getType(), () -> {
+                            try {
+                                return accessor.invoke(effectOrComponent);
+                            } catch (Exception e) {
+                                throw new RuntimeException("Failed to access record: " + component.getName(), e);
+                            }
+                        })
+                );
+            }
+        } else {
+            // Enchantment Components generally don't use classes but let's just be safe
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+                accessors.add(
+                        new Accessor(field.getType(), () -> {
+                            try {
+                                return field.get(effectOrComponent);
+                            } catch (Exception e) {
+                                throw new RuntimeException("Failed to access field: " + field.getName(), e);
+                            }
+                        })
+                );
+            }
+        }
+
+        for (Accessor accessor : accessors) {
+            Object object = accessor.getter.get();
+            if (object instanceof LevelBasedValue value) {
+                values.add(value);
+            } else if (object instanceof Optional<?> optional) {
+                if (optional.isPresent() && optional.get() instanceof LevelBasedValue value) {
+                    values.add(value);
+                }
+            }
+        }
+        return values;
+    }
+
     /**
      * Sieves through a data map and finds all components, including nested ones, stored inside that match the given condition.
      * We're basically going through a whole tree map of {@link AllOf} effects, lists, and other conditional effects and returning a raw list of pure effects.
      * Order should be deterministic.
-     * @param item The item to check conditional effects with.
-     * @param map The enchantment data map to check.
-     * @param type The class type of effect we are looking for
+     *
+     * @param stack     The item to search through for effects.
+     * @param map       The enchantment data map to check.
+     * @param type      The class type of effect we are looking for
      * @param condition A condition for either the {@link TypedDataComponent} or the component object itself
      * @return All matching enchantment entity effects stored in the data map.
      */
-    protected static<T> List<T> getMatchingEffects(ItemStack item, DataComponentMap map, Class<T> type, Either<Predicate<TypedDataComponent<?>>, Predicate<T>> condition) {
+    protected static <T> List<T> getMatchingEffects(ItemStack stack, DataComponentMap map, Class<T> type, Either<Predicate<TypedDataComponent<?>>, Predicate<T>> condition) {
+        return getMatchingEffects(stack, stack, map, type, condition);
+    }
+
+    /**
+     * Sieves through a data map and finds all components, including nested ones, stored inside that match the given condition.
+     * We're basically going through a whole tree map of {@link AllOf} effects, lists, and other conditional effects and returning a raw list of pure effects.
+     * Order should be deterministic.
+     *
+     * @param effectHolder     The item to search through for effects.
+     * @param comparisonBroker The item to pass into any conditional effect checks.
+     * @param map              The enchantment data map to check.
+     * @param type             The class type of effect we are looking for
+     * @param condition        A condition for either the {@link TypedDataComponent} or the component object itself
+     * @return All matching enchantment entity effects stored in the data map.
+     */
+    protected static <T> List<T> getMatchingEffects(ItemStack effectHolder, ItemStack comparisonBroker, DataComponentMap map, Class<T> type, Either<Predicate<TypedDataComponent<?>>, Predicate<T>> condition) {
         ArrayList<Object> effectObjects = new ArrayList<>();
         ArrayList<T> result = new ArrayList<>();
         for (TypedDataComponent<?> component : map) {
@@ -78,14 +178,13 @@ public class LodestoneEnchantmentDataHelper {
             if (condition.left().map(e -> e.test(component)).orElse(true)) {
                 if (value instanceof Collection<?> effectList) {
                     effectObjects.addAll(effectList);
-                }
-                else {
+                } else {
                     effectObjects.add(value);
                 }
             }
         }
         for (Object object : effectObjects) {
-            var effects = getEffects(item, object, type);
+            var effects = getEffects(effectHolder, comparisonBroker, object, type);
             for (T effect : effects) {
                 if (condition.right().map(e -> e.test(effect)).orElse(true)) {
                     result.add(effect);
@@ -97,49 +196,46 @@ public class LodestoneEnchantmentDataHelper {
 
     /**
      * Finds all enchantment effects, going through conditions and lists if any are defined.
-     * @param item The item to check conditional effects with.
+     * @param effectHolder     The item to search through for effects.
+     * @param comparisonBroker The item to pass into any conditional effect checks.
      * @param object Any entity effect or effect container, be it a conditional effect or an effect list
-     * @param type The class type of effect we are looking for
+     * @param type   The class type of effect we are looking for
      * @return All real effects found on an enchantment data component map.
      */
-    public static<T> List<T> getEffects(ItemStack item, Object object, Class<T> type) {
+    private static <T> List<T> getEffects(ItemStack effectHolder, ItemStack comparisonBroker, Object object, Class<T> type) {
         ArrayList<T> effects = new ArrayList<>();
         ArrayList<ConditionalEffect<?>> conditionalEffects = new ArrayList<>();
         ArrayList<TargetedConditionalEffect<?>> targetedConditionalEffects = new ArrayList<>();
         if (object instanceof AllOf.EntityEffects all) {
             for (EnchantmentEntityEffect effect : all.effects()) {
-                effects.addAll(getEffects(item, effect, type));
+                effects.addAll(getEffects(effectHolder, comparisonBroker, effect, type));
             }
-        }
-        else if (object instanceof AllOf.LocationBasedEffects all) {
+        } else if (object instanceof AllOf.LocationBasedEffects all) {
             for (EnchantmentLocationBasedEffect effect : all.effects()) {
-                effects.addAll(getEffects(item, effect, type));
+                effects.addAll(getEffects(effectHolder, comparisonBroker, effect, type));
             }
-        }
-        else if (object instanceof AllOf.ValueEffects all) {
+        } else if (object instanceof AllOf.ValueEffects all) {
             for (EnchantmentValueEffect effect : all.effects()) {
-                effects.addAll(getEffects(item, effect, type));
+                effects.addAll(getEffects(effectHolder, comparisonBroker, effect, type));
             }
         }
         if (type.isInstance(object)) {
             effects.add(type.cast(object));
-        }
-        else if (object instanceof TargetedConditionalEffect<?> conditionalEffect) {
+        } else if (object instanceof TargetedConditionalEffect<?> conditionalEffect) {
             targetedConditionalEffects.add(conditionalEffect);
-        }
-        else if (object instanceof ConditionalEffect<?> conditionalEffect) {
+        } else if (object instanceof ConditionalEffect<?> conditionalEffect) {
             conditionalEffects.add(conditionalEffect);
         }
         for (ConditionalEffect<?> conditionalEffect : conditionalEffects) {
             Optional<LootItemCondition> requirements = conditionalEffect.requirements();
-            if (requirements.isEmpty() || matches(item, requirements.get())) {
-                effects.addAll(getEffects(item, conditionalEffect.effect(), type));
+            if (requirements.isEmpty() || matches(comparisonBroker, requirements.get())) {
+                effects.addAll(getEffects(effectHolder, comparisonBroker, conditionalEffect.effect(), type));
             }
         }
         for (TargetedConditionalEffect<?> conditionalEffect : targetedConditionalEffects) {
             Optional<LootItemCondition> requirements = conditionalEffect.requirements();
-            if (requirements.isEmpty() || matches(item, requirements.get())) {
-                effects.addAll(getEffects(item, conditionalEffect.effect(), type));
+            if (requirements.isEmpty() || matches(comparisonBroker, requirements.get())) {
+                effects.addAll(getEffects(effectHolder, comparisonBroker, conditionalEffect.effect(), type));
             }
         }
         return effects;
@@ -148,8 +244,9 @@ public class LodestoneEnchantmentDataHelper {
     /**
      * Checks if the given {@link LootItemCondition} matches the given context.
      * Only considers {@link MatchTool} conditions
+     *
      * @param condition The condition of the {@link ConditionalEffect} or {@link TargetedConditionalEffect} to check
-     * @param item The item to check against.
+     * @param item      The item to check against.
      * @return If the effect's condition was passed
      */
     public static boolean matches(ItemStack item, LootItemCondition condition) {

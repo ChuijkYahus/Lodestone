@@ -4,10 +4,14 @@ import com.mojang.datafixers.util.*;
 import com.mojang.serialization.*;
 import net.minecraft.core.*;
 import net.minecraft.core.component.*;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.item.enchantment.effects.*;
+import team.lodestar.lodestone.LodestoneLib;
 
 import javax.annotation.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.*;
 
 public class LodestoneEntityEnchantmentEffectFilter<T extends EnchantmentEntityEffect> {
@@ -30,6 +34,10 @@ public class LodestoneEntityEnchantmentEffectFilter<T extends EnchantmentEntityE
     private final MapCodec<? extends EnchantmentEntityEffect> typeFilter;
     @Nullable
     private Holder<Enchantment> enchantmentFilter;
+    @Nullable
+    private ItemStack comparisonBroker;
+    @Nullable
+    private Function<List<T>, T> deadlockBreaker;
 
     public LodestoneEntityEnchantmentEffectFilter(Class<T> classFilter) {
         this(classFilter, null);
@@ -45,6 +53,16 @@ public class LodestoneEntityEnchantmentEffectFilter<T extends EnchantmentEntityE
         return this;
     }
 
+    public LodestoneEntityEnchantmentEffectFilter<T> withComparisonBroker(ItemStack comparisonBroker) {
+        this.comparisonBroker = comparisonBroker;
+        return this;
+    }
+
+    public LodestoneEntityEnchantmentEffectFilter<T> withDeadlockBreaker(Function<List<T>, T> deadlockBreaker) {
+        this.deadlockBreaker = deadlockBreaker;
+        return this;
+    }
+
     protected Either<Predicate<TypedDataComponent<?>>, Predicate<T>> asCondition() {
         return Either.right(e -> (typeFilter == null || e.codec().equals(typeFilter)));
     }
@@ -56,5 +74,18 @@ public class LodestoneEntityEnchantmentEffectFilter<T extends EnchantmentEntityE
     @Nullable
     public Holder<Enchantment> getEnchantmentFilter() {
         return enchantmentFilter;
+    }
+
+    @Nullable
+    public ItemStack getComparisonBroker(ItemStack fallback) {
+        return comparisonBroker != null ? comparisonBroker : fallback;
+    }
+
+    public Optional<T> breakDeadlock(List<T> effects) {
+        if (deadlockBreaker == null) {
+            LodestoneLib.LOGGER.warn("An enchantment with two appropriate effects fit for it's query lacks a deadlock breaker. Report this to the mod dev responsible for the enchantment.");
+            return Optional.empty();
+        }
+        return Optional.of(deadlockBreaker.apply(effects));
     }
 }

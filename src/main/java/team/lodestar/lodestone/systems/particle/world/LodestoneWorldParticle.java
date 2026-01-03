@@ -6,6 +6,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.util.*;
 import net.minecraft.world.phys.*;
+import org.joml.Vector3f;
 import team.lodestar.lodestone.config.ClientConfig;
 import team.lodestar.lodestone.systems.particle.SimpleParticleOptions;
 import team.lodestar.lodestone.systems.particle.data.GenericParticleData;
@@ -43,8 +44,12 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
 
     public final int particleLight;
 
-    public int lifeDelay;
+    public Vector3f oldTravelledDistance = new Vector3f();
+    public Vector3f travelledDistance = new Vector3f();
 
+    public float partialTicksCache;
+
+    public int lifeDelay;
     private float quadLength;
 
     float[] hsv1 = new float[3], hsv2 = new float[3];
@@ -169,7 +174,17 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
     }
 
     @Override
+    public void move(double x, double y, double z) {
+        oldTravelledDistance = new Vector3f(travelledDistance);
+        travelledDistance.x += (float) x;
+        travelledDistance.y += (float) y;
+        travelledDistance.z += (float) z;
+        super.move(x, y, z);
+    }
+
+    @Override
     public void render(VertexConsumer consumer, Camera camera, float partialTicks) {
+        partialTicksCache = partialTicks;
         if (lifeDelay > 0) {
             return;
         }
@@ -192,6 +207,14 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
 
     public float getQuadLength(float partialTicks) {
         return quadLength;
+    }
+
+    public Vec3 getTravelledDistance() {
+        return new Vec3(travelledDistance);
+    }
+
+    public Vec3 getInterpolatedTravelledDistance() {
+        return new Vec3(oldTravelledDistance.lerp(travelledDistance, partialTicksCache));
     }
 
     @Override

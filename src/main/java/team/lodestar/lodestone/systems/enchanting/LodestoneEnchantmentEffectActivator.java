@@ -49,30 +49,36 @@ public class LodestoneEnchantmentEffectActivator<T> {
     private final ServerLevel level;
 
     private ContextSupplier contextSupplier;
+    private EnchantmentTarget targetLimit;
 
     private LodestoneEnchantmentEffectActivator(Either<DataComponentType<List<ConditionalEffect<T>>>, DataComponentType<List<TargetedConditionalEffect<T>>>> componentType, ServerLevel level) {
         this.componentType = componentType;
         this.level = level;
     }
 
-    public LodestoneEnchantmentEffectActivator<T> setItemContext(ItemStack enchantedItem) {
-        return setContext((enchantmentLevel -> Enchantment.itemContext(level, enchantmentLevel, enchantedItem)));
+    public LodestoneEnchantmentEffectActivator<T> setItemContext() {
+        return setContext(((enchantedItem, enchantmentLevel) -> Enchantment.itemContext(level, enchantmentLevel, enchantedItem)));
     }
 
-    public LodestoneEnchantmentEffectActivator<T> setDamageContext(ServerLevel level, Entity attackedEntity, DamageSource damageSource, @Nullable ItemStack enchantedItem) {
-        return setContext((enchantmentLevel -> damageContext(level, enchantmentLevel, attackedEntity, damageSource, enchantedItem)));
+    public LodestoneEnchantmentEffectActivator<T> setDamageContext(ServerLevel level, Entity attackedEntity, DamageSource damageSource) {
+        return setContext(((enchantedItem, enchantmentLevel) -> damageContext(level, enchantmentLevel, attackedEntity, damageSource, enchantedItem)));
     }
 
-    public LodestoneEnchantmentEffectActivator<T> setEntityContext(ServerLevel level, Entity entity, @Nullable ItemStack enchantedItem) {
-        return setEntityContext(level, entity, entity.position(), enchantedItem);
+    public LodestoneEnchantmentEffectActivator<T> setEntityContext(ServerLevel level, Entity entity) {
+        return setEntityContext(level, entity, entity.position());
     }
 
-    public LodestoneEnchantmentEffectActivator<T> setEntityContext(ServerLevel level, Entity entity, Vec3 origin, @Nullable ItemStack enchantedItem) {
-        return setContext((enchantmentLevel -> entityContext(level, enchantmentLevel, entity, origin, enchantedItem)));
+    public LodestoneEnchantmentEffectActivator<T> setEntityContext(ServerLevel level, Entity entity, Vec3 origin) {
+        return setContext(((enchantedItem, enchantmentLevel) -> entityContext(level, enchantmentLevel, entity, origin, enchantedItem)));
     }
 
     public LodestoneEnchantmentEffectActivator<T> setContext(ContextSupplier contextSupplier) {
         this.contextSupplier = contextSupplier;
+        return this;
+    }
+
+    public LodestoneEnchantmentEffectActivator<T> setTargetLimit(EnchantmentTarget targetLimit) {
+        this.targetLimit = targetLimit;
         return this;
     }
 
@@ -157,9 +163,7 @@ public class LodestoneEnchantmentEffectActivator<T> {
      */
     public boolean hasEffect(ItemStack enchantedItem, Entity target) {
         AtomicBoolean hasEffect = new AtomicBoolean(false);
-        applyEffects((effect, entity, enchantmentLevel) -> {
-            hasEffect.set(true);
-        }, enchantedItem, target);
+        applyEffects((effect, entity, enchantmentLevel) -> hasEffect.set(true), enchantedItem, target);
         return hasEffect.get();
     }
     /**
@@ -175,7 +179,7 @@ public class LodestoneEnchantmentEffectActivator<T> {
         }
 
         EnchantmentHelper.runIterationOnItem(enchantedItem, ((enchantment, enchantmentLevel) -> {
-            LootContext context = contextSupplier.getContext(enchantmentLevel);
+            LootContext context = contextSupplier.getContext(enchantedItem, enchantmentLevel);
             componentType.ifLeft(componentType -> {
                 for (ConditionalEffect<T> effect : enchantment.value().getEffects(componentType)) {
                     if (effect.matches(context)) {
@@ -185,6 +189,9 @@ public class LodestoneEnchantmentEffectActivator<T> {
             });
             componentType.ifRight(componentType -> {
                 for (TargetedConditionalEffect<T> effect : enchantment.value().getEffects(componentType)) {
+                    if (targetLimit != null && effect.enchanted() != targetLimit) {
+                        continue;
+                    }
                     if (effect.matches(context)) {
                         DamageSource source = context.getParam(LootContextParams.DAMAGE_SOURCE);
                         Entity entity = switch (effect.affected()) {
@@ -213,7 +220,7 @@ public class LodestoneEnchantmentEffectActivator<T> {
         }
 
         EnchantmentHelper.runIterationOnEquipment(target, ((enchantment, enchantmentLevel, enchantedItem) -> {
-            LootContext context = contextSupplier.getContext(enchantmentLevel);
+            LootContext context = contextSupplier.getContext(enchantedItem.itemStack(), enchantmentLevel);
             componentType.ifLeft(componentType -> {
                 for (ConditionalEffect<T> effect : enchantment.value().getEffects(componentType)) {
                     if (effect.matches(context)) {
@@ -223,6 +230,9 @@ public class LodestoneEnchantmentEffectActivator<T> {
             });
             componentType.ifRight(componentType -> {
                 for (TargetedConditionalEffect<T> effect : enchantment.value().getEffects(componentType)) {
+                    if (targetLimit != null && effect.enchanted() != targetLimit) {
+                        continue;
+                    }
                     if (effect.matches(context)) {
                         DamageSource source = context.getParam(LootContextParams.DAMAGE_SOURCE);
                         Entity entity = switch (effect.affected()) {
@@ -263,7 +273,7 @@ public class LodestoneEnchantmentEffectActivator<T> {
     }
 
     public interface ContextSupplier {
-        LootContext getContext(int enchantmentLevel);
+        LootContext getContext(ItemStack item, int enchantmentLevel);
     }
 
     public interface EnchantmentEffectAcceptor<T> {

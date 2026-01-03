@@ -38,8 +38,19 @@ public class WaterLoggedEntityBlock<T extends LodestoneBlockEntity> extends Lode
     }
 
     @Override
+    public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
+        if (!state.getValue(WATERLOGGED) && fluidState.getType() == Fluids.WATER) {
+            BlockState blockstate = state.setValue(WATERLOGGED, true);
+            level.setBlock(pos, blockstate, 3);
+            level.scheduleTick(pos, fluidState.getType(), fluidState.getType().getTickDelay(level));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     @NotNull
-    @SuppressWarnings("deprecation")
     public BlockState updateShape(BlockState pState, @NotNull Direction pDirection, @NotNull BlockState pNeighborState, @NotNull LevelAccessor pLevel, @NotNull BlockPos pCurrentPos, @NotNull BlockPos pNeighborPos) {
         if (pState.getValue(WATERLOGGED)) {
             pLevel.scheduleTick(pCurrentPos, Fluids.WATER, Fluids.WATER.getTickDelay(pLevel));
@@ -49,7 +60,6 @@ public class WaterLoggedEntityBlock<T extends LodestoneBlockEntity> extends Lode
 
     @Override
     @NotNull
-    @SuppressWarnings("deprecation")
     public FluidState getFluidState(BlockState state) {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }

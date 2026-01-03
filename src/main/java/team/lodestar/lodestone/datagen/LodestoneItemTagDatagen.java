@@ -1,16 +1,24 @@
 package team.lodestar.lodestone.datagen;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.*;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.systems.block.LodestoneBlockProperties;
+import team.lodestar.lodestone.systems.datagen.LodestoneDatagenBlockData;
 import team.lodestar.lodestone.systems.datagen.providers.*;
 
+import java.util.Comparator;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static team.lodestar.lodestone.registry.common.tag.LodestoneItemTags.*;
@@ -23,7 +31,7 @@ public class LodestoneItemTagDatagen extends LodestoneItemTagsProvider {
 
     @Override
     public String getName() {
-        return "Malum Item Tags";
+        return "Lodestone Item Tags";
     }
 
     @SuppressWarnings("unchecked")

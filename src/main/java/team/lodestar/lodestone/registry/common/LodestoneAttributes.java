@@ -37,9 +37,11 @@ public class LodestoneAttributes {
     @SubscribeEvent
     public static void modifyEntityAttributes(EntityAttributeModificationEvent event) {
         event.getTypes().forEach(e -> {
-            event.add(e, MAGIC_RESISTANCE);
-            event.add(e, MAGIC_PROFICIENCY);
-            event.add(e, MAGIC_DAMAGE);
+            for (DeferredHolder<Attribute, ? extends Attribute> entry : ATTRIBUTES.getEntries()) {
+                if (!event.has(e, entry)) {
+                    event.add(e, entry);
+                }
+            }
         });
     }
 }

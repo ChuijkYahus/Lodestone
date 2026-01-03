@@ -90,7 +90,7 @@ public class LodestoneEnchantmentEffectCommonsHelper {
             if (attacker.isAlliedTo(entity)) {
                 return false;
             }
-            if (entity instanceof TamableAnimal tamableanimal && tamableanimal.isTame() && attacker.getUUID().equals(tamableanimal.getOwnerUUID())) {
+            if (entity instanceof TamableAnimal tamableanimal && tamableanimal.isTame()) {
                 return false;
             }
             if (entity instanceof ArmorStand armorstand && armorstand.isMarker()) {
