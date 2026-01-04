@@ -27,9 +27,9 @@ public class GeoQuad {
         Vector2f b = new Vector2f(uv0.x, uv1.y);
         return switch (rotation) {
             case 0 -> new Vector2f[] {uv0, a, uv1, b};
-            case 90 -> new Vector2f[] {a, uv1, b, uv0};
+            case 90 -> new Vector2f[] {b, uv0, a, uv1};
             case 180 -> new Vector2f[] {uv1, b, uv0, a};
-            case 270 -> new Vector2f[] {b, uv0, a, uv1};
+            case 270 -> new Vector2f[] {a, uv1, b, uv0};
             default -> throw new IllegalArgumentException("Invalid rotation: " + rotation);
         };
     }
