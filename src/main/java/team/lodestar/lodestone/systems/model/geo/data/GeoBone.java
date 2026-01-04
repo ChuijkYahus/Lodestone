@@ -63,6 +63,14 @@ public class GeoBone {
         this.zRot = (float)Math.toRadians(zDeg);
     }
 
+    public void setScale(Vector3f scale) {
+        this.scale = scale;
+    }
+
+    public void setScale(float x, float y, float z) {
+        this.scale.set(x, y, z);
+    }
+
     public Vector3f getPosition() {
         return position;
     }
