@@ -22,7 +22,6 @@ public class GeoCube {
         for (GeoQuad quad : quads) {
             for (GeoVertex vertex : quad.vertices) {
                 Vector3f pos = new Vector3f(vertex.getPosition());
-                pos.div(16.0f);
                 vc.addVertex(poseStack.last().pose(), pos.x, pos.y, pos.z)
                         .setUv(vertex.getTexCoord().x, vertex.getTexCoord().y)
                         .setColor(255, 255, 255, 255);

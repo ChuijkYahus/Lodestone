@@ -88,7 +88,15 @@ public class BedrockGeometryParser extends LodestoneParser<BedrockGeometryModel>
     private GeoCube parseCube(JsonObject cube) {
         Vector3f origin = JsonHelper.getAsVec3f(cube, "origin");
         Vector3f size = JsonHelper.getAsVec3f(cube, "size");
-        VertexSet vertexSet = VertexSet.fromCubeData(origin, size);
+
+        origin = new Vector3f(
+                -(origin.x + size.x) / 16.0f,
+                origin.y / 16.0f,
+                origin.z/ 16.0f
+        );
+        Vector3f vertexSize = new Vector3f(size).div(16.0f);
+
+        VertexSet vertexSet = VertexSet.fromCubeData(origin, vertexSize);
 
         JsonObject uv = cube.getAsJsonObject("uv");
         UVSet uvSet = new UVSet(
@@ -144,8 +152,8 @@ public class BedrockGeometryParser extends LodestoneParser<BedrockGeometryModel>
 
         public GeoVertex[] verticesForQuad(Direction direction) {
             return switch (direction) {
-                case WEST -> new GeoVertex[] {this.topLeftFront, this.topRightFront, this.bottomRightFront, this.bottomLeftFront};
-                case EAST -> new GeoVertex[] {this.topRightBack, this.topLeftBack, this.bottomLeftBack, this.bottomRightBack};
+                case WEST -> new GeoVertex[] {this.topRightBack, this.topLeftBack, this.bottomLeftBack, this.bottomRightBack};
+                case EAST -> new GeoVertex[] {this.topLeftFront, this.topRightFront, this.bottomRightFront, this.bottomLeftFront};
                 case NORTH -> new GeoVertex[] {this.topLeftBack, this.topLeftFront, this.bottomLeftFront, this.bottomLeftBack};
                 case SOUTH -> new GeoVertex[] {this.topRightFront, this.topRightBack, this.bottomRightBack, this.bottomRightFront};
                 case UP -> new GeoVertex[] {this.topRightBack, this.topRightFront, this.topLeftFront, this.topLeftBack};

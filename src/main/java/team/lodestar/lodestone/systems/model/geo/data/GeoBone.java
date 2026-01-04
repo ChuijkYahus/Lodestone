@@ -123,14 +123,14 @@ public class GeoBone {
     }
 
     public void translateAndRotate(PoseStack poseStack) {
-        float px = this.position.x / 16.0F;
+        float px = -this.position.x / 16.0F;
         float py = this.position.y / 16.0F;
         float pz = this.position.z / 16.0F;
 
         poseStack.translate(px, py, pz);
 
         if (this.xRot != 0.0F || this.yRot != 0.0F || this.zRot != 0.0F) {
-            poseStack.mulPose(new Quaternionf().rotationZYX(-this.zRot, this.yRot, -this.xRot));
+            poseStack.mulPose(new Quaternionf().rotationZYX(-this.zRot, this.yRot, this.xRot));
         }
 
         poseStack.translate(-px, -py, -pz);
