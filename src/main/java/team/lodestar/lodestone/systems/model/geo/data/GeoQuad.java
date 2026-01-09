@@ -37,4 +37,12 @@ public class GeoQuad {
             default -> throw new IllegalArgumentException("Invalid rotation: " + rotation);
         };
     }
+
+    public GeoQuad copy() {
+        GeoVertex[] copiedVertices = new GeoVertex[this.vertices.length];
+        for (int i = 0; i < this.vertices.length; i++) {
+            copiedVertices[i] = this.vertices[i].copy();
+        }
+        return new GeoQuad(copiedVertices);
+    }
 }

@@ -17,6 +17,7 @@ public class GeoBone {
     private final List<GeoCube> cubes;
     private final Map<String, GeoBone> children;
     private final String parent;
+    private boolean isHidden = false;
 
     public GeoBone(List<GeoCube> cubes, Map<String, GeoBone> children, String parent) {
         this.cubes = cubes;
@@ -24,7 +25,7 @@ public class GeoBone {
         this.parent = parent;
     }
 
-    public void copyFrom(GeoBone geoBone) {
+    public void copyTransformFrom(GeoBone geoBone) {
         this.scale.x = geoBone.scale.x;
         this.scale.y = geoBone.scale.y;
         this.scale.z = geoBone.scale.z;
@@ -107,7 +108,16 @@ public class GeoBone {
         this.children.put(name, bone);
     }
 
+    public void setHidden(boolean hidden) {
+        this.isHidden = hidden;
+    }
+
+    public boolean isHidden() {
+        return this.isHidden;
+    }
+
     public void render(PoseStack poseStack, VertexConsumer vertexConsumer, RenderType renderType) {
+        if (this.isHidden) return;
         if (!this.cubes.isEmpty() || !this.children.isEmpty()) {
             poseStack.pushPose();
             this.translateAndRotate(poseStack);
@@ -138,6 +148,40 @@ public class GeoBone {
         if (this.scale.x != 1.0F || this.scale.y != 1.0F || this.scale.z != 1.0F) {
             poseStack.scale(this.scale.x, this.scale.y, this.scale.z);
         }
+    }
+
+    /**
+     * A copy of the GeoBone with its own copies of the original children and cubes.
+     */
+    public GeoBone copy() {
+        List<GeoCube> copiedCubes = new ArrayList<>();
+        for (GeoCube cube : this.cubes) {
+            copiedCubes.add(cube.copy());
+        }
+
+        Map<String, GeoBone> copiedChildren = new HashMap<>();
+        for (Map.Entry<String, GeoBone> entry : this.children.entrySet()) {
+            copiedChildren.put(entry.getKey(), entry.getValue().copy());
+        }
+
+        GeoBone copiedBone = new GeoBone(copiedCubes, copiedChildren, this.parent);
+        copiedBone.copyTransformFrom(this);
+        return copiedBone;
+    }
+
+    /**
+     * A copy of the GeoBone and with its own copies of the original children but the same cubes.
+     * Used if you want to copy the transforms of a bone hierarchy without duplicating the cube data.
+     */
+    public GeoBone minimalCopy() {
+        Map<String, GeoBone> copiedChildren = new HashMap<>();
+        for (Map.Entry<String, GeoBone> entry : this.children.entrySet()) {
+            copiedChildren.put(entry.getKey(), entry.getValue().minimalCopy());
+        }
+
+        GeoBone copiedBone = new GeoBone(this.cubes, copiedChildren, this.parent);
+        copiedBone.copyTransformFrom(this);
+        return copiedBone;
     }
 
 }

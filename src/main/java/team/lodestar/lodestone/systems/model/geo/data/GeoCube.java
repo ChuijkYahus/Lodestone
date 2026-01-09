@@ -28,4 +28,16 @@ public class GeoCube {
             }
         }
     }
+
+    /**
+     * Creates a complete copy of this GeoCube.
+     * @return The copied GeoCube.
+     */
+    public GeoCube copy() {
+        GeoQuad[] copiedQuads = new GeoQuad[this.quads.length];
+        for (int i = 0; i < this.quads.length; i++) {
+            copiedQuads[i] = this.quads[i].copy();
+        }
+        return new GeoCube(copiedQuads, new Vector3f(this.origin), new Vector3f(this.size), new Vector3f(this.rotation));
+    }
 }
