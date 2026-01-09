@@ -9,7 +9,7 @@ import org.joml.Vector3f;
 import java.util.*;
 
 public class GeoBone {
-    private Vector3f position;
+    private Vector3f position = new Vector3f(0.0f, 0.0f, 0.0f);
     private float xRot;
     private float yRot;
     private float zRot;
