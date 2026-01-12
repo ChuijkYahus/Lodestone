@@ -16,7 +16,7 @@ import team.lodestar.lodestone.systems.attribute.*;
 
 import static team.lodestar.lodestone.LodestoneLib.LODESTONE;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber()
 public class LodestoneAttributes {
 
     public static final ResourceLocation BASE_MAGIC_DAMAGE = LodestoneLib.lodestonePath("base_magic_damage");
