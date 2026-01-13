@@ -1,8 +1,12 @@
 package team.lodestar.lodestone.systems.model.geo.data;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.RenderType;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
-public class GeoQuad {
+public class GeoQuad implements IRenderableModelPart<GeoQuad> {
     GeoVertex[] vertices;
 
     public GeoQuad(GeoVertex[] vertices) {
@@ -38,11 +42,22 @@ public class GeoQuad {
         };
     }
 
+    @Override
     public GeoQuad copy() {
         GeoVertex[] copiedVertices = new GeoVertex[this.vertices.length];
         for (int i = 0; i < this.vertices.length; i++) {
             copiedVertices[i] = this.vertices[i].copy();
         }
         return new GeoQuad(copiedVertices);
+    }
+
+    @Override
+    public void render(PoseStack poseStack, VertexConsumer vertexConsumer, RenderType renderType) {
+        for (GeoVertex vertex : this.vertices) {
+            Vector3f pos = vertex.getPosition();
+            vertexConsumer.addVertex(poseStack.last().pose(), pos.x, pos.y, pos.z)
+                    .setUv(vertex.getTexCoord().x, vertex.getTexCoord().y)
+                    .setColor(255, 255, 255, 255);
+        }
     }
 }

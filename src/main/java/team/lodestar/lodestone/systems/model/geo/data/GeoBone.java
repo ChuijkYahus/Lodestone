@@ -8,13 +8,14 @@ import org.joml.Vector3f;
 
 import java.util.*;
 
-public class GeoBone {
+public class GeoBone implements IRenderableModelPart<GeoBone> {
     private Vector3f position = new Vector3f(0.0f, 0.0f, 0.0f);
     private float xRot;
     private float yRot;
     private float zRot;
     private Vector3f scale = new Vector3f(1.0f, 1.0f, 1.0f);
-    private final List<GeoCube> cubes;
+    private final List<GeoCube> cubes; // Not merging these so i dont confuse people where their cubes went
+    private final List<IRenderableModelPart<?>> customParts = new ArrayList<>();
     private final Map<String, GeoBone> children;
     private final String parent;
     private boolean isHidden = false;
@@ -116,6 +117,19 @@ public class GeoBone {
         return this.isHidden;
     }
 
+    public void addCustomPart(IRenderableModelPart<?> part) {
+        this.customParts.add(part);
+    }
+
+    public void removeCustomPart(IRenderableModelPart<?> part) {
+        this.customParts.remove(part);
+    }
+
+    public List<IRenderableModelPart<?>> getCustomParts() {
+        return this.customParts;
+    }
+
+    @Override
     public void render(PoseStack poseStack, VertexConsumer vertexConsumer, RenderType renderType) {
         if (this.isHidden) return;
         if (!this.cubes.isEmpty() || !this.children.isEmpty()) {
@@ -123,6 +137,10 @@ public class GeoBone {
             this.translateAndRotate(poseStack);
             for (GeoCube cube : this.cubes) {
                 cube.render(poseStack, vertexConsumer, renderType);
+            }
+
+            for (IRenderableModelPart<?> customPart : this.customParts) {
+                customPart.render(poseStack, vertexConsumer, renderType);
             }
 
             for (GeoBone child : this.children.values()) {
@@ -153,10 +171,16 @@ public class GeoBone {
     /**
      * A copy of the GeoBone with its own copies of the original children and cubes.
      */
+    @Override
     public GeoBone copy() {
         List<GeoCube> copiedCubes = new ArrayList<>();
         for (GeoCube cube : this.cubes) {
             copiedCubes.add(cube.copy());
+        }
+
+        List<IRenderableModelPart<?>> copiedCustomParts = new ArrayList<>();
+        for (IRenderableModelPart<?> part : this.customParts) {
+            copiedCustomParts.add((IRenderableModelPart<?>) part.copy());
         }
 
         Map<String, GeoBone> copiedChildren = new HashMap<>();

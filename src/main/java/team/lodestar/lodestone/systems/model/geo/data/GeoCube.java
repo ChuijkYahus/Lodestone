@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.RenderType;
 import org.joml.Vector3f;
 
-public class GeoCube {
+public class GeoCube implements IRenderableModelPart<GeoCube> {
     private final Vector3f origin;
     private final Vector3f size;
     private final Vector3f rotation;
@@ -18,21 +18,34 @@ public class GeoCube {
         this.quads  = quads;
     }
 
-    public void render(PoseStack poseStack, VertexConsumer vc, RenderType rt) {
+    @Override
+    public void render(PoseStack poseStack, VertexConsumer vertexConsumer, RenderType renderType) {
         for (GeoQuad quad : quads) {
-            for (GeoVertex vertex : quad.vertices) {
-                Vector3f pos = new Vector3f(vertex.getPosition());
-                vc.addVertex(poseStack.last().pose(), pos.x, pos.y, pos.z)
-                        .setUv(vertex.getTexCoord().x, vertex.getTexCoord().y)
-                        .setColor(255, 255, 255, 255);
-            }
+            quad.render(poseStack, vertexConsumer, renderType);
         }
+    }
+
+    public Vector3f getOrigin() {
+        return origin;
+    }
+
+    public Vector3f getSize() {
+        return size;
+    }
+
+    public Vector3f getRotation() {
+        return rotation;
+    }
+
+    public GeoQuad[] getQuads() {
+        return quads;
     }
 
     /**
      * Creates a complete copy of this GeoCube.
      * @return The copied GeoCube.
      */
+    @Override
     public GeoCube copy() {
         GeoQuad[] copiedQuads = new GeoQuad[this.quads.length];
         for (int i = 0; i < this.quads.length; i++) {
