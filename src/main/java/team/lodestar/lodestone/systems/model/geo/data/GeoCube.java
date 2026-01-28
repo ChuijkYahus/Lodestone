@@ -21,7 +21,9 @@ public class GeoCube implements IRenderableModelPart<GeoCube> {
     @Override
     public void render(PoseStack poseStack, VertexConsumer vertexConsumer, RenderType renderType) {
         for (GeoQuad quad : quads) {
-            quad.render(poseStack, vertexConsumer, renderType);
+            if (quad != null) {
+                quad.render(poseStack, vertexConsumer, renderType);
+            }
         }
     }
 
