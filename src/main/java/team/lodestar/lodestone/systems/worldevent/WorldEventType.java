@@ -7,6 +7,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import team.lodestar.lodestone.registry.client.LodestoneWorldEventRenderers;
 
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 public class WorldEventType {
 
@@ -50,7 +51,7 @@ public class WorldEventType {
         private final ResourceLocation id;
         private final EventInstanceSupplier<T> supplier;
         private boolean clientSynced;
-        private WorldEventRenderer<T> renderer;
+        private Supplier<WorldEventRenderer<T>> rendererSupplier;
 
         private Builder(EventInstanceSupplier<T> supplier, ResourceLocation id) {
             this.id = id;
@@ -72,12 +73,12 @@ public class WorldEventType {
          * Sets the event to be client-synced and assigns a renderer for the event.
          * The event will be automatically synced upon creation in {@link WorldEventInstance#sync(net.minecraft.world.level.Level)}.
          *
-         * @param renderer The renderer for the event. Set to null if you don't want a renderer for this world event.
+         * @param rendererSupplier The renderer supplier for the event. Set to null if you don't want a renderer for this world event.
          * @return The builder instance with the clientSynced flag set and the renderer assigned.
          */
-        public Builder<T> clientSynced(@Nullable WorldEventRenderer<T> renderer) {
+        public Builder<T> clientSynced(@Nullable Supplier<WorldEventRenderer<T>> rendererSupplier) {
             this.clientSynced = true;
-            this.renderer = renderer;
+            this.rendererSupplier = rendererSupplier;
             return this;
         }
 
@@ -85,7 +86,7 @@ public class WorldEventType {
          * Sets the event to be client-synced without assigning a renderer.
          * The event will be automatically synced upon creation in {@link WorldEventInstance#sync(net.minecraft.world.level.Level)}.
          *
-         * <p>If you want to use a renderer, use {@link #clientSynced(WorldEventRenderer)}.</p>
+         * <p>If you want to use a renderer, use {@link #clientSynced(Supplier)} instead.</p>
          *
          * @return The builder instance with the clientSynced flag set and no renderer assigned.
          */
@@ -102,7 +103,7 @@ public class WorldEventType {
         public WorldEventType build() {
             WorldEventType type = new WorldEventType(this.id, this.supplier, this.clientSynced);
             if (FMLEnvironment.dist.equals(Dist.CLIENT)) {
-                LodestoneWorldEventRenderers.registerRenderer(type, this.renderer);
+                LodestoneWorldEventRenderers.registerRenderer(type, this.rendererSupplier != null ? this.rendererSupplier.get() : null);
             }
             return type;
         }
