@@ -24,8 +24,10 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
         return SoundDefinition.definition().subtitle(subtitle(soundEvent));
     }
 
-    public void add(Supplier<SoundEvent> soundEvent, Function<SoundEvent, SoundDefinition> definition) {
-        add(soundEvent, definition.apply(soundEvent.get()));
+    public SoundDefinition add(Supplier<SoundEvent> soundEvent, Function<SoundEvent, SoundDefinition> definition) {
+        var result = definition.apply(soundEvent.get());
+        add(soundEvent, result);
+        return result;
     }
 
     public void addBlockSoundType(Function<LodestoneSoundEventProvider, BlockSoundEventBuilder> supplier) {
@@ -107,11 +109,11 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
         public final Supplier<SoundEvent> hitSound;
         public final Supplier<SoundEvent> fallSound;
 
-        private Function<SoundDefinition, SoundDefinition> breakSoundModifier = s -> s;
-        private Function<SoundDefinition, SoundDefinition> stepSoundModifier = s -> s;
-        private Function<SoundDefinition, SoundDefinition> placeSoundModifier = s -> s;
-        private Function<SoundDefinition, SoundDefinition> hitSoundModifier = s -> s;
-        private Function<SoundDefinition, SoundDefinition> fallSoundModifier = s -> s;
+        private Consumer<SoundDefinition.Sound> breakSoundModifier = s -> {};
+        private Consumer<SoundDefinition.Sound> stepSoundModifier = s -> {};
+        private Consumer<SoundDefinition.Sound> placeSoundModifier = s -> {};
+        private Consumer<SoundDefinition.Sound> hitSoundModifier = s -> {};
+        private Consumer<SoundDefinition.Sound> fallSoundModifier = s -> {};
 
         private String breakSoundName = "break";
         private String stepSoundName = "step";
@@ -131,7 +133,7 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
             this.fallSound = fallSound;
         }
 
-        public BlockSoundEventBuilder modifySounds(Function<SoundDefinition, SoundDefinition> modifier) {
+        public BlockSoundEventBuilder modifySounds(Consumer<SoundDefinition.Sound> modifier) {
             return this
                     .modifyBreakSound(modifier)
                     .modifyStepSound(modifier)
@@ -140,27 +142,27 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
                     .modifyFallSound(modifier);
         }
 
-        public BlockSoundEventBuilder modifyBreakSound(Function<SoundDefinition, SoundDefinition> modifier) {
+        public BlockSoundEventBuilder modifyBreakSound(Consumer<SoundDefinition.Sound> modifier) {
             this.breakSoundModifier = this.breakSoundModifier.andThen(modifier);
             return this;
         }
 
-        public BlockSoundEventBuilder modifyStepSound(Function<SoundDefinition, SoundDefinition> modifier) {
+        public BlockSoundEventBuilder modifyStepSound(Consumer<SoundDefinition.Sound> modifier) {
             this.stepSoundModifier = this.stepSoundModifier.andThen(modifier);
             return this;
         }
 
-        public BlockSoundEventBuilder modifyPlaceSound(Function<SoundDefinition, SoundDefinition> modifier) {
+        public BlockSoundEventBuilder modifyPlaceSound(Consumer<SoundDefinition.Sound> modifier) {
             this.placeSoundModifier = this.placeSoundModifier.andThen(modifier);
             return this;
         }
 
-        public BlockSoundEventBuilder modifyHitSound(Function<SoundDefinition, SoundDefinition> modifier) {
+        public BlockSoundEventBuilder modifyHitSound(Consumer<SoundDefinition.Sound> modifier) {
             this.hitSoundModifier = this.hitSoundModifier.andThen(modifier);
             return this;
         }
 
-        public BlockSoundEventBuilder modifyFallSound(Function<SoundDefinition, SoundDefinition> modifier) {
+        public BlockSoundEventBuilder modifyFallSound(Consumer<SoundDefinition.Sound> modifier) {
             this.fallSoundModifier = this.fallSoundModifier.andThen(modifier);
             return this;
         }
@@ -198,8 +200,8 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
             add(fallSound, fallSoundModifier, fallSoundName, "hit", "step");
         }
 
-        public void add(Supplier<SoundEvent> soundEvent, Function<SoundDefinition, SoundDefinition> modifier, String name, String... fallbacks) {
-            parent.add(soundEvent, s -> modifier.apply(parent.definition(s).with(parent.allSounds(path, name, fallbacks))));
+        public SoundDefinition add(Supplier<SoundEvent> soundEvent, Consumer<SoundDefinition.Sound> modifier, String name, String... fallbacks) {
+            return parent.add(soundEvent, s -> parent.definition(s).with(parent.allSounds(path, name, modifier, fallbacks)));
         }
     }
 }
