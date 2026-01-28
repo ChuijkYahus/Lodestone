@@ -47,7 +47,7 @@ public abstract class LodestoneBlockStateProvider extends BlockStateProvider {
     public static String getTexturePath() {
         return texturePath;
     }
-    
+
     public String getBlockName(Block block) {
         return BuiltInRegistries.BLOCK.getKey(block).getPath();
     }
