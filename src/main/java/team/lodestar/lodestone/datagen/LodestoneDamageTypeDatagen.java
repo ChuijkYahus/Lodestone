@@ -20,7 +20,9 @@ public class LodestoneDamageTypeDatagen extends DamageTypeTagsProvider {
     @Override
     protected void addTags(Provider pProvider) {
         tag(LodestoneDamageTypeTags.IS_MAGIC).add(DamageTypes.MAGIC, DamageTypes.INDIRECT_MAGIC);
-        tag(LodestoneDamageTypeTags.CAN_TRIGGER_MAGIC).add(DamageTypes.PLAYER_ATTACK);
+        tag(LodestoneDamageTypeTags.AFFECTED_BY_MAGIC_RESISTANCE).addTag(LodestoneDamageTypeTags.IS_MAGIC);
+        tag(LodestoneDamageTypeTags.AFFECTED_BY_MAGIC_PROFICIENCY).addTag(LodestoneDamageTypeTags.IS_MAGIC);
+        tag(LodestoneDamageTypeTags.CAN_TRIGGER_MAGIC_DAMAGE).add(DamageTypes.PLAYER_ATTACK);
         tag(LodestoneDamageTypeTags.IGNORES_MAGIC_ATTACK_COOLDOWN_SCALAR);
     }
 }

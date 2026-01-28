@@ -47,6 +47,28 @@ public abstract class LodestoneBlockStateProvider extends BlockStateProvider {
     public static String getTexturePath() {
         return texturePath;
     }
+    
+    public String getBlockName(Block block) {
+        return BuiltInRegistries.BLOCK.getKey(block).getPath();
+    }
+
+    public ResourceLocation getBlockTexture(String path) {
+        return modLoc("block/" + path);
+    }
+
+    public ResourceLocation getStaticBlockTexture(String path) {
+        return markTextureAsStatic(getBlockTexture(path));
+    }
+
+    public ResourceLocation markTextureAsStatic(ResourceLocation texture) {
+        staticTextures.add(texture);
+        return texture;
+    }
+
+    //TODO: move this to some sorta ResourceLocationHelper if it ever becomes needed.
+    public ResourceLocation extend(ResourceLocation resourceLocation, String suffix) {
+        return ResourceLocation.fromNamespaceAndPath(resourceLocation.getNamespace(), resourceLocation.getPath() + suffix);
+    }
 
     public ModularBlockStateSmith.ModelFileSupplier fromFunction(BiFunction<String, ResourceLocation, ModelFile> modelFileFunction) {
         return b -> {
@@ -85,6 +107,19 @@ public abstract class LodestoneBlockStateProvider extends BlockStateProvider {
         return models().withExistingParent(name, ResourceLocation.withDefaultNamespace("block/leaves")).texture("all", getBlockTexture(name));
     }
 
+    public ModelFile crossModel(Block block) {
+        String name = getBlockName(block);
+        return models().cross(name, getBlockTexture(name));
+    }
+
+    public ModelFile cubeBottomTop(Block block) {
+        String name = getBlockName(block);
+        ResourceLocation side = getBlockTexture(name + "_side");
+        ResourceLocation bottom = getBlockTexture(name + "_bottom");
+        ResourceLocation top = getBlockTexture(name + "_top");
+        return models().cubeBottomTop(name, side, bottom, top);
+    }
+
     public ModelFile airModel(Block block) {
         String name = getBlockName(block);
         return models().withExistingParent(name, ResourceLocation.withDefaultNamespace("block/air"));
@@ -93,27 +128,5 @@ public abstract class LodestoneBlockStateProvider extends BlockStateProvider {
     public ModelFile cubeModelAirTexture(Block block) {
         String name = getBlockName(block);
         return models().cubeAll(name, ResourceLocation.withDefaultNamespace("block/air"));
-    }
-
-    public String getBlockName(Block block) {
-        return BuiltInRegistries.BLOCK.getKey(block).getPath();
-    }
-
-    public ResourceLocation getBlockTexture(String path) {
-        return modLoc("block/" + path);
-    }
-
-    public ResourceLocation getStaticBlockTexture(String path) {
-        return markTextureAsStatic(getBlockTexture(path));
-    }
-
-    public ResourceLocation markTextureAsStatic(ResourceLocation texture) {
-        staticTextures.add(texture);
-        return texture;
-    }
-
-    //TODO: move this to some sorta ResourceLocationHelper if it ever becomes needed.
-    public ResourceLocation extend(ResourceLocation resourceLocation, String suffix) {
-        return ResourceLocation.fromNamespaceAndPath(resourceLocation.getNamespace(), resourceLocation.getPath() + suffix);
     }
 }

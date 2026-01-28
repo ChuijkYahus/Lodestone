@@ -18,18 +18,21 @@ public class LodestoneAttributeEventHandler {
         var target = event.getEntity();
         var damageType = source.typeHolder();
 
-        if (!damageType.is(LodestoneDamageTypeTags.IS_MAGIC)) {
-            return;
-        }
         float amount = event.getOriginalDamage();
-        var magicResistance = target.getAttribute(LodestoneAttributes.MAGIC_RESISTANCE);
-        if (magicResistance != null) {
-            amount /= (float) Math.max(magicResistance.getValue(), 0.01f);
+
+
+        if (damageType.is(LodestoneDamageTypeTags.AFFECTED_BY_MAGIC_RESISTANCE)) {
+            var magicResistance = target.getAttribute(LodestoneAttributes.MAGIC_RESISTANCE);
+            if (magicResistance != null) {
+                amount /= (float) Math.max(magicResistance.getValue(), 0.01f);
+            }
         }
-        if (source.getEntity() instanceof LivingEntity attacker) {
-            var magicProficiency = attacker.getAttribute(LodestoneAttributes.MAGIC_PROFICIENCY);
-            if (magicProficiency != null) {
-                amount *= (float) magicProficiency.getValue();
+        if (damageType.is(LodestoneDamageTypeTags.AFFECTED_BY_MAGIC_PROFICIENCY)) {
+            if (source.getEntity() instanceof LivingEntity attacker) {
+                var magicProficiency = attacker.getAttribute(LodestoneAttributes.MAGIC_PROFICIENCY);
+                if (magicProficiency != null) {
+                    amount *= (float) magicProficiency.getValue();
+                }
             }
         }
         event.setNewDamage(amount);
@@ -48,7 +51,7 @@ public class LodestoneAttributeEventHandler {
         if (!(source.getEntity() instanceof LivingEntity attacker)) {
             return;
         }
-        if (!damageType.is(LodestoneDamageTypeTags.CAN_TRIGGER_MAGIC)) {
+        if (!damageType.is(LodestoneDamageTypeTags.CAN_TRIGGER_MAGIC_DAMAGE)) {
             return;
         }
         var attribute = attacker.getAttribute(LodestoneAttributes.MAGIC_DAMAGE);
