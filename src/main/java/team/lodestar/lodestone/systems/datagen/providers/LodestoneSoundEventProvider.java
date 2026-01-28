@@ -76,7 +76,7 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
                 sounds.add(sound(path));
             } else {
                 if (counter == 1 && !leftoverFallbacks.isEmpty()) {
-                    name = basePath + leftoverFallbacks.removeFirst();
+                    name = leftoverFallbacks.removeFirst();
                     continue;
                 }
                 break;
