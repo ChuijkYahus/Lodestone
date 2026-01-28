@@ -64,6 +64,10 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
         var sounds = new ArrayList<SoundDefinition.Sound>();
         int counter = 1;
         var leftoverFallbacks = new ArrayList<>(List.of(fallbacks));
+
+        if (!basePath.isEmpty()) {
+            basePath += "/";
+        }
         while (true) {
             var id = basePath + name + counter;
             var path = name.contains(":") ? ResourceLocation.parse(id) : ResourceLocation.fromNamespaceAndPath(modId, id);
