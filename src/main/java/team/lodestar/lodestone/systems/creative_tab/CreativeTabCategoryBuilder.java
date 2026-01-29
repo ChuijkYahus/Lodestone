@@ -9,18 +9,18 @@ import java.util.function.*;
 
 public class CreativeTabCategoryBuilder {
 
-    protected final CategorizedCreativeTabWrapper categorizedTab;
+    protected final CategorizedCreativeTab categorizedTab;
     protected final String mod;
     protected final String id;
-    protected final ArrayList<Either<ItemStack, CategorizedCreativeTabWrapper.Operation>> items = new ArrayList<>();
+    protected final ArrayList<Either<ItemStack, CreativeTabCategory.Operation>> items = new ArrayList<>();
 
-    public CreativeTabCategoryBuilder(CategorizedCreativeTabWrapper categorizedTab, String mod, String id) {
+    public CreativeTabCategoryBuilder(CategorizedCreativeTab categorizedTab, String mod, String id) {
         this.categorizedTab = categorizedTab;
         this.mod = mod;
         this.id = id;
     }
 
-    public final <T extends Item> CreativeTabCategoryBuilder addItems(Consumer<CreativeTabCategoryBuilder> itemAdder) {
+    public final CreativeTabCategoryBuilder addItems(Consumer<CreativeTabCategoryBuilder> itemAdder) {
         itemAdder.accept(this);
         return this;
     }
@@ -54,11 +54,11 @@ public class CreativeTabCategoryBuilder {
     }
 
     public CreativeTabCategoryBuilder nextLine() {
-        items.add(Either.right(CategorizedCreativeTabWrapper.Operation.NEXT_LINE));
+        items.add(Either.right(CreativeTabCategory.Operation.NEXT_LINE));
         return this;
     }
 
     public void bake() {
-        categorizedTab.getCategories().put(id, new CategorizedCreativeTabWrapper.Category(mod, id, items));
+        categorizedTab.getCategories().put(id, new CreativeTabCategory(mod, id, items));
     }
 }

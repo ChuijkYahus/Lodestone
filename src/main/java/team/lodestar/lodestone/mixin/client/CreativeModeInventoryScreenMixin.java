@@ -10,13 +10,11 @@ import team.lodestar.lodestone.systems.creative_tab.*;
 @Mixin(CreativeModeInventoryScreen.class)
 public class CreativeModeInventoryScreenMixin {
 
-    @Shadow public static CreativeModeTab selectedTab;
-
     @Inject(method = "selectTab", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/NonNullList;addAll(Ljava/util/Collection;)Z", ordinal = 1, shift = At.Shift.AFTER))
     private void lodestone$selectTab(CallbackInfo ci) {
         var screen = ((CreativeModeInventoryScreen) (Object) this);
         var menu = screen.getMenu();
-        CategorizedCreativeTabHandler.modifyTab(menu, selectedTab);
+        CategorizedCreativeTabHandler.modifyTab(menu);
     }
     @Inject(method = "<init>", at = @At(value = "TAIL"))
     private void lodestone$initCreativeTab(CallbackInfo ci) {

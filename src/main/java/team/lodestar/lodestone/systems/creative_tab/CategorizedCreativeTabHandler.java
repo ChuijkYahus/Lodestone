@@ -1,7 +1,6 @@
 package team.lodestar.lodestone.systems.creative_tab;
 
 import com.mojang.datafixers.util.*;
-import it.unimi.dsi.fastutil.ints.*;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.*;
@@ -13,19 +12,13 @@ import net.minecraft.world.item.*;
 import java.util.*;
 
 public class CategorizedCreativeTabHandler {
-
-    private static final HashMap<CreativeModeTab, CategorizedCreativeTabWrapper> CATEGORIZED_TABS = new HashMap<>();
-
-    public static void registerCategorizedCreativeTab(CreativeModeTab tab, CategorizedCreativeTabWrapper wrapper) {
-        CATEGORIZED_TABS.put(tab, wrapper);
-    }
     
-    public static Optional<CategorizedCreativeTabWrapper> getOpenCategorizedTab() {
+    public static Optional<CategorizedCreativeTab> getOpenCategorizedTab() {
         var selectedTab = CreativeModeInventoryScreen.selectedTab;
-        if (!CATEGORIZED_TABS.containsKey(selectedTab)) {
-            return Optional.empty();
+        if (selectedTab instanceof CategorizedCreativeTab categorizedTab) {
+            return Optional.of(categorizedTab);
         }
-        return Optional.ofNullable(CATEGORIZED_TABS.get(selectedTab));
+        return Optional.empty();
     }
 
     public static void ensureCategoriesAreReal() {
@@ -36,12 +29,8 @@ public class CategorizedCreativeTabHandler {
         });
     }
 
-    public static void modifyTab(CreativeModeInventoryScreen.ItemPickerMenu menu, CreativeModeTab selectedTab) {
-        if (!CATEGORIZED_TABS.containsKey(selectedTab)) {
-            return;
-        }
-        var categorizedTab = CATEGORIZED_TABS.get(selectedTab);
-        fillMenu(menu, categorizedTab);
+    public static void modifyTab(CreativeModeInventoryScreen.ItemPickerMenu menu) {
+        getOpenCategorizedTab().ifPresent(t -> fillMenu(menu, t));
     }
 
     public static boolean renderSlot(GuiGraphics guiGraphics, Slot slot) {
@@ -111,14 +100,14 @@ public class CategorizedCreativeTabHandler {
         return false;
     }
 
-    public static void fillMenu(CreativeModeInventoryScreen.ItemPickerMenu menu, CategorizedCreativeTabWrapper categorizedTab) {
+    public static void fillMenu(CreativeModeInventoryScreen.ItemPickerMenu menu, CategorizedCreativeTab categorizedTab) {
         var categories = categorizedTab.getCategories().values();
         var items = menu.items;
         categorizedTab.getHeaders().clear();
         items.clear();
-        for (CategorizedCreativeTabWrapper.Category category : categories) {
+        for (CreativeTabCategory category : categories) {
             addCategoryHeader(menu, categorizedTab, category);
-            for (Either<ItemStack, CategorizedCreativeTabWrapper.Operation> either : category.items()) {
+            for (Either<ItemStack, CreativeTabCategory.Operation> either : category.items()) {
                 either.ifLeft(i -> {
                     if (categorizedTab.isItemVisible(i)) {
                         items.add(i);
@@ -130,11 +119,11 @@ public class CategorizedCreativeTabHandler {
         }
     }
 
-    public static void addCategoryHeader(CreativeModeInventoryScreen.ItemPickerMenu menu, CategorizedCreativeTabWrapper categorizedTab, CategorizedCreativeTabWrapper.Category category) {
+    public static void addCategoryHeader(CreativeModeInventoryScreen.ItemPickerMenu menu, CategorizedCreativeTab categorizedTab, CreativeTabCategory category) {
         var items = menu.items;
         var index = items.size();
         clearRow(menu, true);
-        categorizedTab.getHeaders().put(index, new CategorizedCreativeTabWrapper.CategoryHeader(category));
+        categorizedTab.getHeaders().put(index, new CreativeTabCategory.CategoryHeader(category));
     }
 
     public static void clearRow(CreativeModeInventoryScreen.ItemPickerMenu menu, boolean force) {
