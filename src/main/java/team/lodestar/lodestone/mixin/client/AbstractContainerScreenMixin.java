@@ -13,14 +13,14 @@ import team.lodestar.lodestone.systems.creative_tab.*;
 public class AbstractContainerScreenMixin {
 
     @Inject(method = "renderSlot", at = @At("HEAD"), cancellable = true)
-    private void malum$modifySlotRendering(GuiGraphics guiGraphics, Slot slot, CallbackInfo ci) {
+    private void lodestone$modifySlotRendering(GuiGraphics guiGraphics, Slot slot, CallbackInfo ci) {
         if (CategorizedCreativeTabHandler.renderSlot(guiGraphics, slot)) {
             ci.cancel();
         }
     }
 
     @Inject(method = "renderSlotHighlight(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;IIF)V", at = @At("HEAD"), cancellable = true)
-    private void malum$modifySlotHighlightRendering(GuiGraphics guiGraphics, Slot slot, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+    private void lodestone$modifySlotHighlightRendering(GuiGraphics guiGraphics, Slot slot, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         if (CategorizedCreativeTabHandler.disableSlotHighlight(slot)) {
             ci.cancel();
         }
