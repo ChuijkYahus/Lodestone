@@ -1,14 +1,25 @@
 package team.lodestar.lodestone.mixin.client;
 
-import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
-import org.spongepowered.asm.mixin.Mixin;
+import net.minecraft.client.gui.screens.inventory.*;
+import net.minecraft.world.item.*;
+import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.callback.*;
+import team.lodestar.lodestone.systems.creative_tab.*;
 
 @Mixin(CreativeModeInventoryScreen.class)
 public class CreativeModeInventoryScreenMixin {
 
-//    @Inject(method = "renderTabButton", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;renderItem(Lnet/minecraft/world/item/ItemStack;II)V"), locals = LocalCapture.CAPTURE_FAILHARD)
-//    private void lodestone$renderScreenParticleAtTabIcon(GuiGraphics guiGraphics, CreativeModeTab tab, CallbackInfo ci, boolean bl, boolean bl2, int a, int b, int c, int d, int e, int f, ItemStack itemStack) {
-//        ScreenParticleHandler.renderItemStackEarly(guiGraphics.pose(), tab.getIconItem(), d, e, false);
-//        ((TheWorstInterface) guiGraphics).lodestone$setB(true);
-//    }
+    @Shadow public static CreativeModeTab selectedTab;
+
+    @Inject(method = "selectTab", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/NonNullList;addAll(Ljava/util/Collection;)Z", ordinal = 1, shift = At.Shift.AFTER))
+    private void lodestone$selectTab(CallbackInfo ci) {
+        var screen = ((CreativeModeInventoryScreen) (Object) this);
+        var menu = screen.getMenu();
+        CategorizedCreativeTabHandler.modifyTab(menu, selectedTab);
+    }
+    @Inject(method = "<init>", at = @At(value = "TAIL"))
+    private void lodestone$initCreativeTab(CallbackInfo ci) {
+        CategorizedCreativeTabHandler.ensureCategoriesAreReal();
+    }
 }

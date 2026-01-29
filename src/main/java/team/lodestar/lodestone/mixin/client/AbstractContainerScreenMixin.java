@@ -1,22 +1,29 @@
 package team.lodestar.lodestone.mixin.client;
 
+import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.world.inventory.*;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.callback.*;
+import team.lodestar.lodestone.systems.creative_tab.*;
 
 
 @Mixin(AbstractContainerScreen.class)
 public class AbstractContainerScreenMixin {
 
-//    @Inject(method = "renderSlot", at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Lnet/minecraft/client/gui/GuiGraphics;renderItem(Lnet/minecraft/world/item/ItemStack;III)V"))
-//    private void lodestone$renderScreenParticleAtSlot(GuiGraphics guiGraphics, Slot slot, CallbackInfo ci) {
-//        ScreenParticleHandler.renderItemStackEarly(guiGraphics.pose(), slot.getItem(), slot.x, slot.y, true);
-//        ((TheWorstInterface) guiGraphics).lodestone$setB(true);
-//    }
-//
-//    @Inject(method = "renderFloatingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;renderItem(Lnet/minecraft/world/item/ItemStack;II)V"))
-//    private void lodestone$renderScreenParticleAtMouse(GuiGraphics guiGraphics, ItemStack stack, int x, int y, String p_282568_, CallbackInfo ci) {
-//        ScreenParticleHandler.renderItemStackEarly(guiGraphics.pose(), stack, x, y, true);
-//        ((TheWorstInterface) guiGraphics).lodestone$setB(true);
-//    }
+    @Inject(method = "renderSlot", at = @At("HEAD"), cancellable = true)
+    private void malum$modifySlotRendering(GuiGraphics guiGraphics, Slot slot, CallbackInfo ci) {
+        if (CategorizedCreativeTabHandler.renderSlot(guiGraphics, slot)) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "renderSlotHighlight(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;IIF)V", at = @At("HEAD"), cancellable = true)
+    private void malum$modifySlotHighlightRendering(GuiGraphics guiGraphics, Slot slot, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+        if (CategorizedCreativeTabHandler.disableSlotHighlight(slot)) {
+            ci.cancel();
+        }
+    }
 
 }
