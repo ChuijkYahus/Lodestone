@@ -4,9 +4,10 @@ import com.mojang.datafixers.util.*;
 import net.minecraft.world.item.*;
 
 import java.util.*;
+import java.util.function.*;
 
 public record CreativeTabCategory(String mod, String id,
-                                  List<Either<ItemStack, Operation>> items) {
+                                  List<Either<Supplier<ItemStack>, Operation>> items) {
     public String getHeaderLangKey() {
         return mod + ".itemGroup.header." + id;
     }

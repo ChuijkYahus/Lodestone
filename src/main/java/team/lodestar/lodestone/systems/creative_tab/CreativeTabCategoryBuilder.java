@@ -12,7 +12,7 @@ public class CreativeTabCategoryBuilder {
     protected final CategorizedCreativeTab categorizedTab;
     protected final String mod;
     protected final String id;
-    protected final ArrayList<Either<ItemStack, CreativeTabCategory.Operation>> items = new ArrayList<>();
+    protected final ArrayList<Either<Supplier<ItemStack>, CreativeTabCategory.Operation>> items = new ArrayList<>();
 
     public CreativeTabCategoryBuilder(CategorizedCreativeTab categorizedTab, String mod, String id) {
         this.categorizedTab = categorizedTab;
@@ -41,15 +41,20 @@ public class CreativeTabCategoryBuilder {
     }
 
     public CreativeTabCategoryBuilder addItem(Supplier<Item> item) {
-        return addItem(item.get());
+        return addItemStack(() -> item.get().getDefaultInstance());
+    }
+
+    public CreativeTabCategoryBuilder addItemStack(Supplier<ItemStack> item) {
+        items.add(Either.left(item));
+        return this;
     }
 
     public CreativeTabCategoryBuilder addItem(Item item) {
-        return addItem(item.getDefaultInstance());
+        return addItemStack(item.getDefaultInstance());
     }
 
-    public CreativeTabCategoryBuilder addItem(ItemStack item) {
-        items.add(Either.left(item));
+    public CreativeTabCategoryBuilder addItemStack(ItemStack item) {
+        items.add(Either.left(() -> item));
         return this;
     }
 

@@ -16,8 +16,4 @@ public class CreativeModeInventoryScreenMixin {
         var menu = screen.getMenu();
         CategorizedCreativeTabHandler.modifyTab(menu);
     }
-    @Inject(method = "<init>", at = @At(value = "TAIL"))
-    private void lodestone$initCreativeTab(CallbackInfo ci) {
-        CategorizedCreativeTabHandler.ensureCategoriesAreReal();
-    }
 }

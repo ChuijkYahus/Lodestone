@@ -10,6 +10,7 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.*;
 
 import java.util.*;
+import java.util.function.*;
 
 public class CategorizedCreativeTabHandler {
     
@@ -19,14 +20,6 @@ public class CategorizedCreativeTabHandler {
             return Optional.of(categorizedTab);
         }
         return Optional.empty();
-    }
-
-    public static void ensureCategoriesAreReal() {
-        getOpenCategorizedTab().ifPresent(t -> {
-            if (t.getCategories().isEmpty()) {
-                t.buildCategories();
-            }
-        });
     }
 
     public static void modifyTab(CreativeModeInventoryScreen.ItemPickerMenu menu) {
@@ -107,10 +100,11 @@ public class CategorizedCreativeTabHandler {
         items.clear();
         for (CreativeTabCategory category : categories) {
             addCategoryHeader(menu, categorizedTab, category);
-            for (Either<ItemStack, CreativeTabCategory.Operation> either : category.items()) {
+            for (Either<Supplier<ItemStack>, CreativeTabCategory.Operation> either : category.items()) {
                 either.ifLeft(i -> {
-                    if (categorizedTab.isItemVisible(i)) {
-                        items.add(i);
+                    var item = i.get();
+                    if (categorizedTab.isItemVisible(item)) {
+                        items.add(item);
                     }
                 });
                 either.ifRight(e -> clearRow(menu, false));
