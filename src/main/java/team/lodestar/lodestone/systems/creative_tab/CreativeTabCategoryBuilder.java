@@ -8,6 +8,7 @@ import net.neoforged.neoforge.registries.*;
 import java.util.*;
 import java.util.function.*;
 
+@SuppressWarnings("UnusedReturnValue")
 public class CreativeTabCategoryBuilder {
 
     protected final CategorizedCreativeTab categorizedTab;
@@ -34,45 +35,53 @@ public class CreativeTabCategoryBuilder {
     }
 
     @SafeVarargs
-    public final <T extends Item> CreativeTabCategoryBuilder addItems(DeferredHolder<Item, T>... items) {
-        for (DeferredHolder<Item, T> item : items) {
-            addItem(item::get);
+    public final <T extends Item> CreativeTabCategoryBuilder addItems(Supplier<T>... items) {
+        for (Supplier<T> item : items) {
+            addItem(item);
         }
         return this;
     }
 
     @SafeVarargs
-    public final <T extends Block> CreativeTabCategoryBuilder addBlocks(DeferredHolder<Block, T>... blocks) {
-        for (DeferredHolder<Block, T> block : blocks) {
-            addBlockItem(block::get);
+    public final  CreativeTabCategoryBuilder addItemStacks(Supplier<ItemStack>... items) {
+        for (Supplier<ItemStack> stack : items) {
+            addItemStack(stack);
         }
         return this;
     }
 
-    public CreativeTabCategoryBuilder addItem(Item item) {
+    @SafeVarargs
+    public final <T extends Block> CreativeTabCategoryBuilder addBlocks(Supplier<T>... blocks) {
+        for (Supplier<T> block : blocks) {
+            addBlockItem(block);
+        }
+        return this;
+    }
+
+    public final CreativeTabCategoryBuilder addItem(Item item) {
         return addItemStack(item.getDefaultInstance());
     }
 
-    public CreativeTabCategoryBuilder addItem(Supplier<Item> item) {
-        return addItemStack(() -> item.get().getDefaultInstance());
-    }
-
-    public CreativeTabCategoryBuilder addItemStack(ItemStack item) {
+    public final CreativeTabCategoryBuilder addItemStack(ItemStack item) {
         items.add(Either.left(() -> item));
         return this;
     }
 
-    public CreativeTabCategoryBuilder addItemStack(Supplier<ItemStack> item) {
-        items.add(Either.left(item));
-        return this;
-    }
-
-    public CreativeTabCategoryBuilder addBlockItem(Block block) {
+    public final CreativeTabCategoryBuilder addBlockItem(Block block) {
         items.add(Either.left(() -> block.asItem().getDefaultInstance()));
         return this;
     }
 
-    public CreativeTabCategoryBuilder addBlockItem(Supplier<Block> block) {
+    public final <T extends Item> CreativeTabCategoryBuilder addItem(Supplier<T> item) {
+        return addItemStack(() -> item.get().getDefaultInstance());
+    }
+
+    public final CreativeTabCategoryBuilder addItemStack(Supplier<ItemStack> item) {
+        items.add(Either.left(item));
+        return this;
+    }
+
+    public final <T extends Block> CreativeTabCategoryBuilder addBlockItem(Supplier<T> block) {
         items.add(Either.left(() -> block.get().asItem().getDefaultInstance()));
         return this;
     }
