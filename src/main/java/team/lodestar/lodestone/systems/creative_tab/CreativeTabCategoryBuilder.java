@@ -2,6 +2,7 @@ package team.lodestar.lodestone.systems.creative_tab;
 
 import com.mojang.datafixers.util.*;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.block.*;
 import net.neoforged.neoforge.registries.*;
 
 import java.util.*;
@@ -40,8 +41,17 @@ public class CreativeTabCategoryBuilder {
         return this;
     }
 
+    public CreativeTabCategoryBuilder addItem(Item item) {
+        return addItemStack(item.getDefaultInstance());
+    }
+
     public CreativeTabCategoryBuilder addItem(Supplier<Item> item) {
         return addItemStack(() -> item.get().getDefaultInstance());
+    }
+
+    public CreativeTabCategoryBuilder addItemStack(ItemStack item) {
+        items.add(Either.left(() -> item));
+        return this;
     }
 
     public CreativeTabCategoryBuilder addItemStack(Supplier<ItemStack> item) {
@@ -49,12 +59,13 @@ public class CreativeTabCategoryBuilder {
         return this;
     }
 
-    public CreativeTabCategoryBuilder addItem(Item item) {
-        return addItemStack(item.getDefaultInstance());
+    public CreativeTabCategoryBuilder addBlockItem(Block block) {
+        items.add(Either.left(() -> block.asItem().getDefaultInstance()));
+        return this;
     }
 
-    public CreativeTabCategoryBuilder addItemStack(ItemStack item) {
-        items.add(Either.left(() -> item));
+    public CreativeTabCategoryBuilder addBlockItem(Supplier<Block> block) {
+        items.add(Either.left(() -> block.get().asItem().getDefaultInstance()));
         return this;
     }
 
