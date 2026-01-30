@@ -57,7 +57,7 @@ public class CategorizedCreativeTabHandler {
                 var headers = categorizedTab.getHeaders();
                 if (headers.containsKey(itemIndex)) {
                     var header = headers.get(itemIndex);
-                    var texture = categorizedTab.getHeaderTexture(row, column);
+                    var texture = categorizedTab.getHeaderTexture(header, row, column);
                     if (texture.isPresent()) {
                         var sprite = minecraft.getGuiSprites().getSprite(texture.get());
                         guiGraphics.blit(slot.x - 1, slot.y - 2, 0, 18, 20, sprite);
