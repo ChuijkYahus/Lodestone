@@ -18,7 +18,7 @@ public abstract class CategorizedCreativeTab extends CreativeModeTab {
         this.mod = mod;
     }
 
-    public abstract Optional<ResourceLocation> getHeaderTexture(int row, int column);
+    public abstract Optional<ResourceLocation> getHeaderTexture(CreativeTabCategory.CategoryHeader header, int row, int column);
 
     public abstract Optional<ResourceLocation> getEmptySlotTexture(int row, int column);
 
