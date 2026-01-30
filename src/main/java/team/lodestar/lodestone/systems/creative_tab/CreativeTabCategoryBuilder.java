@@ -26,6 +26,13 @@ public class CreativeTabCategoryBuilder {
         return this;
     }
 
+    public CreativeTabCategoryBuilder addItems(Item... items) {
+        for (Item item : items) {
+            addItem(item);
+        }
+        return this;
+    }
+
     @SafeVarargs
     public final <T extends Item> CreativeTabCategoryBuilder addItems(DeferredHolder<Item, T>... items) {
         for (DeferredHolder<Item, T> item : items) {
@@ -34,9 +41,10 @@ public class CreativeTabCategoryBuilder {
         return this;
     }
 
-    public CreativeTabCategoryBuilder addItems(Item... items) {
-        for (Item item : items) {
-            addItem(item);
+    @SafeVarargs
+    public final <T extends Block> CreativeTabCategoryBuilder addBlocks(DeferredHolder<Block, T>... blocks) {
+        for (DeferredHolder<Block, T> block : blocks) {
+            addBlockItem(block::get);
         }
         return this;
     }
