@@ -9,11 +9,13 @@ import java.util.function.*;
 
 public abstract class CategorizedCreativeTab extends CreativeModeTab {
 
+    final String mod;
     final HashMap<String, CreativeTabCategory> categories = new LinkedHashMap<>();
     final Int2ObjectArrayMap<CreativeTabCategory.CategoryHeader> headers = new Int2ObjectArrayMap<>();
 
-    protected CategorizedCreativeTab(Builder builder) {
+    protected CategorizedCreativeTab(String mod, Builder builder) {
         super(builder);
+        this.mod = mod;
     }
 
     public abstract Optional<ResourceLocation> getHeaderTexture(int row, int column);
@@ -32,7 +34,7 @@ public abstract class CategorizedCreativeTab extends CreativeModeTab {
         return headers;
     }
 
-    public CreativeTabCategoryBuilder createCategory(String mod, String id) {
+    public CreativeTabCategoryBuilder createCategory(String id) {
         return new CreativeTabCategoryBuilder(this, mod, id);
     }
 
