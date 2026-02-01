@@ -5,19 +5,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import team.lodestar.lodestone.registry.client.LodestoneWorldEventRenderers;
-import team.lodestar.lodestone.systems.command.CommandParameterBuilder;
-import team.lodestar.lodestone.systems.command.DynamicCommandParameter;
+import team.lodestar.lodestone.systems.command.CommandCodec;
 
 import javax.annotation.Nullable;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class WorldEventType {
     public final ResourceLocation id;
     public final EventInstanceSupplier<?> supplier;
     public final boolean clientSynced;
-    public final DynamicCommandParameter<?, ?>[] params;
-
+    public final @Nullable CommandCodec<? extends WorldEventInstance> commandCodec;
 
     /**
      * Creates a new world event type.
@@ -25,22 +22,22 @@ public class WorldEventType {
      * @param supplier The supplier for the event instance
      * @param clientSynced Should this event exist on the client? It will be automatically synced upon creation of the event in {@link WorldEventInstance#sync(net.minecraft.world.level.Level)}
      */
-    public WorldEventType(ResourceLocation id, EventInstanceSupplier<?> supplier, boolean clientSynced, DynamicCommandParameter<?, ?>[] params) {
+    public WorldEventType(ResourceLocation id, EventInstanceSupplier<?> supplier, boolean clientSynced, @Nullable CommandCodec<? extends WorldEventInstance> commandCodec) {
         this.id = id;
         this.supplier = supplier;
         this.clientSynced = clientSynced;
-        this.params = params;
+        this.commandCodec = commandCodec;
     }
 
     /**
      * Creates a new world event type.
      * <p>By default, the event will not be client-synced.</p>
-     * <p>See {@link #WorldEventType(ResourceLocation, EventInstanceSupplier, boolean, DynamicCommandParameter[])} for more information.</p>
+     * <p>See {@link #WorldEventType(ResourceLocation, EventInstanceSupplier, boolean, CommandCodec)} for more information.</p>
      * @param id The id of the event type
      * @param supplier The supplier for the event instance
      */
     public WorldEventType(ResourceLocation id, EventInstanceSupplier<?> supplier) {
-        this(id, supplier, false, new DynamicCommandParameter<?,?>[0]);
+        this(id, supplier, false, null);
     }
 
     public boolean isClientSynced() {
@@ -56,7 +53,7 @@ public class WorldEventType {
         private final EventInstanceSupplier<T> supplier;
         private boolean clientSynced;
         private @Nullable Supplier<WorldEventRenderer<T>> rendererSupplier;
-        private CommandParameterBuilder parameterBuilder;
+        private @Nullable CommandCodec<? extends WorldEventInstance> commandCodec;
 
         private Builder(EventInstanceSupplier<T> supplier, ResourceLocation id) {
             this.id = id;
@@ -99,15 +96,14 @@ public class WorldEventType {
             return clientSynced(null);
         }
 
-
-        public <A> Builder<T> withCommandArguments(Consumer<CommandParameterBuilder> parameterBuilder) {
-            this.parameterBuilder = new CommandParameterBuilder();
-            parameterBuilder.accept(this.parameterBuilder);
-            return this;
-        }
-
-        public <A> Builder<T> withCommandArguments(CommandParameterBuilder parameterBuilder) {
-            this.parameterBuilder = parameterBuilder;
+        /**
+         * Sets the command codec for the world event type.
+         * <p>If you never call this </>
+         * @param commandCodec The command codec
+         * @return The builder instance with the command codec set.
+         */
+        public Builder<T> withCommandCodec(CommandCodec<? extends WorldEventInstance> commandCodec) {
+            this.commandCodec = commandCodec;
             return this;
         }
 
@@ -118,7 +114,7 @@ public class WorldEventType {
          * @return The built WorldEventType.
          */
         public WorldEventType build() {
-            WorldEventType type = new WorldEventType(this.id, this.supplier, this.clientSynced, this.parameterBuilder.build());
+            WorldEventType type = new WorldEventType(this.id, this.supplier, this.clientSynced, this.commandCodec);
             if (FMLEnvironment.dist.equals(Dist.CLIENT)) {
                 LodestoneWorldEventRenderers.registerRenderer(type, this.rendererSupplier != null ? this.rendererSupplier.get() : null);
             }
