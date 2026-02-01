@@ -98,7 +98,7 @@ public class WorldEventType {
 
         /**
          * Sets the command codec for the world event type.
-         * <p>If you never call this </>
+         * <p>If you never call this you won't be able to construct world events using commands (/lodestone worldevent create) </>
          * @param commandCodec The command codec
          * @return The builder instance with the command codec set.
          */
