@@ -45,7 +45,7 @@ public record CubeVertexData(CubeVertices bottomVertices, CubeVertices topVertic
             return topVertices.vertices;
         }
         if (direction.equals(Direction.DOWN)) {
-            return bottomVertices.invert().vertices;
+            return bottomVertices.invert();
         }
         return getVerticesByIndex(direction.get2DDataValue()).vertices;
     }

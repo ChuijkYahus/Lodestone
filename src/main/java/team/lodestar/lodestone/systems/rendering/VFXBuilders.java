@@ -688,7 +688,7 @@ public class VFXBuilders {
         public WorldVFXBuilder renderCube(PoseStack poseStack, CubeVertexData cubeVertexData) {
             var topVertices = cubeVertexData.topVertices().vertices();
             var bottomVertices = cubeVertexData.bottomVertices().invert();
-            
+
             renderQuad(poseStack, topVertices);
             renderQuad(poseStack, bottomVertices);
             for (CubeVertexData.CubeVertices horizontal : cubeVertexData.byHorizontalDirection()) {
