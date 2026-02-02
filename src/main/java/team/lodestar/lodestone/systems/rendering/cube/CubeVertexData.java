@@ -6,10 +6,14 @@ import net.minecraft.util.Mth;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.function.*;
 
-public record CubeVertexData(Vector3f[] bottomVertices, Vector3f[] topVertices, List<Vector3f[]> offsetMap) {
+public record CubeVertexData(CubeVertices bottomVertices, CubeVertices topVertices, List<CubeVertices> byHorizontalDirection) {
+
+    public CubeVertexData(Vector3f[] bottomVertices, Vector3f[] topVertices, List<Vector3f[]> directionToVertex) {
+        this(new CubeVertices(bottomVertices), new CubeVertices(topVertices), directionToVertex.stream().map(CubeVertices::new).toList());
+    }
 
     public static CubeVertexData makeCubePositions(float scale) {
         return makeCubePositions(scale, scale);
@@ -28,28 +32,29 @@ public record CubeVertexData(Vector3f[] bottomVertices, Vector3f[] topVertices, 
     public static CubeVertexData makeCubePositions(float xStart, float xEnd, float yStart, float yEnd, float zStart, float zEnd) {
         Vector3f[] bottomVertices = new Vector3f[]{new Vector3f(xStart, yStart, zStart), new Vector3f(xStart, yStart, zEnd), new Vector3f(xEnd, yStart, zEnd), new Vector3f(xEnd, yStart, zStart)};
         Vector3f[] topVertices = new Vector3f[]{new Vector3f(xStart, yEnd, zStart), new Vector3f(xStart, yEnd, zEnd), new Vector3f(xEnd, yEnd, zEnd), new Vector3f(xEnd, yEnd, zStart)};
-        List<Vector3f[]> offsetMap = new ArrayList<>();
+        List<Vector3f[]> byHorizontalDirection = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            int index = (i*3+3) % 4; //this weird and specific numbering is to tie the vertices to horizontal directions
-            offsetMap.add(new Vector3f[]{bottomVertices[(index) % 4], bottomVertices[(index+1) % 4], topVertices[(index+1) % 4], topVertices[(index) % 4]});
+            int index = (i * 3 + 3) % 4; //this weird and specific numbering is to tie the vertices to horizontal directions
+            byHorizontalDirection.add(new Vector3f[]{bottomVertices[(index) % 4], bottomVertices[(index + 1) % 4], topVertices[(index + 1) % 4], topVertices[(index) % 4]});
         }
-        return new CubeVertexData(bottomVertices, topVertices, offsetMap);
+        return new CubeVertexData(bottomVertices, topVertices, byHorizontalDirection);
     }
 
     public Vector3f[] getVerticesByDirection(Direction direction) {
         if (direction.equals(Direction.UP)) {
-            return topVertices;
+            return topVertices.vertices;
         }
         if (direction.equals(Direction.DOWN)) {
-            return new Vector3f[]{bottomVertices[3], bottomVertices[2], bottomVertices[1], bottomVertices[0]};
+            return bottomVertices.invert().vertices;
         }
-        return getVerticesByIndex(direction.get2DDataValue());
+        return getVerticesByIndex(direction.get2DDataValue()).vertices;
     }
 
-    public Vector3f[] getVerticesByIndex(int index) {
-        return offsetMap.get(index);
+    public CubeVertices getVerticesByIndex(int index) {
+        return byHorizontalDirection.get(index);
     }
 
+    //TODO: These kinda smell
     public CubeVertexData applyWobble(float sineOffset, float strength) {
         return applyWobble(sineOffset, sineOffset, strength);
     }
@@ -58,19 +63,20 @@ public record CubeVertexData(Vector3f[] bottomVertices, Vector3f[] topVertices, 
         return applyWobble(bottomVertices, bottomSineOffset, strength).applyWobble(topVertices, topSineOffset, strength);
     }
 
-    public CubeVertexData applyWobble(Vector3f[] offsets, float sineOffset, float strength) {
-        applyVertexWobble(offsets, sineOffset, strength);
+    public CubeVertexData applyWobble(CubeVertices vertices, float sineOffset, float strength) {
+        applyVertexWobble(vertices, sineOffset, strength);
         return this;
     }
 
-    public static void applyVertexWobble(Vector3f[] offsets, float sineOffset, float strength) {
+    public static void applyVertexWobble(CubeVertices vertices, float sineOffset, float strength) {
         float offset = sineOffset;
-        for (Vector3f vector3f : offsets) {
-            double time = ((Minecraft.getInstance().level.getGameTime() / 40.0F) % 6.28f);
+        long gameTime = Minecraft.getInstance().level.getGameTime();
+        for (Vector3f vertex : vertices.vertices) {
+            double time = ((gameTime / 40.0F) % 40.0F) * 6.28f;
             float angle = (float) (time + (offset * 6.28f));
             float sin = Mth.sin(angle) * strength;
             float cos = Mth.cos(angle) * strength;
-            vector3f.add(sin, cos, 0);
+            vertex.add(sin, cos, 0);
             offset += 0.25f;
         }
     }
@@ -84,18 +90,61 @@ public record CubeVertexData(Vector3f[] bottomVertices, Vector3f[] topVertices, 
     }
 
     public CubeVertexData scale(float x, float y, float z) {
-        for (int i = 0; i < bottomVertices.length; i++) {
-            bottomVertices[i].mul(x, y, z);
-            topVertices[i].mul(x, y, z);
-        }
+        scale(CubeVertexData::bottomVertices, x, y, z);
+        scale(CubeVertexData::topVertices, x, y, z);
+        return this;
+    }
+
+    public CubeVertexData scale(Function<CubeVertexData, CubeVertices> vertices, float scale) {
+        return scale(vertices, scale, scale);
+    }
+
+    public CubeVertexData scale(Function<CubeVertexData, CubeVertices> vertices, float width, float height) {
+        return scale(vertices, width, height, width);
+    }
+
+    public CubeVertexData scale(Function<CubeVertexData, CubeVertices> vertices, float x, float y, float z) {
+        vertices.apply(this).scale(x, y, z);
         return this;
     }
 
     public CubeVertexData offset(float x, float y, float z) {
-        for (int i = 0; i < bottomVertices.length; i++) {
-            bottomVertices[i].add(x, y, z);
-            topVertices[i].add(x, y, z);
-        }
+        offset(CubeVertexData::bottomVertices, x, y, z);
+        offset(CubeVertexData::topVertices, x, y, z);
         return this;
+    }
+
+    public CubeVertexData offset(Function<CubeVertexData, CubeVertices> vertices, float x, float y, float z) {
+        vertices.apply(this).scale(x, y, z);
+        return this;
+    }
+
+    public record CubeVertices(Vector3f[] vertices) {
+
+        public CubeVertices scale(float scale) {
+            return scale(scale, scale);
+        }
+
+        public CubeVertices scale(float width, float height) {
+            return scale(width, height, width);
+        }
+
+        public CubeVertices scale(float x, float y, float z) {
+            for (Vector3f vertex : vertices) {
+                vertex.mul(x, y, z);
+            }
+            return this;
+        }
+
+        public CubeVertices offset(float x, float y, float z) {
+            for (Vector3f vertex : vertices) {
+                vertex.add(x, y, z);
+            }
+            return this;
+        }
+
+        public Vector3f[] invert() {
+            return new Vector3f[]{vertices[3], vertices[2], vertices[1], vertices[0]};
+        }
     }
 }

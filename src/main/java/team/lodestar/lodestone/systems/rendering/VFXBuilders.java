@@ -7,7 +7,6 @@ import net.minecraft.client.*;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.texture.*;
 import net.minecraft.core.*;
 import net.minecraft.resources.*;
 import net.minecraft.util.*;
@@ -687,14 +686,14 @@ public class VFXBuilders {
         }
 
         public WorldVFXBuilder renderCube(PoseStack poseStack, CubeVertexData cubeVertexData) {
-            Vector3f[] topVertices = cubeVertexData.topVertices();
-            Vector3f[] bottomVertices = cubeVertexData.bottomVertices();
-            Collection<Vector3f[]> offsetMap = cubeVertexData.offsetMap();
-            for (Vector3f[] offsets : offsetMap) {
-                renderQuad(poseStack, offsets);
-            }
-            renderQuad(poseStack, new Vector3f[]{bottomVertices[3], bottomVertices[2], bottomVertices[1], bottomVertices[0]});
+            var topVertices = cubeVertexData.topVertices().vertices();
+            var bottomVertices = cubeVertexData.bottomVertices().invert();
+            
             renderQuad(poseStack, topVertices);
+            renderQuad(poseStack, bottomVertices);
+            for (CubeVertexData.CubeVertices horizontal : cubeVertexData.byHorizontalDirection()) {
+                renderQuad(poseStack, horizontal.vertices());
+            }
             return this;
         }
 

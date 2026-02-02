@@ -43,7 +43,7 @@ public class CreativeTabCategoryBuilder {
     }
 
     @SafeVarargs
-    public final  CreativeTabCategoryBuilder addItemStacks(Supplier<ItemStack>... items) {
+    public final CreativeTabCategoryBuilder addItemStacks(Supplier<ItemStack>... items) {
         for (Supplier<ItemStack> stack : items) {
             addItemStack(stack);
         }
