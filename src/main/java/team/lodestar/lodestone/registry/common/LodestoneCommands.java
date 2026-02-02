@@ -25,6 +25,7 @@ public class LodestoneCommands {
                                 .then(GetDataWorldEventCommand.register())
                                 .then(FreezeActiveWorldEventsCommand.register())
                                 .then(UnfreezeActiveWorldEventsCommand.register())
+                                .then(CreateWorldEventsCommand.register())
                         )
         );
         dispatcher.register(Commands.literal(LODESTONE)

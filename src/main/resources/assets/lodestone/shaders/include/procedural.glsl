@@ -136,3 +136,44 @@ float fbm4D(vec4 uv, int OCTAVES) {
 
     return value;
 }
+
+vec2 randomVector2D(vec2 UV, float offset) {
+    mat2 m = mat2(15.27, 47.63, 99.41, 89.98);
+    UV = fract(sin(UV * m) * 46839.32);
+    return vec2(sin(UV.y + offset) * 0.5 + 0.5, cos(UV.x * offset) * 0.5 + 0.5);
+}
+
+void CustomVoronoi_float2D(vec2 UV, float AngleOffset, float CellDensity, out float DistFromCenter, out float DistFromEdge) {
+    ivec2 cell = ivec2(floor(UV * CellDensity));
+    vec2 posInCell = fract(UV * CellDensity);
+
+    DistFromCenter = 8.0;
+    vec2 closestOffset;
+
+    for(int y = -1; y <= 1; ++y) {
+        for(int x = -1; x <= 1; ++x) {
+            ivec2 cellToCheck = ivec2(x, y);
+            vec2 cellOffset = vec2(cellToCheck) - posInCell + randomVector2D(vec2(cell + cellToCheck), AngleOffset);
+
+            float distToPoint = dot(cellOffset, cellOffset);
+
+            if(distToPoint < DistFromCenter) {
+                DistFromCenter = distToPoint;
+                closestOffset = cellOffset;
+            }
+        }
+    }
+
+    DistFromEdge = 8.0;
+
+    for(int y = -1; y <= 1; ++y) {
+        for(int x = -1; x <= 1; ++x) {
+            ivec2 cellToCheck = ivec2(x, y);
+            vec2 cellOffset = vec2(cellToCheck) - posInCell + randomVector2D(vec2(cell + cellToCheck), AngleOffset);
+
+            float distToEdge = dot(0.5 * (closestOffset + cellOffset), normalize(cellOffset - closestOffset));
+
+            DistFromEdge = min(DistFromEdge, distToEdge);
+        }
+    }
+}
