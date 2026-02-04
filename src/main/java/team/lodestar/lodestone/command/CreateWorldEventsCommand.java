@@ -1,13 +1,14 @@
 package team.lodestar.lodestone.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import team.lodestar.lodestone.command.arguments.WorldEventTypeArgument;
 import team.lodestar.lodestone.handlers.WorldEventHandler;
 import team.lodestar.lodestone.registry.common.LodestoneWorldEventTypes;
-import team.lodestar.lodestone.systems.worldevent.WorldEventInstance;
 import team.lodestar.lodestone.systems.worldevent.WorldEventType;
 
 public class CreateWorldEventsCommand {
@@ -21,8 +22,15 @@ public class CreateWorldEventsCommand {
             if (type.commandCodec != null) {
                 type.commandCodec.appendTo(typeArg, (source, instance) -> {
                     Level level = source.getLevel();
-                    WorldEventHandler.addWorldEvent(level, (WorldEventInstance) instance);
+                    source.sendSuccess(() -> Component.literal("Created world event of type " + instance.type.id.toString()).withStyle(ChatFormatting.DARK_GREEN), true);
+                    WorldEventHandler.addWorldEvent(level, instance);
                     return 1;
+                });
+            } else {
+                typeArg.executes(ctx -> {
+                    CommandSourceStack source = ctx.getSource();
+                    source.sendFailure(Component.literal("World Event Type " + type.id.toString() + " has no command codec and cannot be created via command.").withStyle(ChatFormatting.RED));
+                    return 0;
                 });
             }
 
