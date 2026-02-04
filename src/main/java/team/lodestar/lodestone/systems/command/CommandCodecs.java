@@ -21,11 +21,11 @@ public final class CommandCodecs {
     }
 
     public static CommandField<?, Vec3> vec3(String name) {
-        return new SimpleCommandField<>(name, Vec3Argument.vec3(), Vec3Argument::getVec3);
+        return new SimpleCommandField<>(name, Vec3Argument.vec3(false), Vec3Argument::getVec3);
     }
 
     public static CommandField<?, Vec2> vec2(String name) {
-        return new SimpleCommandField<>(name, Vec2Argument.vec2(), Vec2Argument::getVec2);
+        return new SimpleCommandField<>(name, Vec2Argument.vec2(false), Vec2Argument::getVec2);
     }
 
     public static CommandField<?, Float> floatValue(String name) {
