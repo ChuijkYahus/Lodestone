@@ -2,24 +2,19 @@ package team.lodestar.lodestone.registry.client;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import team.lodestar.lodestone.LodestoneLib;
-import team.lodestar.lodestone.systems.rendering.shader.LodestoneShader;
-import team.lodestar.lodestone.systems.rendering.shader.LodestoneShaderRegistry;
+import team.lodestar.lodestone.systems.rendering.shader.ShaderRegister;
 import team.lodestar.lodestone.systems.rendering.shader.ShaderHolder;
 import team.lodestar.lodestone.systems.rendering.shader.compute.ComputeProgram;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static team.lodestar.lodestone.LodestoneLib.lodestonePath;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = LodestoneLib.LODESTONE)
 public class LodestoneShaders {
-    private static final LodestoneShaderRegistry SHADERS = new LodestoneShaderRegistry(LodestoneLib.LODESTONE);
+    private static final ShaderRegister SHADERS = new ShaderRegister(LodestoneLib.LODESTONE);
 
     public static ShaderHolder LODESTONE_TEXTURE = SHADERS.register(new ShaderHolder(lodestonePath("lodestone_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP));
     public static ShaderHolder DISTORTED_TEXTURE = SHADERS.register(new ShaderHolder(lodestonePath("distorted_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP));

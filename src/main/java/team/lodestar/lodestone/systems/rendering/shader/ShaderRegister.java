@@ -8,11 +8,11 @@ import team.lodestar.lodestone.LodestoneLib;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LodestoneShaderRegistry {
+public class ShaderRegister {
     public final List<LodestoneShader> shaders = new ArrayList<>();
     public final String modId;
 
-    public LodestoneShaderRegistry(String modId) {
+    public ShaderRegister(String modId) {
         this.modId = modId;
     }
 
