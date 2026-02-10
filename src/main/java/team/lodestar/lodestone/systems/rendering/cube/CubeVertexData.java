@@ -69,9 +69,13 @@ public record CubeVertexData(CubeVertices bottomVertices, CubeVertices topVertic
     }
 
     public static void applyVertexWobble(CubeVertices vertices, float sineOffset, float strength) {
+        applyVertexWobble(vertices.vertices, sineOffset, strength);
+    }
+
+    public static void applyVertexWobble(Vector3f[] vertices, float sineOffset, float strength) {
         float offset = sineOffset;
         long gameTime = Minecraft.getInstance().level.getGameTime();
-        for (Vector3f vertex : vertices.vertices) {
+        for (Vector3f vertex : vertices) {
             double time = ((gameTime / 40.0F) % 40.0F) * 6.28f;
             float angle = (float) (time + (offset * 6.28f));
             float sin = Mth.sin(angle) * strength;
