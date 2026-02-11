@@ -10,6 +10,7 @@ public class WorldEventRenderEvent extends WorldEventInstanceEvent {
     private final PoseStack poseStack;
     private final MultiBufferSource multiBufferSource;
     private final float partialTicks;
+
     public WorldEventRenderEvent(WorldEventInstance worldEvent, WorldEventRenderer<WorldEventInstance> renderer, PoseStack poseStack, MultiBufferSource multiBufferSource, float partialTicks) {
         super(worldEvent, null);
         this.renderer = renderer;
