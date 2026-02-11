@@ -21,7 +21,7 @@ import java.util.List;
 public class PostProcessHandler {
     private static final List<PostProcessor> instances = new ArrayList<>();
     private static boolean didCopyDepth = false;
-    private static final ReloadListener reloadListener = new ReloadListener(() -> instances.forEach(PostProcessor::init));
+    private static final ReloadListener reloadListener = new ReloadListener(() -> RenderSystem.recordRenderCall(() -> instances.forEach(PostProcessor::init)));
 
     /**
      * Add an {@link PostProcessor} for it to be handled automatically.

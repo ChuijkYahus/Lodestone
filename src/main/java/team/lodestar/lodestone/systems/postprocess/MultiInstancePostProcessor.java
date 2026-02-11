@@ -1,6 +1,7 @@
 package team.lodestar.lodestone.systems.postprocess;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EffectInstance;
 import org.joml.Matrix4f;
 import team.lodestar.lodestone.LodestoneLib;
@@ -55,7 +56,7 @@ public abstract class MultiInstancePostProcessor<I extends DynamicShaderFxInstan
     public void beforeProcess(Matrix4f viewModelMatrix) {
         for (int i = instances.size() - 1; i >= 0; i--) {
             DynamicShaderFxInstance instance = instances.get(i);
-            instance.update(MC.getTimer().getGameTimeDeltaPartialTick(false));
+            instance.update(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
             if (instance.isRemoved()) {
                 instances.remove(i);
             }

@@ -15,14 +15,11 @@ import team.lodestar.lodestone.systems.postprocess.PostProcessor;
 
 public class PhysicallyBasedBloomPostProcessor extends PostProcessor {
     private RenderTarget bloomTarget;
-    private final RenderStateShard.OutputStateShard bloomOutput;
-
     private RenderTarget BLURX2, BLURY2, BLURX4, BLURY4, BLURX8, BLURY8;
 
     private boolean forceDisabled;
 
     public PhysicallyBasedBloomPostProcessor() {
-        this.bloomOutput = StateShardHelper.createOutputState("bloomTarget", () -> { if (this.bloomTarget != null) this.bloomTarget.bindWrite(false); });
         this.setActive(false);
     }
     @Override
@@ -96,7 +93,7 @@ public class PhysicallyBasedBloomPostProcessor extends PostProcessor {
     }
 
     public RenderStateShard.OutputStateShard getBloomOutput() {
-        return bloomOutput;
+        return StateShardHelper.createOutputState("bloomTarget", () -> { if (this.bloomTarget != null) this.bloomTarget.bindWrite(false); });
     }
 
     public RenderTarget getBloomTarget() {

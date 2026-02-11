@@ -8,19 +8,14 @@ import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL30;
 import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.helpers.StateShardHelper;
 import team.lodestar.lodestone.systems.postprocess.PostProcessor;
 
 public class BloomPostProcessor extends PostProcessor {
     private RenderTarget bloomTarget;
-    private final RenderStateShard.OutputStateShard bloomOutput;
-
     private boolean forceDisabled;
 
     public BloomPostProcessor() {
-        this.bloomOutput = new RenderStateShard.OutputStateShard("bloomTarget",
-                () -> { if (this.bloomTarget != null) this.bloomTarget.bindWrite(false); },
-                () -> Minecraft.getInstance().getMainRenderTarget().bindWrite(false)
-        );
         this.setActive(false);
     }
     @Override
@@ -65,7 +60,7 @@ public class BloomPostProcessor extends PostProcessor {
     }
 
     public RenderStateShard.OutputStateShard getBloomOutput() {
-        return bloomOutput;
+        return StateShardHelper.createOutputState("bloomTarget", () -> { if (this.bloomTarget != null) this.bloomTarget.bindWrite(false); });
     }
 
     public RenderTarget getBloomTarget() {

@@ -32,22 +32,6 @@ import static com.mojang.blaze3d.platform.GlConst.GL_DRAW_FRAMEBUFFER;
  * @see <a href="https://github.com/LodestarMC/Lodestone/wiki/Post-Processing-Shaders">Lodestone Post Processing Wiki</a>
  */
 public abstract class PostProcessor {
-    protected static final Minecraft MC = Minecraft.getInstance();
-
-    public static final Collection<Pair<String, Consumer<Uniform>>> COMMON_UNIFORMS = Lists.newArrayList(
-            Pair.of("cameraPos", u -> u.set(new Vector3f(MC.gameRenderer.getMainCamera().getPosition().toVector3f()))),
-            Pair.of("lookVector", u -> u.set(MC.gameRenderer.getMainCamera().getLookVector())),
-            Pair.of("upVector", u -> u.set(MC.gameRenderer.getMainCamera().getUpVector())),
-            Pair.of("leftVector", u -> u.set(MC.gameRenderer.getMainCamera().getLeftVector())),
-            Pair.of("invViewMat", u -> u.set(PostProcessor.viewModelMatrix.invert(new Matrix4f()))),
-            Pair.of("invProjMat", u -> u.set(RenderSystem.getProjectionMatrix().invert(new Matrix4f()))),
-            Pair.of("nearPlaneDistance", u -> u.set(GameRenderer.PROJECTION_Z_NEAR)),
-            Pair.of("farPlaneDistance", u -> u.set(MC.gameRenderer.getDepthFar())),
-            Pair.of("fov", u -> u.set((float) Math.toRadians(MC.gameRenderer.getFov(MC.gameRenderer.getMainCamera(), MC.getTimer().getGameTimeDeltaPartialTick(false), true)))),
-            Pair.of("aspectRatio", u -> u.set((float) MC.getWindow().getWidth() / (float) MC.getWindow().getHeight())),
-            Pair.of("bobOffset", u -> u.set(PostProcessor.viewModelMatrix.invert(new Matrix4f()).transformPosition(LodestoneRenderSystem.getViewBobOffset(), new Vector3f())))
-    );
-
     /**
      * Being updated every frame before calling applyPostProcess() by PostProcessHandler
      */
@@ -57,7 +41,6 @@ public abstract class PostProcessor {
     protected PostChain postChain;
     protected EffectInstance[] effects;
     private RenderTarget tempDepthBuffer;
-    private Collection<Pair<Uniform, Consumer<Uniform>>> defaultUniforms;
 
     private boolean isActive = true;
 
@@ -73,16 +56,6 @@ public abstract class PostProcessor {
 
         if (postChain != null) {
             tempDepthBuffer = postChain.getTempTarget("depthMain");
-
-            defaultUniforms = new ArrayList<>();
-            for (EffectInstance e : effects) {
-                for (Pair<String, Consumer<Uniform>> pair : COMMON_UNIFORMS) {
-                    Uniform u = e.getUniform(pair.getFirst());
-                    if (u != null) {
-                        defaultUniforms.add(Pair.of(u, pair.getSecond()));
-                    }
-                }
-            }
         }
 
         initialized = true;
@@ -98,15 +71,16 @@ public abstract class PostProcessor {
         }
 
         try {
+            var mc = Minecraft.getInstance();
             ResourceLocation file = getPostChainLocation();
             file = ResourceLocation.fromNamespaceAndPath(file.getNamespace(), "shaders/post/" + file.getPath() + ".json");
             postChain = new PostChain(
-                    MC.getTextureManager(),
-                    MC.getResourceManager(),
-                    MC.getMainRenderTarget(),
+                    mc.getTextureManager(),
+                    mc.getResourceManager(),
+                    mc.getMainRenderTarget(),
                     file
             );
-            postChain.resize(MC.getWindow().getWidth(), MC.getWindow().getHeight());
+            postChain.resize(mc.getWindow().getWidth(), mc.getWindow().getHeight());
             effects = postChain.passes.stream().map(PostPass::getEffect).toArray(EffectInstance[]::new);
         } catch (IOException | JsonParseException e) {
             LodestoneLib.LOGGER.error("Failed to load post-processing shader: ", e);
@@ -117,10 +91,10 @@ public abstract class PostProcessor {
         if (isActive) {
             if (postChain == null || tempDepthBuffer == null) return;
 
-            tempDepthBuffer.copyDepthFrom(MC.getMainRenderTarget());
+            tempDepthBuffer.copyDepthFrom(Minecraft.getInstance().getMainRenderTarget());
 
             // rebind the main framebuffer so that we don't mess up other things
-            GlStateManager._glBindFramebuffer(GL_DRAW_FRAMEBUFFER, MC.getMainRenderTarget().frameBufferId);
+            GlStateManager._glBindFramebuffer(GL_DRAW_FRAMEBUFFER, Minecraft.getInstance().getMainRenderTarget().frameBufferId);
         }
     }
 
@@ -133,9 +107,21 @@ public abstract class PostProcessor {
     }
 
     private void applyDefaultUniforms() {
-        Arrays.stream(effects).forEach(e -> e.safeGetUniform("time").set((float) time));
-
-        defaultUniforms.forEach(pair -> pair.getSecond().accept(pair.getFirst()));
+        var MC = Minecraft.getInstance();
+        for (EffectInstance e : effects) {
+            e.getUniform("time").set((float) time);
+            e.getUniform("cameraPos").set(new Vector3f(MC.gameRenderer.getMainCamera().getPosition().toVector3f()));
+            e.getUniform("lookVector").set(MC.gameRenderer.getMainCamera().getLookVector());
+            e.getUniform("upVector").set(MC.gameRenderer.getMainCamera().getUpVector());
+            e.getUniform("leftVector").set(MC.gameRenderer.getMainCamera().getLeftVector());
+            e.getUniform("invViewMat").set(PostProcessor.viewModelMatrix.invert(new Matrix4f()));
+            e.getUniform("invProjMat").set(RenderSystem.getProjectionMatrix().invert(new Matrix4f()));
+            e.getUniform("nearPlaneDistance").set(GameRenderer.PROJECTION_Z_NEAR);
+            e.getUniform("farPlaneDistance").set(MC.gameRenderer.getDepthFar());
+            e.getUniform("fov").set((float) Math.toRadians(MC.gameRenderer.getFov(MC.gameRenderer.getMainCamera(), MC.getTimer().getGameTimeDeltaPartialTick(false), true)));
+            e.getUniform("aspectRatio").set((float) MC.getWindow().getWidth() / (float) MC.getWindow().getHeight());
+            e.getUniform("bobOffset").set(PostProcessor.viewModelMatrix.invert(new Matrix4f()).transformPosition(LodestoneRenderSystem.getViewBobOffset(), new Vector3f()));
+        }
     }
 
     public void applyPostProcess() {
@@ -144,15 +130,16 @@ public abstract class PostProcessor {
                 init();
 
             if (postChain != null) {
-                time += MC.getTimer().getGameTimeDeltaPartialTick(false) / 20.0;
+                var mc = Minecraft.getInstance();
+                time += mc.getTimer().getGameTimeDeltaPartialTick(false) / 20.0;
 
                 beforeProcess(viewModelMatrix);
 
                 applyDefaultUniforms();
                 if (!isActive) return;
-                postChain.process(MC.getTimer().getGameTimeDeltaPartialTick(false));
+                postChain.process(mc.getTimer().getGameTimeDeltaPartialTick(false));
 
-                GlStateManager._glBindFramebuffer(GL_DRAW_FRAMEBUFFER, MC.getMainRenderTarget().frameBufferId);
+                GlStateManager._glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mc.getMainRenderTarget().frameBufferId);
                 afterProcess();
             }
         }
