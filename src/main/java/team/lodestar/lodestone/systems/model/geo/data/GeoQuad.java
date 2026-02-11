@@ -2,6 +2,7 @@ package team.lodestar.lodestone.systems.model.geo.data;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.RenderType;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -52,7 +53,7 @@ public class GeoQuad implements IRenderableModelPart<GeoQuad> {
     }
 
     @Override
-    public void render(PoseStack poseStack, VertexConsumer vertexConsumer, RenderType renderType) {
+    public void render(PoseStack poseStack, VertexConsumer vertexConsumer, VertexFormat vertexFormat, VertexFormat.Mode mode) {
         for (GeoVertex vertex : this.vertices) {
             Vector3f pos = vertex.getPosition();
             vertexConsumer.addVertex(poseStack.last().pose(), pos.x, pos.y, pos.z)

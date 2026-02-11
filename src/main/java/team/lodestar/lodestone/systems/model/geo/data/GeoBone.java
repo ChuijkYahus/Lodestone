@@ -2,6 +2,7 @@ package team.lodestar.lodestone.systems.model.geo.data;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.RenderType;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -130,21 +131,21 @@ public class GeoBone implements IRenderableModelPart<GeoBone> {
     }
 
     @Override
-    public void render(PoseStack poseStack, VertexConsumer vertexConsumer, RenderType renderType) {
+    public void render(PoseStack poseStack, VertexConsumer vertexConsumer, VertexFormat vertexFormat, VertexFormat.Mode mode) {
         if (this.isHidden) return;
         if (!this.cubes.isEmpty() || !this.children.isEmpty()) {
             poseStack.pushPose();
             this.translateAndRotate(poseStack);
             for (GeoCube cube : this.cubes) {
-                cube.render(poseStack, vertexConsumer, renderType);
+                cube.render(poseStack, vertexConsumer, vertexFormat, mode);
             }
 
             for (IRenderableModelPart<?> customPart : this.customParts) {
-                customPart.render(poseStack, vertexConsumer, renderType);
+                customPart.render(poseStack, vertexConsumer, vertexFormat, mode);
             }
 
             for (GeoBone child : this.children.values()) {
-                child.render(poseStack, vertexConsumer, renderType);
+                child.render(poseStack, vertexConsumer, vertexFormat, mode);
             }
             poseStack.popPose();
         }
