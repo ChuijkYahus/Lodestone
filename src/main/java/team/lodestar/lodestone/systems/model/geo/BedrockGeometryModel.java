@@ -44,7 +44,7 @@ public class BedrockGeometryModel implements IRenderableModel {
     @Override
     public MeshData createMesh(PoseStack poseStack, VertexFormat vertexFormat, VertexFormat.Mode mode) {
         BufferBuilder bufferBuilder = Tesselator.getInstance().begin(mode, vertexFormat);
-        // TODO: This is needed for instancing
+        this.root.render(poseStack, bufferBuilder, vertexFormat, mode);
         return bufferBuilder.buildOrThrow();
     }
 

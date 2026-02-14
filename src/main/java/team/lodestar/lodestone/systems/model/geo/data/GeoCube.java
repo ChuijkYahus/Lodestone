@@ -2,6 +2,7 @@ package team.lodestar.lodestone.systems.model.geo.data;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.RenderType;
 import org.joml.Vector3f;
 
@@ -19,10 +20,10 @@ public class GeoCube implements IRenderableModelPart<GeoCube> {
     }
 
     @Override
-    public void render(PoseStack poseStack, VertexConsumer vertexConsumer, RenderType renderType) {
+    public void render(PoseStack poseStack, VertexConsumer vertexConsumer, VertexFormat vertexFormat, VertexFormat.Mode mode) {
         for (GeoQuad quad : quads) {
             if (quad != null) {
-                quad.render(poseStack, vertexConsumer, renderType);
+                quad.render(poseStack, vertexConsumer, vertexFormat, mode);
             }
         }
     }

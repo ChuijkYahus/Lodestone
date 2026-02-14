@@ -1,12 +1,9 @@
 package team.lodestar.lodestone.systems.postprocess;
 
-import com.google.common.collect.Lists;
 import com.google.gson.JsonParseException;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EffectInstance;
 import net.minecraft.client.renderer.GameRenderer;
@@ -19,10 +16,6 @@ import team.lodestar.lodestone.LodestoneLib;
 import team.lodestar.lodestone.systems.rendering.LodestoneRenderSystem;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.function.Consumer;
 
 import static com.mojang.blaze3d.platform.GlConst.GL_DRAW_FRAMEBUFFER;
 
