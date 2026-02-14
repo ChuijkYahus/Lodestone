@@ -33,7 +33,8 @@
   "device.requirement.lodestone.instanced_draw": "Instanced Draw Calls",
   "device.requirement.lodestone.instanced_draw.fail": "Your device does not support Instanced Draw Calls, you are likely using a very old GPU or outdated drivers.",
   "device.requirement.lodestone.compute_shaders": "Compute Shaders",
-  "device.requirement.lodestone.compute_shaders.fail": "Your device does not support Compute Shaders, this is likely caused by using a macOS device or integrated graphics.",,
+  "device.requirement.lodestone.compute_shaders.fail": "Your device does not support Compute Shaders, this is likely caused by using a macOS device or integrated graphics.",
   "device.requirement.lodestone.ssbo": "Shader Storage Buffer Objects (SSBOs)",
   "device.requirement.lodestone.ssbo.fail": "Your device does not support Shader Storage Buffer Objects (SSBOs), this is likely caused by using a macOS device or integrated graphics.",
+  "options.lodestone.renderfeatures": "Render Features"
 }
