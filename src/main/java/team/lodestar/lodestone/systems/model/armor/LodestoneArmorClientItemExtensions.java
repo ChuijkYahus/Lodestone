@@ -5,6 +5,7 @@ import net.minecraft.client.model.*;
 import net.minecraft.util.*;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.*;
+import net.neoforged.neoforge.client.*;
 import net.neoforged.neoforge.client.extensions.common.*;
 import org.jetbrains.annotations.*;
 
@@ -26,19 +27,28 @@ public class LodestoneArmorClientItemExtensions implements IClientItemExtensions
 	public @NotNull Model getGenericArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack itemStack, @NotNull EquipmentSlot armorSlot, @NotNull HumanoidModel playerModel) {
 		var model = this.model.get();
 		if (model instanceof EntityModel entityModel) {
-			float delta = Minecraft.getInstance().getTimer().getGameTimeDeltaTicks();
-			float f = Mth.rotLerp(delta, entity.yBodyRotO, entity.yBodyRot);
-			float f1 = Mth.rotLerp(delta, entity.yHeadRotO, entity.yHeadRot);
+
+			float partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
+			float f = Mth.rotLerp(partialTicks, entity.yBodyRotO, entity.yBodyRot);
+			float f1 = Mth.rotLerp(partialTicks, entity.yHeadRotO, entity.yHeadRot);
+
+			float walkPosition = entity.walkAnimation.position();
+			float walkSpeed = entity.walkAnimation.speed();
+			float tickCount = entity.tickCount + partialTicks;
+
 			float netHeadYaw = f1 - f;
-			float netHeadPitch = Mth.lerp(delta, entity.xRotO, entity.getXRot());
-			playerModel.copyPropertiesTo(entityModel);
+			float netHeadPitch = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
+
 			if (entityModel instanceof LodestoneArmorModel armorModel) {
 				armorModel.slot = armorSlot;
 				armorModel.copyFromDefault(playerModel);
 			}
-			if (!(entityModel instanceof HumanoidModel<?>)) {
-				//Humanoid Models have setupAnim called already by now
-				entityModel.setupAnim(entity, entity.walkAnimation.position(), entity.walkAnimation.speed(), entity.tickCount + delta, netHeadYaw, netHeadPitch);
+			entityModel.setupAnim(entity, walkPosition, walkSpeed, tickCount, netHeadYaw, netHeadPitch);
+			if (entityModel instanceof HumanoidModel<?> humanoidModel) {
+				ClientHooks.copyModelProperties(playerModel, humanoidModel);
+			}
+			else {
+				playerModel.copyPropertiesTo(entityModel);
 			}
 		}
 		return model;
