@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.systems.model;
+package team.lodestar.lodestone.systems.model.armor;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -109,7 +109,6 @@ public class LodestoneArmorModel extends HumanoidModel<LivingEntity> {
         leftFoot.copyFrom(leftLeg);
         rightFoot.copyFrom(rightLeg);
     }
-
 
     public static ModelPart getPart(ModelPart root, String name) {
         try {
