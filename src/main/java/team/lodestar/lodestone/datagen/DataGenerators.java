@@ -19,11 +19,9 @@ public class DataGenerators {
         boolean includeServer = event.includeServer();
 
         var blockTagDatagen = new LodestoneBlockTagDatagen(packOutput, lookupProvider, existingFileHelper);
-        var langDatagen = new LodestoneLangDatagen(packOutput);
         var itemTagDatagen = new LodestoneItemTagDatagen(packOutput, lookupProvider, blockTagDatagen.contentsGetter(), existingFileHelper);
         var damageTypeDatagen = new LodestoneDamageTypeDatagen(packOutput, lookupProvider, existingFileHelper);
 
-        event.getGenerator().addProvider(includeClient, langDatagen);
         event.getGenerator().addProvider(includeServer, blockTagDatagen);
         event.getGenerator().addProvider(includeServer, itemTagDatagen);
         event.getGenerator().addProvider(includeServer, damageTypeDatagen);
