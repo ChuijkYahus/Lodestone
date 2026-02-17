@@ -24,10 +24,11 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
         return SoundDefinition.definition().subtitle(subtitle(soundEvent));
     }
 
-    public SoundDefinition add(Supplier<SoundEvent> soundEvent, Function<SoundEvent, SoundDefinition> definition) {
-        var result = definition.apply(soundEvent.get());
-        add(soundEvent, result);
-        return result;
+    public SoundDefinition add(Supplier<SoundEvent> soundEvent, Consumer<SoundDefinition> modifier) {
+        var definition = definition(soundEvent.get());
+        modifier.accept(definition);
+        add(soundEvent, definition);
+        return definition;
     }
 
     public void addBlockSoundType(Function<LodestoneSoundEventProvider, BlockSoundEventBuilder> supplier) {
@@ -205,7 +206,7 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
         }
 
         public SoundDefinition add(Supplier<SoundEvent> soundEvent, Consumer<SoundDefinition.Sound> modifier, String name, String... fallbacks) {
-            return parent.add(soundEvent, s -> parent.definition(s).with(parent.allSounds(path, name, modifier, fallbacks)));
+            return parent.add(soundEvent, s -> s.with(parent.allSounds(path, name, modifier, fallbacks)));
         }
     }
 }
