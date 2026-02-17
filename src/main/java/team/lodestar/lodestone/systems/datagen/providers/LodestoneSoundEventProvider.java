@@ -31,6 +31,9 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
         return definition;
     }
 
+    public void addBlockSoundType(BlockSoundEventBuilder supplier) {
+        supplier.addSounds();
+    }
     public void addBlockSoundType(Function<LodestoneSoundEventProvider, BlockSoundEventBuilder> supplier) {
         supplier.apply(this).addSounds();
     }
