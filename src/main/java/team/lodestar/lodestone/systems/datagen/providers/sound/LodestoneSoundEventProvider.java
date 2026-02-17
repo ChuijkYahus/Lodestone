@@ -91,6 +91,9 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
             }
             counter++;
         }
+        if (sounds.isEmpty()) {
+            throw new UnsupportedOperationException("Sound Definition is empty for sound: " + (basePath + name));
+        }
         var array = new SoundDefinition.Sound[sounds.size()];
         for (int i = 0; i < sounds.size(); i++) {
             array[i] = sounds.get(i);
