@@ -45,19 +45,19 @@ public class BlockSoundEventBuilder {
                 .modifyFallSoundDefinition(modifier);
     }
 
-    public BlockSoundEventBuilder addBreakAndPlaceSounds(SoundDefinition.Sound... sounds) {
-        return modifyBreakAndPlaceSoundDefinitions(s -> s.with(sounds));
+    public BlockSoundEventBuilder addBreakPlaceSounds(SoundDefinition.Sound... sounds) {
+        return modifyBreakPlaceSoundDefinitions(s -> s.with(sounds));
     }
 
-    public BlockSoundEventBuilder addStepHitAndFallSounds(SoundDefinition.Sound... sounds) {
-        return modifyStepHitAndFallSoundDefinitions(s -> s.with(sounds));
+    public BlockSoundEventBuilder addStepHitFallSounds(SoundDefinition.Sound... sounds) {
+        return modifyStepHitFallSoundDefinitions(s -> s.with(sounds));
     }
 
-    public BlockSoundEventBuilder modifyBreakAndPlaceSoundDefinitions(Consumer<SoundDefinition> modifier) {
+    public BlockSoundEventBuilder modifyBreakPlaceSoundDefinitions(Consumer<SoundDefinition> modifier) {
         return modifyBreakSoundDefinition(modifier).modifyPlaceSoundDefinition(modifier);
     }
 
-    public BlockSoundEventBuilder modifyStepHitAndFallSoundDefinitions(Consumer<SoundDefinition> modifier) {
+    public BlockSoundEventBuilder modifyStepHitFallSoundDefinitions(Consumer<SoundDefinition> modifier) {
         return modifyStepSoundDefinition(modifier).modifyHitSoundDefinition(modifier).modifyFallSoundDefinition(modifier);
     }
 
