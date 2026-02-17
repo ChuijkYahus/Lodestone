@@ -99,7 +99,7 @@ public class BlockSoundEventBuilder {
         return modifyBreakSound(modifier).modifyPlaceSound(modifier);
     }
 
-    public BlockSoundEventBuilder modifyStepAndFallSounds(Consumer<SoundDefinition.Sound> modifier) {
+    public BlockSoundEventBuilder modifyStepHitFallSounds(Consumer<SoundDefinition.Sound> modifier) {
         return modifyStepSound(modifier).modifyHitSound(modifier).modifyFallSound(modifier);
     }
 
@@ -128,11 +128,11 @@ public class BlockSoundEventBuilder {
         return this;
     }
 
-    public BlockSoundEventBuilder setBreakAndPlaceSoundPaths(String path) {
+    public BlockSoundEventBuilder setBreakPlaceSoundPaths(String path) {
         return setBreakSoundPath(path).setPlaceSoundPath(path);
     }
 
-    public BlockSoundEventBuilder setStepHitAndFallSoundPaths(String path) {
+    public BlockSoundEventBuilder setStepHitFallSoundPaths(String path) {
         return setStepSoundPath(path).setHitSoundPath(path).setFallSoundPath(path);
     }
 
