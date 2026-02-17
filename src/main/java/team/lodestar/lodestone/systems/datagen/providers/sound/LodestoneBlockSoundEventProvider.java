@@ -37,11 +37,16 @@ public abstract class LodestoneBlockSoundEventProvider extends LodestoneSoundEve
 
     public static class SoundEventBuilderBlueprint {
         protected final String path;
-        protected final Consumer<BlockSoundEventBuilder> modifier;
+        protected Consumer<BlockSoundEventBuilder> modifier;
 
         public SoundEventBuilderBlueprint(String path, Consumer<BlockSoundEventBuilder> modifier) {
             this.path = path;
             this.modifier = modifier;
+        }
+
+        public SoundEventBuilderBlueprint modify(Consumer<BlockSoundEventBuilder> extraModifier) {
+            modifier = modifier.andThen(extraModifier);
+            return this;
         }
 
         public SoundEventBuilderBlueprint addAll(RegistryReadyBlockSoundType... soundTypes) {
