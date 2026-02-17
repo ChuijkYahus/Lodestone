@@ -52,12 +52,12 @@ public abstract class LodestoneBlockSoundEventProvider extends LodestoneSoundEve
         }
 
         public SoundEventBuilderBlueprint add(RegistryReadyBlockSoundType soundType) {
-            INSTANCE.addBlockSoundEvents(soundType, path, modifier);
+            INSTANCE.add(soundType, path, modifier);
             return this;
         }
 
         public SoundEventBuilderBlueprint add(RegistryReadyBlockSoundType soundType, Consumer<BlockSoundEventBuilder> extraModifier) {
-            INSTANCE.addBlockSoundEvents(soundType, path, modifier.andThen(extraModifier));
+            INSTANCE.add(soundType, path, modifier.andThen(extraModifier));
             return this;
         }
     }
