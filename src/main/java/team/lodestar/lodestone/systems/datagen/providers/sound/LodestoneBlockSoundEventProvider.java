@@ -15,12 +15,12 @@ public abstract class LodestoneBlockSoundEventProvider extends LodestoneSoundEve
         INSTANCE = this;
     }
 
-    public void addBlockSoundType(String path, RegistryReadyBlockSoundType soundType) {
-        addBlockSoundType(path, soundType, c -> {
+    public void addBlockSoundType(RegistryReadyBlockSoundType soundType, String path) {
+        addBlockSoundType(soundType, path, c -> {
         });
     }
 
-    public void addBlockSoundType(String path, RegistryReadyBlockSoundType soundType, Consumer<BlockSoundEventBuilder> modifier) {
+    public void addBlockSoundType(RegistryReadyBlockSoundType soundType, String path, Consumer<BlockSoundEventBuilder> modifier) {
         var builder = BlockSoundEventBuilder.create(path, soundType);
         modifier.accept(builder);
         builder.addSounds();
