@@ -67,6 +67,14 @@ public class BlockSoundEventBuilder {
                 .modifyFallSound(modifier);
     }
 
+    public BlockSoundEventBuilder modifyBreakAndPlaceSounds(Consumer<SoundDefinition.Sound> modifier) {
+        return modifyBreakSound(modifier).modifyPlaceSound(modifier);
+    }
+
+    public BlockSoundEventBuilder modifyStepHitAndFallSounds(Consumer<SoundDefinition.Sound> modifier) {
+        return modifyStepSound(modifier).modifyHitSound(modifier).modifyFallSound(modifier);
+    }
+
     public BlockSoundEventBuilder modifyBreakSound(Consumer<SoundDefinition.Sound> modifier) {
         this.breakSoundModifier = this.breakSoundModifier.andThen(modifier);
         return this;
@@ -92,52 +100,60 @@ public class BlockSoundEventBuilder {
         return this;
     }
 
-    public BlockSoundEventBuilder breakSoundPath(String path) {
+    public BlockSoundEventBuilder setBreakAndPlaceSoundPaths(String path) {
+        return setBreakSoundPath(path).setPlaceSoundPath(path);
+    }
+
+    public BlockSoundEventBuilder setStepHitAndFallSoundPaths(String path) {
+        return setStepSoundPath(path).setHitSoundPath(path).setFallSoundPath(path);
+    }
+
+    public BlockSoundEventBuilder setBreakSoundPath(String path) {
         this.breakSoundPath = path;
         return this;
     }
 
-    public BlockSoundEventBuilder stepSoundPath(String path) {
+    public BlockSoundEventBuilder setStepSoundPath(String path) {
         this.stepSoundPath = path;
         return this;
     }
 
-    public BlockSoundEventBuilder placeSoundPath(String path) {
+    public BlockSoundEventBuilder setPlaceSoundPath(String path) {
         this.placeSoundPath = path;
         return this;
     }
 
-    public BlockSoundEventBuilder hitSoundPath(String path) {
+    public BlockSoundEventBuilder setHitSoundPath(String path) {
         this.hitSoundPath = path;
         return this;
     }
 
-    public BlockSoundEventBuilder fallSoundPath(String path) {
+    public BlockSoundEventBuilder setFallSoundPath(String path) {
         this.fallSoundPath = path;
         return this;
     }
 
-    public BlockSoundEventBuilder breakSoundName(String name) {
+    public BlockSoundEventBuilder setBreakSoundName(String name) {
         this.breakSoundName = name;
         return this;
     }
 
-    public BlockSoundEventBuilder stepSoundName(String name) {
+    public BlockSoundEventBuilder setStepSoundName(String name) {
         this.stepSoundName = name;
         return this;
     }
 
-    public BlockSoundEventBuilder placeSoundName(String name) {
+    public BlockSoundEventBuilder setPlaceSoundName(String name) {
         this.placeSoundName = name;
         return this;
     }
 
-    public BlockSoundEventBuilder hitSoundName(String name) {
+    public BlockSoundEventBuilder setHitSoundName(String name) {
         this.hitSoundName = name;
         return this;
     }
 
-    public BlockSoundEventBuilder fallSoundName(String name) {
+    public BlockSoundEventBuilder setFallSoundName(String name) {
         this.fallSoundName = name;
         return this;
     }
