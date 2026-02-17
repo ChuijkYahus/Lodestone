@@ -26,12 +26,12 @@ public abstract class LodestoneBlockSoundEventProvider extends LodestoneSoundEve
         builder.addSounds();
     }
 
-    public SoundEventBuilderBlueprint create(String path) {
-        return create(path, c -> {
+    public SoundEventBuilderBlueprint blueprint(String path) {
+        return blueprint(path, c -> {
         });
     }
 
-    public SoundEventBuilderBlueprint create(String path, Consumer<BlockSoundEventBuilder> modifier) {
+    public SoundEventBuilderBlueprint blueprint(String path, Consumer<BlockSoundEventBuilder> modifier) {
         return new SoundEventBuilderBlueprint(path, modifier);
     }
 
