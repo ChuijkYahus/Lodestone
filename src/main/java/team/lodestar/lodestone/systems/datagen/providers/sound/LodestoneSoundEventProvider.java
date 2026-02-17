@@ -42,7 +42,6 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
         return sound(name.contains(":") ? ResourceLocation.parse(name) : ResourceLocation.fromNamespaceAndPath(INSTANCE.modId, name));
     }
 
-
     public SoundDefinition.Sound[] sounds(String name, int variants) {
         SoundDefinition.Sound[] sounds = new SoundDefinition.Sound[variants];
         for (int i = 0; i < variants; i++) {
