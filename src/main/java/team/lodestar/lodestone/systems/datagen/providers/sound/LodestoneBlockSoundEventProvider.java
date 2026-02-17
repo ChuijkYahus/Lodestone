@@ -15,14 +15,43 @@ public abstract class LodestoneBlockSoundEventProvider extends LodestoneSoundEve
         INSTANCE = this;
     }
 
-    public void addBlockSoundType(RegistryReadyBlockSoundType soundType, String path) {
-        addBlockSoundType(soundType, path, c -> {
+    public void addBlockSoundEvents(RegistryReadyBlockSoundType soundType, String path) {
+        addBlockSoundEvents(soundType, path, c -> {
         });
     }
 
-    public void addBlockSoundType(RegistryReadyBlockSoundType soundType, String path, Consumer<BlockSoundEventBuilder> modifier) {
+    public void addBlockSoundEvents(RegistryReadyBlockSoundType soundType, String path, Consumer<BlockSoundEventBuilder> modifier) {
         var builder = BlockSoundEventBuilder.create(path, soundType);
         modifier.accept(builder);
         builder.addSounds();
+    }
+
+    public SoundEventBuilderBlueprint createBlockSoundEvents(String path) {
+        return createBlockSoundEvents(path, c -> {
+        });
+    }
+
+    public SoundEventBuilderBlueprint createBlockSoundEvents(String path, Consumer<BlockSoundEventBuilder> modifier) {
+        return new SoundEventBuilderBlueprint(path, modifier);
+    }
+
+    public static class SoundEventBuilderBlueprint {
+        protected final String path;
+        protected final Consumer<BlockSoundEventBuilder> modifier;
+
+        public SoundEventBuilderBlueprint(String path, Consumer<BlockSoundEventBuilder> modifier) {
+            this.path = path;
+            this.modifier = modifier;
+        }
+
+        public SoundEventBuilderBlueprint add(RegistryReadyBlockSoundType soundType) {
+            INSTANCE.addBlockSoundEvents(soundType, path, modifier);
+            return this;
+        }
+
+        public SoundEventBuilderBlueprint add(RegistryReadyBlockSoundType soundType, Consumer<BlockSoundEventBuilder> extraModifier) {
+            INSTANCE.addBlockSoundEvents(soundType, path, modifier.andThen(extraModifier));
+            return this;
+        }
     }
 }

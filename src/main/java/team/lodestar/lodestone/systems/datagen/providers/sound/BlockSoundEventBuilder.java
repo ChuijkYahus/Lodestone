@@ -4,6 +4,7 @@ import net.minecraft.sounds.*;
 import net.neoforged.neoforge.common.data.*;
 import team.lodestar.lodestone.systems.sound.*;
 
+import java.util.*;
 import java.util.function.*;
 
 @SuppressWarnings("unused")
@@ -199,8 +200,10 @@ public class BlockSoundEventBuilder {
         protected String soundName;
         protected String soundPathReplacement;
 
-        protected Consumer<SoundDefinition.Sound> soundModifier = s -> {};
-        protected Consumer<SoundDefinition> soundDefinitionModifier = s -> {};
+        protected Consumer<SoundDefinition.Sound> soundModifier = s -> {
+        };
+        protected Consumer<SoundDefinition> soundDefinitionModifier = s -> {
+        };
 
         public SoundOptions(Supplier<SoundEvent> soundEvent, String soundName) {
             this.soundEvent = soundEvent;
