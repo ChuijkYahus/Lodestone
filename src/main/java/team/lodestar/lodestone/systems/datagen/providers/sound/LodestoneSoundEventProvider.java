@@ -12,6 +12,8 @@ import java.util.function.*;
 
 public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvider {
 
+    public static LodestoneSoundEventProvider INSTANCE;
+
     public final String modId;
     public final ExistingFileHelper helper;
 
@@ -19,6 +21,7 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
         super(packOutput, modId, existingFileHelper);
         this.modId = modId;
         this.helper = existingFileHelper;
+        INSTANCE = this;
     }
 
     protected SoundDefinition definition(SoundEvent soundEvent) {
@@ -34,6 +37,11 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
         add(soundEvent, definition);
         return definition;
     }
+
+    public static SoundDefinition.Sound sound(String name) {
+        return sound(name.contains(":") ? ResourceLocation.parse(name) : ResourceLocation.fromNamespaceAndPath(INSTANCE.modId, name));
+    }
+
 
     public SoundDefinition.Sound[] sounds(String name, int variants) {
         SoundDefinition.Sound[] sounds = new SoundDefinition.Sound[variants];
