@@ -9,13 +9,13 @@ import java.util.function.*;
 @SuppressWarnings("unused")
 public class BlockSoundEventBuilder {
 
-    private final String path;
+    protected final String path;
 
-    public final SoundOptions breakSoundOptions;
-    public final SoundOptions stepSoundOptions;
-    public final SoundOptions placeSoundOptions;
-    public final SoundOptions hitSoundOptions;
-    public final SoundOptions fallSoundOptions;
+    protected final SoundOptions breakSoundOptions;
+    protected final SoundOptions stepSoundOptions;
+    protected final SoundOptions placeSoundOptions;
+    protected final SoundOptions hitSoundOptions;
+    protected final SoundOptions fallSoundOptions;
 
     public static BlockSoundEventBuilder create(String path, RegistryReadyBlockSoundType soundType) {
         return new BlockSoundEventBuilder(path, soundType);
