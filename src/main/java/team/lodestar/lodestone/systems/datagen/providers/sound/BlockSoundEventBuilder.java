@@ -45,6 +45,14 @@ public class BlockSoundEventBuilder {
                 .modifyFallSoundDefinition(modifier);
     }
 
+    public BlockSoundEventBuilder addBreakAndPlaceSounds(SoundDefinition.Sound... sounds) {
+        return modifyBreakAndPlaceSoundDefinitions(s -> s.with(sounds));
+    }
+
+    public BlockSoundEventBuilder addStepHitAndFallSounds(SoundDefinition.Sound... sounds) {
+        return modifyStepHitAndFallSoundDefinitions(s -> s.with(sounds));
+    }
+
     public BlockSoundEventBuilder modifyBreakAndPlaceSoundDefinitions(Consumer<SoundDefinition> modifier) {
         return modifyBreakSoundDefinition(modifier).modifyPlaceSoundDefinition(modifier);
     }
