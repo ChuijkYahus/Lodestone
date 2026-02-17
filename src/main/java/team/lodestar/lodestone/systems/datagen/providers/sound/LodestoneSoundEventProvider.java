@@ -66,12 +66,12 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
         int counter = 1;
         var leftoverFallbacks = new ArrayList<>(List.of(fallbacks));
 
-        if (!basePath.isEmpty()) {
+        if (!basePath.isEmpty() && !basePath.endsWith("/")) {
             basePath += "/";
         }
         while (true) {
             var id = basePath + name + counter;
-            var path = name.contains(":") ? ResourceLocation.parse(id) : ResourceLocation.fromNamespaceAndPath(modId, id);
+            var path = basePath.contains(":") ? ResourceLocation.parse(id) : ResourceLocation.fromNamespaceAndPath(modId, id);
             boolean valid = helper.exists(path, PackType.CLIENT_RESOURCES, ".ogg", "sounds");
             if (valid) {
                 sounds.add(sound(path));
