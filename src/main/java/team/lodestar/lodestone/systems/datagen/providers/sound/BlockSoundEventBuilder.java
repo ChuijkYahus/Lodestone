@@ -27,6 +27,12 @@ public class BlockSoundEventBuilder {
     private Consumer<SoundDefinition.Sound> fallSoundModifier = s -> {
     };
 
+    private String breakSoundPath;
+    private String stepSoundPath;
+    private String placeSoundPath;
+    private String hitSoundPath;
+    private String fallSoundPath;
+
     private String breakSoundName = "break";
     private String stepSoundName = "step";
     private String placeSoundName = "place";
@@ -86,6 +92,31 @@ public class BlockSoundEventBuilder {
         return this;
     }
 
+    public BlockSoundEventBuilder breakSoundPath(String path) {
+        this.breakSoundPath = path;
+        return this;
+    }
+
+    public BlockSoundEventBuilder stepSoundPath(String path) {
+        this.stepSoundPath = path;
+        return this;
+    }
+
+    public BlockSoundEventBuilder placeSoundPath(String path) {
+        this.placeSoundPath = path;
+        return this;
+    }
+
+    public BlockSoundEventBuilder hitSoundPath(String path) {
+        this.hitSoundPath = path;
+        return this;
+    }
+
+    public BlockSoundEventBuilder fallSoundPath(String path) {
+        this.fallSoundPath = path;
+        return this;
+    }
+
     public BlockSoundEventBuilder breakSoundName(String name) {
         this.breakSoundName = name;
         return this;
@@ -112,14 +143,15 @@ public class BlockSoundEventBuilder {
     }
 
     public void addSounds() {
-        add(breakSound, breakSoundModifier, breakSoundName, "place");
-        add(stepSound, stepSoundModifier, stepSoundName, "hit");
-        add(placeSound, placeSoundModifier, placeSoundName, "break");
-        add(hitSound, hitSoundModifier, hitSoundName, "fall");
-        add(fallSound, fallSoundModifier, fallSoundName, "hit", "step");
+        add(breakSound, breakSoundModifier, breakSoundPath, breakSoundName, "place");
+        add(stepSound, stepSoundModifier, stepSoundPath, stepSoundName, "hit");
+        add(placeSound, placeSoundModifier, placeSoundPath, placeSoundName, "break");
+        add(hitSound, hitSoundModifier, hitSoundPath, hitSoundName, "fall");
+        add(fallSound, fallSoundModifier, fallSoundPath, fallSoundName, "hit", "step");
     }
 
-    public SoundDefinition add(Supplier<SoundEvent> soundEvent, Consumer<SoundDefinition.Sound> modifier, String name, String... fallbacks) {
-        return LodestoneBlockSoundEventProvider.INSTANCE.add(soundEvent, s -> s.with(LodestoneBlockSoundEventProvider.INSTANCE.allSounds(path, name, modifier, fallbacks)));
+    public SoundDefinition add(Supplier<SoundEvent> soundEvent, Consumer<SoundDefinition.Sound> modifier, String path, String name, String... fallbacks) {
+        var pathOrFallback = path == null ? this.path : path;
+        return LodestoneBlockSoundEventProvider.INSTANCE.add(soundEvent, s -> s.with(LodestoneBlockSoundEventProvider.INSTANCE.allSounds(pathOrFallback, name, modifier, fallbacks)));
     }
 }
