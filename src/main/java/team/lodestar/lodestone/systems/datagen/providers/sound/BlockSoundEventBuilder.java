@@ -95,11 +95,11 @@ public class BlockSoundEventBuilder {
                 .modifyFallSound(modifier);
     }
 
-    public BlockSoundEventBuilder modifyBreakAndPlaceSounds(Consumer<SoundDefinition.Sound> modifier) {
+    public BlockSoundEventBuilder modifyBreakPlaceSounds(Consumer<SoundDefinition.Sound> modifier) {
         return modifyBreakSound(modifier).modifyPlaceSound(modifier);
     }
 
-    public BlockSoundEventBuilder modifyStepHitAndFallSounds(Consumer<SoundDefinition.Sound> modifier) {
+    public BlockSoundEventBuilder modifyStepAndFallSounds(Consumer<SoundDefinition.Sound> modifier) {
         return modifyStepSound(modifier).modifyHitSound(modifier).modifyFallSound(modifier);
     }
 
