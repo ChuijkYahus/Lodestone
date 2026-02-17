@@ -161,6 +161,15 @@ public class BlockSoundEventBuilder {
         return this;
     }
 
+
+    public BlockSoundEventBuilder setBreakPlaceSoundNames(String name) {
+        return setBreakSoundName(name).setPlaceSoundName(name);
+    }
+
+    public BlockSoundEventBuilder setStepHitFallSoundNames(String name) {
+        return setStepSoundName(name).setHitSoundName(name).setFallSoundName(name);
+    }
+
     public BlockSoundEventBuilder setBreakSoundName(String name) {
         breakSoundOptions.replaceSoundName(name);
         return this;
