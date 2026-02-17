@@ -6,38 +6,16 @@ import team.lodestar.lodestone.systems.sound.*;
 
 import java.util.function.*;
 
+@SuppressWarnings("unused")
 public class BlockSoundEventBuilder {
 
     private final String path;
 
-    public final Supplier<SoundEvent> breakSound;
-    public final Supplier<SoundEvent> stepSound;
-    public final Supplier<SoundEvent> placeSound;
-    public final Supplier<SoundEvent> hitSound;
-    public final Supplier<SoundEvent> fallSound;
-
-    private Consumer<SoundDefinition.Sound> breakSoundModifier = s -> {
-    };
-    private Consumer<SoundDefinition.Sound> stepSoundModifier = s -> {
-    };
-    private Consumer<SoundDefinition.Sound> placeSoundModifier = s -> {
-    };
-    private Consumer<SoundDefinition.Sound> hitSoundModifier = s -> {
-    };
-    private Consumer<SoundDefinition.Sound> fallSoundModifier = s -> {
-    };
-
-    private String breakSoundPath;
-    private String stepSoundPath;
-    private String placeSoundPath;
-    private String hitSoundPath;
-    private String fallSoundPath;
-
-    private String breakSoundName = "break";
-    private String stepSoundName = "step";
-    private String placeSoundName = "place";
-    private String hitSoundName = "hit";
-    private String fallSoundName = "fall";
+    public final SoundOptions breakSoundOptions;
+    public final SoundOptions stepSoundOptions;
+    public final SoundOptions placeSoundOptions;
+    public final SoundOptions hitSoundOptions;
+    public final SoundOptions fallSoundOptions;
 
     public static BlockSoundEventBuilder create(String path, RegistryReadyBlockSoundType soundType) {
         return new BlockSoundEventBuilder(path, soundType);
@@ -50,12 +28,53 @@ public class BlockSoundEventBuilder {
     public BlockSoundEventBuilder(String path,
                                   Supplier<SoundEvent> breakSound, Supplier<SoundEvent> stepSound, Supplier<SoundEvent> placeSound, Supplier<SoundEvent> hitSound, Supplier<SoundEvent> fallSound) {
         this.path = path;
+        this.breakSoundOptions = new SoundOptions(breakSound, "break");
+        this.stepSoundOptions = new SoundOptions(stepSound, "step");
+        this.placeSoundOptions = new SoundOptions(placeSound, "place");
+        this.hitSoundOptions = new SoundOptions(hitSound, "hit");
+        this.fallSoundOptions = new SoundOptions(fallSound, "fall");
+    }
 
-        this.breakSound = breakSound;
-        this.stepSound = stepSound;
-        this.placeSound = placeSound;
-        this.hitSound = hitSound;
-        this.fallSound = fallSound;
+    public BlockSoundEventBuilder modifySoundDefinitions(Consumer<SoundDefinition> modifier) {
+        return this
+                .modifyBreakSoundDefinition(modifier)
+                .modifyStepSoundDefinition(modifier)
+                .modifyPlaceSoundDefinition(modifier)
+                .modifyHitSoundDefinition(modifier)
+                .modifyFallSoundDefinition(modifier);
+    }
+
+    public BlockSoundEventBuilder modifyBreakAndPlaceSoundDefinitions(Consumer<SoundDefinition> modifier) {
+        return modifyBreakSoundDefinition(modifier).modifyPlaceSoundDefinition(modifier);
+    }
+
+    public BlockSoundEventBuilder modifyStepHitAndFallSoundDefinitions(Consumer<SoundDefinition> modifier) {
+        return modifyStepSoundDefinition(modifier).modifyHitSoundDefinition(modifier).modifyFallSoundDefinition(modifier);
+    }
+
+    public BlockSoundEventBuilder modifyBreakSoundDefinition(Consumer<SoundDefinition> modifier) {
+        breakSoundOptions.modifyDefinition(modifier);
+        return this;
+    }
+
+    public BlockSoundEventBuilder modifyStepSoundDefinition(Consumer<SoundDefinition> modifier) {
+        stepSoundOptions.modifyDefinition(modifier);
+        return this;
+    }
+
+    public BlockSoundEventBuilder modifyPlaceSoundDefinition(Consumer<SoundDefinition> modifier) {
+        placeSoundOptions.modifyDefinition(modifier);
+        return this;
+    }
+
+    public BlockSoundEventBuilder modifyHitSoundDefinition(Consumer<SoundDefinition> modifier) {
+        hitSoundOptions.modifyDefinition(modifier);
+        return this;
+    }
+
+    public BlockSoundEventBuilder modifyFallSoundDefinition(Consumer<SoundDefinition> modifier) {
+        fallSoundOptions.modifyDefinition(modifier);
+        return this;
     }
 
     public BlockSoundEventBuilder modifySounds(Consumer<SoundDefinition.Sound> modifier) {
@@ -76,27 +95,27 @@ public class BlockSoundEventBuilder {
     }
 
     public BlockSoundEventBuilder modifyBreakSound(Consumer<SoundDefinition.Sound> modifier) {
-        this.breakSoundModifier = this.breakSoundModifier.andThen(modifier);
+        breakSoundOptions.modifySound(modifier);
         return this;
     }
 
     public BlockSoundEventBuilder modifyStepSound(Consumer<SoundDefinition.Sound> modifier) {
-        this.stepSoundModifier = this.stepSoundModifier.andThen(modifier);
+        stepSoundOptions.modifySound(modifier);
         return this;
     }
 
     public BlockSoundEventBuilder modifyPlaceSound(Consumer<SoundDefinition.Sound> modifier) {
-        this.placeSoundModifier = this.placeSoundModifier.andThen(modifier);
+        placeSoundOptions.modifySound(modifier);
         return this;
     }
 
     public BlockSoundEventBuilder modifyHitSound(Consumer<SoundDefinition.Sound> modifier) {
-        this.hitSoundModifier = this.hitSoundModifier.andThen(modifier);
+        hitSoundOptions.modifySound(modifier);
         return this;
     }
 
     public BlockSoundEventBuilder modifyFallSound(Consumer<SoundDefinition.Sound> modifier) {
-        this.fallSoundModifier = this.fallSoundModifier.andThen(modifier);
+        fallSoundOptions.modifySound(modifier);
         return this;
     }
 
@@ -109,65 +128,103 @@ public class BlockSoundEventBuilder {
     }
 
     public BlockSoundEventBuilder setBreakSoundPath(String path) {
-        this.breakSoundPath = path;
+        breakSoundOptions.replaceSoundPath(path);
         return this;
     }
 
     public BlockSoundEventBuilder setStepSoundPath(String path) {
-        this.stepSoundPath = path;
+        stepSoundOptions.replaceSoundPath(path);
         return this;
     }
 
     public BlockSoundEventBuilder setPlaceSoundPath(String path) {
-        this.placeSoundPath = path;
+        placeSoundOptions.replaceSoundPath(path);
         return this;
     }
 
     public BlockSoundEventBuilder setHitSoundPath(String path) {
-        this.hitSoundPath = path;
+        hitSoundOptions.replaceSoundPath(path);
         return this;
     }
 
     public BlockSoundEventBuilder setFallSoundPath(String path) {
-        this.fallSoundPath = path;
+        fallSoundOptions.replaceSoundPath(path);
         return this;
     }
 
     public BlockSoundEventBuilder setBreakSoundName(String name) {
-        this.breakSoundName = name;
+        breakSoundOptions.replaceSoundName(name);
         return this;
     }
 
     public BlockSoundEventBuilder setStepSoundName(String name) {
-        this.stepSoundName = name;
+        stepSoundOptions.replaceSoundName(name);
         return this;
     }
 
     public BlockSoundEventBuilder setPlaceSoundName(String name) {
-        this.placeSoundName = name;
+        placeSoundOptions.replaceSoundName(name);
         return this;
     }
 
     public BlockSoundEventBuilder setHitSoundName(String name) {
-        this.hitSoundName = name;
+        hitSoundOptions.replaceSoundName(name);
         return this;
     }
 
     public BlockSoundEventBuilder setFallSoundName(String name) {
-        this.fallSoundName = name;
+        fallSoundOptions.replaceSoundName(name);
         return this;
     }
 
     public void addSounds() {
-        add(breakSound, breakSoundModifier, breakSoundPath, breakSoundName, "place");
-        add(stepSound, stepSoundModifier, stepSoundPath, stepSoundName, "hit");
-        add(placeSound, placeSoundModifier, placeSoundPath, placeSoundName, "break");
-        add(hitSound, hitSoundModifier, hitSoundPath, hitSoundName, "fall");
-        add(fallSound, fallSoundModifier, fallSoundPath, fallSoundName, "hit", "step");
+        add(breakSoundOptions, "place");
+        add(stepSoundOptions, "hit");
+        add(placeSoundOptions, "break");
+        add(hitSoundOptions, "step");
+        add(fallSoundOptions, "hit", "step");
     }
 
-    public SoundDefinition add(Supplier<SoundEvent> soundEvent, Consumer<SoundDefinition.Sound> modifier, String path, String name, String... fallbacks) {
-        var pathOrFallback = path == null ? this.path : path;
-        return LodestoneBlockSoundEventProvider.INSTANCE.add(soundEvent, s -> s.with(LodestoneBlockSoundEventProvider.INSTANCE.allSounds(pathOrFallback, name, modifier, fallbacks)));
+    public SoundDefinition add(SoundOptions soundOptions, String... fallbacks) {
+        var pathOrFallback = soundOptions.soundPathReplacement == null ? path : soundOptions.soundPathReplacement;
+        return LodestoneBlockSoundEventProvider.INSTANCE.add(soundOptions.soundEvent,
+                s -> s.with(LodestoneBlockSoundEventProvider.INSTANCE.allSounds(pathOrFallback, soundOptions.soundName, soundOptions.soundModifier, fallbacks)),
+                soundOptions.soundDefinitionModifier);
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public static class SoundOptions {
+
+        protected final Supplier<SoundEvent> soundEvent;
+        protected String soundName;
+        protected String soundPathReplacement;
+
+        protected Consumer<SoundDefinition.Sound> soundModifier = s -> {};
+        protected Consumer<SoundDefinition> soundDefinitionModifier = s -> {};
+
+        public SoundOptions(Supplier<SoundEvent> soundEvent, String soundName) {
+            this.soundEvent = soundEvent;
+            this.soundName = soundName;
+        }
+
+        public SoundOptions replaceSoundName(String soundName) {
+            this.soundName = soundName;
+            return this;
+        }
+
+        public SoundOptions replaceSoundPath(String soundPathReplacement) {
+            this.soundPathReplacement = soundPathReplacement;
+            return this;
+        }
+
+        public SoundOptions modifySound(Consumer<SoundDefinition.Sound> modifier) {
+            this.soundModifier = this.soundModifier.andThen(modifier);
+            return this;
+        }
+
+        public SoundOptions modifyDefinition(Consumer<SoundDefinition> modifier) {
+            this.soundDefinitionModifier = this.soundDefinitionModifier.andThen(modifier);
+            return this;
+        }
     }
 }

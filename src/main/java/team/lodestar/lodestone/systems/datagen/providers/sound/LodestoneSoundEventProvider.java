@@ -25,9 +25,12 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
         return SoundDefinition.definition().subtitle(subtitle(soundEvent));
     }
 
-    public SoundDefinition add(Supplier<SoundEvent> soundEvent, Consumer<SoundDefinition> modifier) {
+    @SafeVarargs
+    public final SoundDefinition add(Supplier<SoundEvent> soundEvent, Consumer<SoundDefinition>... modifiers) {
         var definition = definition(soundEvent.get());
-        modifier.accept(definition);
+        for (Consumer<SoundDefinition> modifier : modifiers) {
+            modifier.accept(definition);
+        }
         add(soundEvent, definition);
         return definition;
     }
