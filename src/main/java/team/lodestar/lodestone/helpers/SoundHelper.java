@@ -1,26 +1,34 @@
 package team.lodestar.lodestone.helpers;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.*;
+import net.minecraft.util.*;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.player.*;
 
-import java.util.logging.Level;
-
+/**
+ * A helper class containing various methods designed to play sound from a side independent context.
+ */
 public class SoundHelper {
 
+    public static void playSound(Entity target, SoundEvent soundEvent) {
+        playSound(target, soundEvent, 1f, 1f);
+    }
 
-    /**
-     * Plays a sound at a target's location, mimicking the behavior of {@link Player#playSound} but allowing for the sound to be heard even if not played on both logical sides.
-     */
     public static void playSound(Entity target, SoundEvent soundEvent, float volume, float pitch) {
         playSound(target, soundEvent, target.getSoundSource(), volume, pitch);
     }
 
-    /**
-     * Plays a sound at a target's location, mimicking the behavior of {@link Player#playSound} but allowing for the sound to be heard even if not played on both logical sides.
-     */
+    public static void playSoundRandomPitch(Entity target, SoundEvent soundEvent, float minPitch, float maxPitch) {
+        playSound(target, soundEvent, minPitch, maxPitch);
+    }
+
+    public static void playSoundRandomPitch(Entity target, SoundEvent soundEvent, float volume, float minPitch, float maxPitch) {
+        var random = target.getRandom();
+        float pitch = RandomHelper.randomBetween(random, minPitch, maxPitch);
+        playSound(target, soundEvent, target.getSoundSource(), volume, pitch);
+    }
+
+    @SuppressWarnings("resource")
     public static void playSound(Entity target, SoundEvent soundEvent, SoundSource soundSource, float volume, float pitch) {
-        target.level().playSound(null, target.getX(), target.getY(), target.getZ(), soundEvent, soundSource, volume, pitch);
+        target.level().playSound(null, target, soundEvent, soundSource, volume, pitch);
     }
 }
