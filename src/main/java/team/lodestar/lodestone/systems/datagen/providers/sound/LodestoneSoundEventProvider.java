@@ -81,12 +81,26 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
         return sounds;
     }
 
+    public SoundDefinition.Sound[] allSounds(String path, Consumer<SoundDefinition.Sound> modifier) {
+        var sounds = allSounds(path);
+        for (SoundDefinition.Sound sound : sounds) {
+            modifier.accept(sound);
+        }
+        return sounds;
+    }
+
     public SoundDefinition.Sound[] allSounds(String basePath, String name, Consumer<SoundDefinition.Sound> modifier, String... fallbacks) {
         var sounds = allSounds(basePath, name, fallbacks);
         for (SoundDefinition.Sound sound : sounds) {
             modifier.accept(sound);
         }
         return sounds;
+    }
+
+    public SoundDefinition.Sound[] allSounds(String path) {
+        int index = path.lastIndexOf("/");
+        var name = path.substring(index + 1);
+        return allSounds(path.substring(0, index) + name);
     }
 
     public SoundDefinition.Sound[] allSounds(String basePath, String name, String... fallbacks) {
