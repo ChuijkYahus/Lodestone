@@ -100,7 +100,7 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
     public SoundDefinition.Sound[] allSounds(String path) {
         int index = path.lastIndexOf("/");
         var name = path.substring(index + 1);
-        return allSounds(path.substring(0, index) + name);
+        return allSounds(path.substring(0, index), name);
     }
 
     public SoundDefinition.Sound[] allSounds(String basePath, String name, String... fallbacks) {
