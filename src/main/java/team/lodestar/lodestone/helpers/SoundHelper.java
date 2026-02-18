@@ -9,14 +9,6 @@ import net.minecraft.world.entity.*;
  */
 public class SoundHelper {
 
-    public static void playSound(Entity target, SoundEvent soundEvent) {
-        playSound(target, soundEvent, 1f, 1f);
-    }
-
-    public static void playSound(Entity target, SoundEvent soundEvent, float volume, float pitch) {
-        playSound(target, soundEvent, target.getSoundSource(), volume, pitch);
-    }
-
     public static void playSoundRandomPitch(Entity target, SoundEvent soundEvent, float minPitch, float maxPitch) {
         playSound(target, soundEvent, minPitch, maxPitch);
     }
@@ -24,6 +16,14 @@ public class SoundHelper {
     public static void playSoundRandomPitch(Entity target, SoundEvent soundEvent, float volume, float minPitch, float maxPitch) {
         var random = target.getRandom();
         float pitch = RandomHelper.randomBetween(random, minPitch, maxPitch);
+        playSound(target, soundEvent, volume, pitch);
+    }
+
+    public static void playSound(Entity target, SoundEvent soundEvent) {
+        playSound(target, soundEvent, 1f, 1f);
+    }
+
+    public static void playSound(Entity target, SoundEvent soundEvent, float volume, float pitch) {
         playSound(target, soundEvent, target.getSoundSource(), volume, pitch);
     }
 
