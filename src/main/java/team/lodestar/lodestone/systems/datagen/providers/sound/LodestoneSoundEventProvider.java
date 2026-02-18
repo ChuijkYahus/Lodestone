@@ -10,6 +10,7 @@ import team.lodestar.lodestone.systems.sound.*;
 import java.util.*;
 import java.util.function.*;
 
+@SuppressWarnings("NullableProblems")
 public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvider {
 
     public static LodestoneSoundEventProvider INSTANCE;
@@ -24,8 +25,28 @@ public abstract class LodestoneSoundEventProvider extends SoundDefinitionsProvid
         INSTANCE = this;
     }
 
-    protected SoundDefinition definition(SoundEvent soundEvent) {
+    public SoundDefinition definition(SoundEvent soundEvent) {
         return SoundDefinition.definition().subtitle(subtitle(soundEvent));
+    }
+
+    @Override
+    public void add(String soundEvent, SoundDefinition definition) {
+        super.add(soundEvent, definition);
+    }
+
+    @Override
+    public void add(Supplier<SoundEvent> soundEvent, SoundDefinition definition) {
+        super.add(soundEvent, definition);
+    }
+
+    @Override
+    public void add(SoundEvent soundEvent, SoundDefinition definition) {
+        super.add(soundEvent, definition);
+    }
+
+    @Override
+    public void add(ResourceLocation soundEvent, SoundDefinition definition) {
+        super.add(soundEvent, definition);
     }
 
     @SafeVarargs
