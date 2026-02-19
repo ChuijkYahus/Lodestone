@@ -107,6 +107,16 @@ public class BlockStateSmithTypes {
     });
 
     /**
+     * Generates a glazed terracotta based block model and state.
+     */
+    public static BlockStateSmith<Block> GLAZED_TERRACOTTA_BLOCK = new BlockStateSmith<>(Block.class, (block, provider) -> {
+        String name = provider.getBlockName(block);
+        ResourceLocation textureName = provider.getBlockTexture(name);
+        BlockModelBuilder model = provider.models().withExistingParent(name, ResourceLocation.parse("block/template_glazed_terracotta")).texture("pattern", textureName);
+        provider.horizontalBlock(block, model);
+    });
+
+    /**
      * Generates stairs!
      */
     public static BlockStateSmith<StairBlock> STAIRS_BLOCK = new BlockStateSmith<>(StairBlock.class, (block, provider) -> {
