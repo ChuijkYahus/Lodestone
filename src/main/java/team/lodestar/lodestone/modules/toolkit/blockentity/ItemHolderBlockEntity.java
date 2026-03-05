@@ -13,12 +13,13 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.*;
 import org.jetbrains.annotations.Nullable;
+import team.lodestar.lodestone.modules.toolkit.inventory.LodestoneItemStackHandler;
 
 /**
  * A simple block entity which holds a single ItemStack
  */
 public abstract class ItemHolderBlockEntity extends LodestoneBlockEntity implements IInventoryCapabilityProvider {
-    public LodestoneBlockEntityInventory inventory;
+    public LodestoneItemStackHandler inventory;
 
     public ItemHolderBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -31,8 +32,8 @@ public abstract class ItemHolderBlockEntity extends LodestoneBlockEntity impleme
 
     @Override
     public ItemInteractionResult onUseWithItem(Player pPlayer, ItemStack pStack, InteractionHand pHand) {
-        if (level instanceof ServerLevel serverLevel) {
-            inventory.interact(serverLevel, pPlayer, pHand);
+        if (level instanceof ServerLevel) {
+            inventory.interact(pPlayer, pHand);
         }
         return ItemInteractionResult.SUCCESS;
     }
