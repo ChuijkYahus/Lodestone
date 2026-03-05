@@ -48,6 +48,10 @@ public abstract class LodestoneItemModelSystem extends ItemModelProvider impleme
         return (LodestoneItemModelBuilder) generatedModels.computeIfAbsent(outputLoc, factory);
     }
 
+    public void setTexturePath(String folder) {
+        DatagenSystemCommons.ITEM_TEXTURE.setFolder(folder);
+    }
+
     public ItemModelBuilder createParentedModel(Item item, ResourceLocation modelParent) {
         return getBuilder(getItemName(item)).parent(new ModelFile.UncheckedModelFile(modelParent));
     }

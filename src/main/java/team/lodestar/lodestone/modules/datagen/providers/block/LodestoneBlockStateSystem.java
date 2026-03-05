@@ -8,6 +8,7 @@ import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import team.lodestar.lodestone.modules.datagen.DatagenSystemCommons;
 import team.lodestar.lodestone.modules.datagen.IDatagenPathfinder;
 import team.lodestar.lodestone.modules.datagen.providers.item.LodestoneItemModelSystem;
 import team.lodestar.lodestone.modules.datagen.smith.blockstate.ModularBlockStateSmith;
@@ -46,6 +47,10 @@ public abstract class LodestoneBlockStateSystem extends BlockStateProvider imple
     @Override
     public LodestoneItemModelSystem itemModels() {
         return itemModelProvider;
+    }
+
+    public void setTexturePath(String folder) {
+        DatagenSystemCommons.BLOCK_TEXTURE.setFolder(folder);
     }
 
     public ModularBlockStateSmith.ModelFileSupplier fromFunction(BiFunction<String, ResourceLocation, ModelFile> modelFileFunction) {
