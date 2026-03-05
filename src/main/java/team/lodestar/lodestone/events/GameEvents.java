@@ -7,7 +7,7 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import team.lodestar.lodestone.handlers.*;
-import team.lodestar.lodestone.systems.enchanting.*;
+import team.lodestar.lodestone.modules.toolkit.enchanting.*;
 
 @EventBusSubscriber
 public class GameEvents {

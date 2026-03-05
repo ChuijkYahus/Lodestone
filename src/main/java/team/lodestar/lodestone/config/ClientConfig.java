@@ -2,7 +2,7 @@ package team.lodestar.lodestone.config;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
-import team.lodestar.lodestone.systems.config.LodestoneConfig;
+import team.lodestar.lodestone.modules.core.config.LodestoneConfig;
 
 import static team.lodestar.lodestone.LodestoneLib.LODESTONE;
 

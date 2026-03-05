@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import team.lodestar.lodestone.registry.client.LodestoneWorldEventRenderers;
-import team.lodestar.lodestone.systems.command.CommandCodec;
+import team.lodestar.lodestone.modules.toolkit.command.CommandCodec;
 
 import javax.annotation.Nullable;
 import java.util.function.Supplier;

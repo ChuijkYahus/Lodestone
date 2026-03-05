@@ -7,7 +7,7 @@ import net.minecraft.world.item.enchantment.effects.*;
 import net.minecraft.world.level.storage.loot.parameters.*;
 import net.neoforged.neoforge.registries.*;
 import team.lodestar.lodestone.*;
-import team.lodestar.lodestone.systems.enchanting.*;
+import team.lodestar.lodestone.modules.toolkit.enchanting.*;
 
 import java.util.*;
 import java.util.function.Supplier;

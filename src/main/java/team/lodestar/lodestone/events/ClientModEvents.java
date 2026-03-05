@@ -5,7 +5,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
-import team.lodestar.lodestone.handlers.ThrowawayBlockDataHandler;
 import team.lodestar.lodestone.handlers.screenparticle.ParticleEmitterHandler;
 import team.lodestar.lodestone.registry.common.particle.*;
 import team.lodestar.lodestone.systems.particle.world.type.LodestoneItemCrumbsParticleType;
@@ -24,7 +23,6 @@ public class ClientModEvents {
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent event) {
         ParticleEmitterHandler.registerParticleEmitters(event);
-        ThrowawayBlockDataHandler.setRenderLayers(event);
     }
 
     private static void registerParticleProviders(RegisterParticleProvidersEvent event) {

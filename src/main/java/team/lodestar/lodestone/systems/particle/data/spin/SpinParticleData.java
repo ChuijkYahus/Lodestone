@@ -1,7 +1,7 @@
 package team.lodestar.lodestone.systems.particle.data.spin;
 
 import net.minecraft.util.RandomSource;
-import team.lodestar.lodestone.systems.easing.Easing;
+import team.lodestar.lodestone.modules.core.easing.Easing;
 import team.lodestar.lodestone.systems.particle.data.GenericParticleData;
 
 public class SpinParticleData extends GenericParticleData implements SpinParticleDataWrapper {

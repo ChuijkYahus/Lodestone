@@ -2,7 +2,7 @@ package team.lodestar.lodestone.helpers;
 
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
-import team.lodestar.lodestone.systems.easing.Easing;
+import team.lodestar.lodestone.modules.core.easing.Easing;
 
 import java.awt.*;
 import java.util.List;

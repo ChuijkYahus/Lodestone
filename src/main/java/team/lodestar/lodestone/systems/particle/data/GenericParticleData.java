@@ -1,7 +1,7 @@
 package team.lodestar.lodestone.systems.particle.data;
 
 import net.minecraft.util.Mth;
-import team.lodestar.lodestone.systems.easing.Easing;
+import team.lodestar.lodestone.modules.core.easing.Easing;
 
 @SuppressWarnings("unused")
 public class GenericParticleData implements GenericParticleDataWrapper {

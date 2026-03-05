@@ -12,7 +12,7 @@ import org.apache.logging.log4j.*;
 import team.lodestar.lodestone.registry.common.LodestoneAttachmentTypes;
 import team.lodestar.lodestone.compability.*;
 import team.lodestar.lodestone.config.*;
-import team.lodestar.lodestone.datagen.*;
+import team.lodestar.lodestone.modules.datagen.*;
 import team.lodestar.lodestone.registry.common.*;
 import team.lodestar.lodestone.registry.common.particle.*;
 

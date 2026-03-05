@@ -10,11 +10,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import team.lodestar.lodestone.systems.block.sign.LodestoneStandingSignBlock;
-import team.lodestar.lodestone.systems.block.sign.LodestoneWallSignBlock;
-import team.lodestar.lodestone.systems.blockentity.LodestoneSignBlockEntity;
-import team.lodestar.lodestone.systems.multiblock.ILodestoneMultiblockComponent;
-import team.lodestar.lodestone.systems.multiblock.MultiBlockComponentEntity;
+import team.lodestar.lodestone.modules.toolkit.block.sign.LodestoneStandingSignBlock;
+import team.lodestar.lodestone.modules.toolkit.block.sign.LodestoneWallSignBlock;
+import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneSignBlockEntity;
+import team.lodestar.lodestone.modules.toolkit.multiblock.ILodestoneMultiblockComponent;
+import team.lodestar.lodestone.modules.toolkit.multiblock.MultiBlockComponentEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
