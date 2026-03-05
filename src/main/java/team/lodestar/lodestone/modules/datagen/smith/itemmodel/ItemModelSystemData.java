@@ -6,5 +6,5 @@ import team.lodestar.lodestone.modules.datagen.providers.item.LodestoneItemModel
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public record ItemModelSmithProcessor(LodestoneItemModelSystem provider, Consumer<Supplier<? extends Item>> consumer) {
+public record ItemModelSystemData(LodestoneItemModelSystem provider, Consumer<Supplier<? extends Item>> consumer) {
 }

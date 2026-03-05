@@ -7,7 +7,6 @@ import team.lodestar.lodestone.modules.datagen.providers.block.LodestoneBlockSta
 import team.lodestar.lodestone.modules.datagen.smith.itemmodel.ItemModelSmith;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public abstract class AbstractBlockStateSmith<T extends Block> {
@@ -18,7 +17,7 @@ public abstract class AbstractBlockStateSmith<T extends Block> {
         this.blockClass = blockClass;
     }
 
-    protected final void tryAct(StateSmithData data, ItemModelSmith itemModelSmith, Supplier<? extends Block> registryObject, BiConsumer<T, LodestoneBlockStateSystem> actor) {
+    protected final void tryAct(BlockStateSystemData data, ItemModelSmith itemModelSmith, Supplier<? extends Block> registryObject, BiConsumer<T, LodestoneBlockStateSystem> actor) {
         var block = registryObject.get();
         if (blockClass.isInstance(block)) {
             var provider = data.provider();
@@ -30,13 +29,10 @@ public abstract class AbstractBlockStateSmith<T extends Block> {
         }
     }
 
-    protected final void makeItemModel(StateSmithData data, ItemModelSmith itemModelSmith, Block block) {
+    protected final void makeItemModel(BlockStateSystemData data, ItemModelSmith itemModelSmith, Block block) {
         if (!itemModelSmith.equals(ItemModelSmithTypes.NO_DATAGEN)) {
             itemModelSmith.act(data.provider().itemModelProvider, block::asItem);
         }
-    }
-
-    public record StateSmithData(LodestoneBlockStateSystem provider, Consumer<Supplier<? extends Block>> consumer) {
     }
 
     public interface StateFunction<T extends Block> {

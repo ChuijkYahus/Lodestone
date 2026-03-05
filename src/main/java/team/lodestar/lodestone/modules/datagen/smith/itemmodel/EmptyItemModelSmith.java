@@ -11,7 +11,7 @@ public class EmptyItemModelSmith extends ItemModelSmith{
     }
 
     @Override
-    public ItemModelSmithResult act(ItemModelSmithProcessor data, Supplier<? extends Item> registryObject) {
+    public ItemModelSmithResult act(ItemModelSystemData data, Supplier<? extends Item> registryObject) {
         return null;
     }
 

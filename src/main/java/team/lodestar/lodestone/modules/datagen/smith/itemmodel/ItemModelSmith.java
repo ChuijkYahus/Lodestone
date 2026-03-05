@@ -58,11 +58,11 @@ public class ItemModelSmith {
     }
 
     @SafeVarargs
-    public final List<ItemModelSmithResult> act(ItemModelSmithProcessor data, Supplier<? extends Item>... items) {
+    public final List<ItemModelSmithResult> act(ItemModelSystemData data, Supplier<? extends Item>... items) {
         return act(data, List.of(items));
     }
 
-    public final List<ItemModelSmithResult> act(ItemModelSmithProcessor data, Collection<Supplier<? extends Item>> items) {
+    public final List<ItemModelSmithResult> act(ItemModelSystemData data, Collection<Supplier<? extends Item>> items) {
         var copy = new ArrayList<>(items);
         var result = new ArrayList<ItemModelSmithResult>();
         for (Supplier<? extends Item> item : copy) {
@@ -71,7 +71,7 @@ public class ItemModelSmith {
         return result;
     }
 
-    public ItemModelSmithResult act(ItemModelSmithProcessor data, Supplier<? extends Item> itemSupplier) {
+    public ItemModelSmithResult act(ItemModelSystemData data, Supplier<? extends Item> itemSupplier) {
         data.consumer().accept(itemSupplier);
         return act(data.provider(), itemSupplier);
     }
