@@ -8,16 +8,20 @@ public class LodestoneItemStackHandlerBuilder<T> {
 
     public final T parent;
     public final int slotCount;
-    public final int allowedItemSize;
+    public int allowedItemSize = 64;
     public Predicate<ItemStack> inputPredicate = s -> true;
     public Runnable onContentsChanged;
 
-    protected LodestoneItemStackHandlerBuilder(T parent, int slotCount, int allowedItemSize) {
+    protected LodestoneItemStackHandlerBuilder(T parent, int slotCount) {
         this.parent = parent;
         this.slotCount = slotCount;
-        this.allowedItemSize = allowedItemSize;
     }
 
+    public LodestoneItemStackHandlerBuilder<T> limitItemSize(int allowedItemSize) {
+        this.allowedItemSize = allowedItemSize;
+        return this;
+    }
+    
     public LodestoneItemStackHandlerBuilder<T> setInputPredicate(Predicate<ItemStack> inputPredicate) {
         this.inputPredicate = inputPredicate;
         return this;
