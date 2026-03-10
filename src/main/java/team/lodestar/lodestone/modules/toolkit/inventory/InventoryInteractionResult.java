@@ -2,7 +2,7 @@ package team.lodestar.lodestone.modules.toolkit.inventory;
 
 import net.minecraft.world.item.ItemStack;
 
-public record InventoryInteractionResult(ResultType resultType, ItemStack taken, ItemStack received) {
+public record InventoryInteractionResult(ResultType resultType, ItemStack original, ItemStack result) {
 
     public enum ResultType {
         INSERT,
@@ -14,8 +14,8 @@ public record InventoryInteractionResult(ResultType resultType, ItemStack taken,
         return new InventoryInteractionResult(resultType, unchanged, unchanged);
     }
 
-    public static InventoryInteractionResult success(ResultType resultType, ItemStack taken, ItemStack received) {
-        return new InventoryInteractionResult(resultType, taken, received);
+    public static InventoryInteractionResult success(ResultType resultType, ItemStack original, ItemStack result) {
+        return new InventoryInteractionResult(resultType, original, result);
     }
 
     public static InventoryInteractionResult failure() {
@@ -23,11 +23,11 @@ public record InventoryInteractionResult(ResultType resultType, ItemStack taken,
     }
 
     public boolean wasSuccessful() {
-        return !taken.equals(received);
+        return !original.equals(result);
     }
 
     public int getLeftoverCount(int clamp) {
-        int leftover = taken.getCount() - received.getCount();
+        int leftover = original.getCount() - result.getCount();
         return Math.min(leftover, clamp);
     }
 }
