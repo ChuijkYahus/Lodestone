@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -139,17 +140,17 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         }
     }
 
-    public Optional<InventoryInteractionResult> interact(Player player, InteractionHand hand) {
+    public Optional<InventoryInteractionResult> interact(ServerLevel level, Player player, InteractionHand hand) {
         updateCaches();
         var heldStack = player.getItemInHand(hand);
         if (heldStack.isEmpty()) {
-            var extract = extractItem(player);
+            var extract = extractItem(level, player);
             if (extract.wasSuccessful()) {
                 return Optional.of(extract);
             }
         }
         else {
-            var insert = insertItem(heldStack);
+            var insert = insertItem(level, heldStack);
             if (insert.wasSuccessful()) {
                 return Optional.of(insert);
             }
@@ -157,7 +158,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         return Optional.empty();
     }
 
-    public InventoryInteractionResult extractItem(Player player) {
+    public InventoryInteractionResult extractItem(ServerLevel level, Player player) {
         if (isEmpty()) {
             return InventoryInteractionResult.failure();
         }
@@ -174,7 +175,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         return InventoryInteractionResult.success(ResultType.EXTRACT, real, leftover);
     }
 
-    public InventoryInteractionResult insertItem(ItemStack stack) {
+    public InventoryInteractionResult insertItem(ServerLevel level, ItemStack stack) {
         var simulated = insertItem(stack, true);
         if (!simulated.wasSuccessful()) {
             return simulated;

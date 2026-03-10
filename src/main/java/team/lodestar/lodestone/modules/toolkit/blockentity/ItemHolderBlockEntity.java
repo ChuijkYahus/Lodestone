@@ -32,8 +32,8 @@ public abstract class ItemHolderBlockEntity extends LodestoneBlockEntity impleme
 
     @Override
     public ItemInteractionResult onUseWithItem(Player pPlayer, ItemStack pStack, InteractionHand pHand) {
-        if (level instanceof ServerLevel) {
-            inventory.interact(pPlayer, pHand);
+        if (level instanceof ServerLevel serverLevel) {
+            inventory.interact(serverLevel, pPlayer, pHand);
         }
         return ItemInteractionResult.SUCCESS;
     }

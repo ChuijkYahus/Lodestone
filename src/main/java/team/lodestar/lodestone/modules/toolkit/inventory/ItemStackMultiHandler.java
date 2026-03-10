@@ -1,6 +1,7 @@
 package team.lodestar.lodestone.modules.toolkit.inventory;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -24,18 +25,18 @@ public class ItemStackMultiHandler {
         this.exposedInventory = () -> new CombinedInvWrapper(asArray);
     }
 
-    public boolean interact(Player player, InteractionHand hand) {
+    public boolean interact(ServerLevel level, Player player, InteractionHand hand) {
         var interactionQueue = new ArrayList<>(inventories);
         if (recentInteractionIndex != -1) {
             var recentHandler = asArray[recentInteractionIndex];
             interactionQueue.remove(recentHandler);
-            var result = interact(recentHandler, player, hand);
+            var result = interact(level, recentHandler, player, hand);
             if (result.map(InventoryInteractionResult::wasSuccessful).orElse(false)) {
                 return true;
             }
         }
         for (LodestoneItemStackHandler handler : interactionQueue) {
-            var result = interact(handler, player, hand);
+            var result = interact(level, handler, player, hand);
             if (result.map(InventoryInteractionResult::wasSuccessful).orElse(false)) {
                 return true;
             }
@@ -43,7 +44,7 @@ public class ItemStackMultiHandler {
         return false;
     }
 
-    public Optional<InventoryInteractionResult> interact(LodestoneItemStackHandler handler, Player player, InteractionHand hand) {
-        return handler.interact(player, hand);
+    public Optional<InventoryInteractionResult> interact(ServerLevel level, LodestoneItemStackHandler handler, Player player, InteractionHand hand) {
+        return handler.interact(level, player, hand);
     }
 }
