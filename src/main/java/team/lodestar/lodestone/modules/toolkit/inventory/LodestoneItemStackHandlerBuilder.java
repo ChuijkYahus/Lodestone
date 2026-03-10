@@ -4,37 +4,39 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Predicate;
 
-public class LodestoneItemStackHandlerBuilder {
+public class LodestoneItemStackHandlerBuilder<T> {
 
+    public final T parent;
     public final int slotCount;
     public final int allowedItemSize;
     public Predicate<ItemStack> inputPredicate = s -> true;
     public Runnable onContentsChanged;
 
-    protected LodestoneItemStackHandlerBuilder(int slotCount, int allowedItemSize) {
+    protected LodestoneItemStackHandlerBuilder(T parent, int slotCount, int allowedItemSize) {
+        this.parent = parent;
         this.slotCount = slotCount;
         this.allowedItemSize = allowedItemSize;
     }
 
-    public LodestoneItemStackHandlerBuilder setInputPredicate(Predicate<ItemStack> inputPredicate) {
+    public LodestoneItemStackHandlerBuilder<T> setInputPredicate(Predicate<ItemStack> inputPredicate) {
         this.inputPredicate = inputPredicate;
         return this;
     }
 
-    public LodestoneItemStackHandlerBuilder onContentsChanged(Runnable contentsChangeBehavior) {
+    public LodestoneItemStackHandlerBuilder<T> onContentsChanged(Runnable contentsChangeBehavior) {
         this.onContentsChanged = contentsChangeBehavior;
         return this;
     }
 
-    public LodestoneItemStackHandler build() {
+    public LodestoneItemStackHandler<T> build() {
         return build(LodestoneItemStackHandler::new);
     }
 
-    public LodestoneItemStackHandler build(Factory factory) {
-        return factory.build(slotCount, allowedItemSize, inputPredicate, onContentsChanged);
+    public LodestoneItemStackHandler<T> build(Factory<T> factory) {
+        return factory.build(parent, slotCount, allowedItemSize, inputPredicate, onContentsChanged);
     }
 
-    public interface Factory {
-        LodestoneItemStackHandler build(int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable onContentsChanged);
+    public interface Factory<T> {
+        LodestoneItemStackHandler<T> build(T parent, int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable onContentsChanged);
     }
 }
