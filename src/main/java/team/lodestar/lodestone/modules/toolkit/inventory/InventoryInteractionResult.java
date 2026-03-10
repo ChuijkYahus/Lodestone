@@ -1,28 +1,33 @@
 package team.lodestar.lodestone.modules.toolkit.inventory;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
-public record InventoryInteractionResult(ItemStack original, ItemStack result) {
+public record InventoryInteractionResult(ResultType resultType, ItemStack taken, ItemStack received) {
 
-    public static InventoryInteractionResult empty() {
-        return unchanged(ItemStack.EMPTY);
+    public enum ResultType {
+        INSERT,
+        EXTRACT,
+        FAILURE
     }
 
-    public static InventoryInteractionResult unchanged(ItemStack unchanged) {
-        return new InventoryInteractionResult(unchanged, unchanged);
+    public static InventoryInteractionResult unchanged(ResultType resultType, ItemStack unchanged) {
+        return new InventoryInteractionResult(resultType, unchanged, unchanged);
     }
 
-    public static InventoryInteractionResult success(ItemStack original, ItemStack result) {
-        return new InventoryInteractionResult(original, result);
+    public static InventoryInteractionResult success(ResultType resultType, ItemStack taken, ItemStack received) {
+        return new InventoryInteractionResult(resultType, taken, received);
+    }
+
+    public static InventoryInteractionResult failure() {
+        return new InventoryInteractionResult(ResultType.FAILURE, ItemStack.EMPTY, ItemStack.EMPTY);
     }
 
     public boolean wasSuccessful() {
-        return !original.equals(result);
+        return !taken.equals(received);
     }
 
     public int getLeftoverCount(int clamp) {
-        int leftover = original.getCount() - result.getCount();
+        int leftover = taken.getCount() - received.getCount();
         return Math.min(leftover, clamp);
     }
 }

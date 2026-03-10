@@ -7,6 +7,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class ItemStackMultiHandler {
@@ -28,17 +29,21 @@ public class ItemStackMultiHandler {
         if (recentInteractionIndex != -1) {
             var recentHandler = asArray[recentInteractionIndex];
             interactionQueue.remove(recentHandler);
-            var result = recentHandler.interact(player, hand);
+            var result = interact(recentHandler, player, hand);
             if (result.map(InventoryInteractionResult::wasSuccessful).orElse(false)) {
                 return true;
             }
         }
         for (LodestoneItemStackHandler handler : interactionQueue) {
-            var result = handler.interact(player, hand);
+            var result = interact(handler, player, hand);
             if (result.map(InventoryInteractionResult::wasSuccessful).orElse(false)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public Optional<InventoryInteractionResult> interact(LodestoneItemStackHandler handler, Player player, InteractionHand hand) {
+        return handler.interact(player, hand);
     }
 }

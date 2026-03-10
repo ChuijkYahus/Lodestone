@@ -4,9 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -14,10 +13,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.ResultType;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -157,18 +156,18 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
 
     public InventoryInteractionResult extractItem(Player player) {
         if (isEmpty()) {
-            return InventoryInteractionResult.empty();
+            return InventoryInteractionResult.failure();
         }
         var extracted = nonEmptyItemStacks.getLast();
-        var amount = extracted.getCount();
         int slot = stacks.indexOf(extracted);
+        var amount = extracted.getCount();
         var simulated = extractItem(slot, amount, true);
         if (simulated.equals(ItemStack.EMPTY)) {
-            return InventoryInteractionResult.unchanged(extracted);
+            return InventoryInteractionResult.unchanged(ResultType.EXTRACT, extracted);
         }
         var real = extractItem(slot, amount, false);
         ItemHandlerHelper.giveItemToPlayer(player, real);
-        return InventoryInteractionResult.success(real, ItemStack.EMPTY);
+        return InventoryInteractionResult.success(ResultType.EXTRACT, real, ItemStack.EMPTY);
     }
 
     public InventoryInteractionResult insertItem(ItemStack stack) {
@@ -184,8 +183,8 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
     protected InventoryInteractionResult insertItem(ItemStack stack, boolean simulate) {
         ItemStack result = ItemHandlerHelper.insertItem(this, stack, simulate);
         if (result.equals(stack)) {
-            return InventoryInteractionResult.unchanged(result);
+            return InventoryInteractionResult.unchanged(ResultType.INSERT, result);
         }
-        return InventoryInteractionResult.success(stack, result);
+        return InventoryInteractionResult.success(ResultType.INSERT, stack, result);
     }
 }
