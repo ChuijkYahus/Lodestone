@@ -36,8 +36,8 @@ public class LodestoneItemStackHandler<T> extends ItemStackHandler {
 
     private int filledSlots;
 
-    public static <T> LodestoneItemStackHandlerBuilder<T> create(T parent, int slotCount, int allowedItemSize) {
-        return new LodestoneItemStackHandlerBuilder<>(parent, slotCount, allowedItemSize);
+    public static <T> LodestoneItemStackHandlerBuilder<T> create(T parent, int slotCount) {
+        return new LodestoneItemStackHandlerBuilder<>(parent, slotCount);
     }
 
     public LodestoneItemStackHandler(T parent, int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable contentsChangeBehavior) {

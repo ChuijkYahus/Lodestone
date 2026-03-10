@@ -21,7 +21,7 @@ public class LodestoneItemStackHandlerBuilder<T> {
         this.allowedItemSize = allowedItemSize;
         return this;
     }
-    
+
     public LodestoneItemStackHandlerBuilder<T> setInputPredicate(Predicate<ItemStack> inputPredicate) {
         this.inputPredicate = inputPredicate;
         return this;
