@@ -4,43 +4,41 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Predicate;
 
-public class LodestoneItemStackHandlerBuilder<T> {
+public class LodestoneItemStackHandlerBuilder {
 
-    public final T parent;
     public final int slotCount;
     public int allowedItemSize = 64;
     public Predicate<ItemStack> inputPredicate = s -> true;
     public Runnable onContentsChanged;
 
-    protected LodestoneItemStackHandlerBuilder(T parent, int slotCount) {
-        this.parent = parent;
+    protected LodestoneItemStackHandlerBuilder(int slotCount) {
         this.slotCount = slotCount;
     }
 
-    public LodestoneItemStackHandlerBuilder<T> limitItemSize(int allowedItemSize) {
+    public LodestoneItemStackHandlerBuilder limitItemSize(int allowedItemSize) {
         this.allowedItemSize = allowedItemSize;
         return this;
     }
 
-    public LodestoneItemStackHandlerBuilder<T> setInputPredicate(Predicate<ItemStack> inputPredicate) {
+    public LodestoneItemStackHandlerBuilder setInputPredicate(Predicate<ItemStack> inputPredicate) {
         this.inputPredicate = inputPredicate;
         return this;
     }
 
-    public LodestoneItemStackHandlerBuilder<T> onContentsChanged(Runnable contentsChangeBehavior) {
+    public LodestoneItemStackHandlerBuilder onContentsChanged(Runnable contentsChangeBehavior) {
         this.onContentsChanged = contentsChangeBehavior;
         return this;
     }
 
-    public LodestoneItemStackHandler<T> build() {
+    public LodestoneItemStackHandler build() {
         return build(LodestoneItemStackHandler::new);
     }
 
-    public LodestoneItemStackHandler<T> build(Factory<T> factory) {
-        return factory.build(parent, slotCount, allowedItemSize, inputPredicate, onContentsChanged);
+    public LodestoneItemStackHandler build(Factory factory) {
+        return factory.build(slotCount, allowedItemSize, inputPredicate, onContentsChanged);
     }
 
-    public interface Factory<T> {
-        LodestoneItemStackHandler<T> build(T parent, int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable onContentsChanged);
+    public interface Factory {
+        LodestoneItemStackHandler build(int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable onContentsChanged);
     }
 }

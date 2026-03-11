@@ -24,9 +24,8 @@ import java.util.function.Predicate;
 /**
  * An extension of the ItemStackHandler class, designed to work well when several inventories are relevant in a singular context, such as a block that stores multiple types of items in different lists.
  */
-public class LodestoneItemStackHandler<T> extends ItemStackHandler {
+public class LodestoneItemStackHandler extends ItemStackHandler {
 
-    public final T parent;
     public final int slotCount;
     public final int allowedItemSize;
     public final Predicate<ItemStack> inputPredicate;
@@ -36,12 +35,11 @@ public class LodestoneItemStackHandler<T> extends ItemStackHandler {
 
     private int filledSlots;
 
-    public static <T> LodestoneItemStackHandlerBuilder<T> create(T parent, int slotCount) {
-        return new LodestoneItemStackHandlerBuilder<>(parent, slotCount);
+    public static LodestoneItemStackHandlerBuilder create(int slotCount) {
+        return new LodestoneItemStackHandlerBuilder(slotCount);
     }
 
-    public LodestoneItemStackHandler(T parent, int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable contentsChangeBehavior) {
-        this.parent = parent;
+    public LodestoneItemStackHandler(int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable contentsChangeBehavior) {
         this.slotCount = slotCount;
         this.allowedItemSize = allowedItemSize;
         this.inputPredicate = inputPredicate;
