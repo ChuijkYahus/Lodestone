@@ -16,7 +16,11 @@ public class LodestoneRecipeSearch<T extends RecipeInput, K extends Recipe<T>> {
     protected final Level level;
     protected final RecipeType<K> recipeType;
 
-    public LodestoneRecipeSearch(Level level, RecipeType<K> recipeType) {
+    public static <T extends RecipeInput, K extends Recipe<T>> LodestoneRecipeSearch<T, K> search(Level level, RecipeType<K> recipeType) {
+        return new LodestoneRecipeSearch<>(level, recipeType);
+    }
+
+    protected LodestoneRecipeSearch(Level level, RecipeType<K> recipeType) {
         this.level = level;
         this.recipeType = recipeType;
     }
