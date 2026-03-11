@@ -13,36 +13,25 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public class ItemStackMultiHandler {
+public class ItemStackMultiHandler extends CombinedInvWrapper {
 
     protected final ImmutableList<LodestoneItemStackHandler> inventories;
-    protected final LodestoneItemStackHandler[] asArray;
-    protected final Supplier<IItemHandler> exposedInventory;
 
     protected int recentInteractionIndex;
 
     public ItemStackMultiHandler(LodestoneItemStackHandler... inventories) {
-        this(List.of(inventories));
-    }
-
-    public ItemStackMultiHandler(List<LodestoneItemStackHandler> inventories) {
-        this.inventories = ImmutableList.<LodestoneItemStackHandler>builder().addAll(inventories).build();
-        this.asArray = inventories.toArray(LodestoneItemStackHandler[]::new);
-        this.exposedInventory = () -> new CombinedInvWrapper(asArray);
+        super(inventories);
+        this.inventories = ImmutableList.<LodestoneItemStackHandler>builder().add(inventories).build();
     }
 
     public ImmutableList<LodestoneItemStackHandler> getInventories() {
         return inventories;
     }
 
-    public Supplier<IItemHandler> getExposedInventory() {
-        return exposedInventory;
-    }
-
     public boolean interact(ServerLevel level, Player player, InteractionHand hand) {
         var interactionQueue = new ArrayList<>(inventories);
         if (recentInteractionIndex != -1) {
-            var recentHandler = asArray[recentInteractionIndex];
+            var recentHandler = inventories.get(recentInteractionIndex);
             interactionQueue.remove(recentHandler);
             var result = interact(level, recentHandler, player, hand);
             if (result.map(InventoryInteractionResult::wasSuccessful).orElse(false)) {
