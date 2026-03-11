@@ -8,6 +8,8 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -19,10 +21,22 @@ public class ItemStackMultiHandler {
 
     protected int recentInteractionIndex;
 
-    public ItemStackMultiHandler(ImmutableList<LodestoneItemStackHandler> inventories) {
-        this.inventories = inventories;
+    public ItemStackMultiHandler(LodestoneItemStackHandler... inventories) {
+        this(List.of(inventories));
+    }
+
+    public ItemStackMultiHandler(List<LodestoneItemStackHandler> inventories) {
+        this.inventories = ImmutableList.<LodestoneItemStackHandler>builder().addAll(inventories).build();
         this.asArray = inventories.toArray(LodestoneItemStackHandler[]::new);
         this.exposedInventory = () -> new CombinedInvWrapper(asArray);
+    }
+
+    public ImmutableList<LodestoneItemStackHandler> getInventories() {
+        return inventories;
+    }
+
+    public Supplier<IItemHandler> getExposedInventory() {
+        return exposedInventory;
     }
 
     public boolean interact(ServerLevel level, Player player, InteractionHand hand) {
@@ -33,11 +47,14 @@ public class ItemStackMultiHandler {
             var result = interact(level, recentHandler, player, hand);
             if (result.map(InventoryInteractionResult::wasSuccessful).orElse(false)) {
                 return true;
+            } else {
+                recentInteractionIndex = -1;
             }
         }
         for (LodestoneItemStackHandler handler : interactionQueue) {
             var result = interact(level, handler, player, hand);
             if (result.map(InventoryInteractionResult::wasSuccessful).orElse(false)) {
+                recentInteractionIndex = inventories.indexOf(handler);
                 return true;
             }
         }

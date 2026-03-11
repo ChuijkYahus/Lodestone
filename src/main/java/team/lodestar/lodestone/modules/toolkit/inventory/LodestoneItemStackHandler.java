@@ -26,12 +26,12 @@ import java.util.function.Predicate;
  */
 public class LodestoneItemStackHandler extends ItemStackHandler {
 
-    public final int slotCount;
-    public final int allowedItemSize;
-    public final Predicate<ItemStack> inputPredicate;
-    public final Runnable contentsChangeBehavior;
+    protected final int slotCount;
+    protected final int allowedItemSize;
+    protected final Predicate<ItemStack> inputPredicate;
+    protected final Runnable contentsChangeBehavior;
 
-    public ArrayList<ItemStack> nonEmptyItemStacks = new ArrayList<>();
+    protected ArrayList<ItemStack> nonEmptyItemStacks = new ArrayList<>();
 
     private int filledSlots;
 
@@ -44,6 +44,18 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         this.allowedItemSize = allowedItemSize;
         this.inputPredicate = inputPredicate;
         this.contentsChangeBehavior = contentsChangeBehavior;
+    }
+
+    public int getSlotCount() {
+        return slotCount;
+    }
+
+    public int getAllowedItemSize() {
+        return allowedItemSize;
+    }
+
+    public Predicate<ItemStack> getInputPredicate() {
+        return inputPredicate;
     }
 
     public NonNullList<ItemStack> getStacks() {
