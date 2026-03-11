@@ -9,6 +9,7 @@ import net.minecraft.world.level.Level;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class LodestoneRecipeSearch<T extends RecipeInput, K extends Recipe<T>> {
@@ -16,6 +17,9 @@ public class LodestoneRecipeSearch<T extends RecipeInput, K extends Recipe<T>> {
     protected final Level level;
     protected final RecipeType<K> recipeType;
 
+    public static <T extends RecipeInput, K extends Recipe<T>> LodestoneRecipeSearch<T, K> search(Level level, Supplier<RecipeType<K>> recipeType) {
+        return search(level, recipeType.get());
+    }
     public static <T extends RecipeInput, K extends Recipe<T>> LodestoneRecipeSearch<T, K> search(Level level, RecipeType<K> recipeType) {
         return new LodestoneRecipeSearch<>(level, recipeType);
     }
