@@ -21,7 +21,7 @@ public abstract class AbstractBlockStateSmith<T extends Block> {
         var block = registryObject.get();
         if (blockClass.isInstance(block)) {
             var provider = data.provider();
-            actor.accept(blockClass.cast(registryObject), provider);
+            actor.accept(blockClass.cast(block), provider);
             makeItemModel(data, itemModelSmith, block);
             data.consumer().accept(registryObject);
         } else {
