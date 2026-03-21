@@ -15,6 +15,8 @@ import team.lodestar.lodestone.helpers.*;
 import team.lodestar.lodestone.registry.common.*;
 import team.lodestar.lodestone.modules.toolkit.blockentity.*;
 
+import java.util.Optional;
+
 /**
  * A basic Multiblock component block entity. Defers some important actions to the core of the multiblock.
  */
@@ -32,8 +34,12 @@ public class MultiBlockComponentEntity extends LodestoneBlockEntity implements I
 
     @Override
     public IItemHandler getInventory(Direction direction) {
-        if (corePos != null && level.getBlockEntity(corePos) instanceof MultiBlockCoreEntity core && core instanceof IInventoryCapabilityProvider supplier) {
-            return supplier.getInventory(direction);
+        Optional<MultiBlockCoreEntity> optional = getCore();
+        if (optional.isEmpty()) {
+            return null;
+        }
+        if (optional.get() instanceof IInventoryCapabilityProvider provider) {
+            return provider.getInventory(direction);
         }
         return null;
     }
@@ -54,33 +60,32 @@ public class MultiBlockComponentEntity extends LodestoneBlockEntity implements I
 
     @Override
     public ItemInteractionResult onUse(Player pPlayer, InteractionHand pHand) {
-        if (corePos != null && level.getBlockEntity(corePos) instanceof MultiBlockCoreEntity core) {
-            return core.onUse(pPlayer, pHand);
-        }
+        getCore().ifPresent(c -> c.onUse(pPlayer, pHand));
         return super.onUse(pPlayer, pHand);
     }
 
     @Override
     public InteractionResult onUseWithoutItem(Player pPlayer) {
-        if (corePos != null && level.getBlockEntity(corePos) instanceof MultiBlockCoreEntity core) {
-            return core.onUseWithoutItem(pPlayer);
-        }
+        getCore().ifPresent(c -> c.onUseWithoutItem(pPlayer));
         return super.onUseWithoutItem(pPlayer);
     }
 
     @Override
     public ItemInteractionResult onUseWithItem(Player pPlayer, ItemStack pStack, InteractionHand pHand) {
-        if (corePos != null && level.getBlockEntity(corePos) instanceof MultiBlockCoreEntity core) {
-            return core.onUseWithItem(pPlayer, pStack, pHand);
-        }
+        getCore().ifPresent(c -> c.onUseWithItem(pPlayer, pStack, pHand));
         return super.onUseWithItem(pPlayer, pStack, pHand);
     }
 
     @Override
     public void onBreak(@Nullable Player player) {
-        if (corePos != null && level.getBlockEntity(corePos) instanceof MultiBlockCoreEntity core) {
-            core.onBreak(player);
-        }
+        getCore().ifPresent(c -> c.onBreak(player));
         super.onBreak(player);
+    }
+
+    public Optional<MultiBlockCoreEntity> getCore() {
+        if (corePos != null && level.getBlockEntity(corePos) instanceof MultiBlockCoreEntity core) {
+            return Optional.of(core);
+        }
+        return Optional.empty();
     }
 }

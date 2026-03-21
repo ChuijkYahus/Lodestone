@@ -1,5 +1,6 @@
 package team.lodestar.lodestone.modules.toolkit.block;
 
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlag;
@@ -139,6 +140,15 @@ public class LodestoneBlockProperties extends BlockBehaviour.Properties {
     @DatagenOnly
     public LodestoneBlockProperties needsDiamond() {
         addDatagenData(LodestoneDatagenBlockData::needsDiamond);
+        return this;
+    }
+
+    public LodestoneBlockProperties setCutoutRenderType() {
+        return setRenderType(() -> RenderType::cutoutMipped);
+    }
+
+    public LodestoneBlockProperties setRenderType(Supplier<Supplier<RenderType>> renderType) {
+        addDatagenData(d -> d.setRenderType(renderType));
         return this;
     }
 
