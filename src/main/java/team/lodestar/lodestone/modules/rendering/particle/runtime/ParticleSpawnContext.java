@@ -1,13 +1,13 @@
 package team.lodestar.lodestone.modules.rendering.particle.runtime;
 
 public class ParticleSpawnContext {
-    public double x;
-    public double y;
-    public double z;
+    public double x = 0;
+    public double y = 0;
+    public double z = 0;
 
-    public double vx;
-    public double vy;
-    public double vz;
+    public double vx = 0;
+    public double vy = 0;
+    public double vz = 0;
 
     public int lifetime = 20;
 
@@ -28,5 +28,9 @@ public class ParticleSpawnContext {
     public ParticleSpawnContext lifetime(int lifetime) {
         this.lifetime = lifetime;
         return this;
+    }
+
+    public ParticleSpawnContext copy() {
+        return new ParticleSpawnContext().position(x, y, z).motion(vx, vy, vz).lifetime(lifetime);
     }
 }
