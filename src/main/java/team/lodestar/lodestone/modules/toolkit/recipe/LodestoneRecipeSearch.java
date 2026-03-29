@@ -1,5 +1,7 @@
 package team.lodestar.lodestone.modules.toolkit.recipe;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeInput;
@@ -31,6 +33,18 @@ public class LodestoneRecipeSearch<T extends RecipeInput, K extends Recipe<T>> {
     protected LodestoneRecipeSearch(Level level, RecipeType<K> recipeType) {
         this.level = level;
         this.recipeType = recipeType;
+    }
+
+    public K findRecipe(ResourceLocation id) {
+        return findRecipe(r -> {
+            List<RecipeHolder<K>> recipeHolders = getRecipeHolders();
+            for (RecipeHolder<K> recipeHolder : recipeHolders) {
+                if (recipeHolder.id().equals(id)) {
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 
     public K findRecipe(T recipeInput) {
