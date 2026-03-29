@@ -5,6 +5,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,9 @@ public class LodestoneRecipeSearch<T extends RecipeInput, K extends Recipe<T>> {
     protected final Level level;
     protected final RecipeType<K> recipeType;
 
+    public static <T extends RecipeInput, K extends Recipe<T>> LodestoneRecipeSearch<T, K> search(Level level, DeferredHolder<RecipeType<?>, LodestoneRecipeType<K>> holder) {
+        return search(level, holder.get());
+    }
     public static <T extends RecipeInput, K extends Recipe<T>> LodestoneRecipeSearch<T, K> search(Level level, Supplier<RecipeType<K>> recipeType) {
         return search(level, recipeType.get());
     }
