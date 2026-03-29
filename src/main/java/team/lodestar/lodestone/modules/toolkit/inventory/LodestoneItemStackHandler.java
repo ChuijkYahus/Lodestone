@@ -84,9 +84,9 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         if (contentsChangeBehavior != null) {
             contentsChangeBehavior.run();
         }
-        if (displayData != null) {
-            displayData.onContentsChanged();
-        }
+//        if (displayData != null) {
+//            displayData.onContentsChanged();
+//        }
     }
 
     @Override
