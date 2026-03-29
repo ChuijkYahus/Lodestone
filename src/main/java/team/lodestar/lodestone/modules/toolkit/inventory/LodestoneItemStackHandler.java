@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import static team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.success;
+import static team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.unchanged;
+
 /**
  * An extension of the ItemStackHandler class, designed to work well when several inventories are relevant in a singular context, such as a block that stores multiple types of items in different lists.
  */
@@ -32,6 +35,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
     protected final Runnable contentsChangeBehavior;
 
     protected ArrayList<ItemStack> nonEmptyItemStacks = new ArrayList<>();
+//    protected RotatingItemDisplayData displayData;
 
     private int filledSlots;
 
@@ -79,6 +83,9 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         updateCaches();
         if (contentsChangeBehavior != null) {
             contentsChangeBehavior.run();
+        }
+        if (displayData != null) {
+            displayData.onContentsChanged();
         }
     }
 
@@ -180,12 +187,12 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         var amount = toExtract.getCount();
         var simulated = extractItem(slot, amount, true);
         if (simulated.equals(ItemStack.EMPTY)) {
-            return InventoryInteractionResult.unchanged(ResultType.EXTRACT, toExtract);
+            return unchanged(ResultType.EXTRACT, toExtract);
         }
         var real = extractItem(slot, amount, false);
         var leftover = real.copyWithCount(real.getCount() - amount);
         ItemHandlerHelper.giveItemToPlayer(player, real);
-        return InventoryInteractionResult.success(ResultType.EXTRACT, real, leftover);
+        return processResult(success(ResultType.EXTRACT, real, leftover));
     }
 
     public InventoryInteractionResult insertItem(ServerLevel level, ItemStack stack) {
@@ -195,14 +202,18 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         }
         int count = simulated.getLeftoverCount(allowedItemSize);
         var input = stack.split(count);
-        return insertItem(input, false);
+        return processResult(insertItem(input, false));
     }
 
     protected InventoryInteractionResult insertItem(ItemStack stack, boolean simulate) {
         ItemStack leftover = ItemHandlerHelper.insertItem(this, stack, simulate);
         if (leftover.equals(stack)) {
-            return InventoryInteractionResult.unchanged(ResultType.INSERT, leftover);
+            return unchanged(ResultType.INSERT, leftover);
         }
-        return InventoryInteractionResult.success(ResultType.INSERT, stack, leftover);
+        return success(ResultType.INSERT, stack, leftover);
+    }
+
+    protected InventoryInteractionResult processResult(InventoryInteractionResult result) {
+        return result;
     }
 }

@@ -147,6 +147,7 @@ public class DataHelper {
         }
         return arrayList;
     }
+
     public static int approach(int value, int limit, int stepSize) {
         stepSize = Math.abs(stepSize);
         return value < limit ? Math.clamp(value + stepSize, value, limit) : Math.clamp(value - stepSize, limit, value);
