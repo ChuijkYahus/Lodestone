@@ -19,6 +19,7 @@ public class LodestoneBlockModelBuilder extends BlockModelBuilder {
     @Override
     public BlockModelBuilder texture(String key, ResourceLocation path) {
         var modified = DatagenSystemCommons.modifyTexturePath(path);
+        DatagenSystemCommons.writeBlockTextureFromBlockModel(key, modified);
         return super.texture(key, modified);
     }
 

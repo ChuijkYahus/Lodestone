@@ -29,7 +29,7 @@ import java.util.function.Supplier;
 
 /**
  * A SimpleBlock is an implementation of EntityBlock that allows most frequently used logic to be handled in a SimpleBlockEntity
- * It's important to still utilize generic, T extends YourBlockEntity, in order to allow for other mods to extend your block and use a different block entity
+ * It's important to still utilize a generic, T extends YourBlockEntity, in order to allow for other mods to extend your block and use a different block entity
  */
 @SuppressWarnings("unchecked")
 public class LodestoneEntityBlock<T extends LodestoneBlockEntity> extends Block implements EntityBlock {

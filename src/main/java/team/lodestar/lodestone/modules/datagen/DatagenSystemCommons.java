@@ -29,6 +29,10 @@ public class DatagenSystemCommons {
         return BLOCK_MODEL_TEXTURE_REFERENCE.get(key);
     }
 
+    public static void writeBlockTextureFromBlockModel(String key, ResourceLocation texture) {
+        BLOCK_MODEL_TEXTURE_REFERENCE.put(key, texture);
+    }
+
     public static ResourceLocation escapeTextureFolderHierarchy(ResourceLocation texture) {
         IMMUTABLE_TEXTURES.add(texture);
         return texture;
