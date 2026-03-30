@@ -44,6 +44,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
     }
 
     public LodestoneItemStackHandler(int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable contentsChangeBehavior) {
+        super(slotCount);
         this.slotCount = slotCount;
         this.allowedItemSize = allowedItemSize;
         this.inputPredicate = inputPredicate;
