@@ -116,12 +116,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         }
     }
 
-    public void load(HolderLookup.Provider provider, CompoundTag compound) {
-        load(provider, compound, "inventory");
-    }
-
-    public void load(HolderLookup.Provider provider, CompoundTag compound, String name) {
-        deserializeNBT(provider, compound.getCompound(name));
+    public void ensureSize() {
         if (stacks.size() != slotCount) {
             var updated = NonNullList.withSize(slotCount, ItemStack.EMPTY);
             for (int i = 0; i < stacks.size(); i++) {
@@ -129,7 +124,16 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
                     updated.set(i, stacks.get(i));
                 }
             }
+            stacks = updated;
         }
+    }
+    public void load(HolderLookup.Provider provider, CompoundTag compound) {
+        load(provider, compound, "inventory");
+    }
+
+    public void load(HolderLookup.Provider provider, CompoundTag compound, String name) {
+        ensureSize();
+        deserializeNBT(provider, compound.getCompound(name));
         updateCaches();
     }
 
@@ -142,7 +146,8 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
     }
 
     public void clear() {
-        for (int i = 0; i < slotCount; i++) {
+        ensureSize();
+        for (int i = 0; i < getSlotCount(); i++) {
             setStackInSlot(i, ItemStack.EMPTY);
         }
     }
@@ -152,7 +157,8 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
     }
 
     public void dumpItems(Level level, Vec3 pos) {
-        for (int i = 0; i < slotCount; i++) {
+        ensureSize();
+        for (int i = 0; i < getSlotCount(); i++) {
             if (!getStackInSlot(i).isEmpty()) {
                 level.addFreshEntity(new ItemEntity(level, pos.x(), pos.y(), pos.z(), getStackInSlot(i)));
                 setStackInSlot(i, ItemStack.EMPTY);
