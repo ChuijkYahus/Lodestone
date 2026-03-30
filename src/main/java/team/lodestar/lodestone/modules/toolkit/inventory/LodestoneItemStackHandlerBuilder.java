@@ -33,14 +33,6 @@ public class LodestoneItemStackHandlerBuilder {
     }
 
     public LodestoneItemStackHandler build() {
-        return build(LodestoneItemStackHandler::new);
-    }
-
-    public LodestoneItemStackHandler build(Factory factory) {
-        return factory.build(slotCount, allowedItemSize, inputPredicate, onContentsChanged);
-    }
-
-    public interface Factory {
-        LodestoneItemStackHandler build(int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable onContentsChanged);
+        return new LodestoneItemStackHandler(slotCount, allowedItemSize, inputPredicate, onContentsChanged);
     }
 }

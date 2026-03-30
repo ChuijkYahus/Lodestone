@@ -1,30 +1,31 @@
 {
-    "required": true,
-    "package": "team.lodestar.lodestone.mixin",
-    "compatibilityLevel": "JAVA_17",
-    "refmap": "lodestone.refmap.json",
-    "mixins": [
-        "modules.core.common.BlockItemMixin",
-        "modules.core.common.EntityMixin",
-        "modules.core.common.LivingEntityMixin"
-    ],
-    "client": [
-        "modules.toolkit.client.AbstractContainerScreenMixin",
-        "modules.toolkit.client.CreativeModeInventoryScreenMixin",
-        "client.EffectInstanceMixin",
-        "client.EffectProgramMixin",
-        "client.GameRendererMixin",
-        "client.GuiGraphicsMixin",
-        "client.GuiMixin",
-        "client.LevelRendererMixin",
-        "client.PostChainMixin",
-        "client.ShaderInstanceMixin",
-        "client.VertexBufferMixin",
-        "modules.core.client.LevelRendererMixin",
-        "modules.core.client.MultiPlayerGameModeMixin"
-    ],
-    "injectors": {
-        "defaultRequire": 1
-    },
-    "minVersion": "0.8.5"
+  "required": true,
+  "package": "team.lodestar.lodestone.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "lodestone.refmap.json",
+  "mixins": [
+    "modules.core.common.BlockItemMixin",
+    "modules.core.common.EntityMixin",
+    "modules.core.common.LivingEntityMixin",
+    "modules.toolkit.LevelChunkMixin"
+  ],
+  "client": [
+    "client.EffectInstanceMixin",
+    "client.EffectProgramMixin",
+    "client.GameRendererMixin",
+    "client.GuiGraphicsMixin",
+    "client.GuiMixin",
+    "client.LevelRendererMixin",
+    "client.PostChainMixin",
+    "client.ShaderInstanceMixin",
+    "client.VertexBufferMixin",
+    "modules.core.client.LevelRendererMixin",
+    "modules.core.client.MultiPlayerGameModeMixin",
+    "modules.toolkit.client.AbstractContainerScreenMixin",
+    "modules.toolkit.client.CreativeModeInventoryScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8.5"
 }

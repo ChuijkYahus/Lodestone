@@ -1,7 +1,6 @@
 package team.lodestar.lodestone.modules.toolkit.block;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.*;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -24,6 +23,8 @@ import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntity;
+import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityTicker;
+import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityType;
 
 import java.util.function.Supplier;
 
@@ -31,63 +32,60 @@ import java.util.function.Supplier;
  * A SimpleBlock is an implementation of EntityBlock that allows most frequently used logic to be handled in a SimpleBlockEntity
  * It's important to still utilize a generic, T extends YourBlockEntity, in order to allow for other mods to extend your block and use a different block entity
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "NullableProblems"})
 public class LodestoneEntityBlock<T extends LodestoneBlockEntity> extends Block implements EntityBlock {
 
-    protected Supplier<BlockEntityType<T>> blockEntityType = null;
-    protected BlockEntityTicker<T> ticker = null;
+    protected Supplier<LodestoneBlockEntityType<T>> blockEntityType = null;
 
     public LodestoneEntityBlock(Properties properties) {
         super(properties);
     }
 
-    public LodestoneEntityBlock<T> setBlockEntity(Supplier<BlockEntityType<T>> type) {
+    @SuppressWarnings("UnusedReturnValue")
+    public LodestoneEntityBlock<T> setBlockEntity(Supplier<LodestoneBlockEntityType<T>> type) {
         this.blockEntityType = type;
-        this.ticker = (l, p, s, t) -> {
-            if (l instanceof ServerLevel level) {
-                t.serverTick(level);
-            }
-            else {
-                t.clientTick(l);
-            }
-            t.commonTick(l);
-        };
         return this;
+    }
+
+    public boolean hasBlockEntity() {
+        return blockEntityType != null;
+    }
+
+    public T getBlockEntity(LevelReader level, BlockPos pos) {
+        if (hasBlockEntity()) {
+            return blockEntityType.get().getBlockEntity(level, pos);
+        }
+        return null;
     }
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return hasTileEntity(state) ? blockEntityType.get().create(pos, state) : null;
+        return hasBlockEntity() ? blockEntityType.get().create(pos, state) : null;
     }
 
-    public boolean hasTileEntity(BlockState state) {
-        return this.blockEntityType != null;
+    @Nullable
+    @Override
+    public <Y extends BlockEntity> BlockEntityTicker<Y> getTicker(Level level, BlockState state, BlockEntityType<Y> blockEntityType) {
+        return (BlockEntityTicker<Y>) ((LodestoneBlockEntityType<T>)blockEntityType).getTickerUnsafe(level, state);
     }
 
     @Override
-    public <Y extends BlockEntity> BlockEntityTicker<Y> getTicker(Level level, BlockState state, BlockEntityType<Y> type) {
-        return (BlockEntityTicker<Y>) ticker;
-    }
-
-    @Override
-    public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
-        if (hasTileEntity(pState)) {
-            if (pLevel.getBlockEntity(pPos) instanceof LodestoneBlockEntity blockEntity) {
-                blockEntity.onPlace(pPlacer, pStack);
-            }
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        var blockEntity = getBlockEntity(level, pos);
+        if (blockEntity != null) {
+            blockEntity.onPlace(placer, stack);
         }
-        super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
+        super.setPlacedBy(level, pos, state, placer, stack);
     }
 
     @Override
     @NotNull
     public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
-        if (hasTileEntity(state)) {
-            if (level.getBlockEntity(pos) instanceof LodestoneBlockEntity blockEntity) {
-                ItemStack stack = blockEntity.onClone(state, target, level, pos, player);
-                if (!stack.isEmpty()) {
-                    return stack;
-                }
+        var blockEntity = getBlockEntity(level, pos);
+        if (blockEntity != null) {
+            ItemStack stack = blockEntity.onClone(state, target, level, pos, player);
+            if (!stack.isEmpty()) {
+                return stack;
             }
         }
         return super.getCloneItemStack(state, target, level, pos, player);
@@ -96,64 +94,58 @@ public class LodestoneEntityBlock<T extends LodestoneBlockEntity> extends Block 
     @Override
     @NotNull
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        onBlockBroken(state, level, pos, player);
+        onBlockBroken(level, pos, player);
         return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
     public void onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
-        onBlockBroken(state, level, pos, null);
+        onBlockBroken(level, pos, null);
         super.onBlockExploded(state, level, pos, explosion);
     }
 
-    public void onBlockBroken(BlockState state, BlockGetter level, BlockPos pos, @Nullable Player player) {
-        if (hasTileEntity(state)) {
-            if (level.getBlockEntity(pos) instanceof LodestoneBlockEntity blockEntity) {
-                blockEntity.onBreak(player);
-            }
+    public void onBlockBroken(Level level, BlockPos pos, @Nullable Player player) {
+        var blockEntity = getBlockEntity(level, pos);
+        if (blockEntity != null) {
+            blockEntity.onBreak(player);
         }
     }
 
     @Override
-    public void entityInside(BlockState pState, Level pLevel, BlockPos pPos, Entity pEntity) {
-        if (hasTileEntity(pState)) {
-            if (pLevel.getBlockEntity(pPos) instanceof LodestoneBlockEntity blockEntity) {
-                blockEntity.onEntityInside(pState, pLevel, pPos, pEntity);
-            }
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+        var blockEntity = getBlockEntity(level, pos);
+        if (blockEntity != null) {
+            blockEntity.onEntityInside(state, level, pos, entity);
         }
-        super.entityInside(pState, pLevel, pPos, pEntity);
+        super.entityInside(state, level, pos, entity);
     }
 
     @Override
-    public void neighborChanged(BlockState pState, Level pLevel, BlockPos pPos, Block pBlock, BlockPos pFromPos, boolean pIsMoving) {
-        if (hasTileEntity(pState)) {
-            if (pLevel.getBlockEntity(pPos) instanceof LodestoneBlockEntity blockEntity) {
-                blockEntity.onNeighborUpdate(pState, pPos, pFromPos);
-            }
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+        var blockEntity = getBlockEntity(level, pos);
+        if (blockEntity != null) {
+            blockEntity.onNeighborUpdate(state, pos, fromPos);
         }
-        super.neighborChanged(pState, pLevel, pPos, pBlock, pFromPos, pIsMoving);
+        super.neighborChanged(state, level, pos, block, fromPos, isMoving);
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
-        if (hasTileEntity(pState)) {
-            if (pLevel.getBlockEntity(pPos) instanceof LodestoneBlockEntity blockEntity) {
-                var earlyResult = blockEntity.onUseWithoutItem(pPlayer);
-                return earlyResult.consumesAction() ? earlyResult : blockEntity.onUse(pPlayer, InteractionHand.MAIN_HAND).result();
-            }
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        var blockEntity = getBlockEntity(level, pos);
+        if (blockEntity != null) {
+            var earlyResult = blockEntity.onUseWithoutItem(player);
+            return earlyResult.consumesAction() ? earlyResult : blockEntity.onUse(player, InteractionHand.MAIN_HAND).result();
         }
-        return super.useWithoutItem(pState, pLevel, pPos, pPlayer, pHitResult);
+        return super.useWithoutItem(state, level, pos, player, hitResult);
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHitResult) {
-        if (hasTileEntity(pState)) {
-            if (pLevel.getBlockEntity(pPos) instanceof LodestoneBlockEntity blockEntity) {
-                var earlyResult = blockEntity.onUseWithItem(pPlayer, pStack, pHand);
-                return earlyResult.consumesAction() ? earlyResult : blockEntity.onUse(pPlayer, pHand);
-
-            }
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        var blockEntity = getBlockEntity(level, pos);
+        if (blockEntity != null) {
+            var earlyResult = blockEntity.onUseWithItem(player, stack, hand);
+            return earlyResult.consumesAction() ? earlyResult : blockEntity.onUse(player, hand);
         }
-        return super.useItemOn(pStack, pState, pLevel, pPos, pPlayer, pHand, pHitResult);
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 }

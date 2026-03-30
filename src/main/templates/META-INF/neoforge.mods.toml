@@ -29,13 +29,13 @@ config="${mod_id}.mixins.json"
 
 [[dependencies.${mod_id}]]
 modId="neoforge"
-type="required"
+tickerType="required"
 versionRange="${neo_version_range}"
 ordering="NONE"
 side="BOTH"
 [[dependencies.${mod_id}]]
 modId="minecraft"
-type="required"
+tickerType="required"
 versionRange="${minecraft_version_range}"
 ordering="NONE"
 side="BOTH"

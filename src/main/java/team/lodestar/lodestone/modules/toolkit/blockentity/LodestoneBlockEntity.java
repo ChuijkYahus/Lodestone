@@ -21,8 +21,11 @@ import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.Nullable;
 import team.lodestar.lodestone.helpers.block.*;
 import team.lodestar.lodestone.modules.toolkit.block.LodestoneEntityBlock;
+import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityTicker.BlockEntityTickerAttachment;
 
-import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * A simple block entity with various methods normally found inside of Block delegated here from {@link LodestoneEntityBlock}
@@ -30,8 +33,19 @@ import javax.annotation.Nonnull;
 @SuppressWarnings("NullableProblems")
 public class LodestoneBlockEntity extends BlockEntity {
 
-    public LodestoneBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    final List<BlockEntityTickerAttachment> tickers = new ArrayList<>();
+
+    public LodestoneBlockEntity(LodestoneBlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+    }
+
+    public final void attachTicker(BlockEntityTickerAttachment ticker) {
+        tickers.add(ticker);
+    }
+
+    @Override
+    public LodestoneBlockEntityType<?> getType() {
+        return (LodestoneBlockEntityType<?>) super.getType();
     }
 
     @Override

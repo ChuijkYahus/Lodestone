@@ -18,6 +18,7 @@ public class LodestoneLogBlock extends RotatedPillarBlock {
         super(properties);
         this.stripped = stripped;
     }
+
     public LodestoneLogBlock(Properties properties) {
         this(properties, null);
     }

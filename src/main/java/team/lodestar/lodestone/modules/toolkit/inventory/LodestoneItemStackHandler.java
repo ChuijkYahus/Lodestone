@@ -10,9 +10,11 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityTicker;
 import team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.ResultType;
 
 import javax.annotation.Nonnull;
@@ -34,7 +36,6 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
     protected final Runnable contentsChangeBehavior;
 
     protected ArrayList<ItemStack> nonEmptyItemStacks = new ArrayList<>();
-    protected ItemStackHandlerItemDisplayData displayData;
 
     private int filledSlots;
 
@@ -82,9 +83,6 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         updateCaches();
         if (contentsChangeBehavior != null) {
             contentsChangeBehavior.run();
-        }
-        if (displayData != null) {
-            displayData.onContentsChanged(slot);
         }
     }
 
