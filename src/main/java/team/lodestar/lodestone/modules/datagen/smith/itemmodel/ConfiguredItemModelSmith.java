@@ -63,7 +63,7 @@ public class ConfiguredItemModelSmith extends ItemModelSmith {
     @Override
     protected void preDatagen(LodestoneItemModelSystem provider, Item item) {
         DatagenSystemCommons.ITEM_MODEL.modify(modelPathModifier);
-        DatagenSystemCommons.ITEM_PARENT.modify(modelPathModifier);
+        DatagenSystemCommons.ITEM_PARENT.modify(modelParentModifier);
         DatagenSystemCommons.ITEM_TEXTURE.modify(texturePathModifier);
     }
 
@@ -73,6 +73,7 @@ public class ConfiguredItemModelSmith extends ItemModelSmith {
             result.applyModifier(resultModifier);
         }
         DatagenSystemCommons.ITEM_MODEL.clearModifier();
+        DatagenSystemCommons.ITEM_PARENT.clearModifier();
         DatagenSystemCommons.ITEM_TEXTURE.clearModifier();
     }
 }
