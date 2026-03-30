@@ -46,7 +46,7 @@ public interface IDatagenPathfinder {
         return DatagenSystemCommons.escapeTextureFolderHierarchy(texture);
     }
 
-    default ResourceLocation extendWithFolder(ResourceLocation rl) {
+    default ResourceLocation appendFolder(ResourceLocation rl) {
         if (rl.getPath().contains("/")) {
             return rl;
         }

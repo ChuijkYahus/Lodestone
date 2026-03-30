@@ -25,7 +25,7 @@ public final class LodestoneBlockModelProvider extends BlockModelProvider implem
 
     public LodestoneBlockModelBuilder getBuilder(String path) {
         Preconditions.checkNotNull(path, "Path must not be null");
-        ResourceLocation outputLoc = extendWithFolder(path.contains(":") ? ResourceLocation.parse(path) : ResourceLocation.fromNamespaceAndPath(modid, path));
+        ResourceLocation outputLoc = appendFolder(path.contains(":") ? ResourceLocation.parse(path) : ResourceLocation.fromNamespaceAndPath(modid, path));
         this.existingFileHelper.trackGenerated(outputLoc, MODEL);
         return (LodestoneBlockModelBuilder) generatedModels.computeIfAbsent(outputLoc, factory);
     }

@@ -50,7 +50,6 @@ public class LodestoneEntityBlock<T extends LodestoneBlockEntity> extends Block 
             else {
                 t.clientTick(l);
             }
-            t.tick();
             t.commonTick(l);
         };
         return this;

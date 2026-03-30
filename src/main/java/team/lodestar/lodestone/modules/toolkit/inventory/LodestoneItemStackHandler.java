@@ -6,7 +6,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -35,7 +34,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
     protected final Runnable contentsChangeBehavior;
 
     protected ArrayList<ItemStack> nonEmptyItemStacks = new ArrayList<>();
-//    protected RotatingItemDisplayData displayData;
+    protected ItemStackHandlerItemDisplayData displayData;
 
     private int filledSlots;
 
@@ -84,9 +83,9 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         if (contentsChangeBehavior != null) {
             contentsChangeBehavior.run();
         }
-//        if (displayData != null) {
-//            displayData.onContentsChanged();
-//        }
+        if (displayData != null) {
+            displayData.onContentsChanged(slot);
+        }
     }
 
     @Override

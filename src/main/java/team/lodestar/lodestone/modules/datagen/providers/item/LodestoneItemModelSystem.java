@@ -1,6 +1,5 @@
 package team.lodestar.lodestone.modules.datagen.providers.item;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -43,7 +42,7 @@ public abstract class LodestoneItemModelSystem extends ItemModelProvider impleme
     @Override
     public LodestoneItemModelBuilder getBuilder(String path) {
         Preconditions.checkNotNull(path, "Path must not be null");
-        ResourceLocation outputLoc = extendWithFolder(path.contains(":") ? ResourceLocation.parse(path) : ResourceLocation.fromNamespaceAndPath(modid, path));
+        ResourceLocation outputLoc = appendFolder(path.contains(":") ? ResourceLocation.parse(path) : ResourceLocation.fromNamespaceAndPath(modid, path));
         this.existingFileHelper.trackGenerated(outputLoc, MODEL);
         return (LodestoneItemModelBuilder) generatedModels.computeIfAbsent(outputLoc, factory);
     }

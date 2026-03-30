@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 /**
  * A simple block entity with various methods normally found inside of Block delegated here from {@link LodestoneEntityBlock}
  */
+@SuppressWarnings("NullableProblems")
 public class LodestoneBlockEntity extends BlockEntity {
 
     public LodestoneBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -72,24 +73,12 @@ public class LodestoneBlockEntity extends BlockEntity {
 
     }
 
-    /**
-     * A method designed to run anytime substantial changes to the entity are made.
-     * Called the tick after the entity is updated from the server to the client, or loaded from memory
-     */
-    public void update(@Nonnull Level level) {
-
-    }
-
     public void serverTick(ServerLevel level) {
 
     }
 
     public void clientTick(Level level) {
 
-    }
-
-    @Deprecated
-    public void tick() {
     }
 
     public void commonTick(Level level) {
