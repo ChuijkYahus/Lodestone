@@ -28,17 +28,6 @@ public class ConfiguredItemModelSmith extends ItemModelSmith {
     }
 
     @Override
-    public ConfiguredItemModelSmith addTextureNameAffix(String affix) {
-        return modifyTexturePath(s -> s + affix);
-    }
-
-    @Override
-    public ConfiguredItemModelSmith modifyTexturePath(UnaryOperator<String> textureNameModifier) {
-        this.texturePathModifier = textureNameModifier;
-        return this;
-    }
-
-    @Override
     public ConfiguredItemModelSmith addModelParentAffix(String affix) {
         return modifyModelParent(s -> s + affix);
     }
@@ -46,6 +35,17 @@ public class ConfiguredItemModelSmith extends ItemModelSmith {
     @Override
     public ConfiguredItemModelSmith modifyModelParent(UnaryOperator<String> modelParentModifier) {
         this.modelParentModifier = modelParentModifier;
+        return this;
+    }
+
+    @Override
+    public ConfiguredItemModelSmith addTextureNameAffix(String affix) {
+        return modifyTexturePath(s -> s + affix);
+    }
+
+    @Override
+    public ConfiguredItemModelSmith modifyTexturePath(UnaryOperator<String> textureNameModifier) {
+        this.texturePathModifier = textureNameModifier;
         return this;
     }
 
@@ -62,8 +62,9 @@ public class ConfiguredItemModelSmith extends ItemModelSmith {
 
     @Override
     protected void preDatagen(LodestoneItemModelSystem provider, Item item) {
+        DatagenSystemCommons.MODEL_PARENT.modify(modelParentModifier);
+
         DatagenSystemCommons.ITEM_MODEL.modify(modelPathModifier);
-        DatagenSystemCommons.ITEM_PARENT.modify(modelParentModifier);
         DatagenSystemCommons.ITEM_TEXTURE.modify(texturePathModifier);
     }
 
@@ -72,8 +73,9 @@ public class ConfiguredItemModelSmith extends ItemModelSmith {
         if (resultModifier != null) {
             result.applyModifier(resultModifier);
         }
+        DatagenSystemCommons.MODEL_PARENT.clearModifier();
+
         DatagenSystemCommons.ITEM_MODEL.clearModifier();
-        DatagenSystemCommons.ITEM_PARENT.clearModifier();
         DatagenSystemCommons.ITEM_TEXTURE.clearModifier();
     }
 }
