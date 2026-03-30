@@ -33,13 +33,16 @@ import java.util.function.Consumer;
 @SuppressWarnings("NullableProblems")
 public class LodestoneBlockEntity extends BlockEntity {
 
-    final List<BlockEntityTickerAttachment> tickers = new ArrayList<>();
+    List<BlockEntityTickerAttachment> tickers;
 
     public LodestoneBlockEntity(LodestoneBlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
     public final void attachTicker(BlockEntityTickerAttachment ticker) {
+        if (tickers == null) {
+            tickers = new ArrayList<>();
+        }
         tickers.add(ticker);
     }
 
@@ -107,7 +110,7 @@ public class LodestoneBlockEntity extends BlockEntity {
         playSound(soundEvent, volume, 1);
     }
 
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "unused"})
     public void playSound(SoundEvent soundEvent, float volume, float pitch) {
         level.playSound(null, worldPosition, soundEvent, SoundSource.BLOCKS, 1, 1f);
     }
