@@ -9,12 +9,12 @@ import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityT
 
 import java.util.function.Predicate;
 
-public class LodestoneItemStackBlockHandler<T extends LodestoneBlockEntity> extends LodestoneItemStackHandler implements LodestoneBlockEntityTicker.BlockEntityTickerAttachment {
+public class LodestoneItemStackBlockHandler extends LodestoneItemStackHandler implements LodestoneBlockEntityTicker.BlockEntityTickerAttachment {
 
-    protected final T parent;
+    protected final LodestoneBlockEntity parent;
     protected ItemStackHandlerItemDisplayData displayData;
 
-    public LodestoneItemStackBlockHandler(T parent, int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable contentsChangeBehavior) {
+    public LodestoneItemStackBlockHandler(LodestoneBlockEntity parent, int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable contentsChangeBehavior) {
         super(slotCount, allowedItemSize, inputPredicate, contentsChangeBehavior);
         this.parent = parent;
         parent.attachTicker(this);
@@ -23,6 +23,7 @@ public class LodestoneItemStackBlockHandler<T extends LodestoneBlockEntity> exte
     @Override
     public void onContentsChanged(int slot) {
         super.onContentsChanged(slot);
+        parent.setDirty();
         if (displayData != null) {
             displayData.onContentsChanged(slot);
         }

@@ -122,9 +122,11 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
     public void load(HolderLookup.Provider provider, CompoundTag compound, String name) {
         deserializeNBT(provider, compound.getCompound(name));
         if (stacks.size() != slotCount) {
-            int missing = slotCount - stacks.size();
-            for (int i = 0; i < missing; i++) {
-                stacks.add(ItemStack.EMPTY);
+            var updated = NonNullList.withSize(slotCount, ItemStack.EMPTY);
+            for (int i = 0; i < stacks.size(); i++) {
+                if (i < slotCount) {
+                    updated.set(i, stacks.get(i));
+                }
             }
         }
         updateCaches();
