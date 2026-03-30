@@ -2,6 +2,7 @@ package team.lodestar.lodestone.modules.datagen.smith.blockstate;
 
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
+import team.lodestar.lodestone.modules.datagen.DatagenSystemCommons;
 import team.lodestar.lodestone.modules.datagen.ItemModelSmithTypes;
 import team.lodestar.lodestone.modules.datagen.providers.block.LodestoneBlockStateSystem;
 import team.lodestar.lodestone.modules.datagen.smith.itemmodel.ItemModelSmith;
@@ -24,6 +25,7 @@ public abstract class AbstractBlockStateSmith<T extends Block> {
             actor.accept(blockClass.cast(block), provider);
             makeItemModel(data, itemModelSmith, block);
             data.consumer().accept(registryObject);
+            DatagenSystemCommons.clearCachedBlockTextures();
         } else {
             throw new IllegalArgumentException("Block does not match the state smith it was assigned: " + block.toString());
         }

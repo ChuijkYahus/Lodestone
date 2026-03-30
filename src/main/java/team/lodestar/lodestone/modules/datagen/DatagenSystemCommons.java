@@ -26,11 +26,17 @@ public class DatagenSystemCommons {
         if (!BLOCK_MODEL_TEXTURE_REFERENCE.containsKey(key)) {
             throw new IllegalArgumentException("Cannot find block texture associated with key: " + key);
         }
-        return BLOCK_MODEL_TEXTURE_REFERENCE.get(key);
+        var texture = BLOCK_MODEL_TEXTURE_REFERENCE.get(key);
+        escapeTextureFolderHierarchy(texture);
+        return texture;
     }
 
     public static void writeBlockTextureFromBlockModel(String key, ResourceLocation texture) {
         BLOCK_MODEL_TEXTURE_REFERENCE.put(key, texture);
+    }
+
+    public static void clearCachedBlockTextures() {
+        BLOCK_MODEL_TEXTURE_REFERENCE.clear();
     }
 
     public static ResourceLocation escapeTextureFolderHierarchy(ResourceLocation texture) {
@@ -38,17 +44,17 @@ public class DatagenSystemCommons {
         return texture;
     }
 
-    public static ResourceLocation modifyTexturePath(ResourceLocation texturePath) {
-        if (IMMUTABLE_TEXTURES.contains(texturePath)) {
-            IMMUTABLE_TEXTURES.remove(texturePath);
-            return texturePath;
+    public static ResourceLocation modifyTexturePath(ResourceLocation texture) {
+        if (IMMUTABLE_TEXTURES.contains(texture)) {
+            IMMUTABLE_TEXTURES.remove(texture);
+            return texture;
         }
-        if (texturePath.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE)) {
-            return texturePath;
+        if (texture.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE)) {
+            return texture;
         }
-        var item = ITEM_TEXTURE.apply(texturePath, "item/");
-        var block = BLOCK_TEXTURE.apply(texturePath, "block/");
-        return item.orElseGet(() -> block.orElse(texturePath));
+        var item = ITEM_TEXTURE.apply(texture, "item/");
+        var block = BLOCK_TEXTURE.apply(texture, "block/");
+        return item.orElseGet(() -> block.orElse(texture));
     }
 
     public static ResourceLocation modifyModelPath(ResourceLocation modelPath) {
