@@ -5,7 +5,6 @@ import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import team.lodestar.lodestone.modules.datagen.DatagenSystemCommons;
-import team.lodestar.lodestone.modules.datagen.providers.block.LodestoneBlockModelBuilder;
 
 @SuppressWarnings("NullableProblems")
 public class LodestoneItemModelBuilder extends ItemModelBuilder {
@@ -26,7 +25,7 @@ public class LodestoneItemModelBuilder extends ItemModelBuilder {
     @Override
     public ItemModelBuilder parent(ModelFile parent) {
         var location = parent.getLocation();
-        var modified = DatagenSystemCommons.modifyModelPath(location);
+        var modified = DatagenSystemCommons.modifyModelParentPath(location);
         return super.parent(new UncheckedModelFile(modified));
 
     }

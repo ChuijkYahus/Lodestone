@@ -37,20 +37,28 @@ public class ItemModelSmith {
         return configure().modifyResult(modifier);
     }
 
-    public ConfiguredItemModelSmith addModelPathAffix(String affix) {
-        return configure().addModelPathAffix(affix);
-    }
-
-    public ConfiguredItemModelSmith modifyModelPath(UnaryOperator<String> modelPathModifier) {
-        return configure().modifyModelPath(modelPathModifier);
-    }
-
     public ConfiguredItemModelSmith addTextureNameAffix(String affix) {
         return configure().addTextureNameAffix(affix);
     }
 
     public ConfiguredItemModelSmith modifyTexturePath(UnaryOperator<String> textureNameModifier) {
         return configure().modifyTexturePath(textureNameModifier);
+    }
+
+    public ConfiguredItemModelSmith addModelParentAffix(String affix) {
+        return configure().addModelParentAffix(affix);
+    }
+
+    public ConfiguredItemModelSmith modifyModelParent(UnaryOperator<String> modelParentModifier) {
+        return configure().modifyModelParent(modelParentModifier);
+    }
+
+    public ConfiguredItemModelSmith addModelPathAffix(String affix) {
+        return configure().addModelPathAffix(affix);
+    }
+
+    public ConfiguredItemModelSmith modifyModelPath(UnaryOperator<String> modelPathModifier) {
+        return configure().modifyModelPath(modelPathModifier);
     }
 
     protected ConfiguredItemModelSmith configure() {

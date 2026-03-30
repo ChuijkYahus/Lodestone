@@ -17,9 +17,11 @@ public class DatagenSystemCommons {
     protected static final Set<ResourceLocation> IMMUTABLE_TEXTURES = new HashSet<>();
 
     public static PathModifier BLOCK_TEXTURE = new PathModifier();
+    public static PathModifier BLOCK_PARENT = new PathModifier();
     public static PathModifier BLOCK_MODEL = new PathModifier();
 
     public static PathModifier ITEM_TEXTURE = new PathModifier();
+    public static PathModifier ITEM_PARENT = new PathModifier();
     public static PathModifier ITEM_MODEL = new PathModifier();
 
     public static ResourceLocation getBlockTextureFromBlockModel(String key) {
@@ -55,6 +57,15 @@ public class DatagenSystemCommons {
         var item = ITEM_TEXTURE.apply(texture, "item/");
         var block = BLOCK_TEXTURE.apply(texture, "block/");
         return item.orElseGet(() -> block.orElse(texture));
+    }
+
+    public static ResourceLocation modifyModelParentPath(ResourceLocation modelPath) {
+        if (modelPath.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE)) {
+            return modelPath;
+        }
+        var item = ITEM_PARENT.apply(modelPath, "item/");
+        var block = BLOCK_PARENT.apply(modelPath, "block/");
+        return item.orElseGet(() -> block.orElse(modelPath));
     }
 
     public static ResourceLocation modifyModelPath(ResourceLocation modelPath) {

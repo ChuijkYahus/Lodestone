@@ -27,8 +27,8 @@ public class ItemModelSmithTypes {
         return provider.getBuilder(name).parent(new ModelFile.UncheckedModelFile(provider.modLoc("block/" + name)));
     }));
 
-    public static ItemModelSmith BUTTON_ITEM = BLOCK_MODEL_ITEM.addModelPathAffix("_inventory");
-    public static ItemModelSmith TRAPDOOR_ITEM = BLOCK_MODEL_ITEM.addModelPathAffix("_bottom");
+    public static ItemModelSmith BUTTON_ITEM = BLOCK_MODEL_ITEM.addModelParentAffix("_inventory");
+    public static ItemModelSmith TRAPDOOR_ITEM = BLOCK_MODEL_ITEM.addModelParentAffix("_bottom");
 
     public static ItemModelSmith CROSS_MODEL_ITEM = new ItemModelSmith(((item, provider) -> {
         var cross = DatagenSystemCommons.getBlockTextureFromBlockModel("cross");

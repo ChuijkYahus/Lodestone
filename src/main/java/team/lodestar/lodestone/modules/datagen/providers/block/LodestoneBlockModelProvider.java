@@ -25,9 +25,10 @@ public final class LodestoneBlockModelProvider extends BlockModelProvider implem
 
     public LodestoneBlockModelBuilder getBuilder(String path) {
         Preconditions.checkNotNull(path, "Path must not be null");
-        ResourceLocation outputLoc = appendFolder(path.contains(":") ? ResourceLocation.parse(path) : ResourceLocation.fromNamespaceAndPath(modid, path));
-        this.existingFileHelper.trackGenerated(outputLoc, MODEL);
-        return (LodestoneBlockModelBuilder) generatedModels.computeIfAbsent(outputLoc, factory);
+        var modelPath = appendFolder(path.contains(":") ? ResourceLocation.parse(path) : ResourceLocation.fromNamespaceAndPath(modid, path));
+        modelPath = DatagenSystemCommons.modifyModelPath(modelPath);
+        this.existingFileHelper.trackGenerated(modelPath, MODEL);
+        return (LodestoneBlockModelBuilder) generatedModels.computeIfAbsent(modelPath, factory);
     }
 
     @Override
@@ -47,7 +48,7 @@ public final class LodestoneBlockModelProvider extends BlockModelProvider implem
 
     @Override
     public ModelFile.ExistingModelFile getExistingFile(ResourceLocation path) {
-        var modified = DatagenSystemCommons.modifyModelPath(path);
+        var modified = DatagenSystemCommons.modifyModelParentPath(path);
         return super.getExistingFile(modified);
     }
 

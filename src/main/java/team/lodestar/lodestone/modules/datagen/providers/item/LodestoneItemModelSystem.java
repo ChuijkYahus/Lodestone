@@ -35,16 +35,17 @@ public abstract class LodestoneItemModelSystem extends ItemModelProvider impleme
 
     @Override
     public ModelFile.ExistingModelFile getExistingFile(ResourceLocation path) {
-        var modified = DatagenSystemCommons.modifyModelPath(path);
+        var modified = DatagenSystemCommons.modifyModelParentPath(path);
         return super.getExistingFile(modified);
     }
 
     @Override
     public LodestoneItemModelBuilder getBuilder(String path) {
         Preconditions.checkNotNull(path, "Path must not be null");
-        ResourceLocation outputLoc = appendFolder(path.contains(":") ? ResourceLocation.parse(path) : ResourceLocation.fromNamespaceAndPath(modid, path));
-        this.existingFileHelper.trackGenerated(outputLoc, MODEL);
-        return (LodestoneItemModelBuilder) generatedModels.computeIfAbsent(outputLoc, factory);
+        var modelPath = appendFolder(path.contains(":") ? ResourceLocation.parse(path) : ResourceLocation.fromNamespaceAndPath(modid, path));
+        modelPath = DatagenSystemCommons.modifyModelPath(modelPath);
+        this.existingFileHelper.trackGenerated(modelPath, MODEL);
+        return (LodestoneItemModelBuilder) generatedModels.computeIfAbsent(modelPath, factory);
     }
 
     public void setTexturePath(String folder) {

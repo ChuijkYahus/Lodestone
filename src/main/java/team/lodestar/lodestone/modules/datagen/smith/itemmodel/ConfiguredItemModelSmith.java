@@ -13,8 +13,9 @@ import java.util.function.UnaryOperator;
 public class ConfiguredItemModelSmith extends ItemModelSmith {
 
     private Consumer<ItemModelSmithResult> resultModifier;
-    private UnaryOperator<String> modelPathModifier;
     private UnaryOperator<String> texturePathModifier;
+    private UnaryOperator<String> modelParentModifier;
+    private UnaryOperator<String> modelPathModifier;
 
     public ConfiguredItemModelSmith(ItemModelSmith.ItemModelSupplier modelSupplier) {
         super(modelSupplier);
@@ -23,17 +24,6 @@ public class ConfiguredItemModelSmith extends ItemModelSmith {
     @Override
     public ConfiguredItemModelSmith modifyResult(Consumer<ItemModelSmithResult> modifier) {
         this.resultModifier = modifier;
-        return this;
-    }
-
-    @Override
-    public ConfiguredItemModelSmith addModelPathAffix(String affix) {
-        return modifyModelPath(s -> s + affix);
-    }
-
-    @Override
-    public ConfiguredItemModelSmith modifyModelPath(UnaryOperator<String> modelPathModifier) {
-        this.modelPathModifier = modelPathModifier;
         return this;
     }
 
@@ -49,8 +39,31 @@ public class ConfiguredItemModelSmith extends ItemModelSmith {
     }
 
     @Override
+    public ConfiguredItemModelSmith addModelParentAffix(String affix) {
+        return modifyModelParent(s -> s + affix);
+    }
+
+    @Override
+    public ConfiguredItemModelSmith modifyModelParent(UnaryOperator<String> modelParentModifier) {
+        this.modelParentModifier = modelParentModifier;
+        return this;
+    }
+
+    @Override
+    public ConfiguredItemModelSmith addModelPathAffix(String affix) {
+        return modifyModelPath(s -> s + affix);
+    }
+
+    @Override
+    public ConfiguredItemModelSmith modifyModelPath(UnaryOperator<String> modelPathModifier) {
+        this.modelPathModifier = modelPathModifier;
+        return this;
+    }
+
+    @Override
     protected void preDatagen(LodestoneItemModelSystem provider, Item item) {
         DatagenSystemCommons.ITEM_MODEL.modify(modelPathModifier);
+        DatagenSystemCommons.ITEM_PARENT.modify(modelPathModifier);
         DatagenSystemCommons.ITEM_TEXTURE.modify(texturePathModifier);
     }
 
