@@ -13,12 +13,12 @@ import java.util.Set;
 
 public class LodestoneBlockEntityType<T extends LodestoneBlockEntity> extends BlockEntityType<T> {
 
-    protected final LodestoneBlockEntityTicker.TickerType tickerType;
+    protected final LodestoneBlockEntityTicker.Type type;
 
     @SuppressWarnings("DataFlowIssue")
-    public LodestoneBlockEntityType(LodestoneBlockEntityBuilder.LodestoneBlockEntitySupplier<? extends T> factory, Set<Block> validBlocks, LodestoneBlockEntityTicker.TickerType tickerType) {
+    public LodestoneBlockEntityType(LodestoneBlockEntityBuilder.LodestoneBlockEntitySupplier<? extends T> factory, Set<Block> validBlocks, LodestoneBlockEntityTicker.Type type) {
         super(factory, validBlocks, null);
-        this.tickerType = tickerType;
+        this.type = type;
     }
 
     public final LodestoneBlockEntityTicker<T> getTickerUnsafe(Level level, BlockState state) {
@@ -37,7 +37,7 @@ public class LodestoneBlockEntityType<T extends LodestoneBlockEntity> extends Bl
     }
 
     public boolean hasTicker(Level level) {
-        return switch (tickerType) {
+        return switch (type) {
             case BOTH -> true;
             case NONE -> false;
             case SERVER -> level instanceof ServerLevel;

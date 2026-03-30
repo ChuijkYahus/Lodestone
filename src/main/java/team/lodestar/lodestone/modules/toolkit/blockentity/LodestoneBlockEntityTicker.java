@@ -11,7 +11,7 @@ import java.util.List;
 @SuppressWarnings("NullableProblems")
 public class LodestoneBlockEntityTicker<T extends LodestoneBlockEntity> implements BlockEntityTicker<T> {
 
-    public enum TickerType {
+    public enum Type {
         BOTH,
         CLIENT,
         SERVER,
