@@ -5,7 +5,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityBuilder;
+import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityTypeBuilder;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityTicker;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityType;
 import team.lodestar.lodestone.modules.toolkit.multiblock.ILodestoneMultiblockComponent;
@@ -21,7 +21,7 @@ import static team.lodestar.lodestone.LodestoneLib.LODESTONE;
 public class LodestoneBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, LODESTONE);
 
-    public static final Supplier<LodestoneBlockEntityType<MultiBlockComponentEntity>> MULTIBLOCK_COMPONENT = BLOCK_ENTITY_TYPES.register("multiblock_component", () -> LodestoneBlockEntityBuilder.of(MultiBlockComponentEntity::new, getBlocks(ILodestoneMultiblockComponent.class)).setTickerType(LodestoneBlockEntityTicker.Type.SERVER).build());
+    public static final Supplier<LodestoneBlockEntityType<MultiBlockComponentEntity>> MULTIBLOCK_COMPONENT = BLOCK_ENTITY_TYPES.register("multiblock_component", () -> LodestoneBlockEntityTypeBuilder.of(MultiBlockComponentEntity::new, getBlocks(ILodestoneMultiblockComponent.class)).setTickerType(LodestoneBlockEntityTicker.Type.SERVER).build());
 
     public static Block[] getBlocks(Class<?>... blockClasses) {
         DefaultedRegistry<Block> blocks = BuiltInRegistries.BLOCK;

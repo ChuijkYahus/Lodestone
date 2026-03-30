@@ -5,9 +5,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityTicker.BlockEntityTickerAttachment;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
 
@@ -16,7 +14,7 @@ public class LodestoneBlockEntityType<T extends LodestoneBlockEntity> extends Bl
     protected final LodestoneBlockEntityTicker.Type type;
 
     @SuppressWarnings("DataFlowIssue")
-    public LodestoneBlockEntityType(LodestoneBlockEntityBuilder.LodestoneBlockEntitySupplier<? extends T> factory, Set<Block> validBlocks, LodestoneBlockEntityTicker.Type type) {
+    public LodestoneBlockEntityType(LodestoneBlockEntityTypeBuilder.LodestoneBlockEntitySupplier<? extends T> factory, Set<Block> validBlocks, LodestoneBlockEntityTicker.Type type) {
         super(factory, validBlocks, null);
         this.type = type;
     }

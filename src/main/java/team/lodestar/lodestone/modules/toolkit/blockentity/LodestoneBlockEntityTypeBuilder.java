@@ -7,21 +7,21 @@ import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityT
 
 import java.util.Set;
 
-public final class LodestoneBlockEntityBuilder<T extends LodestoneBlockEntity> {
+public final class LodestoneBlockEntityTypeBuilder<T extends LodestoneBlockEntity> {
     private final LodestoneBlockEntitySupplier<? extends T> factory;
     final Set<Block> validBlocks;
     private Type type = Type.NONE;
 
-    private LodestoneBlockEntityBuilder(LodestoneBlockEntitySupplier<? extends T> factory, Set<Block> validBlocks) {
+    private LodestoneBlockEntityTypeBuilder(LodestoneBlockEntitySupplier<? extends T> factory, Set<Block> validBlocks) {
         this.factory = factory;
         this.validBlocks = validBlocks;
     }
 
-    public static <T extends LodestoneBlockEntity> LodestoneBlockEntityBuilder<T> of(LodestoneBlockEntitySupplier<? extends T> factory, Block... validBlocks) {
-        return new LodestoneBlockEntityBuilder<>(factory, ImmutableSet.copyOf(validBlocks));
+    public static <T extends LodestoneBlockEntity> LodestoneBlockEntityTypeBuilder<T> of(LodestoneBlockEntitySupplier<? extends T> factory, Block... validBlocks) {
+        return new LodestoneBlockEntityTypeBuilder<>(factory, ImmutableSet.copyOf(validBlocks));
     }
 
-    public LodestoneBlockEntityBuilder<T> setTickerType(Type type) {
+    public LodestoneBlockEntityTypeBuilder<T> setTickerType(Type type) {
         this.type = type;
         return this;
     }
