@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntity;
+import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityType;
 
 import java.util.ArrayList;
 
@@ -15,7 +16,7 @@ public abstract class MultiBlockCoreEntity extends LodestoneBlockEntity implemen
 
     public final MultiBlockStructure structure;
 
-    public MultiBlockCoreEntity(BlockEntityType<?> type, MultiBlockStructure structure, BlockPos pos, BlockState state) {
+    public MultiBlockCoreEntity(LodestoneBlockEntityType<?> type, MultiBlockStructure structure, BlockPos pos, BlockState state) {
         super(type, pos, state);
         this.structure = structure;
         setupMultiblock(pos);

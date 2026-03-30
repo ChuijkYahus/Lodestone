@@ -21,7 +21,7 @@ import team.lodestar.lodestone.modules.toolkit.inventory.LodestoneItemStackHandl
 public abstract class ItemHolderBlockEntity extends LodestoneBlockEntity implements IInventoryCapabilityProvider {
     public LodestoneItemStackHandler inventory;
 
-    public ItemHolderBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public ItemHolderBlockEntity(LodestoneBlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
     

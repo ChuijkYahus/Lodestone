@@ -24,7 +24,7 @@ public class MultiBlockComponentEntity extends LodestoneBlockEntity implements I
 
     public BlockPos corePos;
 
-    public MultiBlockComponentEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public MultiBlockComponentEntity(LodestoneBlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
