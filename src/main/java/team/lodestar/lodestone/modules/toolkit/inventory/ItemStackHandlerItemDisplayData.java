@@ -12,6 +12,7 @@ import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityT
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -75,8 +76,8 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
         return Optional.ofNullable(dataEntries[i]);
     }
 
-    public List<Optional<ItemDisplayDataEntry>> getDataEntries() {
-        return Arrays.stream(dataEntries).map(Optional::ofNullable).toList();
+    public List<ItemDisplayDataEntry> getDataEntries() {
+        return Arrays.stream(dataEntries).filter(Objects::nonNull).toList();
     }
 
     public ItemDisplayDataEntry addNewItem(int index, ItemStack stack) {
