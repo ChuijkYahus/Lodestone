@@ -42,7 +42,7 @@ public class BlockStateSmithTypes {
     });
 
     /**
-     * Generates a tall grass block model and blockstate
+     * Generates a tall grass block model and blockstate, used by tall flowers and grass.
      */
     public static BlockStateSmith<Block> TALL_CROSS_MODEL_BLOCK = new BlockStateSmith<>(Block.class, ItemModelSmithTypes.BLOCK_TEXTURE_ITEM.addTextureNameAffix("_top"), (block, provider) -> {
         var name = provider.getBlockName(block);
@@ -220,6 +220,35 @@ public class BlockStateSmithTypes {
         var name = provider.getBlockName(block);
         var particleTextureName = name.replace("_wall", "").replace("_sign", "") + "_planks";
         provider.getVariantBuilder(block).forAllStates(s -> ConfiguredModel.builder().modelFile(provider.models().sign(name, provider.getBlockTexture(particleTextureName))).build());
+    });
+
+
+    /**
+     * Generates a crop block model, used by wheat and whatnot.
+     */
+    public static BlockStateSmith<CropBlock> CROP_MODEL_BLOCK = new BlockStateSmith<>(CropBlock.class, ItemModelSmithTypes.CROSS_MODEL_ITEM, (block, provider) -> {
+        var name = provider.getBlockName(block);
+        provider.getVariantBuilder(block).forAllStates(blockState -> {
+            int age = block.getAge(blockState);
+            var agePath = name + "_" + age;
+            var texture = provider.getBlockTexture(agePath);
+            var model = provider.models().crop(agePath, texture);
+            return ConfiguredModel.builder().modelFile(model).build();
+        });
+    });
+
+    /**
+     * Generates a crop block model, used by wheat and whatnot.
+     */
+    public static BlockStateSmith<CropBlock> CROSS_CROP_MODEL_BLOCK = new BlockStateSmith<>(CropBlock.class, ItemModelSmithTypes.CROSS_MODEL_ITEM, (block, provider) -> {
+        var name = provider.getBlockName(block);
+        provider.getVariantBuilder(block).forAllStates(blockState -> {
+            int age = block.getAge(blockState);
+            var agePath = name + "_" + age;
+            var texture = provider.getBlockTexture(agePath);
+            var model = provider.models().cross(agePath, texture);
+            return ConfiguredModel.builder().modelFile(model).build();
+        });
     });
 
     /**
