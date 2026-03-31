@@ -132,6 +132,13 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
             return Mth.lerp(oldLift, lift, partialTicks);
         }
 
+        public Vec3 getPosition(Vec3 center) {
+            var x = center.x + Mth.sin(angle) * distance;
+            var y = center.y + lift;
+            var z = center.z + Mth.cos(angle) * distance;
+            return new Vec3(x, y, z);
+        }
+
         public ItemStack getStack() {
             return stack;
         }
