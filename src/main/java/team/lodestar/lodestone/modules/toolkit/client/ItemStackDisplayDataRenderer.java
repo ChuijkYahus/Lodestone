@@ -14,6 +14,8 @@ import team.lodestar.lodestone.modules.toolkit.inventory.ItemStackHandlerItemDis
 import team.lodestar.lodestone.modules.toolkit.inventory.LodestoneItemStackBlockHandler;
 import team.lodestar.lodestone.modules.toolkit.inventory.LodestoneItemStackHandler;
 
+import java.util.Optional;
+
 import static net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
 
 public class ItemStackDisplayDataRenderer {
@@ -47,11 +49,12 @@ public class ItemStackDisplayDataRenderer {
         var stacks = handler.getStacks();
 
         for (int i = 0; i < stacks.size(); i++) {
-            var stack = stacks.get(i);
-            if (stack.isEmpty()) {
+            var optional = displayData.getEntry(i);
+            if (optional.isEmpty()) {
                 continue;
             }
-            var entry = displayData.getEntry(i);
+            var entry = optional.get();
+            var stack = entry.getStack();
             var angle = entry.getAngle(partialTicks);
             var distance = entry.getDistance(partialTicks);
             var lift = entry.getLift(partialTicks);
