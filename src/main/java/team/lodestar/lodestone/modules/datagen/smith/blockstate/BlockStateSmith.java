@@ -13,16 +13,16 @@ import java.util.function.Supplier;
 public class BlockStateSmith<T extends Block> extends AbstractBlockStateSmith<T> {
 
     protected final SmithStateSupplier<T> stateSupplier;
-    protected final ItemModelSmith itemModelSmith;
+    protected final ItemModelSmith defaultItemModelSmith;
 
     public BlockStateSmith(Class<T> blockClass, SmithStateSupplier<T> stateSupplier) {
         this(blockClass, ItemModelSmithTypes.BLOCK_MODEL_ITEM, stateSupplier);
     }
 
-    public BlockStateSmith(Class<T> blockClass, ItemModelSmith itemModelSmith, SmithStateSupplier<T> stateSupplier) {
+    public BlockStateSmith(Class<T> blockClass, ItemModelSmith defaultItemModelSmith, SmithStateSupplier<T> stateSupplier) {
         super(blockClass);
         this.stateSupplier = stateSupplier;
-        this.itemModelSmith = itemModelSmith;
+        this.defaultItemModelSmith = defaultItemModelSmith;
     }
 
     @SafeVarargs
@@ -30,9 +30,18 @@ public class BlockStateSmith<T extends Block> extends AbstractBlockStateSmith<T>
         act(data, List.of(blocks));
     }
 
+    @SafeVarargs
+    public final void act(BlockStateSystemData data, ItemModelSmith smith, Supplier<? extends Block>... blocks) {
+        act(data, smith, List.of(blocks));
+    }
+
     public void act(BlockStateSystemData data, Collection<Supplier<? extends Block>> blocks) {
+        act(data, defaultItemModelSmith, blocks);
+    }
+
+    public void act(BlockStateSystemData data, ItemModelSmith smith, Collection<Supplier<? extends Block>> blocks) {
         for (Supplier<? extends Block> block : blocks) {
-            tryAct(data, itemModelSmith, block, stateSupplier::act);
+            tryAct(data, smith, block, stateSupplier::act);
         }
     }
 
