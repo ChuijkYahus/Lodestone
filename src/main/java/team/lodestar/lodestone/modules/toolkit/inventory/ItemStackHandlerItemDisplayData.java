@@ -11,6 +11,7 @@ import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntity;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityTicker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * A class designed to help with tracking and then displaying items rotating around an object.
@@ -19,7 +20,7 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
 
     protected final LodestoneItemStackBlockHandler handler;
 
-    protected ArrayList<ItemDisplayDataEntry> dataEntries = new ArrayList<>();
+    protected ItemDisplayDataEntry[] dataEntries = new ItemDisplayDataEntry[]{};
 
     protected final float turnRate, turnCorrectionRate;
 
@@ -47,14 +48,16 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
 
         int tickedStacks = 0;
         int actualStacks = handler.getNonEmptyStacks().size();
-        dataEntries.ensureCapacity(stacks.size());
+        if (dataEntries.length != stacks.size()) {
+            dataEntries = new ItemDisplayDataEntry[stacks.size()];
+        }
         for (int i = 0; i < stacks.size(); i++) {
             var stack = stacks.get(i);
             if (stack.isEmpty()) {
-                dataEntries.set(i, null);
+                dataEntries[i] = null;
                 continue;
             }
-            var visibleItem = dataEntries.get(i);
+            var visibleItem = dataEntries[i];
             if (visibleItem == null) {
                 visibleItem = addNewItem(i, stack);
             }
@@ -68,21 +71,23 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
     }
 
     public ItemDisplayDataEntry getEntry(int i) {
-        return getDataEntries().get(i);
+        return dataEntries[i];
     }
-    public ArrayList<ItemDisplayDataEntry> getDataEntries() {
+
+    public ItemDisplayDataEntry[] getDataEntries() {
         return dataEntries;
     }
 
     public ItemDisplayDataEntry addNewItem(int index, ItemStack stack) {
         var entry = new ItemDisplayDataEntry(stack);
-        dataEntries.set(index, entry);
+        dataEntries[index] = entry;
         return entry;
     }
 
     public final Vec3 getDisplayCenter() {
         return getDisplayCenter(0);
     }
+
     public final Vec3 getDisplayCenter(float partialTicks) {
         return getDisplayCenter(handler.parent, partialTicks);
     }

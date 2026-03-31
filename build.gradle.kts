@@ -171,7 +171,7 @@ dependencies {
 //    implementation("curse.maven:octo-lib-916747:6932487")
 //    implementation("curse.maven:immersive-ui-1021685:6886575")
 
-    runtimeOnly(("com.sammy.malum:malum:${property("minecraft_version")}-1.9.0.198"))
+    runtimeOnly(("com.sammy.malum:malum:${property("minecraft_version")}-1.9.0.199"))
 
     compileOnly("maven.modrinth:sodium:mc${property("minecraft_version")}-${property("sodium_version")}-neoforge")
     compileOnly("maven.modrinth:iris:${property("iris_version")}+${property("minecraft_version")}-neoforge")
