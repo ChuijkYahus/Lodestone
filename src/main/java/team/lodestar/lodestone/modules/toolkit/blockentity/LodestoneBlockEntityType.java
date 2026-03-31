@@ -1,5 +1,6 @@
 package team.lodestar.lodestone.modules.toolkit.blockentity;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -28,8 +29,7 @@ public class LodestoneBlockEntityType<T extends LodestoneBlockEntity> extends Bl
 
     public final LodestoneBlockEntityTicker<T> getBlockEntityAwareTicker(Level level, BlockState state, LodestoneBlockEntity blockEntity) {
         if (hasTicker(level)) {
-            var attachments = blockEntity.tickers;
-            return new LodestoneBlockEntityTicker<>(attachments);
+            return new LodestoneBlockEntityTicker<>(ImmutableList.copyOf(blockEntity.tickers));
         }
         return null;
     }

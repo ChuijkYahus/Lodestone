@@ -9,15 +9,16 @@ import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityT
 
 import java.util.function.Predicate;
 
-public class LodestoneItemStackBlockHandler extends LodestoneItemStackHandler implements LodestoneBlockEntityTicker.BlockEntityTickerAttachment {
+public class LodestoneItemStackBlockHandler<T extends LodestoneBlockEntity> extends LodestoneItemStackHandler {
 
-    protected final LodestoneBlockEntity parent;
-    protected ItemStackHandlerItemDisplayData displayData;
+    protected final T parent;
+    protected final ItemStackHandlerItemDisplayData<T> displayData;
 
-    public LodestoneItemStackBlockHandler(LodestoneBlockEntity parent, int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable contentsChangeBehavior) {
+    public LodestoneItemStackBlockHandler(T parent, ItemStackHandlerItemDisplayData<T> displayData, int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable contentsChangeBehavior) {
         super(slotCount, allowedItemSize, inputPredicate, contentsChangeBehavior);
         this.parent = parent;
-        parent.attachTicker(this);
+        this.displayData = displayData;
+        parent.attachTicker(displayData);
     }
 
     @Override
@@ -29,10 +30,11 @@ public class LodestoneItemStackBlockHandler extends LodestoneItemStackHandler im
         }
     }
 
-    @Override
-    public void tick(Level level, BlockPos pos, BlockState state) {
-        if (displayData != null) {
-            displayData.tick();
-        }
+    public T getParent() {
+        return parent;
+    }
+
+    public ItemStackHandlerItemDisplayData<T> getDisplayData() {
+        return displayData;
     }
 }

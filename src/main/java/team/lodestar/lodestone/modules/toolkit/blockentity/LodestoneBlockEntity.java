@@ -39,7 +39,10 @@ public class LodestoneBlockEntity extends BlockEntity {
         super(type, pos, state);
     }
 
-    public final void attachTicker(BlockEntityTickerAttachment ticker) {
+    public final void attachTicker(@Nullable BlockEntityTickerAttachment ticker) {
+        if (ticker == null) {
+            return;
+        }
         if (tickers == null) {
             tickers = new ArrayList<>();
         }

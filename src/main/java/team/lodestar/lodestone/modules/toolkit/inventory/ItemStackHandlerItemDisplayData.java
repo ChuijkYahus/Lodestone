@@ -1,19 +1,25 @@
 package team.lodestar.lodestone.modules.toolkit.inventory;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import team.lodestar.lodestone.helpers.DataHelper;
+import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntity;
+import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityTicker;
 
 import java.util.ArrayList;
 
 /**
  * A class designed to help with tracking and then displaying items rotating around an object.
  */
-public class ItemStackHandlerItemDisplayData {
+public class ItemStackHandlerItemDisplayData<T extends LodestoneBlockEntity> implements LodestoneBlockEntityTicker.BlockEntityTickerAttachment {
 
-    protected final LodestoneItemStackHandler parent;
+    protected final LodestoneItemStackBlockHandler<T> parent;
 
-    protected ArrayList<ItemDisplayDataEntry> displayData = new ArrayList<>();
+    protected ArrayList<ItemDisplayDataEntry<T>> dataEntries = new ArrayList<>();
 
     protected final float turnRate, turnCorrectionRate;
 
@@ -21,7 +27,7 @@ public class ItemStackHandlerItemDisplayData {
 
     protected float oldTurn, turn;
 
-    public ItemStackHandlerItemDisplayData(LodestoneItemStackHandler parent, float turnRate, float turnCorrectionRate, float distanceStepRate, float liftStepRate) {
+    public ItemStackHandlerItemDisplayData(LodestoneItemStackBlockHandler<T> parent, float turnRate, float turnCorrectionRate, float distanceStepRate, float liftStepRate) {
         this.parent = parent;
         this.turnRate = turnRate;
         this.turnCorrectionRate = turnCorrectionRate;
@@ -33,21 +39,22 @@ public class ItemStackHandlerItemDisplayData {
 
     }
 
-    public void tick() {
+    @Override
+    public void tick(Level level, BlockPos pos, BlockState state) {
         oldTurn = turn;
         turn += turnRate;
         var stacks = parent.getStacks();
 
         int tickedStacks = 0;
         int actualStacks = parent.getNonEmptyStacks().size();
-        displayData.ensureCapacity(stacks.size());
+        dataEntries.ensureCapacity(stacks.size());
         for (int i = 0; i < stacks.size(); i++) {
             var stack = stacks.get(i);
             if (stack.isEmpty()) {
-                displayData.set(i, null);
+                dataEntries.set(i, null);
                 continue;
             }
-            var visibleItem = displayData.get(i);
+            var visibleItem = dataEntries.get(i);
             if (visibleItem == null) {
                 visibleItem = addNewItem(i, stack);
             }
@@ -56,28 +63,44 @@ public class ItemStackHandlerItemDisplayData {
             float targetLift = getLiftForItem(visibleItem, tickedStacks, actualStacks);
             var coordinates = new ItemCoordinates(targetAngle, targetDistance, targetLift);
             visibleItem.tick(this, coordinates);
+            tickedStacks++;
         }
     }
 
-    public ItemDisplayDataEntry addNewItem(int index, ItemStack stack) {
-        var entry = new ItemDisplayDataEntry(stack);
-        displayData.set(index, entry);
+    public ItemDisplayDataEntry<T> getEntry(int i) {
+        return getDataEntries().get(i);
+    }
+    public ArrayList<ItemDisplayDataEntry<T>> getDataEntries() {
+        return dataEntries;
+    }
+
+    public ItemDisplayDataEntry<T> addNewItem(int index, ItemStack stack) {
+        var entry = new ItemDisplayDataEntry<T>(stack);
+        dataEntries.set(index, entry);
         return entry;
     }
 
-    public float getAngleForItem(ItemDisplayDataEntry item, int index, float total) {
+    public final Vec3 getDisplayCenter(float partialTicks) {
+        return getDisplayCenter(parent.parent, partialTicks);
+    }
+
+    public Vec3 getDisplayCenter(T parent, float partialTicks) {
+        return parent.getBlockPos().getCenter();
+    }
+
+    public float getAngleForItem(ItemDisplayDataEntry<T> item, int index, float total) {
         return index / total;
     }
 
-    public float getDistanceForItem(ItemDisplayDataEntry item, int index, float total) {
+    public float getDistanceForItem(ItemDisplayDataEntry<T> item, int index, float total) {
         return (total - 1) * 0.2f;
     }
 
-    public float getLiftForItem(ItemDisplayDataEntry item, int index, float total) {
+    public float getLiftForItem(ItemDisplayDataEntry<T> item, int index, float total) {
         return (1 - Math.min(item.age, 20) / 20f) * 0.25f;
     }
 
-    public static class ItemDisplayDataEntry {
+    public static class ItemDisplayDataEntry<T extends LodestoneBlockEntity> {
         protected final ItemStack stack;
         protected float angle, oldAngle;
         protected float distance, oldDistance;
@@ -88,7 +111,7 @@ public class ItemStackHandlerItemDisplayData {
             this.stack = stack;
         }
 
-        public void tick(ItemStackHandlerItemDisplayData data, ItemCoordinates coordinates) {
+        public void tick(ItemStackHandlerItemDisplayData<T> data, ItemCoordinates coordinates) {
             oldAngle = angle;
             oldDistance = distance;
             angle = DataHelper.approach(angle, coordinates.angle, data.turnRate + data.turnCorrectionRate);
