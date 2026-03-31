@@ -3,14 +3,14 @@ package team.lodestar.lodestone.modules.toolkit.inventory;
 import net.minecraft.world.item.ItemStack;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntity;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 
-@SuppressWarnings("unchecked")
 public class LodestoneItemStackBlockHandlerBuilder extends LodestoneItemStackHandlerBuilder{
 
     protected final LodestoneBlockEntity parent;
 
-    protected ItemStackHandlerItemDisplayData displayData;
+    protected Function<LodestoneItemStackBlockHandler, ItemStackHandlerItemDisplayData> displayData;
 
     protected LodestoneItemStackBlockHandlerBuilder(LodestoneBlockEntity parent, int slotCount) {
         super(slotCount);
@@ -32,13 +32,8 @@ public class LodestoneItemStackBlockHandlerBuilder extends LodestoneItemStackHan
         return (LodestoneItemStackBlockHandlerBuilder) super.setInputPredicate(inputPredicate);
     }
 
-    public LodestoneItemStackBlockHandlerBuilder setDisplayData(ItemStackHandlerItemDisplayData displayData) {
-        this.displayData = displayData;
-        return this;
-    }
-
     @Override
     public LodestoneItemStackBlockHandler build() {
-        return new LodestoneItemStackBlockHandler(parent, displayData, slotCount, allowedItemSize, inputPredicate, onContentsChanged);
+        return new LodestoneItemStackBlockHandler(parent, slotCount, allowedItemSize, inputPredicate, onContentsChanged);
     }
 }

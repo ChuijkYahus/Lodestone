@@ -12,11 +12,15 @@ import java.util.function.Predicate;
 public class LodestoneItemStackBlockHandler extends LodestoneItemStackHandler {
 
     protected final LodestoneBlockEntity parent;
-    protected final ItemStackHandlerItemDisplayData displayData;
+    protected ItemStackHandlerItemDisplayData displayData;
 
-    public LodestoneItemStackBlockHandler(LodestoneBlockEntity parent, ItemStackHandlerItemDisplayData displayData, int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable contentsChangeBehavior) {
+    public LodestoneItemStackBlockHandler(LodestoneBlockEntity parent, int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable contentsChangeBehavior) {
         super(slotCount, allowedItemSize, inputPredicate, contentsChangeBehavior);
         this.parent = parent;
+    }
+
+    public void attachDisplayData(ItemStackHandlerItemDisplayData displayData) {
+        assert this.displayData == null;
         this.displayData = displayData;
         parent.attachTicker(displayData);
     }
