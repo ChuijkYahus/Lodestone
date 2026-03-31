@@ -9,12 +9,12 @@ import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityT
 
 import java.util.function.Predicate;
 
-public class LodestoneItemStackBlockHandler<T extends LodestoneBlockEntity> extends LodestoneItemStackHandler {
+public class LodestoneItemStackBlockHandler extends LodestoneItemStackHandler {
 
-    protected final T parent;
-    protected final ItemStackHandlerItemDisplayData<T> displayData;
+    protected final LodestoneBlockEntity parent;
+    protected final ItemStackHandlerItemDisplayData displayData;
 
-    public LodestoneItemStackBlockHandler(T parent, ItemStackHandlerItemDisplayData<T> displayData, int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable contentsChangeBehavior) {
+    public LodestoneItemStackBlockHandler(LodestoneBlockEntity parent, ItemStackHandlerItemDisplayData displayData, int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable contentsChangeBehavior) {
         super(slotCount, allowedItemSize, inputPredicate, contentsChangeBehavior);
         this.parent = parent;
         this.displayData = displayData;
@@ -30,11 +30,11 @@ public class LodestoneItemStackBlockHandler<T extends LodestoneBlockEntity> exte
         }
     }
 
-    public T getParent() {
+    public LodestoneBlockEntity getParent() {
         return parent;
     }
 
-    public ItemStackHandlerItemDisplayData<T> getDisplayData() {
+    public ItemStackHandlerItemDisplayData getDisplayData() {
         return displayData;
     }
 }

@@ -35,7 +35,7 @@ public class ItemStackDisplayDataRenderer {
         return this;
     }
 
-    public void render(LodestoneItemStackBlockHandler<?> handler, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, float partialTicks) {
+    public void render(LodestoneItemStackBlockHandler handler, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, float partialTicks) {
         var level = Minecraft.getInstance().level;
         var itemRenderer = Minecraft.getInstance().getItemRenderer();
         var parent = handler.getParent();

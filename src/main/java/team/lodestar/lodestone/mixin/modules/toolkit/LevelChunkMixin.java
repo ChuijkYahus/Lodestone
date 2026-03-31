@@ -8,9 +8,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntity;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityType;
@@ -21,11 +19,11 @@ public class LevelChunkMixin {
     @SuppressWarnings("unchecked")
     @WrapOperation(method = "updateBlockEntityTicker", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getTicker(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/entity/BlockEntityType;)Lnet/minecraft/world/level/block/entity/BlockEntityTicker;"))
     private <T extends BlockEntity> BlockEntityTicker<T> lodestone$attachBlockEntityAwareTicker(BlockState state, Level level, BlockEntityType<T> blockEntityType, Operation<BlockEntityTicker<T>> original, T blockEntity) {
-        var clazz = LodestoneBlockEntity.class;
-        if (clazz.isInstance(blockEntity)) {
-            var wawa = clazz.cast(blockEntity);
-            var type = wawa.getType();
-            return (BlockEntityTicker<T>) type.tryGetBlockEntityAwareTicker(level, state, wawa);
+        if (blockEntityType instanceof LodestoneBlockEntityType<?> lodestoneType) {
+            if (blockEntity instanceof LodestoneBlockEntity entity) {
+                return (BlockEntityTicker<T>) lodestoneType.getBlockEntityAwareTicker(level, state, entity);
+            }
+            return null;
         }
         return original.call(state, level, blockEntityType);
     }

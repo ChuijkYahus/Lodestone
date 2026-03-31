@@ -6,39 +6,39 @@ import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntity;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unchecked")
-public class LodestoneItemStackBlockHandlerBuilder<T extends LodestoneBlockEntity> extends LodestoneItemStackHandlerBuilder{
+public class LodestoneItemStackBlockHandlerBuilder extends LodestoneItemStackHandlerBuilder{
 
-    protected final T parent;
+    protected final LodestoneBlockEntity parent;
 
-    protected ItemStackHandlerItemDisplayData<T> displayData;
+    protected ItemStackHandlerItemDisplayData displayData;
 
-    protected LodestoneItemStackBlockHandlerBuilder(T parent, int slotCount) {
+    protected LodestoneItemStackBlockHandlerBuilder(LodestoneBlockEntity parent, int slotCount) {
         super(slotCount);
         this.parent = parent;
     }
 
     @Override
-    public LodestoneItemStackBlockHandlerBuilder<T> limitItemSize(int allowedItemSize) {
-        return (LodestoneItemStackBlockHandlerBuilder<T>) super.limitItemSize(allowedItemSize);
+    public LodestoneItemStackBlockHandlerBuilder limitItemSize(int allowedItemSize) {
+        return (LodestoneItemStackBlockHandlerBuilder) super.limitItemSize(allowedItemSize);
     }
 
     @Override
-    public LodestoneItemStackBlockHandlerBuilder<T> onContentsChanged(Runnable contentsChangeBehavior) {
-        return (LodestoneItemStackBlockHandlerBuilder<T>) super.onContentsChanged(contentsChangeBehavior);
+    public LodestoneItemStackBlockHandlerBuilder onContentsChanged(Runnable contentsChangeBehavior) {
+        return (LodestoneItemStackBlockHandlerBuilder) super.onContentsChanged(contentsChangeBehavior);
     }
 
     @Override
-    public LodestoneItemStackBlockHandlerBuilder<T> setInputPredicate(Predicate<ItemStack> inputPredicate) {
-        return (LodestoneItemStackBlockHandlerBuilder<T>) super.setInputPredicate(inputPredicate);
+    public LodestoneItemStackBlockHandlerBuilder setInputPredicate(Predicate<ItemStack> inputPredicate) {
+        return (LodestoneItemStackBlockHandlerBuilder) super.setInputPredicate(inputPredicate);
     }
 
-    public LodestoneItemStackBlockHandlerBuilder<T> setDisplayData(ItemStackHandlerItemDisplayData<T> displayData) {
+    public LodestoneItemStackBlockHandlerBuilder setDisplayData(ItemStackHandlerItemDisplayData displayData) {
         this.displayData = displayData;
         return this;
     }
 
     @Override
-    public LodestoneItemStackBlockHandler<T> build() {
-        return new LodestoneItemStackBlockHandler<>(parent, displayData, slotCount, allowedItemSize, inputPredicate, onContentsChanged);
+    public LodestoneItemStackBlockHandler build() {
+        return new LodestoneItemStackBlockHandler(parent, displayData, slotCount, allowedItemSize, inputPredicate, onContentsChanged);
     }
 }

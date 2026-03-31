@@ -6,12 +6,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.ApiStatus;
-import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityTicker.BlockEntityTickerAttachment;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 public class LodestoneBlockEntityType<T extends LodestoneBlockEntity> extends BlockEntityType<T> {
@@ -31,21 +27,9 @@ public class LodestoneBlockEntityType<T extends LodestoneBlockEntity> extends Bl
         return null;
     }
 
-    @ApiStatus.Internal
-    @SuppressWarnings("unchecked")
-    public final LodestoneBlockEntityTicker<T> tryGetBlockEntityAwareTicker(Level level, BlockState state, LodestoneBlockEntity blockEntity) {
-        return getBlockEntityAwareTicker(level, state, (T) blockEntity);
-    }
-
-    @ApiStatus.Internal
-    @SuppressWarnings("unchecked")
-    public final LodestoneBlockEntityTicker<T> getBlockEntityAwareTicker(Level level, BlockState state, T blockEntity) {
+    public final LodestoneBlockEntityTicker<T> getBlockEntityAwareTicker(Level level, BlockState state, LodestoneBlockEntity blockEntity) {
         if (hasTicker(level)) {
-            List<BlockEntityTickerAttachment<T>> result = new ArrayList<>();
-            for (Object obj : blockEntity.tickers) {
-                result.add((BlockEntityTickerAttachment<T>) obj);
-            }
-            return new LodestoneBlockEntityTicker<>(ImmutableList.copyOf(result));
+            return new LodestoneBlockEntityTicker<>(ImmutableList.copyOf(blockEntity.tickers));
         }
         return null;
     }

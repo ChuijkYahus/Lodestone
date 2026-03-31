@@ -15,11 +15,11 @@ import java.util.ArrayList;
 /**
  * A class designed to help with tracking and then displaying items rotating around an object.
  */
-public class ItemStackHandlerItemDisplayData<T extends LodestoneBlockEntity> implements LodestoneBlockEntityTicker.BlockEntityTickerAttachment<T> {
+public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTicker.BlockEntityTickerAttachment {
 
-    protected final LodestoneItemStackBlockHandler<T> handler;
+    protected final LodestoneItemStackBlockHandler handler;
 
-    protected ArrayList<ItemDisplayDataEntry<T>> dataEntries = new ArrayList<>();
+    protected ArrayList<ItemDisplayDataEntry> dataEntries = new ArrayList<>();
 
     protected final float turnRate, turnCorrectionRate;
 
@@ -27,7 +27,7 @@ public class ItemStackHandlerItemDisplayData<T extends LodestoneBlockEntity> imp
 
     protected float oldTurn, turn;
 
-    public ItemStackHandlerItemDisplayData(LodestoneItemStackBlockHandler<T> handler, float turnRate, float turnCorrectionRate, float distanceStepRate, float liftStepRate) {
+    public ItemStackHandlerItemDisplayData(LodestoneItemStackBlockHandler handler, float turnRate, float turnCorrectionRate, float distanceStepRate, float liftStepRate) {
         this.handler = handler;
         this.turnRate = turnRate;
         this.turnCorrectionRate = turnCorrectionRate;
@@ -40,7 +40,7 @@ public class ItemStackHandlerItemDisplayData<T extends LodestoneBlockEntity> imp
     }
 
     @Override
-    public void tick(T parent, Level level, BlockPos pos, BlockState state) {
+    public void tick(LodestoneBlockEntity parent, Level level, BlockPos pos, BlockState state) {
         oldTurn = turn;
         turn += turnRate;
         var stacks = handler.getStacks();
@@ -67,15 +67,15 @@ public class ItemStackHandlerItemDisplayData<T extends LodestoneBlockEntity> imp
         }
     }
 
-    public ItemDisplayDataEntry<T> getEntry(int i) {
+    public ItemDisplayDataEntry getEntry(int i) {
         return getDataEntries().get(i);
     }
-    public ArrayList<ItemDisplayDataEntry<T>> getDataEntries() {
+    public ArrayList<ItemDisplayDataEntry> getDataEntries() {
         return dataEntries;
     }
 
-    public ItemDisplayDataEntry<T> addNewItem(int index, ItemStack stack) {
-        var entry = new ItemDisplayDataEntry<T>(stack);
+    public ItemDisplayDataEntry addNewItem(int index, ItemStack stack) {
+        var entry = new ItemDisplayDataEntry(stack);
         dataEntries.set(index, entry);
         return entry;
     }
@@ -84,23 +84,23 @@ public class ItemStackHandlerItemDisplayData<T extends LodestoneBlockEntity> imp
         return getDisplayCenter(handler.parent, partialTicks);
     }
 
-    public Vec3 getDisplayCenter(T parent, float partialTicks) {
+    public Vec3 getDisplayCenter(LodestoneBlockEntity parent, float partialTicks) {
         return parent.getBlockPos().getCenter();
     }
 
-    public float getAngleForItem(ItemDisplayDataEntry<T> item, int index, float total) {
+    public float getAngleForItem(ItemDisplayDataEntry item, int index, float total) {
         return index / total;
     }
 
-    public float getDistanceForItem(ItemDisplayDataEntry<T> item, int index, float total) {
+    public float getDistanceForItem(ItemDisplayDataEntry item, int index, float total) {
         return (total - 1) * 0.2f;
     }
 
-    public float getLiftForItem(ItemDisplayDataEntry<T> item, int index, float total) {
+    public float getLiftForItem(ItemDisplayDataEntry item, int index, float total) {
         return (1 - Math.min(item.age, 20) / 20f) * 0.25f;
     }
 
-    public static class ItemDisplayDataEntry<T extends LodestoneBlockEntity> {
+    public static class ItemDisplayDataEntry {
         protected final ItemStack stack;
         protected float angle, oldAngle;
         protected float distance, oldDistance;
@@ -111,7 +111,7 @@ public class ItemStackHandlerItemDisplayData<T extends LodestoneBlockEntity> imp
             this.stack = stack;
         }
 
-        public void tick(ItemStackHandlerItemDisplayData<T> data, ItemCoordinates coordinates) {
+        public void tick(ItemStackHandlerItemDisplayData data, ItemCoordinates coordinates) {
             oldAngle = angle;
             oldDistance = distance;
             angle = DataHelper.approach(angle, coordinates.angle, data.turnRate + data.turnCorrectionRate);

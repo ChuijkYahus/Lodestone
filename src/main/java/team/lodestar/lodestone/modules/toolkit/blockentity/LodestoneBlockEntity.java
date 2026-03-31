@@ -33,13 +33,13 @@ import java.util.function.Consumer;
 @SuppressWarnings("NullableProblems")
 public class LodestoneBlockEntity extends BlockEntity {
 
-    List<BlockEntityTickerAttachment<? extends LodestoneBlockEntity>> tickers;
+    List<BlockEntityTickerAttachment> tickers;
 
     public LodestoneBlockEntity(LodestoneBlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
-    public final void attachTicker(@Nullable BlockEntityTickerAttachment<?> ticker) {
+    public final void attachTicker(@Nullable BlockEntityTickerAttachment ticker) {
         if (ticker == null) {
             return;
         }
