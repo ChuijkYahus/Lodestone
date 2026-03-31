@@ -10,8 +10,9 @@ import team.lodestar.lodestone.helpers.DataHelper;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntity;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityTicker;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * A class designed to help with tracking and then displaying items rotating around an object.
@@ -70,12 +71,12 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
         }
     }
 
-    public ItemDisplayDataEntry getEntry(int i) {
-        return dataEntries[i];
+    public Optional<ItemDisplayDataEntry> getEntry(int i) {
+        return Optional.ofNullable(dataEntries[i]);
     }
 
-    public ItemDisplayDataEntry[] getDataEntries() {
-        return dataEntries;
+    public List<Optional<ItemDisplayDataEntry>> getDataEntries() {
+        return Arrays.stream(dataEntries).map(Optional::ofNullable).toList();
     }
 
     public ItemDisplayDataEntry addNewItem(int index, ItemStack stack) {
