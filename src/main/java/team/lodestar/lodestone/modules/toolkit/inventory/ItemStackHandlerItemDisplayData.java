@@ -15,9 +15,9 @@ import java.util.ArrayList;
 /**
  * A class designed to help with tracking and then displaying items rotating around an object.
  */
-public class ItemStackHandlerItemDisplayData<T extends LodestoneBlockEntity> implements LodestoneBlockEntityTicker.BlockEntityTickerAttachment {
+public class ItemStackHandlerItemDisplayData<T extends LodestoneBlockEntity> implements LodestoneBlockEntityTicker.BlockEntityTickerAttachment<T> {
 
-    protected final LodestoneItemStackBlockHandler<T> parent;
+    protected final LodestoneItemStackBlockHandler<T> handler;
 
     protected ArrayList<ItemDisplayDataEntry<T>> dataEntries = new ArrayList<>();
 
@@ -27,8 +27,8 @@ public class ItemStackHandlerItemDisplayData<T extends LodestoneBlockEntity> imp
 
     protected float oldTurn, turn;
 
-    public ItemStackHandlerItemDisplayData(LodestoneItemStackBlockHandler<T> parent, float turnRate, float turnCorrectionRate, float distanceStepRate, float liftStepRate) {
-        this.parent = parent;
+    public ItemStackHandlerItemDisplayData(LodestoneItemStackBlockHandler<T> handler, float turnRate, float turnCorrectionRate, float distanceStepRate, float liftStepRate) {
+        this.handler = handler;
         this.turnRate = turnRate;
         this.turnCorrectionRate = turnCorrectionRate;
         this.distanceStepRate = distanceStepRate;
@@ -40,13 +40,13 @@ public class ItemStackHandlerItemDisplayData<T extends LodestoneBlockEntity> imp
     }
 
     @Override
-    public void tick(Level level, BlockPos pos, BlockState state) {
+    public void tick(T parent, Level level, BlockPos pos, BlockState state) {
         oldTurn = turn;
         turn += turnRate;
-        var stacks = parent.getStacks();
+        var stacks = handler.getStacks();
 
         int tickedStacks = 0;
-        int actualStacks = parent.getNonEmptyStacks().size();
+        int actualStacks = handler.getNonEmptyStacks().size();
         dataEntries.ensureCapacity(stacks.size());
         for (int i = 0; i < stacks.size(); i++) {
             var stack = stacks.get(i);
@@ -81,7 +81,7 @@ public class ItemStackHandlerItemDisplayData<T extends LodestoneBlockEntity> imp
     }
 
     public final Vec3 getDisplayCenter(float partialTicks) {
-        return getDisplayCenter(parent.parent, partialTicks);
+        return getDisplayCenter(handler.parent, partialTicks);
     }
 
     public Vec3 getDisplayCenter(T parent, float partialTicks) {
@@ -131,6 +131,15 @@ public class ItemStackHandlerItemDisplayData<T extends LodestoneBlockEntity> imp
         public float getLift(float partialTicks) {
             return Mth.lerp(oldLift, lift, partialTicks);
         }
+
+        public ItemStack getStack() {
+            return stack;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
     }
 
     public record ItemCoordinates(float angle, float distance, float lift) {

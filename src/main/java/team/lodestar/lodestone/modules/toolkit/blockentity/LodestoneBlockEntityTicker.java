@@ -18,9 +18,9 @@ public class LodestoneBlockEntityTicker<T extends LodestoneBlockEntity> implemen
         NONE
     }
 
-    protected final List<BlockEntityTickerAttachment> attachments;
+    protected final List<BlockEntityTickerAttachment<T>> attachments;
 
-    public LodestoneBlockEntityTicker(List<BlockEntityTickerAttachment> attachments) {
+    public LodestoneBlockEntityTicker(List<BlockEntityTickerAttachment<T>> attachments) {
         this.attachments = attachments;
     }
 
@@ -33,10 +33,10 @@ public class LodestoneBlockEntityTicker<T extends LodestoneBlockEntity> implemen
             blockEntity.clientTick(level);
         }
         blockEntity.commonTick(level);
-        attachments.forEach(attachment -> attachment.tick(level, pos, state));
+        attachments.forEach(attachment -> attachment.tick(blockEntity, level, pos, state));
     }
 
-    public interface BlockEntityTickerAttachment {
-        void tick(Level level, BlockPos pos, BlockState state);
+    public interface BlockEntityTickerAttachment<T extends LodestoneBlockEntity> {
+        void tick(T parent, Level level, BlockPos pos, BlockState state);
     }
 }
