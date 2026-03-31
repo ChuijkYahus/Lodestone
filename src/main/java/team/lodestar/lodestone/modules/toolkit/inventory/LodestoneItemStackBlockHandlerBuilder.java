@@ -10,7 +10,7 @@ public class LodestoneItemStackBlockHandlerBuilder<T extends LodestoneBlockEntit
 
     protected final T parent;
 
-    protected ItemStackHandlerItemDisplayData displayData;
+    protected ItemStackHandlerItemDisplayData<T> displayData;
 
     protected LodestoneItemStackBlockHandlerBuilder(T parent, int slotCount) {
         super(slotCount);
@@ -32,13 +32,13 @@ public class LodestoneItemStackBlockHandlerBuilder<T extends LodestoneBlockEntit
         return (LodestoneItemStackBlockHandlerBuilder<T>) super.setInputPredicate(inputPredicate);
     }
 
-    public LodestoneItemStackBlockHandlerBuilder<T> setDisplayData(ItemStackHandlerItemDisplayData displayData) {
+    public LodestoneItemStackBlockHandlerBuilder<T> setDisplayData(ItemStackHandlerItemDisplayData<T> displayData) {
         this.displayData = displayData;
         return this;
     }
 
     @Override
-    public LodestoneItemStackBlockHandler build() {
+    public LodestoneItemStackBlockHandler<T> build() {
         return new LodestoneItemStackBlockHandler<>(parent, displayData, slotCount, allowedItemSize, inputPredicate, onContentsChanged);
     }
 }
