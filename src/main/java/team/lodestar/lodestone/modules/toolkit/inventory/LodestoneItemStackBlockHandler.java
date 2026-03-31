@@ -20,8 +20,8 @@ public class LodestoneItemStackBlockHandler extends LodestoneItemStackHandler {
         this.parent = parent;
     }
 
-    public void attachDisplayData(Function<LodestoneBlockEntity, ItemStackHandlerItemDisplayData> displayData) {
-        attachDisplayData(displayData.apply(parent));
+    public void attachDisplayData(Function<LodestoneItemStackBlockHandler, ItemStackHandlerItemDisplayData> displayData) {
+        attachDisplayData(displayData.apply(this));
     }
     public void attachDisplayData(ItemStackHandlerItemDisplayData displayData) {
         assert this.displayData == null;
