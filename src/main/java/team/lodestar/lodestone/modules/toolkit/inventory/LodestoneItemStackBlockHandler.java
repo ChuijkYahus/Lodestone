@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntity;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityTicker;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class LodestoneItemStackBlockHandler extends LodestoneItemStackHandler {
@@ -19,6 +20,9 @@ public class LodestoneItemStackBlockHandler extends LodestoneItemStackHandler {
         this.parent = parent;
     }
 
+    public void attachDisplayData(Function<LodestoneBlockEntity, ItemStackHandlerItemDisplayData> displayData) {
+        attachDisplayData(displayData.apply(parent));
+    }
     public void attachDisplayData(ItemStackHandlerItemDisplayData displayData) {
         assert this.displayData == null;
         this.displayData = displayData;
