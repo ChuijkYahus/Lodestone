@@ -80,6 +80,9 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
         return entry;
     }
 
+    public final Vec3 getDisplayCenter() {
+        return getDisplayCenter(0);
+    }
     public final Vec3 getDisplayCenter(float partialTicks) {
         return getDisplayCenter(handler.parent, partialTicks);
     }
