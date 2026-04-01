@@ -6,6 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Math;
 import team.lodestar.lodestone.helpers.DataHelper;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntity;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityTicker;
@@ -30,7 +31,8 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
 
     protected float oldTurn, turn;
 
-    public ItemStackHandlerItemDisplayData(LodestoneItemStackBlockHandler handler, float turnRate, float turnCorrectionRate, float distanceStepRate, float liftStepRate) {
+    public ItemStackHandlerItemDisplayData(LodestoneItemStackBlockHandler handler,
+                                           float turnRate, float turnCorrectionRate, float distanceStepRate, float liftStepRate) {
         this.handler = handler;
         this.turnRate = turnRate;
         this.turnCorrectionRate = turnCorrectionRate;
@@ -63,11 +65,12 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
             if (visibleItem == null) {
                 visibleItem = addNewItem(i, stack);
             }
-            float targetAngle = turn + getAngleForItem(visibleItem, tickedStacks, actualStacks);
-            float targetDistance = getDistanceForItem(visibleItem, tickedStacks, actualStacks);
-            float targetLift = getLiftForItem(visibleItem, tickedStacks, actualStacks);
-            var coordinates = new ItemCoordinates(targetAngle, targetDistance, targetLift);
-            visibleItem.tick(this, coordinates);
+            float angle = turn + getAngleForItem(visibleItem, tickedStacks, actualStacks);
+            float distance = getDistanceForItem(visibleItem, tickedStacks, actualStacks);
+            float lift = getLiftForItem(visibleItem, tickedStacks, actualStacks);
+            float scale = getItemScaleForItem(visibleItem, tickedStacks, actualStacks);
+            float itemRotationRate = getItemRotationRateForItem(visibleItem, tickedStacks, actualStacks);
+            visibleItem.tick(this, angle, distance, lift, scale, itemRotationRate);
             tickedStacks++;
         }
     }
@@ -98,54 +101,84 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
         return parent.getBlockPos().getCenter();
     }
 
+    public float getItemScaleForItem(ItemDisplayDataEntry item, int index, float total) {
+        return 1;
+    }
+
     public float getAngleForItem(ItemDisplayDataEntry item, int index, float total) {
-        return index / total;
+        return 6.28f * (index / total);
     }
 
     public float getDistanceForItem(ItemDisplayDataEntry item, int index, float total) {
-        return (total - 1) * 0.2f;
+        return 1;
     }
 
     public float getLiftForItem(ItemDisplayDataEntry item, int index, float total) {
-        return (1 - Math.min(item.age, 20) / 20f) * 0.25f;
+        return 0;
+    }
+
+    public float getItemRotationRateForItem(ItemDisplayDataEntry item, int index, float total) {
+        return 5;
     }
 
     public static class ItemDisplayDataEntry {
         protected final ItemStack stack;
+        protected float scale, oldScale;
         protected float angle, oldAngle;
         protected float distance, oldDistance;
         protected float lift, oldLift;
+        protected float itemAngle, oldItemAngle;
         protected int age;
 
         public ItemDisplayDataEntry(ItemStack stack) {
             this.stack = stack;
         }
 
-        public void tick(ItemStackHandlerItemDisplayData data, ItemCoordinates coordinates) {
+        public void tick(ItemStackHandlerItemDisplayData data,
+                         float targetAngle, float targetDistance, float targetLift, float targetScale, float itemRotationRate) {
+            oldScale = scale;
             oldAngle = angle;
             oldDistance = distance;
-            angle = DataHelper.approach(angle, coordinates.angle, data.turnRate + data.turnCorrectionRate);
-            distance = DataHelper.approach(distance, coordinates.distance, data.distanceStepRate);
-            lift = DataHelper.approach(lift, coordinates.lift, data.liftStepRate);
+            oldLift = lift;
+            oldItemAngle = itemAngle;
+            angle = DataHelper.approach(angle, targetAngle, data.turnRate + data.turnCorrectionRate);
+            distance = DataHelper.approach(distance, targetDistance, data.distanceStepRate);
+            lift = DataHelper.approach(lift, targetLift, data.liftStepRate);
+            scale = targetScale;
+            itemAngle += itemRotationRate;
             age++;
         }
 
         public float getAngle(float partialTicks) {
-            return Mth.lerp(oldAngle, angle, partialTicks) % 6.28f;
+            return Mth.rotLerp(partialTicks, oldAngle, angle);
         }
 
         public float getDistance(float partialTicks) {
-            return Mth.lerp(oldDistance, distance, partialTicks);
+            return Mth.lerp(partialTicks, oldDistance, distance);
         }
 
         public float getLift(float partialTicks) {
-            return Mth.lerp(oldLift, lift, partialTicks);
+            return Mth.lerp(partialTicks, oldLift, lift);
+        }
+
+        public float getScale(float partialTicks) {
+            return Mth.lerp(partialTicks, oldScale, scale);
+        }
+
+        public float getItemRotation(float partialTicks) {
+            return Mth.rotLerp(partialTicks, oldItemAngle, itemAngle);
         }
 
         public Vec3 getPosition(Vec3 center) {
-            var x = center.x + Mth.sin(angle) * distance;
-            var y = center.y + lift;
-            var z = center.z + Mth.cos(angle) * distance;
+            return getPosition(center, 0);
+        }
+
+        public Vec3 getPosition(Vec3 center, float partialTicks) {
+            float distance = getDistance(partialTicks);
+            float angle = getAngle(partialTicks);
+            var x = center.x + Math.sin(angle) * distance;
+            var y = center.y + getLift(partialTicks);
+            var z = center.z + Math.cos(angle) * distance;
             return new Vec3(x, y, z);
         }
 
@@ -156,10 +189,6 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
         public int getAge() {
             return age;
         }
-
-    }
-
-    public record ItemCoordinates(float angle, float distance, float lift) {
 
     }
 }

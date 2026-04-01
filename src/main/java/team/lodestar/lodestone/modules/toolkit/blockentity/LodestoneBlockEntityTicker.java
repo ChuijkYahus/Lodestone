@@ -6,19 +6,25 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("NullableProblems")
 public class LodestoneBlockEntityTicker<T extends LodestoneBlockEntity> implements BlockEntityTicker<T> {
 
+
+
     public enum Type {
         BOTH,
         CLIENT,
         SERVER,
-        NONE
+        NONE;
     }
-
     protected final List<BlockEntityTickerAttachment> attachments;
+
+    public LodestoneBlockEntityTicker() {
+        this(Collections.emptyList());
+    }
 
     public LodestoneBlockEntityTicker(List<BlockEntityTickerAttachment> attachments) {
         this.attachments = attachments;

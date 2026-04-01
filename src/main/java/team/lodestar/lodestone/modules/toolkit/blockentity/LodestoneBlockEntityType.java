@@ -22,13 +22,16 @@ public class LodestoneBlockEntityType<T extends LodestoneBlockEntity> extends Bl
 
     public final LodestoneBlockEntityTicker<T> getTickerUnsafe(Level level, BlockState state) {
         if (hasTicker(level)) {
-            return new LodestoneBlockEntityTicker<>(Collections.emptyList());
+            return new LodestoneBlockEntityTicker<>();
         }
         return null;
     }
 
     public final LodestoneBlockEntityTicker<T> getBlockEntityAwareTicker(Level level, BlockState state, LodestoneBlockEntity blockEntity) {
         if (hasTicker(level)) {
+            if (blockEntity.tickers == null) {
+                return new LodestoneBlockEntityTicker<>();
+            }
             return new LodestoneBlockEntityTicker<>(ImmutableList.copyOf(blockEntity.tickers));
         }
         return null;

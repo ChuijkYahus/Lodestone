@@ -9,6 +9,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import org.joml.Math;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntity;
 import team.lodestar.lodestone.modules.toolkit.inventory.ItemStackHandlerItemDisplayData;
 import team.lodestar.lodestone.modules.toolkit.inventory.LodestoneItemStackBlockHandler;
@@ -20,21 +22,8 @@ import static net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
 
 public class ItemStackDisplayDataRenderer {
 
-    protected float itemScale = 0.5f;
-    protected float rotationRate = 2f;
-
     public ItemStackDisplayDataRenderer() {
 
-    }
-
-    public ItemStackDisplayDataRenderer setItemScale(float itemScale) {
-        this.itemScale = itemScale;
-        return this;
-    }
-
-    public ItemStackDisplayDataRenderer setRotationRate(float rotationRate) {
-        this.rotationRate = rotationRate;
-        return this;
     }
 
     public void render(LodestoneItemStackBlockHandler handler, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, float partialTicks) {
@@ -42,7 +31,6 @@ public class ItemStackDisplayDataRenderer {
         var itemRenderer = Minecraft.getInstance().getItemRenderer();
         var parent = handler.getParent();
         var pos = parent.getBlockPos();
-        float time = level.getGameTime() + partialTicks;
 
         var displayData = handler.getDisplayData();
         assert displayData != null;
@@ -55,18 +43,18 @@ public class ItemStackDisplayDataRenderer {
             }
             var entry = optional.get();
             var stack = entry.getStack();
-            var angle = entry.getAngle(partialTicks);
-            var distance = entry.getDistance(partialTicks);
-            var lift = entry.getLift(partialTicks);
             var center = displayData.getDisplayCenter(partialTicks);
+            var scale = entry.getScale(partialTicks);
+            var itemRotation = entry.getItemRotation(partialTicks);
 
-            var xt = center.x - pos.getX() + Mth.sin(angle) * distance;
-            var yt = center.y - pos.getY() + lift;
-            var zt = center.z - pos.getZ() + Mth.cos(angle) * distance;
+            var position = entry.getPosition(center);
+            var xt = position.x - pos.getX();
+            var yt = position.y - pos.getY();
+            var zt = position.z - pos.getZ();
             poseStack.pushPose();
             poseStack.translate(xt, yt, zt);
-            poseStack.mulPose(Axis.YP.rotationDegrees((time * rotationRate) % 360));
-            poseStack.scale(itemScale, itemScale, itemScale);
+            poseStack.mulPose(Axis.YP.rotation(itemRotation));
+            poseStack.scale(scale, scale, scale);
             itemRenderer.renderStatic(stack, ItemDisplayContext.FIXED, combinedLightIn, NO_OVERLAY, poseStack, bufferIn, level, 0);
             poseStack.popPose();
         }
