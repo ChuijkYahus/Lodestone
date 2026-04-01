@@ -13,13 +13,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.*;
 import org.jetbrains.annotations.Nullable;
+import team.lodestar.lodestone.modules.toolkit.inventory.LodestoneItemStackBlockHandler;
 import team.lodestar.lodestone.modules.toolkit.inventory.LodestoneItemStackHandler;
 
 /**
  * A simple block entity which holds a single ItemStack
  */
 public abstract class ItemHolderBlockEntity extends LodestoneBlockEntity implements IInventoryCapabilityProvider {
-    public LodestoneItemStackHandler inventory;
+    public LodestoneItemStackBlockHandler inventory;
 
     public ItemHolderBlockEntity(LodestoneBlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
