@@ -96,10 +96,10 @@ public class LodestoneScreenParticle extends TextureSheetScreenParticle {
         setSprite(spriteSet.sprites.get(Mth.clamp(spriteIndex, 0, spriteSet.sprites.size() - 1)));
     }
 
-    public void pickColor(float colorCoeff) {
-        float h = Mth.rotLerp(colorCoeff, 360f * hsv1[0], 360f * hsv2[0]) / 360f;
-        float s = Mth.lerp(colorCoeff, hsv1[1], hsv2[1]);
-        float v = Mth.lerp(colorCoeff, hsv1[2], hsv2[2]);
+    public void pickColor(float delta) {
+        float h = Mth.rotLerp(delta, 360f * hsv1[0], 360f * hsv2[0]) / 360f;
+        float s = Mth.lerp(delta, hsv1[1], hsv2[1]);
+        float v = Mth.lerp(delta, hsv1[2], hsv2[2]);
         int packed = Color.HSBtoRGB(h, s, v);
         float r = FastColor.ARGB32.red(packed) / 255.0f;
         float g = FastColor.ARGB32.green(packed) / 255.0f;
@@ -115,7 +115,8 @@ public class LodestoneScreenParticle extends TextureSheetScreenParticle {
             return;
         }
 
-        pickColor(colorData.getColorCurve().clamped(colorData.getProgress(age, lifetime), 0, 1));
+        float eased = colorData.getColorCurve().ease(colorData.getProgress(age, lifetime));
+        pickColor(eased);
 
         quadSize = scaleData.getValue(age, lifetime);
         quadLength = lengthData != null ? lengthData.getValue(age, lifetime) : quadSize;

@@ -4,7 +4,6 @@ import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.*;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import team.lodestar.lodestone.helpers.RandomHelper;
 import team.lodestar.lodestone.modules.core.easing.Easing;
 
 import java.awt.*;
@@ -131,7 +130,8 @@ public class ColorParticleData implements ColorParticleDataWrapper {
     }
 
     public static ColorParticleData createGrayParticleColor(RandomSource random, float min, float max) {
-        int brightness = (int) (255 * RandomHelper.randomBetween(random, min, max));
+        float delta = Easing.SINE_IN_OUT.asWeighedRandom(random, min, max);
+        int brightness = (int) (255 * delta);
         Color color = new Color(brightness, brightness, brightness);
         return ColorParticleData.create(color, color.darker()).setEasing(Easing.SINE_IN_OUT).build();
     }

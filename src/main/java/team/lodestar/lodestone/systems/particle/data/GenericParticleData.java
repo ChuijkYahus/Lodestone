@@ -98,12 +98,12 @@ public class GenericParticleData implements GenericParticleDataWrapper {
         float result;
         if (isTrinary()) {
             if (progress >= 0.5f) {
-                result = Mth.lerp(endingCurve.ease(progress - 0.5f, 0, 1, 0.5f), middleValue, endingValue);
+                result = Mth.lerp(endingCurve.ease((progress - 0.5f)*2), middleValue, endingValue);
             } else {
-                result = Mth.lerp(startingCurve.ease(progress, 0, 1, 0.5f), startingValue, middleValue);
+                result = Mth.lerp(startingCurve.ease(progress*2), startingValue, middleValue);
             }
         } else {
-            result = Mth.lerp(startingCurve.ease(progress, 0, 1, 1), startingValue, middleValue);
+            result = Mth.lerp(startingCurve.ease(progress), startingValue, middleValue);
         }
         return result * getValueMultiplier();
     }

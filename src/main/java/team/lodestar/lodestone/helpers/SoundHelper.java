@@ -3,6 +3,7 @@ package team.lodestar.lodestone.helpers;
 import net.minecraft.sounds.*;
 import net.minecraft.util.*;
 import net.minecraft.world.entity.*;
+import team.lodestar.lodestone.modules.core.easing.Easing;
 
 import java.util.function.*;
 
@@ -25,7 +26,7 @@ public class SoundHelper {
 
     public static void playSoundRandomPitch(Entity target, SoundEvent soundEvent, float volume, float minPitch, float maxPitch) {
         var random = target.getRandom();
-        float pitch = RandomHelper.randomBetween(random, minPitch, maxPitch);
+        float pitch = Easing.SINE_IN_OUT.asWeighedRandom(random, minPitch, maxPitch);
         playSound(target, soundEvent, volume, pitch);
     }
 

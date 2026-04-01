@@ -128,7 +128,8 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
                 return;
             }
         }
-        pickColor(colorData.getColorCurve().clamped(colorData.getProgress(age, lifetime), 0, 1));
+        float eased = colorData.getColorCurve().ease(colorData.getProgress(age, lifetime));
+        pickColor(eased);
 
         quadSize = scaleData.getValue(age, lifetime);
         quadLength = lengthData != null ? lengthData.getValue(age, lifetime) : quadSize;

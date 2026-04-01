@@ -34,37 +34,37 @@ public class ColorHelper {
         return FastColor.ARGB32.color((int) (a * 255f), (int) (r * 255f), (int) (g * 255f), (int) (b * 255f));
     }
 
-    public static Color colorLerp(Easing easing, float pct, Color startColor, Color endColor) {
-        pct = Mth.clamp(pct, 0, 1);
+    public static Color colorLerp(Easing easing, float delta, Color startColor, Color endColor) {
+        delta = Mth.clamp(delta, 0, 1);
         int br = startColor.getRed(), bg = startColor.getGreen(), bb = startColor.getBlue();
         int dr = endColor.getRed(), dg = endColor.getGreen(), db = endColor.getBlue();
-        float ease = easing.ease(pct, 0, 1, 1);
-        int red = (int) Mth.lerp(ease, br, dr);
-        int green = (int) Mth.lerp(ease, bg, dg);
-        int blue = (int) Mth.lerp(ease, bb, db);
+        float eased = easing.ease(delta);
+        int red = (int) Mth.lerp(eased, br, dr);
+        int green = (int) Mth.lerp(eased, bg, dg);
+        int blue = (int) Mth.lerp(eased, bb, db);
         return new Color(Mth.clamp(red, 0, 255), Mth.clamp(green, 0, 255), Mth.clamp(blue, 0, 255));
     }
 
-    public static Color colorLerp(Easing easing, float pct, float min, float max, Color startColor, Color endColor) {
-        pct = Mth.clamp(pct, 0, 1);
+    public static Color colorLerp(Easing easing, float delta, float min, float max, Color startColor, Color endColor) {
+        delta = Mth.clamp(delta, 0, 1);
         int br = startColor.getRed(), bg = startColor.getGreen(), bb = startColor.getBlue();
         int dr = endColor.getRed(), dg = endColor.getGreen(), db = endColor.getBlue();
-        float ease = easing.ease(pct, min, max, 1);
-        int red = (int) Mth.lerp(ease, br, dr);
-        int green = (int) Mth.lerp(ease, bg, dg);
-        int blue = (int) Mth.lerp(ease, bb, db);
+        float eased = easing.lerp(delta, min, max);
+        int red = (int) Mth.lerp(eased, br, dr);
+        int green = (int) Mth.lerp(eased, bg, dg);
+        int blue = (int) Mth.lerp(eased, bb, db);
         return new Color(Mth.clamp(red, 0, 255), Mth.clamp(green, 0, 255), Mth.clamp(blue, 0, 255));
     }
 
-    public static Color multicolorLerp(Easing easing, float pct, Color... colors) {
-        return multicolorLerp(easing, pct, List.of(colors));
+    public static Color multicolorLerp(Easing easing, float delta, Color... colors) {
+        return multicolorLerp(easing, delta, List.of(colors));
     }
 
-    public static Color multicolorLerp(Easing easing, float pct, List<Color> colors) {
-        pct = Mth.clamp(pct, 0, 1);
+    public static Color multicolorLerp(Easing easing, float delta, List<Color> colors) {
+        delta = Mth.clamp(delta, 0, 1);
         int colorCount = colors.size() - 1;
-        float lerp = easing.ease(pct, 0, 1, 1);
-        float colorIndex = colorCount * lerp;
+        float eased = easing.ease(delta);
+        float colorIndex = colorCount * eased;
         int index = (int) Mth.clamp(colorIndex, 0, colorCount);
         Color color = colors.get(index);
         Color nextColor = index == colorCount ? color : colors.get(index + 1);
@@ -75,11 +75,11 @@ public class ColorHelper {
         return multicolorLerp(easing, pct, min, max, List.of(colors));
     }
 
-    public static Color multicolorLerp(Easing easing, float pct, float min, float max, List<Color> colors) {
-        pct = Mth.clamp(pct, 0, 1);
+    public static Color multicolorLerp(Easing easing, float delta, float min, float max, List<Color> colors) {
+        delta = Mth.clamp(delta, 0, 1);
         int colorCount = colors.size() - 1;
-        float lerp = easing.ease(pct, 0, 1, 1);
-        float colorIndex = colorCount * lerp;
+        float eased = easing.ease(delta);
+        float colorIndex = colorCount * eased;
         int index = (int) Mth.clamp(colorIndex, 0, colorCount);
         Color color = colors.get(index);
         Color nextColor = index == colorCount ? color : colors.get(index + 1);

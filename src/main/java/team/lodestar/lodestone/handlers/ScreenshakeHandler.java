@@ -7,6 +7,7 @@ import net.minecraft.util.RandomSource;
 import net.neoforged.neoforge.client.event.*;
 import team.lodestar.lodestone.config.ClientConfig;
 import team.lodestar.lodestone.helpers.*;
+import team.lodestar.lodestone.modules.core.easing.Easing;
 import team.lodestar.lodestone.systems.screenshake.*;
 
 import java.util.*;
@@ -22,8 +23,8 @@ public class ScreenshakeHandler {
         RandomSource random = Minecraft.getInstance().level.getRandom();
         if (intensity > 0) {
             float intensity = (float) (ScreenshakeHandler.intensity * ClientConfig.SCREENSHAKE_INTENSITY.getConfigValue());
-            float yaw = RandomHelper.randomBetween(random, 0, intensity * 2) * (random.nextBoolean() ? 1 : -1);
-            float pitch = RandomHelper.randomBetween(random, 0, intensity * 2) * (random.nextBoolean() ? 1 : -1);
+            float yaw = Easing.SINE_IN_OUT.asWeighedRandom(random, 0, intensity * 2) * (random.nextBoolean() ? 1 : -1);
+            float pitch = Easing.SINE_IN_OUT.asWeighedRandom(random, 0, intensity * 2) * (random.nextBoolean() ? 1 : -1);
             event.setYaw(event.getYaw() + yaw);
             event.setPitch(event.getPitch() + pitch);
         }
