@@ -61,12 +61,12 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
             if (visibleItem == null) {
                 visibleItem = addNewItem(i, stack);
             }
-            float angle = turn + getAngleForItem(visibleItem, tickedStacks, actualStacks);
+            float turnAndAngle = turn + getAngleForItem(visibleItem, tickedStacks, actualStacks);
+            float itemTurn = getItemRotationRateForItem(visibleItem, tickedStacks, actualStacks);
             float distance = getDistanceForItem(visibleItem, tickedStacks, actualStacks);
             float lift = getLiftForItem(visibleItem, tickedStacks, actualStacks);
             float scale = getItemScaleForItem(visibleItem, tickedStacks, actualStacks);
-            float itemRotationRate = getItemRotationRateForItem(visibleItem, tickedStacks, actualStacks);
-            visibleItem.tick(this, angle, distance, lift, scale, itemRotationRate);
+            visibleItem.tick(this, turnAndAngle, itemTurn, distance, lift, scale);
             tickedStacks++;
         }
     }
@@ -131,17 +131,17 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
         }
 
         public void tick(ItemStackHandlerItemDisplayData data,
-                         float targetAngle, float targetDistance, float targetLift, float targetScale, float itemRotationRate) {
-            oldScale = scale;
+                         float turnAndAngle, float itemTurn, float distance, float lift, float scale) {
+            oldScale = this.scale;
             oldAngle = angle;
-            oldDistance = distance;
-            oldLift = lift;
+            oldDistance = this.distance;
+            oldLift = this.lift;
             oldItemAngle = itemAngle;
-            angle = DataHelper.approach(angle, targetAngle, data.turnRate + data.turnCorrectionRate);
-            distance = targetDistance;
-            lift = targetLift;
-            scale = targetScale;
-            itemAngle += itemRotationRate;
+            angle = DataHelper.approach(angle, turnAndAngle, data.turnRate + data.turnCorrectionRate);
+            this.distance = distance;
+            this.lift = lift;
+            this.scale = scale;
+            itemAngle += itemTurn;
             age++;
         }
 
