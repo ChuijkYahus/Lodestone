@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.modules.rendering.particle;
+package team.lodestar.lodestone.modules.rendering.particle.runtime;
 
 public enum ParticlePhase {
     PRE_UPDATE,

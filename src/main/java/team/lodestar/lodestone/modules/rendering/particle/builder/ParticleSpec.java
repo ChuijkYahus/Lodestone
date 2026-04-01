@@ -1,19 +1,13 @@
 package team.lodestar.lodestone.modules.rendering.particle.builder;
 
 import net.minecraft.resources.ResourceLocation;
-import team.lodestar.lodestone.modules.rendering.particle.ParticlePool;
+import team.lodestar.lodestone.modules.rendering.particle.pool.ParticlePool;
 import team.lodestar.lodestone.modules.rendering.particle.component.ParticleComponentType;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticleSpawnContext;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticleSpawnContextChain;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.profile.ParticleSpawnProfile;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public  class ParticleSpec {
     private static final Comparator<ParticleComponentType<?>> COMPONENT_PRIORITY =
@@ -23,7 +17,7 @@ public  class ParticleSpec {
     private final Map<ParticleComponentType<?>, Object> componentConfigs;
     private final ParticleComponentType<?>[] orderedComponentTypes;
 
-    ParticleSpec(ResourceLocation particleTypeId, Map<ParticleComponentType<?>, Object> componentConfigs) {
+    public ParticleSpec(ResourceLocation particleTypeId, Map<ParticleComponentType<?>, Object> componentConfigs) {
         this.particleTypeId = Objects.requireNonNull(particleTypeId, "particleTypeId");
         this.componentConfigs = Collections.unmodifiableMap(new LinkedHashMap<>(componentConfigs));
 
@@ -72,8 +66,7 @@ public  class ParticleSpec {
 
     public void spawn(ParticlePool pool, ParticleSpawnContext ctx, ParticleSpawnContextChain ctxChain, int count) {
         for (int i = 0; i < count; i++) {
-            ctxChain.apply(ctx.copy());
-            pool.spawn(this, ctx);
+            pool.spawn(this, ctxChain.apply(ctx.copy(), i, count));
         }
     }
 }
