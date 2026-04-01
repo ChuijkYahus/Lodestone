@@ -27,17 +27,13 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
 
     protected final float turnRate, turnCorrectionRate;
 
-    protected final float distanceStepRate, liftStepRate;
-
     protected float oldTurn, turn;
 
     public ItemStackHandlerItemDisplayData(LodestoneItemStackBlockHandler handler,
-                                           float turnRate, float turnCorrectionRate, float distanceStepRate, float liftStepRate) {
+                                           float turnRate, float turnCorrectionRate) {
         this.handler = handler;
         this.turnRate = turnRate;
         this.turnCorrectionRate = turnCorrectionRate;
-        this.distanceStepRate = distanceStepRate;
-        this.liftStepRate = liftStepRate;
     }
 
     public void onContentsChanged(int slot) {
@@ -142,8 +138,8 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
             oldLift = lift;
             oldItemAngle = itemAngle;
             angle = DataHelper.approach(angle, targetAngle, data.turnRate + data.turnCorrectionRate);
-            distance = DataHelper.approach(distance, targetDistance, data.distanceStepRate);
-            lift = DataHelper.approach(lift, targetLift, data.liftStepRate);
+            distance = targetDistance;
+            lift = targetLift;
             scale = targetScale;
             itemAngle += itemRotationRate;
             age++;
