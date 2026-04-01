@@ -114,7 +114,7 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
     }
 
     public float getItemRotationRateForItem(ItemDisplayDataEntry item, int index, float total) {
-        return 5;
+        return 0.157f;
     }
 
     public static class ItemDisplayDataEntry {
@@ -143,11 +143,6 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
             this.scale = scale;
             itemAngle += itemTurn;
             age++;
-        }
-
-        public ItemDisplayDataEntry setAngle(float angle) {
-            this.angle = angle;
-            return this;
         }
 
         public float getAngle(float partialTicks) {
