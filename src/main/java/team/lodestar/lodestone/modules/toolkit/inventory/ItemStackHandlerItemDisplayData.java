@@ -145,6 +145,11 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
             age++;
         }
 
+        public ItemDisplayDataEntry setAngle(float angle) {
+            this.angle = angle;
+            return this;
+        }
+
         public float getAngle(float partialTicks) {
             return Mth.rotLerp(partialTicks, oldAngle, angle);
         }
