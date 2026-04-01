@@ -59,12 +59,24 @@ public abstract class Easing {
         }
     }
 
+    public int asValueDistribution(float delta, int start, int end) {
+        return Math.round(asValueDistribution(delta, start, (start + end) / 2f, end));
+    }
+
     public float asValueDistribution(float delta, float start, float end) {
-        return asValueDistribution(delta, start, (start+end)/2f, end);
+        return asValueDistribution(delta, start, (start + end) / 2f, end);
+    }
+
+    public int asWeighedRandom(RandomSource randomSource, int start, int middle, int end) {
+        return Math.round(asValueDistribution(randomSource.nextFloat(), start, middle, end));
     }
 
     public float asWeighedRandom(RandomSource randomSource, float start, float middle, float end) {
         return asValueDistribution(randomSource.nextFloat(), start, middle, end);
+    }
+
+    public int asWeighedRandom(RandomSource randomSource, int start, int end) {
+        return asValueDistribution(randomSource.nextFloat(), start, end);
     }
 
     public float asWeighedRandom(RandomSource randomSource, float start, float end) {
