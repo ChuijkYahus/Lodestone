@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public final class ParticleBuilder {
+public class ParticleBuilder {
     private final ResourceLocation particleTypeId;
     private final Map<ParticleComponentType<?>, Object> componentConfigs = new LinkedHashMap<>();
 

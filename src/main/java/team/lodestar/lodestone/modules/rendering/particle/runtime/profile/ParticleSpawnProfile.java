@@ -3,8 +3,9 @@ package team.lodestar.lodestone.modules.rendering.particle.runtime.profile;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticleSpawnContext;
 
 public interface ParticleSpawnProfile {
-    default void apply() {
-        this.apply(new ParticleSpawnContext());
+    void apply(ParticleSpawnContext context, int index, int count);
+
+    default void apply(ParticleSpawnContext context) {
+        apply(context, 0, 1);
     }
-    void apply(ParticleSpawnContext context);
 }

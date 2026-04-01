@@ -4,7 +4,7 @@ import team.lodestar.lodestone.modules.rendering.particle.component.ParticleComp
 import team.lodestar.lodestone.modules.rendering.particle.storage.ParticleComponentStorage;
 
 @SuppressWarnings("rawtypes")
-public final class ParticleStorageBinding {
+public class ParticleStorageBinding {
     private final ParticleComponentType type;
     private final ParticleComponentStorage storage;
 

@@ -1,9 +1,10 @@
 package team.lodestar.lodestone.modules.rendering.particle.component;
 
 import net.minecraft.resources.ResourceLocation;
-import team.lodestar.lodestone.modules.rendering.particle.ParticlePhase;
+import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticlePhase;
 import team.lodestar.lodestone.modules.rendering.particle.storage.ParticleComponentStorage;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.function.Function;
@@ -71,9 +72,7 @@ public class ParticleComponentType<T> {
 
         public Builder<T> phases(ParticlePhase... phases) {
             this.phases = EnumSet.noneOf(ParticlePhase.class);
-            for (ParticlePhase phase : phases) {
-                this.phases.add(phase);
-            }
+            this.phases.addAll(Arrays.asList(phases));
             return this;
         }
 

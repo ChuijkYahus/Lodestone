@@ -1,10 +1,11 @@
-package team.lodestar.lodestone.modules.rendering.particle;
+package team.lodestar.lodestone.modules.rendering.particle.pool;
 
 import team.lodestar.lodestone.modules.rendering.particle.builder.ParticleSpec;
 import team.lodestar.lodestone.modules.rendering.particle.component.ParticleComponentType;
 import team.lodestar.lodestone.modules.rendering.particle.component.PostUpdateComponent;
 import team.lodestar.lodestone.modules.rendering.particle.component.PreRenderComponent;
 import team.lodestar.lodestone.modules.rendering.particle.component.PreUpdateComponent;
+import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticlePhase;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticleSpawnContext;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticleStorageBinding;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticleView;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public final class ParticlePool {
+public class ParticlePool {
     private static final Comparator<ParticleStorageBinding> BINDING_PRIORITY =
             Comparator.comparingInt(a -> a.type().priority());
 
