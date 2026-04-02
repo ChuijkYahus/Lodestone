@@ -2,7 +2,6 @@ package team.lodestar.lodestone.modules.toolkit.inventory;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,6 +19,7 @@ import java.util.Optional;
 /**
  * A class designed to help with tracking and then displaying items rotating around an object.
  */
+@SuppressWarnings("unused")
 public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTicker.BlockEntityTickerAttachment {
 
     protected final LodestoneItemStackBlockHandler handler;
@@ -62,7 +62,7 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
             if (visibleItem == null) {
                 visibleItem = addNewItem(i, stack);
             }
-            float turnAndAngle = turn + getAngleForItem(visibleItem, tickedStacks, actualStacks);
+            float turnAndAngle = getAngleForItem(visibleItem, tickedStacks, actualStacks);
             float itemTurn = getItemRotationRateForItem(visibleItem, tickedStacks, actualStacks);
             float distance = getDistanceForItem(visibleItem, tickedStacks, actualStacks);
             float lift = getLiftForItem(visibleItem, tickedStacks, actualStacks);
@@ -87,6 +87,10 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
         var entry = new ItemDisplayDataEntry(stack, seed);
         dataEntries[index] = entry;
         return entry;
+    }
+
+    public float getTurn(float partialTicks) {
+        return Mth.lerp(partialTicks, oldTurn, turn);
     }
 
     public final Vec3 getDisplayCenter() {
@@ -161,17 +165,21 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
         }
 
         public void tick(ItemStackHandlerItemDisplayData data,
-                         float turnAndAngle, float itemTurn, float distance, float lift, float scale) {
-            oldScale = this.scale;
+                         float targetAngle, float addedItemAngle, float targetDistance, float targetLift, float targetScale) {
             oldAngle = angle;
-            oldDistance = this.distance;
-            oldLift = this.lift;
+            angle = DataHelper.approach(angle, targetAngle, data.turnCorrectionRate);
+
             oldItemAngle = itemAngle;
-            angle = DataHelper.approach(angle, turnAndAngle, data.turnRate + data.turnCorrectionRate);
-            this.distance = distance;
-            this.lift = lift;
-            this.scale = scale;
-            itemAngle += itemTurn;
+            itemAngle += addedItemAngle;
+
+            oldDistance = distance;
+            distance = targetDistance;
+
+            oldLift = lift;
+            lift = targetLift;
+
+            oldScale = scale;
+            scale = targetScale;
             age++;
         }
 
@@ -180,6 +188,7 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
         }
 
         public float getAngle(float partialTicks) {
+
             return Mth.rotLerp(partialTicks, oldAngle, angle);
         }
 
@@ -199,13 +208,14 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
             return Mth.rotLerp(partialTicks, oldItemAngle, itemAngle);
         }
 
-        public Vec3 getPosition(Vec3 center) {
-            return getPosition(center, 0);
+        public Vec3 getPosition(ItemStackHandlerItemDisplayData data) {
+            return getPosition(data, 0);
         }
 
-        public Vec3 getPosition(Vec3 center, float partialTicks) {
+        public Vec3 getPosition(ItemStackHandlerItemDisplayData data, float partialTicks) {
+            var center = data.getDisplayCenter(partialTicks);
             float distance = getDistance(partialTicks);
-            float angle = getAngle(partialTicks);
+            float angle = getAngle(partialTicks) + data.getTurn(partialTicks);
             var x = center.x + Math.sin(angle) * distance;
             var y = center.y + getLift(partialTicks);
             var z = center.z + Math.cos(angle) * distance;

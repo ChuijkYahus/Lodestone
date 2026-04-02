@@ -2,6 +2,7 @@ package team.lodestar.lodestone.helpers;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -152,7 +153,6 @@ public class DataHelper {
         stepSize = Math.abs(stepSize);
         return value < limit ? Math.clamp(value + stepSize, value, limit) : Math.clamp(value - stepSize, limit, value);
     }
-
     public static float approach(float a, float b, float amount) {
         if (Math.abs(a - b) < amount) {
             return b;
