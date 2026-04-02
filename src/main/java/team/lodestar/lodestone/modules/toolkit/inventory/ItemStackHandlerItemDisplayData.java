@@ -63,7 +63,7 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
             float distance = getDistanceForItem(entry, tickedStacks, totalStacks);
             float lift = getLiftForItem(entry, tickedStacks, totalStacks);
             float scale = getItemScaleForItem(entry, tickedStacks, totalStacks);
-            entry.tick(this, targetAngle, itemTurn, distance, lift, scale);
+            entry.tick(this, correctedAngle, itemTurn, distance, lift, scale);
             tickedStacks++;
         }
     }
