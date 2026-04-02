@@ -26,15 +26,10 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
 
     protected ItemDisplayDataEntry[] dataEntries = new ItemDisplayDataEntry[]{};
 
-    protected final float turnRate, turnCorrectionRate;
-
     protected float oldTurn, turn;
 
-    public ItemStackHandlerItemDisplayData(LodestoneItemStackBlockHandler handler,
-                                           float turnRate, float turnCorrectionRate) {
+    public ItemStackHandlerItemDisplayData(LodestoneItemStackBlockHandler handler) {
         this.handler = handler;
-        this.turnRate = turnRate;
-        this.turnCorrectionRate = turnCorrectionRate;
     }
 
     public void onContentsChanged(int slot) {
@@ -44,11 +39,11 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
     @Override
     public void tick(LodestoneBlockEntity parent, Level level, BlockPos pos, BlockState state) {
         oldTurn = turn;
-        turn += turnRate;
+        turn += getTurnRate();
         var stacks = handler.getStacks();
 
         int tickedStacks = 0;
-        int actualStacks = handler.getNonEmptyStacks().size();
+        int totalStacks = handler.getNonEmptyStacks().size();
         if (dataEntries.length != stacks.size()) {
             dataEntries = new ItemDisplayDataEntry[stacks.size()];
         }
@@ -58,16 +53,17 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
                 dataEntries[i] = null;
                 continue;
             }
-            var visibleItem = dataEntries[i];
-            if (visibleItem == null) {
-                visibleItem = addNewItem(i, stack);
+            var entry = dataEntries[i];
+            if (entry == null) {
+                entry = addNewItem(i, stack);
             }
-            float angle = getAngleForItem(visibleItem, tickedStacks, actualStacks);
-            float itemTurn = getItemRotationRateForItem(visibleItem, tickedStacks, actualStacks);
-            float distance = getDistanceForItem(visibleItem, tickedStacks, actualStacks);
-            float lift = getLiftForItem(visibleItem, tickedStacks, actualStacks);
-            float scale = getItemScaleForItem(visibleItem, tickedStacks, actualStacks);
-            visibleItem.tick(this, angle, itemTurn, distance, lift, scale);
+            float targetAngle = getAngleForItem(entry, tickedStacks, totalStacks);
+            float correctedAngle = handleAngleCorrection(entry, tickedStacks, totalStacks, targetAngle);
+            float itemTurn = getItemRotationRateForItem(entry, tickedStacks, totalStacks);
+            float distance = getDistanceForItem(entry, tickedStacks, totalStacks);
+            float lift = getLiftForItem(entry, tickedStacks, totalStacks);
+            float scale = getItemScaleForItem(entry, tickedStacks, totalStacks);
+            entry.tick(this, targetAngle, itemTurn, distance, lift, scale);
             tickedStacks++;
         }
     }
@@ -101,7 +97,6 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
         return parent.getBlockPos().getCenter();
     }
 
-
     public Optional<Vec3> getItemPosition(int index) {
         if (dataEntries[index] != null) {
             return Optional.of(getItemPosition(dataEntries[index]));
@@ -121,6 +116,15 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
         var y = center.y + dataEntry.getLift(partialTicks);
         var z = center.z + Math.cos(angle) * distance;
         return new Vec3(x, y, z);
+    }
+
+    public float getTurnRate() {
+        return 0.02f;
+    }
+
+    public float handleAngleCorrection(ItemDisplayDataEntry item, int index, float total, float targetAngle) {
+        float angle = item.angle;
+        return DataHelper.approach(angle, targetAngle, 0.05f);
     }
 
     public float getItemScaleForItem(ItemDisplayDataEntry item, int index, float total) {
@@ -189,7 +193,7 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
         public void tick(ItemStackHandlerItemDisplayData data,
                          float targetAngle, float addedItemAngle, float targetDistance, float targetLift, float targetScale) {
             oldAngle = angle;
-            angle = DataHelper.approach(angle, targetAngle, data.turnCorrectionRate);
+            angle = targetAngle;
 
             oldItemAngle = itemAngle;
             itemAngle += addedItemAngle;
@@ -210,7 +214,6 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
         }
 
         public float getAngle(float partialTicks) {
-
             return Mth.rotLerp(partialTicks, oldAngle, angle);
         }
 
