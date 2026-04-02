@@ -2,6 +2,7 @@ package team.lodestar.lodestone.modules.toolkit.inventory;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -80,7 +81,10 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
     }
 
     public ItemDisplayDataEntry addNewItem(int index, ItemStack stack) {
-        var entry = new ItemDisplayDataEntry(stack);
+        var blockEntity = handler.parent;
+        var random = Objects.requireNonNull(blockEntity.getLevel()).random;
+        var seed = random.nextLong();
+        var entry = new ItemDisplayDataEntry(stack, seed);
         dataEntries[index] = entry;
         return entry;
     }
@@ -119,6 +123,7 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
 
     public static class ItemDisplayDataEntry {
         protected final ItemStack stack;
+        protected final long seed;
         protected float scale, oldScale;
         protected float angle, oldAngle;
         protected float distance, oldDistance;
@@ -126,8 +131,15 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
         protected float itemAngle, oldItemAngle;
         protected int age;
 
-        public ItemDisplayDataEntry(ItemStack stack) {
+        public ItemDisplayDataEntry(ItemStack stack, long seed) {
             this.stack = stack;
+            this.seed = seed;
+        }
+
+        public ItemDisplayDataEntry setAngle(float angle) {
+            this.angle = angle;
+            this.oldAngle = angle;
+            return this;
         }
 
         public void tick(ItemStackHandlerItemDisplayData data,
