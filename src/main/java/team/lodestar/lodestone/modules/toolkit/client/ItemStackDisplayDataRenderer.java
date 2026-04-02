@@ -49,7 +49,7 @@ public class ItemStackDisplayDataRenderer {
             var scale = entry.getScale(partialTicks);
             var itemRotation = entry.getItemRotation(partialTicks);
 
-            var position = entry.getPosition(displayData, partialTicks);
+            var position = displayData.getItemPosition(entry, partialTicks);
             var xt = position.x - pos.getX();
             var yt = position.y - pos.getY();
             var zt = position.z - pos.getZ();

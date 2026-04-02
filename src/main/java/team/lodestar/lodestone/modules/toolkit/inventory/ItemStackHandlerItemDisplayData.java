@@ -62,12 +62,12 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
             if (visibleItem == null) {
                 visibleItem = addNewItem(i, stack);
             }
-            float turnAndAngle = getAngleForItem(visibleItem, tickedStacks, actualStacks);
+            float angle = getAngleForItem(visibleItem, tickedStacks, actualStacks);
             float itemTurn = getItemRotationRateForItem(visibleItem, tickedStacks, actualStacks);
             float distance = getDistanceForItem(visibleItem, tickedStacks, actualStacks);
             float lift = getLiftForItem(visibleItem, tickedStacks, actualStacks);
             float scale = getItemScaleForItem(visibleItem, tickedStacks, actualStacks);
-            visibleItem.tick(this, turnAndAngle, itemTurn, distance, lift, scale);
+            visibleItem.tick(this, angle, itemTurn, distance, lift, scale);
             tickedStacks++;
         }
     }
@@ -89,10 +89,6 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
         return entry;
     }
 
-    public float getTurn(float partialTicks) {
-        return Mth.lerp(partialTicks, oldTurn, turn);
-    }
-
     public final Vec3 getDisplayCenter() {
         return getDisplayCenter(0);
     }
@@ -103,6 +99,28 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
 
     public Vec3 getDisplayCenter(LodestoneBlockEntity parent, float partialTicks) {
         return parent.getBlockPos().getCenter();
+    }
+
+
+    public Optional<Vec3> getItemPosition(int index) {
+        if (dataEntries[index] != null) {
+            return Optional.of(getItemPosition(dataEntries[index]));
+        }
+        return Optional.empty();
+    }
+
+    public Vec3 getItemPosition(ItemDisplayDataEntry dataEntry) {
+        return getItemPosition(dataEntry, 0);
+    }
+
+    public Vec3 getItemPosition(ItemDisplayDataEntry dataEntry, float partialTicks) {
+        var center = getDisplayCenter(partialTicks);
+        float distance = dataEntry.getDistance(partialTicks);
+        float angle = dataEntry.getAngle(partialTicks) + getTurn(partialTicks);
+        var x = center.x + Math.sin(angle) * distance;
+        var y = center.y + dataEntry.getLift(partialTicks);
+        var z = center.z + Math.cos(angle) * distance;
+        return new Vec3(x, y, z);
     }
 
     public float getItemScaleForItem(ItemDisplayDataEntry item, int index, float total) {
@@ -123,6 +141,10 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
 
     public float getItemRotationRateForItem(ItemDisplayDataEntry item, int index, float total) {
         return 0.157f;
+    }
+
+    public float getTurn(float partialTicks) {
+        return Mth.lerp(partialTicks, oldTurn, turn);
     }
 
     public static class ItemDisplayDataEntry {
@@ -206,20 +228,6 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
 
         public float getItemRotation(float partialTicks) {
             return Mth.rotLerp(partialTicks, oldItemAngle, itemAngle);
-        }
-
-        public Vec3 getPosition(ItemStackHandlerItemDisplayData data) {
-            return getPosition(data, 0);
-        }
-
-        public Vec3 getPosition(ItemStackHandlerItemDisplayData data, float partialTicks) {
-            var center = data.getDisplayCenter(partialTicks);
-            float distance = getDistance(partialTicks);
-            float angle = getAngle(partialTicks) + data.getTurn(partialTicks);
-            var x = center.x + Math.sin(angle) * distance;
-            var y = center.y + getLift(partialTicks);
-            var z = center.z + Math.cos(angle) * distance;
-            return new Vec3(x, y, z);
         }
 
         public ItemStack getStack() {
