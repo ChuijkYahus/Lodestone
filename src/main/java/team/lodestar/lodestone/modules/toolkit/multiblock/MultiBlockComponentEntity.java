@@ -59,27 +59,23 @@ public class MultiBlockComponentEntity extends LodestoneBlockEntity implements I
     }
 
     @Override
-    public ItemInteractionResult onUse(Player pPlayer, InteractionHand pHand) {
-        getCore().ifPresent(c -> c.onUse(pPlayer, pHand));
-        return super.onUse(pPlayer, pHand);
+    public ItemInteractionResult onUse(Player player, InteractionHand hand) {
+        return getCore().map(c -> c.onUse(player, hand)).orElse(ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION);
     }
 
     @Override
-    public InteractionResult onUseWithoutItem(Player pPlayer) {
-        getCore().ifPresent(c -> c.onUseWithoutItem(pPlayer));
-        return super.onUseWithoutItem(pPlayer);
+    public InteractionResult onUseWithoutItem(Player player) {
+        return getCore().map(c -> c.onUseWithoutItem(player)).orElse(InteractionResult.PASS);
     }
 
     @Override
-    public ItemInteractionResult onUseWithItem(Player pPlayer, ItemStack pStack, InteractionHand pHand) {
-        getCore().ifPresent(c -> c.onUseWithItem(pPlayer, pStack, pHand));
-        return super.onUseWithItem(pPlayer, pStack, pHand);
+    public ItemInteractionResult onUseWithItem(Player player, ItemStack stack, InteractionHand hand) {
+        return getCore().map(c -> c.onUseWithItem(player, stack, hand)).orElse(ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION);
     }
 
     @Override
     public void onBreak(@Nullable Player player) {
         getCore().ifPresent(c -> c.onBreak(player));
-        super.onBreak(player);
     }
 
     public Optional<MultiBlockCoreEntity> getCore() {
