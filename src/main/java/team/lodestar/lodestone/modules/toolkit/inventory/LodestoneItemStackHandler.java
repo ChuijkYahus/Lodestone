@@ -10,11 +10,9 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityTicker;
 import team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.ResultType;
 
 import javax.annotation.Nonnull;
@@ -166,7 +164,12 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         }
     }
 
-    public Optional<InventoryInteractionResult> interact(ServerLevel level, Player player, InteractionHand hand) {
+    public boolean interact(ServerLevel level, Player player, InteractionHand hand) {
+        var result = performInteraction(level, player, hand);
+        return result.map(InventoryInteractionResult::wasSuccessful).orElse(false);
+    }
+
+    public Optional<InventoryInteractionResult> performInteraction(ServerLevel level, Player player, InteractionHand hand) {
         updateCaches();
         var heldStack = player.getItemInHand(hand);
         if (heldStack.isEmpty()) {

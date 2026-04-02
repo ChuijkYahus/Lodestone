@@ -9,12 +9,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.*;
 import org.jetbrains.annotations.Nullable;
 import team.lodestar.lodestone.modules.toolkit.inventory.LodestoneItemStackBlockHandler;
-import team.lodestar.lodestone.modules.toolkit.inventory.LodestoneItemStackHandler;
 
 /**
  * A simple block entity which holds a single ItemStack
@@ -34,7 +32,7 @@ public abstract class ItemHolderBlockEntity extends LodestoneBlockEntity impleme
     @Override
     public ItemInteractionResult onUseWithItem(Player pPlayer, ItemStack pStack, InteractionHand pHand) {
         if (level instanceof ServerLevel serverLevel) {
-            inventory.interact(serverLevel, pPlayer, pHand);
+            inventory.performInteraction(serverLevel, pPlayer, pHand);
         }
         return ItemInteractionResult.SUCCESS;
     }

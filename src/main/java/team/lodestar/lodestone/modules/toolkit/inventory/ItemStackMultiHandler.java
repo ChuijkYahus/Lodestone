@@ -4,14 +4,10 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class ItemStackMultiHandler extends CombinedInvWrapper {
 
@@ -51,6 +47,6 @@ public class ItemStackMultiHandler extends CombinedInvWrapper {
     }
 
     public Optional<InventoryInteractionResult> interact(ServerLevel level, LodestoneItemStackHandler handler, Player player, InteractionHand hand) {
-        return handler.interact(level, player, hand);
+        return handler.performInteraction(level, player, hand);
     }
 }
