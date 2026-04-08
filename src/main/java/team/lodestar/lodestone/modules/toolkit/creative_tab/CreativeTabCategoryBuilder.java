@@ -35,14 +35,6 @@ public class CreativeTabCategoryBuilder {
     }
 
     @SafeVarargs
-    public final <T extends Item> CreativeTabCategoryBuilder addItems(Supplier<T>... items) {
-        for (Supplier<T> item : items) {
-            addItem(item);
-        }
-        return this;
-    }
-
-    @SafeVarargs
     public final CreativeTabCategoryBuilder addItemStacks(Supplier<ItemStack>... items) {
         for (Supplier<ItemStack> stack : items) {
             addItemStack(stack);
@@ -57,10 +49,6 @@ public class CreativeTabCategoryBuilder {
     public final CreativeTabCategoryBuilder addItemStack(ItemStack item) {
         items.add(Either.left(() -> item));
         return this;
-    }
-
-    public final <T extends Item> CreativeTabCategoryBuilder addItem(Supplier<T> item) {
-        return addItemStack(() -> item.get().getDefaultInstance());
     }
 
     public final CreativeTabCategoryBuilder addItemStack(Supplier<ItemStack> item) {
