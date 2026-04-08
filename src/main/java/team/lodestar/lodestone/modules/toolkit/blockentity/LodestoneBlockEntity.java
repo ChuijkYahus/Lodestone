@@ -74,7 +74,7 @@ public class LodestoneBlockEntity extends BlockEntity {
     }
 
     public ItemStack onClone(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
-        return ItemStack.EMPTY;
+        return state.getBlock().asItem().getDefaultInstance();
     }
 
     public ItemInteractionResult onUse(Player pPlayer, InteractionHand pHand) {

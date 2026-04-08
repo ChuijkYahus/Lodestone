@@ -7,8 +7,10 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.items.*;
 import org.jetbrains.annotations.Nullable;
 import team.lodestar.lodestone.helpers.*;
@@ -56,6 +58,11 @@ public class MultiBlockComponentEntity extends LodestoneBlockEntity implements I
     protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
         corePos = NBTHelper.readBlockPos(pTag);
         super.loadAdditional(pTag, pRegistries);
+    }
+    
+    @Override
+    public ItemStack onClone(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
+        return getCore().map(c -> c.onClone(state, target, level, pos, player)).orElse(ItemStack.EMPTY);
     }
 
     @Override
