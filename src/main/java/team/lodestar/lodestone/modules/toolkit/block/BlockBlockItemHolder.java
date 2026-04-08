@@ -17,7 +17,7 @@ public record BlockBlockItemHolder<T extends Block, K extends BlockItem>(Deferre
     public K getItem() {
         return item.get();
     }
-    
+
     public DeferredHolder<Block, T> getBlockHolder() {
         return block;
     }
