@@ -59,7 +59,7 @@ public class MultiBlockComponentEntity extends LodestoneBlockEntity implements I
         corePos = NBTHelper.readBlockPos(pTag);
         super.loadAdditional(pTag, pRegistries);
     }
-    
+
     @Override
     public ItemStack onClone(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
         return getCore().map(c -> c.onClone(state, target, level, pos, player)).orElse(ItemStack.EMPTY);

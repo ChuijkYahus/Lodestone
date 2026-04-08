@@ -2,6 +2,7 @@ package team.lodestar.lodestone.modules.toolkit.creative_tab;
 
 import com.mojang.datafixers.util.*;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.*;
 
 import java.util.*;
@@ -26,8 +27,8 @@ public class CreativeTabCategoryBuilder {
         return this;
     }
 
-    public CreativeTabCategoryBuilder addItems(Item... items) {
-        for (Item item : items) {
+    public CreativeTabCategoryBuilder addItems(ItemLike... items) {
+        for (ItemLike item : items) {
             addItem(item);
         }
         return this;
@@ -49,25 +50,12 @@ public class CreativeTabCategoryBuilder {
         return this;
     }
 
-    @SafeVarargs
-    public final <T extends Block> CreativeTabCategoryBuilder addBlocks(Supplier<T>... blocks) {
-        for (Supplier<T> block : blocks) {
-            addBlockItem(block);
-        }
-        return this;
-    }
-
-    public final CreativeTabCategoryBuilder addItem(Item item) {
-        return addItemStack(item.getDefaultInstance());
+    public final CreativeTabCategoryBuilder addItem(ItemLike item) {
+        return addItemStack(item.asItem().getDefaultInstance());
     }
 
     public final CreativeTabCategoryBuilder addItemStack(ItemStack item) {
         items.add(Either.left(() -> item));
-        return this;
-    }
-
-    public final CreativeTabCategoryBuilder addBlockItem(Block block) {
-        items.add(Either.left(() -> block.asItem().getDefaultInstance()));
         return this;
     }
 
@@ -77,11 +65,6 @@ public class CreativeTabCategoryBuilder {
 
     public final CreativeTabCategoryBuilder addItemStack(Supplier<ItemStack> item) {
         items.add(Either.left(item));
-        return this;
-    }
-
-    public final <T extends Block> CreativeTabCategoryBuilder addBlockItem(Supplier<T> block) {
-        items.add(Either.left(() -> block.get().asItem().getDefaultInstance()));
         return this;
     }
 
