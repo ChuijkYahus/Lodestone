@@ -6,6 +6,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.registries.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.*;
 
@@ -14,6 +15,11 @@ public record BlockBlockItemHolder<T extends Block, K extends BlockItem>(Deferre
     @Override
     public T get() {
         return block.get();
+    }
+
+    @Override
+    public @NotNull Item asItem() {
+        return getItem();
     }
 
     public BlockState getDefaultState() {
@@ -36,8 +42,11 @@ public record BlockBlockItemHolder<T extends Block, K extends BlockItem>(Deferre
         return item;
     }
 
-    @Override
-    public Item asItem() {
-        return getItem();
+    public boolean is(ItemLike item) {
+        return getItem().equals(item.asItem());
+    }
+
+    public boolean is(Block block) {
+        return get().equals(block);
     }
 }
