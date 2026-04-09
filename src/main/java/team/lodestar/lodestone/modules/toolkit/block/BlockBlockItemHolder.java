@@ -46,6 +46,10 @@ public record BlockBlockItemHolder<T extends Block, K extends BlockItem>(Deferre
         return getItem().equals(item.asItem());
     }
 
+    public boolean is(BlockState state) {
+        return is(state.getBlock());
+    }
+
     public boolean is(Block block) {
         return get().equals(block);
     }
