@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
@@ -34,45 +35,61 @@ public class LodestoneBlockProperties extends BlockBehaviour.Properties {
         return new LodestoneBlockProperties();
     }
 
-    public static LodestoneBlockProperties copy(BlockBehaviour pBlockBehaviour) {
-        LodestoneBlockProperties properties = LodestoneBlockProperties.of();
-        properties.destroyTime = pBlockBehaviour.properties().destroyTime;
-        properties.explosionResistance = pBlockBehaviour.properties().explosionResistance;
-        properties.hasCollision = pBlockBehaviour.properties().hasCollision;
-        properties.isRandomlyTicking = pBlockBehaviour.properties().isRandomlyTicking;
-        properties.lightEmission = pBlockBehaviour.properties().lightEmission;
-        properties.mapColor = pBlockBehaviour.properties().mapColor;
-        properties.soundType = pBlockBehaviour.properties().soundType;
-        properties.friction = pBlockBehaviour.properties().friction;
-        properties.speedFactor = pBlockBehaviour.properties().speedFactor;
-        properties.dynamicShape = pBlockBehaviour.properties().dynamicShape;
-        properties.canOcclude = pBlockBehaviour.properties().canOcclude;
-        properties.isAir = pBlockBehaviour.properties().isAir;
-        properties.requiresCorrectToolForDrops = pBlockBehaviour.properties().requiresCorrectToolForDrops;
-        properties.jumpFactor = pBlockBehaviour.properties().jumpFactor;
-        properties.drops = pBlockBehaviour.properties().drops;
-        properties.ignitedByLava = pBlockBehaviour.properties().ignitedByLava;
-        properties.forceSolidOn = pBlockBehaviour.properties().forceSolidOn;
-        properties.pushReaction = pBlockBehaviour.properties().pushReaction;
-        properties.spawnTerrainParticles = pBlockBehaviour.properties().spawnTerrainParticles;
-        properties.instrument = pBlockBehaviour.properties().instrument;
-        properties.replaceable = pBlockBehaviour.properties().replaceable;
-        properties.isValidSpawn = pBlockBehaviour.properties().isValidSpawn;
-        properties.isRedstoneConductor = pBlockBehaviour.properties().isRedstoneConductor;
-        properties.isSuffocating = pBlockBehaviour.properties().isSuffocating;
-        properties.isViewBlocking = pBlockBehaviour.properties().isViewBlocking;
-        properties.emissiveRendering = pBlockBehaviour.properties().emissiveRendering;
-        properties.requiredFeatures = pBlockBehaviour.properties().requiredFeatures;
-        properties.offsetFunction = pBlockBehaviour.properties().offsetFunction;
-        properties.hasPostProcess = pBlockBehaviour.properties().hasPostProcess;
+    public static LodestoneBlockProperties copy(BlockBehaviour behaviour) {
+        return copy(behaviour.properties);
+    }
 
-        return properties;
+    public static LodestoneBlockProperties copy(BlockBehaviour.Properties properties) {
+        LodestoneBlockProperties copy = LodestoneBlockProperties.of();
+        copy.destroyTime = properties.destroyTime;
+        copy.explosionResistance = properties.explosionResistance;
+        copy.hasCollision = properties.hasCollision;
+        copy.isRandomlyTicking = properties.isRandomlyTicking;
+        copy.lightEmission = properties.lightEmission;
+        copy.mapColor = properties.mapColor;
+        copy.soundType = properties.soundType;
+        copy.friction = properties.friction;
+        copy.speedFactor = properties.speedFactor;
+        copy.dynamicShape = properties.dynamicShape;
+        copy.canOcclude = properties.canOcclude;
+        copy.isAir = properties.isAir;
+        copy.requiresCorrectToolForDrops = properties.requiresCorrectToolForDrops;
+        copy.jumpFactor = properties.jumpFactor;
+        copy.drops = properties.drops;
+        copy.ignitedByLava = properties.ignitedByLava;
+        copy.forceSolidOn = properties.forceSolidOn;
+        copy.pushReaction = properties.pushReaction;
+        copy.spawnTerrainParticles = properties.spawnTerrainParticles;
+        copy.instrument = properties.instrument;
+        copy.replaceable = properties.replaceable;
+        copy.isValidSpawn = properties.isValidSpawn;
+        copy.isRedstoneConductor = properties.isRedstoneConductor;
+        copy.isSuffocating = properties.isSuffocating;
+        copy.isViewBlocking = properties.isViewBlocking;
+        copy.emissiveRendering = properties.emissiveRendering;
+        copy.requiredFeatures = properties.requiredFeatures;
+        copy.offsetFunction = properties.offsetFunction;
+        copy.hasPostProcess = properties.hasPostProcess;
+
+        if (properties instanceof LodestoneBlockProperties from) {
+            from.copyDatagenDataTo(copy);
+        }
+
+        return copy;
     }
 
     @DatagenOnly
     public LodestoneBlockProperties addDatagenData(Consumer<LodestoneDatagenBlockData> function) {
         if (DatagenModLoader.isRunningDataGen()) {
             function.accept(getDatagenData());
+        }
+        return this;
+    }
+
+    @DatagenOnly
+    public LodestoneBlockProperties copyDatagenDataTo(LodestoneBlockProperties to) {
+        if (DatagenModLoader.isRunningDataGen()) {
+            LodestoneDatagenBlockData.copyDatagenDataFrom(this, to);
         }
         return this;
     }

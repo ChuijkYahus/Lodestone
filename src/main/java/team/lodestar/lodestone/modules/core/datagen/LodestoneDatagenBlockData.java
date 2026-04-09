@@ -24,6 +24,11 @@ public class LodestoneDatagenBlockData {
     public Supplier<Supplier<RenderType>> renderType;
     public boolean noLootDatagen = false;
 
+    public static LodestoneDatagenBlockData copyDatagenDataFrom(LodestoneBlockProperties from, LodestoneBlockProperties to) {
+        var copy = getDatagenData(from).copy();
+        return DATAGEN_DATA_CACHE.put(to, copy);
+    }
+
     public static LodestoneDatagenBlockData getDatagenData(LodestoneBlockProperties properties) {
         if (!DatagenModLoader.isRunningDataGen()) {
             throw new UnsupportedOperationException("Cannot access datagen data outside of datagen");
@@ -43,6 +48,14 @@ public class LodestoneDatagenBlockData {
     public final LodestoneDatagenBlockData addTags(TagKey<Block>... blockTagKeys) {
         tags.addAll(Arrays.asList(blockTagKeys));
         return this;
+    }
+
+    public LodestoneDatagenBlockData copy() {
+        LodestoneDatagenBlockData copy = new LodestoneDatagenBlockData();
+        copy.tags.addAll(tags);
+        copy.renderType = renderType;
+        copy.noLootDatagen = noLootDatagen;
+        return copy;
     }
 
     public List<TagKey<Block>> getTags() {
