@@ -42,6 +42,10 @@ public record BlockBlockItemHolder<T extends Block, K extends BlockItem>(Deferre
         return item;
     }
 
+    public boolean is(ItemStack stack) {
+        return is(stack.getItem());
+    }
+
     public boolean is(ItemLike item) {
         return getItem().equals(item.asItem());
     }
