@@ -4,6 +4,7 @@ package team.lodestar.lodestone.modules.toolkit.block;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.registries.*;
 
 import java.util.function.*;
@@ -13,6 +14,14 @@ public record BlockBlockItemHolder<T extends Block, K extends BlockItem>(Deferre
     @Override
     public T get() {
         return block.get();
+    }
+
+    public BlockState getDefaultState() {
+        return get().defaultBlockState();
+    }
+
+    public ItemStack getDefaultInstance() {
+        return getItem().getDefaultInstance();
     }
 
     public K getItem() {
