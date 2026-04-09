@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Supplier;
 
 public class LodestoneStairBlock extends StairBlock {
+    
     public LodestoneStairBlock(Properties properties) {
         super(Blocks.AIR.defaultBlockState(), properties);
     }
