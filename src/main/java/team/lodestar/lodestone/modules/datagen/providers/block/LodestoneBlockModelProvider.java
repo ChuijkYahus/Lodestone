@@ -41,7 +41,11 @@ public final class LodestoneBlockModelProvider extends BlockModelProvider implem
         if (currentBlock != null) {
             if (currentBlock.properties() instanceof LodestoneBlockProperties properties) {
                 var datagenData = properties.getDatagenData();
-                builder.renderType(datagenData.renderType);
+                var renderType = datagenData.renderType;
+                if (renderType == null) {
+                    return;
+                }
+                builder.renderType(renderType);
             }
         }
     }
