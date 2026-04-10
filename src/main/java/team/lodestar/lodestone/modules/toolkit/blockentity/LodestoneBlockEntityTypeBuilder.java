@@ -20,6 +20,7 @@ public final class LodestoneBlockEntityTypeBuilder<T extends LodestoneBlockEntit
         this.validBlocks = validBlocks;
     }
 
+    @SafeVarargs
     public static <T extends LodestoneBlockEntity> LodestoneBlockEntityTypeBuilder<T> of(LodestoneBlockEntitySupplier<? extends T> factory, Supplier<? extends Block>... validBlocks) {
         return new LodestoneBlockEntityTypeBuilder<>(factory, ImmutableSet.copyOf(validBlocks));
     }
