@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntity;
@@ -41,10 +42,8 @@ public class LodestoneEntityBlock<T extends LodestoneBlockEntity> extends Block 
         super(properties);
     }
 
-    @SuppressWarnings("UnusedReturnValue")
-    public LodestoneEntityBlock<T> setBlockEntity(Supplier<LodestoneBlockEntityType<T>> type) {
-        this.blockEntityType = type;
-        return this;
+    public void setBlockEntity(LodestoneBlockEntityType<?> type) {
+        this.blockEntityType = () -> (LodestoneBlockEntityType<T>) type;
     }
 
     public boolean hasBlockEntity() {

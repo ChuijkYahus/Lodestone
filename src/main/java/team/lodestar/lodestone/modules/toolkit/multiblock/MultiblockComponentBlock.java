@@ -23,9 +23,9 @@ import java.util.Optional;
  * A basic Multiblock component block.
  */
 public class MultiblockComponentBlock extends LodestoneEntityBlock<MultiBlockComponentEntity> implements ILodestoneMultiblockComponent {
+
     public MultiblockComponentBlock(BlockBehaviour.Properties properties) {
         super(properties);
-        setBlockEntity(LodestoneBlockEntities.MULTIBLOCK_COMPONENT);
     }
 
     @Override
