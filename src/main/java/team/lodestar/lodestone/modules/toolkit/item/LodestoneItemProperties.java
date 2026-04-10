@@ -9,6 +9,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.*;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.*;
+import team.lodestar.lodestone.modules.toolkit.creative_tab.CategorizedCreativeTab;
 
 import java.util.*;
 
@@ -127,8 +128,11 @@ public class LodestoneItemProperties extends Item.Properties {
         }
     }
 
-    public static void populateItemGroups(BuildCreativeModeTabContentsEvent event) {
-        final ResourceKey<CreativeModeTab> tabKey = event.getTabKey();
+    public static void buildCreativeTabs(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTab() instanceof CategorizedCreativeTab) {
+            return;
+        }
+        var tabKey = event.getTabKey();
         if (TAB_SORTING.containsKey(tabKey)) {
             TAB_SORTING.get(tabKey).stream().map(BuiltInRegistries.ITEM::get)
                     .filter(s -> !event.getParentEntries().contains(s.getDefaultInstance()))

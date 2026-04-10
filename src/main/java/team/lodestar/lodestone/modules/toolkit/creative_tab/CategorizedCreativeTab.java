@@ -1,11 +1,15 @@
 package team.lodestar.lodestone.modules.toolkit.creative_tab;
 
+import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.ints.*;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.*;
 import net.minecraft.world.item.*;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.Stream;
 
 public abstract class CategorizedCreativeTab extends CreativeModeTab {
 
@@ -17,6 +21,16 @@ public abstract class CategorizedCreativeTab extends CreativeModeTab {
         super(builder);
         this.mod = mod;
         buildCategories();
+    }
+
+    public static void buildCreativeTabs(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTab() instanceof CategorizedCreativeTab tab) {
+            for (CreativeTabCategory category : tab.categories.values()) {
+                for (Either<Supplier<ItemStack>, CreativeTabCategory.Operation> either : category.items()) {
+                    either.ifLeft(l -> event.accept(l.get()));
+                }
+            }
+        }
     }
 
     public abstract Optional<ResourceLocation> getHeaderTexture(CreativeTabCategory.CategoryHeader header, int row, int column);
