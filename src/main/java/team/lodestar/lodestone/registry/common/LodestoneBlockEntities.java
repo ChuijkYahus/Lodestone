@@ -21,7 +21,7 @@ import static team.lodestar.lodestone.LodestoneLib.LODESTONE;
 public class LodestoneBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, LODESTONE);
 
-    public static final Supplier<LodestoneBlockEntityType<MultiBlockComponentEntity>> MULTIBLOCK_COMPONENT = BLOCK_ENTITY_TYPES.register("multiblock_component", () -> LodestoneBlockEntityTypeBuilder.of(MultiBlockComponentEntity::new, getBlocks(ILodestoneMultiblockComponent.class)).setTickerType(LodestoneBlockEntityTicker.Type.SERVER).build());
+    public static final Supplier<LodestoneBlockEntityType<MultiBlockComponentEntity>> MULTIBLOCK_COMPONENT = BLOCK_ENTITY_TYPES.register("multiblock_component", () -> LodestoneBlockEntityTypeBuilder.create(MultiBlockComponentEntity::new, getBlocks(ILodestoneMultiblockComponent.class)).setTickerType(LodestoneBlockEntityTicker.Type.SERVER).build());
 
     public static Block[] getBlocks(Class<?>... blockClasses) {
         DefaultedRegistry<Block> blocks = BuiltInRegistries.BLOCK;

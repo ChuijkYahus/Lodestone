@@ -1,17 +1,17 @@
 package team.lodestar.lodestone.modules.core.datagen;
 
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.data.loading.DatagenModLoader;
 import team.lodestar.lodestone.modules.toolkit.block.LodestoneBlockProperties;
+import team.lodestar.lodestone.modules.toolkit.block.LodestoneBlockProperties.BlockRenderType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Supplier;
 
 @SuppressWarnings("UnusedReturnValue")
 @DatagenOnly
@@ -21,7 +21,7 @@ public class LodestoneDatagenBlockData {
 
     private final List<TagKey<Block>> tags = new ArrayList<>();
 
-    public Supplier<Supplier<RenderType>> renderType;
+    public ResourceLocation renderType;
     public boolean noLootDatagen = false;
 
     public static LodestoneDatagenBlockData copyDatagenDataFrom(LodestoneBlockProperties from, LodestoneBlockProperties to) {
@@ -90,12 +90,8 @@ public class LodestoneDatagenBlockData {
         return addTag(BlockTags.NEEDS_DIAMOND_TOOL);
     }
 
-    public LodestoneDatagenBlockData setCutoutRenderType() {
-        return setRenderType(() -> RenderType::cutoutMipped);
-    }
-
-    public LodestoneDatagenBlockData setRenderType(Supplier<Supplier<RenderType>> renderType) {
-        this.renderType = renderType;
+    public LodestoneDatagenBlockData setRenderType(BlockRenderType renderType) {
+        this.renderType = renderType.getLocation();
         return this;
     }
 

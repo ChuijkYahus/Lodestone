@@ -1,6 +1,7 @@
 package team.lodestar.lodestone.modules.toolkit.block;
 
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlag;
@@ -26,6 +27,25 @@ import java.util.function.*;
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public class LodestoneBlockProperties extends BlockBehaviour.Properties {
+
+    public enum BlockRenderType {
+        SOLID("solid"),
+        CUTOUT("cutout"),
+        CUTOUT_MIPPED("cutout_mipped"),
+        CUTOUT_MIPPED_ALL("cutout_mipped_all"),
+        TRANSLUCENT("translucent"),
+        TRIPWIRE("tripwire");
+
+        private final ResourceLocation location;
+
+        BlockRenderType(String name) {
+            this.location = ResourceLocation.withDefaultNamespace(name);
+        }
+
+        public ResourceLocation getLocation() {
+            return location;
+        }
+    }
 
     public LodestoneBlockProperties() {
         super();
@@ -160,11 +180,15 @@ public class LodestoneBlockProperties extends BlockBehaviour.Properties {
         return this;
     }
 
-    public LodestoneBlockProperties setCutoutRenderType() {
-        return setRenderType(() -> RenderType::cutoutMipped);
+    public LodestoneBlockProperties setCutout() {
+        return setRenderType(BlockRenderType.CUTOUT);
     }
 
-    public LodestoneBlockProperties setRenderType(Supplier<Supplier<RenderType>> renderType) {
+    public LodestoneBlockProperties setTranslucent() {
+        return setRenderType(BlockRenderType.TRANSLUCENT);
+    }
+
+    public LodestoneBlockProperties setRenderType(BlockRenderType renderType) {
         addDatagenData(d -> d.setRenderType(renderType));
         return this;
     }

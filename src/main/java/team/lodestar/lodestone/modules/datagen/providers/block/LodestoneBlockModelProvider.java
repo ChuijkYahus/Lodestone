@@ -8,8 +8,10 @@ import net.neoforged.neoforge.client.model.generators.BlockModelProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.spongepowered.include.com.google.common.base.Preconditions;
+import team.lodestar.lodestone.modules.core.datagen.LodestoneDatagenBlockData;
 import team.lodestar.lodestone.modules.datagen.DatagenSystemCommons;
 import team.lodestar.lodestone.modules.datagen.IDatagenPathfinder;
+import team.lodestar.lodestone.modules.toolkit.block.LodestoneBlockProperties;
 
 import java.util.function.Function;
 
@@ -23,12 +25,25 @@ public final class LodestoneBlockModelProvider extends BlockModelProvider implem
         this.factory = l -> new LodestoneBlockModelBuilder(l, existingFileHelper);
     }
 
+    @Override
     public LodestoneBlockModelBuilder getBuilder(String path) {
         Preconditions.checkNotNull(path, "Path must not be null");
         var modelPath = appendFolder(path.contains(":") ? ResourceLocation.parse(path) : ResourceLocation.fromNamespaceAndPath(modid, path));
         modelPath = DatagenSystemCommons.modifyModelPath(modelPath);
         this.existingFileHelper.trackGenerated(modelPath, MODEL);
-        return (LodestoneBlockModelBuilder) generatedModels.computeIfAbsent(modelPath, factory);
+        var builder = (LodestoneBlockModelBuilder) generatedModels.computeIfAbsent(modelPath, factory);
+        setRenderType(builder);
+        return builder;
+    }
+
+    public void setRenderType(LodestoneBlockModelBuilder builder) {
+        Block currentBlock = DatagenSystemCommons.CURRENT_BLOCK;
+        if (currentBlock != null) {
+            if (currentBlock.properties() instanceof LodestoneBlockProperties properties) {
+                var datagenData = properties.getDatagenData();
+                builder.renderType(datagenData.renderType);
+            }
+        }
     }
 
     @Override

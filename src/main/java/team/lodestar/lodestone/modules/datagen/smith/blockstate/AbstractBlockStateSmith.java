@@ -21,11 +21,13 @@ public abstract class AbstractBlockStateSmith<T extends Block> {
     protected final void tryAct(BlockStateSystemData data, ItemModelSmith itemModelSmith, Supplier<? extends Block> registryObject, BiConsumer<T, LodestoneBlockStateSystem> actor) {
         var block = registryObject.get();
         if (blockClass.isInstance(block)) {
+            DatagenSystemCommons.CURRENT_BLOCK = block;
             var provider = data.provider();
             actor.accept(blockClass.cast(block), provider);
             makeItemModel(data, itemModelSmith, block);
             data.consumer().accept(registryObject);
             DatagenSystemCommons.clearCachedBlockTextures();
+            DatagenSystemCommons.CURRENT_BLOCK = null;
         } else {
             throw new IllegalArgumentException("Block does not match the state smith it was assigned: " + block.toString());
         }

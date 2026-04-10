@@ -21,11 +21,11 @@ public final class LodestoneBlockEntityTypeBuilder<T extends LodestoneBlockEntit
     }
 
     @SafeVarargs
-    public static <T extends LodestoneBlockEntity> LodestoneBlockEntityTypeBuilder<T> of(LodestoneBlockEntitySupplier<? extends T> factory, Supplier<? extends Block>... validBlocks) {
+    public static <T extends LodestoneBlockEntity> LodestoneBlockEntityTypeBuilder<T> create(LodestoneBlockEntitySupplier<? extends T> factory, Supplier<? extends Block>... validBlocks) {
         return new LodestoneBlockEntityTypeBuilder<>(factory, ImmutableSet.copyOf(validBlocks));
     }
 
-    public static <T extends LodestoneBlockEntity> LodestoneBlockEntityTypeBuilder<T> of(LodestoneBlockEntitySupplier<? extends T> factory, Block... validBlocks) {
+    public static <T extends LodestoneBlockEntity> LodestoneBlockEntityTypeBuilder<T> create(LodestoneBlockEntitySupplier<? extends T> factory, Block... validBlocks) {
         Set<Supplier<? extends Block>> suppliers = new HashSet<>();
         for (Block validBlock : validBlocks) {
             suppliers.add(() -> validBlock);

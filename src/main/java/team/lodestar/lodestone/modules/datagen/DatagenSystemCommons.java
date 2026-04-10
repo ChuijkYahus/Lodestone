@@ -1,6 +1,7 @@
 package team.lodestar.lodestone.modules.datagen;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +16,8 @@ public class DatagenSystemCommons {
      */
     protected static final HashMap<String, ResourceLocation> BLOCK_MODEL_TEXTURE_REFERENCE = new HashMap<>();
     protected static final Set<ResourceLocation> IMMUTABLE_TEXTURES = new HashSet<>();
+
+    public static Block CURRENT_BLOCK;
 
     public static PathModifier MODEL_PARENT = new PathModifier();
 
