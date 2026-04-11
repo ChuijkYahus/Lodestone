@@ -55,6 +55,10 @@ public class LodestoneBlockProperties extends BlockBehaviour.Properties {
         return new LodestoneBlockProperties();
     }
 
+    public LodestoneBlockProperties copy() {
+        return copy(this);
+    }
+
     public static LodestoneBlockProperties copy(BlockBehaviour behaviour) {
         return copy(behaviour.properties);
     }
