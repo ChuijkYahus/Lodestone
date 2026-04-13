@@ -1,6 +1,7 @@
 package team.lodestar.lodestone.systems.worldgen;
 
 import net.minecraft.core.*;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.*;
 
@@ -86,13 +87,17 @@ public class LodestoneWorldgenBuilderLayer {
         return orderedEntries;
     }
 
-    public ArrayList<LodestoneWorldgenBuilderEntry> getRandomEntries(int amount) {
+    public ArrayList<LodestoneWorldgenBuilderEntry> getRandomEntries(RandomSource random, int amount) {
         ArrayList<LodestoneWorldgenBuilderEntry> randomEntries = new ArrayList<>();
         List<BlockPos> keys = new ArrayList<>(entries.keySet());
-        Collections.shuffle(keys);
+        shuffle(random, keys);
         for (int i = 0; i < Math.min(amount, keys.size()); i++) {
             randomEntries.add(entries.get(keys.get(i)));
         }
         return randomEntries;
+    }
+
+    public static <T> List<T> shuffle(RandomSource random, Collection<T> collection) {
+        return collection.stream().sorted((a, b) -> random.nextIntBetweenInclusive(-1, 0)).toList();
     }
 }
