@@ -78,7 +78,7 @@ public class ConfiguredItemModelSmith extends ItemModelSmith {
         DatagenSystemCommons.MODEL_PARENT.clearModifier();
 
         DatagenSystemCommons.ITEM_MODEL.clearModifier();
-        DatagenSystemCommons.ITEM_MODEL.clearModifier();
+        DatagenSystemCommons.BLOCK_MODEL.clearModifier();
         DatagenSystemCommons.ITEM_TEXTURE.clearModifier();
         DatagenSystemCommons.BLOCK_TEXTURE.clearModifier();
     }
