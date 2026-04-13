@@ -93,7 +93,7 @@ public abstract class LodestoneBlockTagsSystem extends BlockTagsProvider {
     public void addNameTag(TagKey<Block> tagKey, Block block, Class<? extends Block> clazz, String... checks) {
         if (clazz.isInstance(block)) {
             var name = block.builtInRegistryHolder().getKey().location().getPath();
-            boolean matches = checks.length == 0 || Arrays.stream(checks).anyMatch(c -> c.contains(name));
+            boolean matches = checks.length == 0 || Arrays.stream(checks).anyMatch(name::contains);
             addConditionTag(tagKey, block, matches);
         }
     }
