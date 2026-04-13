@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.*;
 
-public record BlockBlockItemHolder<T extends Block, K extends BlockItem>(DeferredHolder<Block, T> block, DeferredHolder<Item, K> item) implements Supplier<T>, ItemLike {
+public record BlockBlockItemHolder<T extends Block, K extends BlockItem>(DeferredBlock<T> block, DeferredItem<K> item) implements Supplier<T>, ItemLike {
 
     @Override
     public T get() {
