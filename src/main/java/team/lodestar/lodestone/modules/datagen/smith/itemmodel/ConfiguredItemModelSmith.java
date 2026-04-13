@@ -65,7 +65,9 @@ public class ConfiguredItemModelSmith extends ItemModelSmith {
         DatagenSystemCommons.MODEL_PARENT.modify(modelParentModifier);
 
         DatagenSystemCommons.ITEM_MODEL.modify(modelPathModifier);
+        DatagenSystemCommons.BLOCK_MODEL.modify(modelPathModifier);
         DatagenSystemCommons.ITEM_TEXTURE.modify(texturePathModifier);
+        DatagenSystemCommons.BLOCK_TEXTURE.modify(texturePathModifier);
     }
 
     @Override
@@ -76,6 +78,8 @@ public class ConfiguredItemModelSmith extends ItemModelSmith {
         DatagenSystemCommons.MODEL_PARENT.clearModifier();
 
         DatagenSystemCommons.ITEM_MODEL.clearModifier();
+        DatagenSystemCommons.ITEM_MODEL.clearModifier();
         DatagenSystemCommons.ITEM_TEXTURE.clearModifier();
+        DatagenSystemCommons.BLOCK_TEXTURE.clearModifier();
     }
 }
