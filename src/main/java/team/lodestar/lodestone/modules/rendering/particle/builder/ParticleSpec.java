@@ -1,33 +1,32 @@
 package team.lodestar.lodestone.modules.rendering.particle.builder;
 
-import net.minecraft.resources.ResourceLocation;
 import team.lodestar.lodestone.modules.rendering.particle.pool.ParticlePool;
 import team.lodestar.lodestone.modules.rendering.particle.component.ParticleComponentType;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticleSpawnContext;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticleSpawnContextChain;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.profile.ParticleSpawnProfile;
+import team.lodestar.lodestone.modules.rendering.particle.visual.ParticleVisualDict;
+import team.lodestar.lodestone.modules.rendering.particle.visual.ParticleVisualEntry;
 
 import java.util.*;
 
 public  class ParticleSpec {
-    private static final Comparator<ParticleComponentType<?>> COMPONENT_PRIORITY =
-            Comparator.comparingInt(ParticleComponentType::priority);
+    private static final Comparator<ParticleComponentType<?>> COMPONENT_PRIORITY = Comparator.comparingInt(ParticleComponentType::priority);
 
-    private final ResourceLocation particleTypeId;
     private final Map<ParticleComponentType<?>, Object> componentConfigs;
     private final ParticleComponentType<?>[] orderedComponentTypes;
+    private final List<ParticleVisualEntry<?>> visuals;
+    private final int visualId;
 
-    public ParticleSpec(ResourceLocation particleTypeId, Map<ParticleComponentType<?>, Object> componentConfigs) {
-        this.particleTypeId = Objects.requireNonNull(particleTypeId, "particleTypeId");
+
+    public ParticleSpec(Map<ParticleComponentType<?>, Object> componentConfigs, List<ParticleVisualEntry<?>> visuals) {
         this.componentConfigs = Collections.unmodifiableMap(new LinkedHashMap<>(componentConfigs));
+        this.visuals = visuals;
+        this.visualId = ParticleVisualDict.getId(visuals);
 
         List<ParticleComponentType<?>> ordered = new ArrayList<>(this.componentConfigs.keySet());
         ordered.sort(COMPONENT_PRIORITY);
         this.orderedComponentTypes = ordered.toArray(new ParticleComponentType<?>[0]);
-    }
-
-    public ResourceLocation particleTypeId() {
-        return particleTypeId;
     }
 
     public Map<ParticleComponentType<?>, Object> componentConfigs() {
@@ -36,6 +35,14 @@ public  class ParticleSpec {
 
     public ParticleComponentType<?>[] orderedComponentTypes() {
         return orderedComponentTypes;
+    }
+
+    public List<ParticleVisualEntry<?>> visuals() {
+        return visuals;
+    }
+
+    public int visualId() {
+        return visualId;
     }
 
     public void spawn(ParticlePool pool, ParticleSpawnContext ctx, int count) {

@@ -1,0 +1,116 @@
+package team.lodestar.lodestone.modules.rendering.particle.visual.types.billboard;
+
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.VertexBuffer;
+import net.minecraft.client.Camera;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
+import org.joml.Matrix4f;
+import org.lwjgl.system.MemoryUtil;
+import team.lodestar.lodestone.modules.rendering.particle.visual.ParticleVisualBatchKey;
+import team.lodestar.lodestone.modules.rendering.particle.visual.ParticleVisualBatchRenderer;
+import team.lodestar.lodestone.modules.rendering.particle.visual.ParticleVisualSubmission;
+import team.lodestar.lodestone.modules.rendering.particle.visual.instance.InstanceElement;
+import team.lodestar.lodestone.modules.rendering.particle.visual.instance.InstanceFormat;
+import team.lodestar.lodestone.systems.rendering.IVertexBuffer;
+
+import java.nio.FloatBuffer;
+import java.util.List;
+
+import static org.lwjgl.opengl.GL33.*;
+
+public class BillboardBatchRenderer implements ParticleVisualBatchRenderer {
+    public static final BillboardBatchRenderer INSTANCE = new BillboardBatchRenderer();
+
+    private int instanceVbo = -1;
+
+    @Override
+    public void renderBatch(ParticleVisualBatchKey key, List<ParticleVisualSubmission> submissions, DeltaTracker partialTick, Matrix4f viewMat, Matrix4f projMat) {
+        RenderType renderType = key.renderType();
+        VertexBuffer quadBuffer = key.vertexBuffer();
+        InstanceFormat instanceFormat = key.instanceFormat();
+
+        if (quadBuffer == null || instanceFormat == null) return;
+
+        int totalInstances = 0;
+        for (ParticleVisualSubmission submission : submissions) {
+            BillboardVisualDrawData data = (BillboardVisualDrawData) submission.drawData();
+            totalInstances += data.liveCount();
+        }
+
+        if (totalInstances == 0) return;
+
+        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        float pt = partialTick.getGameTimeDeltaPartialTick(false);
+        int strideFloats = instanceFormat.totalFloats();
+
+        FloatBuffer instanceData = MemoryUtil.memAllocFloat(totalInstances * strideFloats);
+
+        try {
+            int currentInstanceOffset = 0;
+
+            for (ParticleVisualSubmission submission : submissions) {
+                BillboardVisualDrawData data = (BillboardVisualDrawData) submission.drawData();
+                int targetId = data.targetVisualId();
+                int liveCount = data.liveCount();
+
+                int elementOffset = 0;
+                int particlesWritten = 0;
+
+                for (InstanceElement element : instanceFormat.elements()) {
+                    particlesWritten = element.writer().write(
+                            data.particles(), liveCount, targetId, pt, camera,
+                            instanceData, currentInstanceOffset, elementOffset, strideFloats
+                    );
+                    elementOffset += element.floatCount();
+                }
+
+                currentInstanceOffset += particlesWritten;
+            }
+
+            instanceData.position(0);
+            instanceData.limit(totalInstances * strideFloats);
+
+            if (instanceVbo == -1) instanceVbo = glGenBuffers();
+
+            glBindBuffer(GL_ARRAY_BUFFER, instanceVbo);
+            glBufferData(GL_ARRAY_BUFFER, instanceData, GL_DYNAMIC_DRAW);
+
+            renderType.setupRenderState();
+            quadBuffer.bind();
+            ShaderInstance shader = RenderSystem.getShader();
+
+            if (shader.safeGetUniform("CamUp") != null) shader.safeGetUniform("CamUp").set(camera.getUpVector());
+            if (shader.safeGetUniform("CamLeft") != null) shader.safeGetUniform("CamLeft").set(camera.getLeftVector());
+
+            int baseAttributes = quadBuffer.getFormat().getElements().size();
+            int currentAttribute = baseAttributes;
+            int offset = 0;
+
+            for (InstanceElement element : instanceFormat.elements()) {
+                glEnableVertexAttribArray(currentAttribute);
+                glVertexAttribPointer(currentAttribute, element.floatCount(), GL_FLOAT, false, instanceFormat.strideBytes(), offset);
+                glVertexAttribDivisor(currentAttribute, 1);
+
+                offset += element.floatCount() * Float.BYTES;
+                currentAttribute++;
+            }
+
+            IVertexBuffer.cast(quadBuffer).drawWithShaderInstanced(viewMat, projMat, shader, totalInstances);
+
+            for (int i = baseAttributes; i < currentAttribute; i++) {
+                glVertexAttribDivisor(i, 0);
+                glDisableVertexAttribArray(i);
+            }
+
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            VertexBuffer.unbind();
+            renderType.clearRenderState();
+
+        } finally {
+            MemoryUtil.memFree(instanceData);
+        }
+    }
+}

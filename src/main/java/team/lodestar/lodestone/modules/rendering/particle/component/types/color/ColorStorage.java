@@ -14,8 +14,6 @@ public class ColorStorage implements ParticleComponentStorage<ColorConfig>, PreR
 
     private final Easing[] easing;
 
-    private final float[] r, g, b, a;
-
     public ColorStorage(int capacity) {
         this.mode = new ColorMode[capacity];
 
@@ -30,11 +28,6 @@ public class ColorStorage implements ParticleComponentStorage<ColorConfig>, PreR
         this.a1 = new float[capacity];
 
         this.easing = new Easing[capacity];
-
-        this.r = new float[capacity];
-        this.g = new float[capacity];
-        this.b = new float[capacity];
-        this.a = new float[capacity];
     }
 
     @Override
@@ -46,20 +39,20 @@ public class ColorStorage implements ParticleComponentStorage<ColorConfig>, PreR
 
             switch (mode[i]) {
                 case ColorMode.CONSTANT -> {
-                    r[i] = r0[i];
-                    g[i] = g0[i];
-                    b[i] = b0[i];
-                    a[i] = a0[i];
+                    particles.r()[i] = r0[i];
+                    particles.g()[i] = g0[i];
+                    particles.b()[i] = b0[i];
+                    particles.a()[i] = a0[i];
                 }
 
                 case ColorMode.LERP -> {
                     float t = lifetime[i] <= 0 ? 1.0f : (float) age[i] / (float) lifetime[i];
                     t = easing[i].lerp(t, 0.0f, 1.0f);
 
-                    r[i] = lerp(r0[i], r1[i], t);
-                    g[i] = lerp(g0[i], g1[i], t);
-                    b[i] = lerp(b0[i], b1[i], t);
-                    a[i] = lerp(a0[i], a1[i], t);
+                    particles.r()[i] = lerp(r0[i], r1[i], t);
+                    particles.g()[i] = lerp(g0[i], g1[i], t);
+                    particles.b()[i] = lerp(b0[i], b1[i], t);
+                    particles.a()[i] = lerp(a0[i], a1[i], t);
                 }
 
                 default -> throw new IllegalStateException("Unknown color mode " + mode[i]);
@@ -82,10 +75,10 @@ public class ColorStorage implements ParticleComponentStorage<ColorConfig>, PreR
                 b0[particleIndex] = config.b0;
                 a0[particleIndex] = config.a0;
 
-                r[particleIndex] = config.r0;
-                g[particleIndex] = config.g0;
-                b[particleIndex] = config.b0;
-                a[particleIndex] = config.a0;
+                particles.r()[particleIndex] = config.r0;
+                particles.g()[particleIndex] = config.g0;
+                particles.b()[particleIndex] = config.b0;
+                particles.a()[particleIndex] = config.a0;
             }
 
             case ColorMode.LERP -> {
@@ -101,10 +94,10 @@ public class ColorStorage implements ParticleComponentStorage<ColorConfig>, PreR
 
                 easing[particleIndex] = config.easing;
 
-                r[particleIndex] = config.r0;
-                g[particleIndex] = config.g0;
-                b[particleIndex] = config.b0;
-                a[particleIndex] = config.a0;
+                particles.r()[particleIndex] = config.r0;
+                particles.g()[particleIndex] = config.g0;
+                particles.b()[particleIndex] = config.b0;
+                particles.a()[particleIndex] = config.a0;
             }
 
             default -> throw new IllegalStateException("Unknown color mode: " + config.mode);
@@ -126,26 +119,5 @@ public class ColorStorage implements ParticleComponentStorage<ColorConfig>, PreR
         a1[deadIndex] = a1[movedIndex];
 
         easing[deadIndex] = easing[movedIndex];
-
-        r[deadIndex] = r[movedIndex];
-        g[deadIndex] = g[movedIndex];
-        b[deadIndex] = b[movedIndex];
-        a[deadIndex] = a[movedIndex];
-    }
-
-    public float[] r() {
-        return r;
-    }
-
-    public float[] g() {
-        return g;
-    }
-
-    public float[] b() {
-        return b;
-    }
-
-    public float[] a() {
-        return a;
     }
 }
