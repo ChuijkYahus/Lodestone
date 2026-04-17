@@ -13,12 +13,13 @@ import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticleSpawnC
 import team.lodestar.lodestone.modules.rendering.particle.visual.*;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @EventBusSubscriber
 public class ParticleHandler {
     private static final int DEFAULT_POOL_CAPACITY = 1000;
     private static final Map<ParticlePoolKey, ParticlePoolGroup> poolGroups = new HashMap<>();
-    private static final Map<Integer, CompiledParticleVisualSet> compiledVisuals = new HashMap<>();
+    private static final Map<Integer, CompiledParticleVisualSet> compiledVisuals = new ConcurrentHashMap<>();
     private static final ParticleVisualCollector collector = new ParticleVisualCollector();
 
     public static void spawn(ParticleSpec spec, ParticleSpawnContext ctx) {
