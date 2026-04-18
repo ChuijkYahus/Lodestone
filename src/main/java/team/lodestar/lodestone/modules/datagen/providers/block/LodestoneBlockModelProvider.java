@@ -107,6 +107,15 @@ public final class LodestoneBlockModelProvider extends BlockModelProvider implem
         return cubeBottomTop(name, side, bottom, top);
     }
 
+    public ModelFile orientableWithBottom(Block block) {
+        String name = getBlockName(block);
+        ResourceLocation side = getBlockTexture(name + "_side");
+        ResourceLocation front = getBlockTexture(name + "_front");
+        ResourceLocation bottom = getBlockTexture(name + "_bottom");
+        ResourceLocation top = getBlockTexture(name + "_top");
+        return orientableWithBottom(name, side, front, bottom, top);
+    }
+
     public ModelFile airModel(Block block) {
         String name = getBlockName(block);
         return withExistingParent(name, ResourceLocation.withDefaultNamespace("block/air"));
