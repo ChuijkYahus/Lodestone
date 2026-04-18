@@ -44,6 +44,8 @@ public class LodestoneShaders {
 
     // Debug
     public static ShaderHolder DEBUG_SDF = SHADERS.register(new ShaderHolder(LodestoneLib.lodestonePath("debug/sdf"), DefaultVertexFormat.POSITION));
+    public static ShaderHolder DEBUG_POS_TEX = SHADERS.register(new ShaderHolder(LodestoneLib.lodestonePath("debug/pos"), DefaultVertexFormat.POSITION_TEX));
+    public static ShaderHolder DEBUG_TRAIL = SHADERS.register(new ShaderHolder(LodestoneLib.lodestonePath("debug/trail"), DefaultVertexFormat.POSITION_TEX_COLOR));
 
     @SubscribeEvent
     public static void shaderRegistry(RegisterShadersEvent event) {
