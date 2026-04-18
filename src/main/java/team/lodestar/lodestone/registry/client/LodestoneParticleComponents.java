@@ -2,6 +2,10 @@ package team.lodestar.lodestone.registry.client;
 
 import net.minecraft.resources.ResourceLocation;
 import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.modules.rendering.particle.component.types.attractor.AttractorConfig;
+import team.lodestar.lodestone.modules.rendering.particle.component.types.attractor.AttractorStorage;
+import team.lodestar.lodestone.modules.rendering.particle.component.types.boids.BoidsConfig;
+import team.lodestar.lodestone.modules.rendering.particle.component.types.boids.BoidsStorage;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticlePhase;
 import team.lodestar.lodestone.modules.rendering.particle.component.ParticleComponentType;
 import team.lodestar.lodestone.modules.rendering.particle.component.types.color.ColorConfig;
@@ -14,15 +18,32 @@ public class LodestoneParticleComponents {
     private static final Map<ParticleComponentType<?>, Integer> REGISTRY_IDS = new HashMap<>();
     private static int nextId = 0;
 
-    public static final ParticleComponentType<ColorConfig> COLOR =
-            LodestoneParticleComponents.register(
-                    ParticleComponentType.<ColorConfig>builder(LodestoneLib.lodestonePath("color"))
-                            .configFactory(ColorConfig::new)
-                            .storageFactory(ColorStorage::new)
-                            .phases(ParticlePhase.PRE_RENDER)
-                            .priority(0)
-                            .build()
-            );
+    public static final ParticleComponentType<ColorConfig> COLOR = LodestoneParticleComponents.register(
+            ParticleComponentType.<ColorConfig>builder(LodestoneLib.lodestonePath("color"))
+                    .configFactory(ColorConfig::new)
+                    .storageFactory(ColorStorage::new)
+                    .phases(ParticlePhase.PRE_RENDER)
+                    .priority(0)
+                    .build()
+    );
+
+    public static final ParticleComponentType<BoidsConfig> BOIDS = LodestoneParticleComponents.register(
+            ParticleComponentType.<BoidsConfig>builder(LodestoneLib.lodestonePath("boids"))
+                    .configFactory(BoidsConfig::new)
+                    .storageFactory(BoidsStorage::new)
+                    .phases(ParticlePhase.PRE_UPDATE)
+                    .priority(10)
+                    .build()
+    );
+
+    public static final ParticleComponentType<AttractorConfig> ATTRACTOR = LodestoneParticleComponents.register(
+            ParticleComponentType.<AttractorConfig>builder(LodestoneLib.lodestonePath("attractor"))
+                    .configFactory(AttractorConfig::new)
+                    .storageFactory(AttractorStorage::new)
+                    .phases(ParticlePhase.PRE_UPDATE)
+                    .priority(20)
+                    .build()
+    );
 
     public static <T> ParticleComponentType<T> register(ParticleComponentType<T> type) {
         Objects.requireNonNull(type, "type");

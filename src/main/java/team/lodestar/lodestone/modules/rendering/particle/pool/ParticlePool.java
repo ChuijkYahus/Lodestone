@@ -18,18 +18,19 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class ParticlePool {
-    private static final Comparator<ParticleStorageBinding> BINDING_PRIORITY =
-            Comparator.comparingInt(a -> a.type().priority());
+public class ParticlePool implements ParticleView {
+    private static final Comparator<ParticleStorageBinding> BINDING_PRIORITY = Comparator.comparingInt(a -> a.type().priority());
 
     private final int capacity;
     private int count;
 
     private final double[] x, y, z;
     private final double[] vx, vy, vz;
+    private final float[] r, g, b, a;
     private final int[] age, lifetime;
 
-    private final ParticleView view;
+    private final int[] visualIds;
+    private final Map<Integer, Integer> activeVisualCounts = new HashMap<>();
 
     private final Map<ParticleComponentType<?>, ParticleStorageBinding> bindings = new HashMap<>();
 
@@ -48,10 +49,15 @@ public class ParticlePool {
         this.vy = new double[capacity];
         this.vz = new double[capacity];
 
+        this.r = new float[capacity];
+        this.g = new float[capacity];
+        this.b = new float[capacity];
+        this.a = new float[capacity];
+
         this.age = new int[capacity];
         this.lifetime = new int[capacity];
 
-        this.view = new ParticleView(x, y, z, vx, vy, vz, age, lifetime);
+        this.visualIds = new int[capacity];
     }
 
     public int capacity() {
@@ -66,8 +72,8 @@ public class ParticlePool {
         return count >= capacity;
     }
 
-    public ParticleView view() {
-        return view;
+    public Iterable<Integer> getActiveVisualIds() {
+        return activeVisualCounts.keySet();
     }
 
     public void spawn(ParticleSpec spec, ParticleSpawnContext ctx) {
@@ -77,7 +83,7 @@ public class ParticlePool {
 
         ensureBindings(spec);
 
-        int i = count++;
+        int i = count;
 
         x[i] = ctx.x;
         y[i] = ctx.y;
@@ -90,11 +96,16 @@ public class ParticlePool {
         age[i] = 0;
         lifetime[i] = ctx.lifetime;
 
+        visualIds[i] = spec.visualId();
+        activeVisualCounts.merge(spec.visualId(), 1, Integer::sum);
+
         for (ParticleComponentType<?> type : spec.orderedComponentTypes()) {
             ParticleStorageBinding binding = bindings.get(type);
             Object config = spec.componentConfigs().get(type);
-            binding.storage().onSpawn(i, config, ctx, view);
+            binding.storage().onSpawn(i, config, ctx, this);
         }
+
+        count++;
     }
 
     private void ensureBindings(ParticleSpec spec) {
@@ -126,7 +137,7 @@ public class ParticlePool {
     public void tick(float dt) {
         for (ParticleStorageBinding binding : preUpdateBindings) {
             if (binding.storage() instanceof PreUpdateComponent c) {
-                c.preUpdate(count, dt, view);
+                c.preUpdate(count, dt, this);
             }
         }
 
@@ -152,7 +163,7 @@ public class ParticlePool {
 
         for (ParticleStorageBinding binding : postUpdateBindings) {
             if (binding.storage() instanceof PostUpdateComponent c) {
-                c.postUpdate(count, dt, view);
+                c.postUpdate(count, dt, this);
             }
         }
     }
@@ -160,13 +171,14 @@ public class ParticlePool {
     public void preRender() {
         for (ParticleStorageBinding binding : preRenderBindings) {
             if (binding.storage() instanceof PreRenderComponent c) {
-                c.preRender(count, view);
+                c.preRender(count, this);
             }
         }
     }
 
     public void remove(int index) {
         int last = count - 1;
+        int removedVisualId = visualIds[index];
 
         if (index != last) {
             x[index] = x[last];
@@ -177,20 +189,94 @@ public class ParticlePool {
             vy[index] = vy[last];
             vz[index] = vz[last];
 
+            r[index] = r[last];
+            g[index] = g[last];
+            b[index] = b[last];
+            a[index] = a[last];
+
             age[index] = age[last];
             lifetime[index] = lifetime[last];
+
+            visualIds[index] = visualIds[last];
         }
 
         for (ParticleStorageBinding binding : bindings.values()) {
-            binding.storage().onSwapRemove(index, last, view);
+            binding.storage().onSwapRemove(index, last, this);
         }
 
         count--;
+
+        activeVisualCounts.computeIfPresent(removedVisualId, (k, v) -> (v == 1) ? null : v - 1);
     }
 
     public void clear() {
         while (count > 0) {
             remove(count - 1);
         }
+    }
+
+    @Override
+    public double[] x() {
+        return x;
+    }
+
+    @Override
+    public double[] y() {
+        return y;
+    }
+
+    @Override
+    public double[] z() {
+        return z;
+    }
+
+    @Override
+    public double[] vx() {
+        return vx;
+    }
+
+    @Override
+    public double[] vy() {
+        return vy;
+    }
+
+    @Override
+    public double[] vz() {
+        return vz;
+    }
+
+    @Override
+    public float[] r() {
+        return r;
+    }
+
+    @Override
+    public float[] g() {
+        return g;
+    }
+
+    @Override
+    public float[] b() {
+        return b;
+    }
+
+    @Override
+    public float[] a() {
+        return a;
+    }
+
+    @Override
+    public int[] age() {
+        return age;
+    }
+
+    @Override
+    public int[] lifetime() {
+        return lifetime;
+    }
+
+    @Override
+    public int[] visualIds() {
+        return visualIds;
     }
 }

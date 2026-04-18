@@ -3,6 +3,7 @@ package team.lodestar.lodestone.modules.rendering.particle.component.types.color
 import team.lodestar.lodestone.modules.core.easing.Easing;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class ColorConfig {
     protected ColorMode mode = ColorMode.CONSTANT;
@@ -56,5 +57,26 @@ public class ColorConfig {
         this.a1 = a1;
         this.easing = easing;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ColorConfig that = (ColorConfig) o;
+        return Float.compare(r0, that.r0) == 0 &&
+                Float.compare(g0, that.g0) == 0 &&
+                Float.compare(b0, that.b0) == 0 &&
+                Float.compare(a0, that.a0) == 0 &&
+                Float.compare(r1, that.r1) == 0 &&
+                Float.compare(g1, that.g1) == 0 &&
+                Float.compare(b1, that.b1) == 0 &&
+                Float.compare(a1, that.a1) == 0 &&
+                mode == that.mode &&
+                Objects.equals(easing, that.easing);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mode, r0, g0, b0, a0, r1, g1, b1, a1, easing);
     }
 }

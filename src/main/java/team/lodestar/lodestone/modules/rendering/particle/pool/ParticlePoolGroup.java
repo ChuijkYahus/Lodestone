@@ -41,14 +41,6 @@ public class ParticlePoolGroup {
         }
     }
 
-    public void preRender() {
-        for (ParticlePool pool : pools) {
-            if (pool.count() > 0) {
-                pool.preRender();
-            }
-        }
-    }
-
     public boolean isEmpty() {
         for (ParticlePool pool : pools) {
             if (pool.count() > 0) {
