@@ -41,10 +41,9 @@ public class CubeInfo {
     }
 
     public double[] pickPosition() {
-
-        double x = weight.lerp(CUBE_RANDOM.nextFloat(), min[0], max[0]);
-        double y = weight.lerp(CUBE_RANDOM.nextFloat(), min[1], max[1]);
-        double z = weight.lerp(CUBE_RANDOM.nextFloat(), min[2], max[2]);
+        double x = weight.asValueDistribution(CUBE_RANDOM.nextFloat(), min[0], max[0]);
+        double y = weight.asValueDistribution(CUBE_RANDOM.nextFloat(), min[1], max[1]);
+        double z = weight.asValueDistribution(CUBE_RANDOM.nextFloat(), min[2], max[2]);
         double[] values = new double[]{x, y, z};
         switch (mode) {
             case SURROUND -> {

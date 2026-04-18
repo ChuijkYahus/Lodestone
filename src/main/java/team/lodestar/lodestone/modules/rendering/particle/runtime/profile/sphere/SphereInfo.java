@@ -51,21 +51,21 @@ public class SphereInfo {
             minAngle = sector - half;
             maxAngle = sector + half;
         }
-        double angle = angleWeight.lerp(SPHERE_RANDOM.nextFloat(), minAngle, maxAngle);
+        double angle = angleWeight.asValueDistribution(SPHERE_RANDOM.nextFloat(), minAngle, maxAngle);
         double x = Math.sin(angle);
         double y = SPHERE_RANDOM.nextDouble();
         double z = Math.cos(angle);
         double width = distanceWeight.asValueDistribution(y, 0, 1, 0);
         switch (mode) {
             case DISTRIBUTE -> {
-                x *= distanceWeight.lerp(SPHERE_RANDOM.nextDouble(), min[0], max[0]) * width;
-                y = distanceWeight.lerp(y, min[1], max[1]);
-                z *= distanceWeight.lerp(SPHERE_RANDOM.nextDouble(), min[2], max[2]) * width;
+                x *= distanceWeight.asValueDistribution(SPHERE_RANDOM.nextDouble(), min[0], max[0]) * width;
+                y = distanceWeight.asValueDistribution(y, min[1], max[1]);
+                z *= distanceWeight.asValueDistribution(SPHERE_RANDOM.nextDouble(), min[2], max[2]) * width;
             }
             case OUTLINE -> {
-                x = distanceWeight.lerp(x, min[0], max[0]) * width;
-                y = distanceWeight.lerp(y, min[1], max[1]);
-                z = distanceWeight.lerp(z, min[2], max[2]) * width;
+                x = distanceWeight.asValueDistribution(x, min[0], max[0]) * width;
+                y = distanceWeight.asValueDistribution(y, min[1], max[1]);
+                z = distanceWeight.asValueDistribution(z, min[2], max[2]) * width;
             }
         }
         return new double[]{x, y, z};
