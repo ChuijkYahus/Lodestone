@@ -137,6 +137,21 @@ public class LodestoneRenderTypes extends RenderStateShard {
             createGenericRenderType(token, "debug_sdf", POSITION,
                     QUADS, builder(token, LodestoneShaders.DEBUG_SDF, CULL)));
 
+    public static final RenderType DEBUG_POS_TEX = RenderType.create("pos_tex", POSITION_TEX, QUADS, 256, RenderType.CompositeState.builder()
+            .setShaderState(LodestoneShaders.DEBUG_POS_TEX.getShard())
+            .setTextureState(new TextureStateShard(LodestoneLib.lodestonePath("textures/painting/lefunny.png"), false, false))
+            .setCullState(NO_CULL)
+            .createCompositeState(false)
+    );
+
+    public static final RenderType DEBUG_TRAIL = RenderType.create("trail", POSITION_TEX_COLOR, TRIANGLE_STRIP, 256, RenderType.CompositeState.builder()
+            .setShaderState(LodestoneShaders.DEBUG_TRAIL.getShard())
+            .setTextureState(new TextureStateShard(LodestoneLib.lodestonePath("textures/painting/lefunny.png"), false, false))
+            .setTransparencyState(StateShards.NORMAL_TRANSPARENCY)
+            .setCullState(NO_CULL)
+            .createCompositeState(false)
+    );
+
     public static LodestoneRenderType createTransparentRenderType(String name, RenderTypeToken token, ShaderHolder shader) {
         return createGenericRenderType(token, name, POSITION_COLOR_TEX_LIGHTMAP,
                 QUADS, builder(token, StateShards.NORMAL_TRANSPARENCY, shader, CULL, LIGHTMAP, COLOR_WRITE));
