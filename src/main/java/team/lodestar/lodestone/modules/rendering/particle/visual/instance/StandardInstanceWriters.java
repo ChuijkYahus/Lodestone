@@ -6,6 +6,7 @@ import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticleView;
 import java.nio.FloatBuffer;
 
 public class StandardInstanceWriters {
+
     public static final InstanceWriter POSITION = new PositionWriter();
     public static final InstanceWriter COLOR = new ColorWriter();
     public static final InstanceWriter AGE = new AgeWriter();

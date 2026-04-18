@@ -47,7 +47,7 @@ public class ColorStorage implements ParticleComponentStorage<ColorConfig>, PreR
 
                 case ColorMode.LERP -> {
                     float t = lifetime[i] <= 0 ? 1.0f : (float) age[i] / (float) lifetime[i];
-                    t = easing[i].lerp(t, 0.0f, 1.0f);
+                    t = easing[i].ease(t);
 
                     particles.r()[i] = lerp(r0[i], r1[i], t);
                     particles.g()[i] = lerp(g0[i], g1[i], t);

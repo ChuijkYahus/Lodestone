@@ -6,6 +6,8 @@ import team.lodestar.lodestone.modules.rendering.particle.component.types.attrac
 import team.lodestar.lodestone.modules.rendering.particle.component.types.attractor.AttractorStorage;
 import team.lodestar.lodestone.modules.rendering.particle.component.types.boids.BoidsConfig;
 import team.lodestar.lodestone.modules.rendering.particle.component.types.boids.BoidsStorage;
+import team.lodestar.lodestone.modules.rendering.particle.component.types.scale.ScaleConfig;
+import team.lodestar.lodestone.modules.rendering.particle.component.types.scale.ScaleStorage;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticlePhase;
 import team.lodestar.lodestone.modules.rendering.particle.component.ParticleComponentType;
 import team.lodestar.lodestone.modules.rendering.particle.component.types.color.ColorConfig;
@@ -27,12 +29,21 @@ public class LodestoneParticleComponents {
                     .build()
     );
 
+    public static final ParticleComponentType<ScaleConfig> SCALE = LodestoneParticleComponents.register(
+            ParticleComponentType.<ScaleConfig>builder(LodestoneLib.lodestonePath("scale"))
+                    .configFactory(ScaleConfig::new)
+                    .storageFactory(ScaleStorage::new)
+                    .phases(ParticlePhase.PRE_RENDER)
+                    .priority(1)
+                    .build()
+    );
+
     public static final ParticleComponentType<BoidsConfig> BOIDS = LodestoneParticleComponents.register(
             ParticleComponentType.<BoidsConfig>builder(LodestoneLib.lodestonePath("boids"))
                     .configFactory(BoidsConfig::new)
                     .storageFactory(BoidsStorage::new)
                     .phases(ParticlePhase.PRE_UPDATE)
-                    .priority(10)
+                    .priority(100)
                     .build()
     );
 
@@ -41,7 +52,7 @@ public class LodestoneParticleComponents {
                     .configFactory(AttractorConfig::new)
                     .storageFactory(AttractorStorage::new)
                     .phases(ParticlePhase.PRE_UPDATE)
-                    .priority(20)
+                    .priority(101)
                     .build()
     );
 
