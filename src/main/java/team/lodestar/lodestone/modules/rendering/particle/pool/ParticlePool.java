@@ -233,8 +233,8 @@ public class ParticlePool implements ParticleView {
 
     public boolean kidnapDelayedParticles(ParticleSpec spec, ParticleSpawnContext ctx) {
         if (ctx.delay > 0) {
-            ctx.delay = 0;
             long time = tickCount + ctx.delay;
+            ctx.delay = 0;
             if (!delayedParticles.containsKey(time)) {
                 delayedParticles.put(time, new DelayedParticles(spec));
             }
