@@ -171,12 +171,33 @@ dependencies {
 //    implementation("curse.maven:octo-lib-916747:6932487")
 //    implementation("curse.maven:immersive-ui-1021685:6886575")
 
-//    runtimeOnly(("com.sammy.malum:malum:${property("minecraft_version")}-1.9.0.201"))
+    runtimeOnly(("com.sammy.malum:malum:${property("minecraft_version")}-1.9.0.220"))
 
     compileOnly("maven.modrinth:sodium:mc${property("minecraft_version")}-${property("sodium_version")}-neoforge")
     compileOnly("maven.modrinth:iris:${property("iris_version")}+${property("minecraft_version")}-neoforge")
     //runtimeOnly("maven.modrinth:sodium:mc${property("minecraft_version")}-${property("sodium_version")}-neoforge")
     //runtimeOnly("maven.modrinth:iris:${property("iris_version")}+${property("minecraft_version")}-neoforge")
+
+
+
+    compileOnly("io.github.spair:imgui-java-app:${property("imgui_version")}")
+    compileOnly("io.github.spair:imgui-java-lwjgl3:${property("imgui_version")}")
+    compileOnly("io.github.spair:imgui-java-binding:${property("imgui_version")}")
+    compileOnly("io.github.spair:imgui-java-natives-windows:${property("imgui_version")}")
+    compileOnly("io.github.spair:imgui-java-natives-macos-ft:${property("imgui_version")}")
+    compileOnly("io.github.spair:imgui-java-natives-linux:${property("imgui_version")}")
+    localRuntime("io.github.spair:imgui-java-app:${property("imgui_version")}")
+    localRuntime("io.github.spair:imgui-java-lwjgl3:${property("imgui_version")}")
+    localRuntime("io.github.spair:imgui-java-binding:${property("imgui_version")}")
+    localRuntime("io.github.spair:imgui-java-natives-windows:${property("imgui_version")}")
+    localRuntime("io.github.spair:imgui-java-natives-macos-ft:${property("imgui_version")}")
+    localRuntime("io.github.spair:imgui-java-natives-linux:${property("imgui_version")}")
+    additionalRuntimeClasspath("io.github.spair:imgui-java-app:${property("imgui_version")}")
+    additionalRuntimeClasspath("io.github.spair:imgui-java-lwjgl3:${property("imgui_version")}")
+    additionalRuntimeClasspath("io.github.spair:imgui-java-binding:${property("imgui_version")}")
+    additionalRuntimeClasspath("io.github.spair:imgui-java-natives-windows:${property("imgui_version")}")
+    additionalRuntimeClasspath("io.github.spair:imgui-java-natives-macos-ft:${property("imgui_version")}")
+    additionalRuntimeClasspath("io.github.spair:imgui-java-natives-linux:${property("imgui_version")}")
 }
 val generateModMetadata by tasks.registering(ProcessResources::class) {
     val replaceProperties = mapOf(

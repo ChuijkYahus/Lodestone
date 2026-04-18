@@ -36,7 +36,7 @@ public class ParticleHandler {
 
     public static void spawn(ParticleSpec spec, ParticleSpawnContext ctx, ParticlePoolGroup group) {
         compiledVisuals.computeIfAbsent(spec.visualId(), id -> new CompiledParticleVisualSet(spec.visuals()));
-        group.claimPool().spawn(spec, ctx);
+        group.claimPool().spawn(spec, ctx.copy());
     }
 
     public static ParticlePoolGroup getPoolGroup(ParticleSpec spec) {

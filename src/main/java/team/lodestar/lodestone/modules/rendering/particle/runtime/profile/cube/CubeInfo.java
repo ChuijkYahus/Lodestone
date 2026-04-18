@@ -10,7 +10,8 @@ public class CubeInfo {
     public enum PlacementMode {
         DISTRIBUTE,
         SURROUND,
-        OUTLINE
+        OUTLINE,
+        CORNERS
     }
 
     private static final RandomSource CUBE_RANDOM = RandomSource.create();
@@ -27,7 +28,7 @@ public class CubeInfo {
     }
 
     public CubeInfo weighed(Easing weight) {
-        this.weight = weight;
+        this.weight = Easing.EXPO_IN;
         return this;
     }
 
@@ -56,7 +57,12 @@ public class CubeInfo {
                 values[axis] = snapToFace(values[axis], min[axis], max[axis]);
                 values[secondAxis] = snapToFace(values[secondAxis], min[secondAxis], max[secondAxis]);
             }
-        };
+            case CORNERS -> {
+                for (int i = 0; i < 3; i++) {
+                    values[i] = snapToFace(values[i], min[i], max[i]);
+                }
+            }
+        }
         return values;
     }
 

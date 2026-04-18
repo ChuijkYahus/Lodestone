@@ -1,5 +1,6 @@
 package team.lodestar.lodestone.modules.rendering.particle.runtime.profile.sphere;
 
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import team.lodestar.lodestone.modules.core.easing.Easing;
 
@@ -32,7 +33,7 @@ public class SphereInfo {
     }
 
     public SphereInfo weighedDistance(Easing distanceWeight) {
-        this.distanceWeight = distanceWeight;
+        this.distanceWeight = Easing.SINE_IN_OUT;
         return this;
     }
 
@@ -43,31 +44,37 @@ public class SphereInfo {
 
     public double[] pickPosition() {
         double minAngle = 0;
-        double maxAngle = 6.28f;
+        double maxAngle = 6.28;
+
         if (angleSections > 1) {
-            double sectionSize = 6.28f / angleSections;
+            double sectionSize = 6.28 / angleSections;
             double sector = SPHERE_RANDOM.nextInt(angleSections) * sectionSize;
-            double half = sectionSize / 2;
+            double half = sectionSize / 2.0;
             minAngle = sector - half;
             maxAngle = sector + half;
         }
-        double angle = angleWeight.asValueDistribution(SPHERE_RANDOM.nextFloat(), minAngle, maxAngle);
-        double x = Math.sin(angle);
-        double y = SPHERE_RANDOM.nextDouble();
-        double z = Math.cos(angle);
-        double width = distanceWeight.asValueDistribution(y, 0, 1, 0);
-        switch (mode) {
-            case DISTRIBUTE -> {
-                x *= distanceWeight.asValueDistribution(SPHERE_RANDOM.nextDouble(), min[0], max[0]) * width;
-                y = distanceWeight.asValueDistribution(y, min[1], max[1]);
-                z *= distanceWeight.asValueDistribution(SPHERE_RANDOM.nextDouble(), min[2], max[2]) * width;
-            }
-            case OUTLINE -> {
-                x = distanceWeight.asValueDistribution(x, min[0], max[0]) * width;
-                y = distanceWeight.asValueDistribution(y, min[1], max[1]);
-                z = distanceWeight.asValueDistribution(z, min[2], max[2]) * width;
-            }
-        }
-        return new double[]{x, y, z};
+
+        double angle = angleWeight.asValueDistribution(
+                SPHERE_RANDOM.nextDouble(),
+                minAngle,
+                maxAngle
+        );
+
+        double pitch = SPHERE_RANDOM.nextDouble() * 6.28 - (3.14);
+        double cosPitch = Math.cos(pitch);
+
+        double x = Math.cos(angle) * cosPitch;
+        double y = Math.sin(pitch);
+        double z = Math.sin(angle) * cosPitch;
+
+        x = (x + 1.0) * 0.5;
+        y = (y + 1.0) * 0.5;
+        z = (z + 1.0) * 0.5;
+
+        x = Mth.lerp(x, min[0], max[0]);
+        y = Mth.lerp(y, min[1], max[1]);
+        z = Mth.lerp(z, min[2], max[2]);
+
+        return new double[]{x, y + 10, z};
     }
 }
