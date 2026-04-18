@@ -26,7 +26,7 @@ public abstract class Easing {
     public abstract double ease(double delta);
 
     public float ease(float delta) {
-        return (float) ease((double)delta);
+        return (float) ease((double) delta);
     }
 
     protected double pow(double delta, double exponent) {
@@ -53,19 +53,19 @@ public abstract class Easing {
         return Mth.lerp(pct, min, max);
     }
 
-    public double asWeighedRandom(RandomSource randomSource, double start, double middle, double end) {
+    public int asWeighedRandom(RandomSource randomSource, int start, int middle, int end) {
         return asValueDistribution(randomSource.nextDouble(), start, middle, end);
     }
 
     public float asWeighedRandom(RandomSource randomSource, float start, float middle, float end) {
-        return (float) asValueDistribution(randomSource.nextDouble(), start, middle, end);
+        return asValueDistribution(randomSource.nextDouble(), start, middle, end);
     }
 
-    public int asWeighedRandom(RandomSource randomSource, int start, int middle, int end) {
-        return (int) Math.round(asValueDistribution(randomSource.nextDouble(), start, middle, end));
+    public double asWeighedRandom(RandomSource randomSource, double start, double middle, double end) {
+        return asValueDistribution(randomSource.nextDouble(), start, middle, end);
     }
 
-    public double asWeighedRandom(RandomSource randomSource, double start, double end) {
+    public int asWeighedRandom(RandomSource randomSource, int start, int end) {
         return asValueDistribution(randomSource.nextDouble(), start, end);
     }
 
@@ -73,20 +73,28 @@ public abstract class Easing {
         return asValueDistribution(randomSource.nextDouble(), start, end);
     }
 
-    public int asWeighedRandom(RandomSource randomSource, int start, int end) {
+    public double asWeighedRandom(RandomSource randomSource, double start, double end) {
         return asValueDistribution(randomSource.nextDouble(), start, end);
+    }
+
+    public int asValueDistribution(double delta, int start, int end) {
+        return asValueDistribution(delta, start, (start + end) / 2, end);
+    }
+
+    public float asValueDistribution(double delta, float start, float end) {
+        return asValueDistribution(delta, start, (start + end) / 2f, end);
     }
 
     public double asValueDistribution(double delta, double start, double end) {
         return asValueDistribution(delta, start, (start + end) / 2f, end);
     }
 
-    public float asValueDistribution(double delta, float start, float end) {
-        return (float) asValueDistribution(delta, start, (start + end) / 2f, end);
+    public int asValueDistribution(double delta, int start, int middle, int end) {
+        return (int) Math.round(asValueDistribution(delta, (double) start, middle, end));
     }
 
-    public int asValueDistribution(double delta, int start, int end) {
-        return (int) Math.round(asValueDistribution(delta, start, (start + end) / 2., end));
+    public float asValueDistribution(double delta, float start, float middle, float end) {
+        return (float) asValueDistribution(delta, (double)start, middle, end);
     }
 
     public double asValueDistribution(double delta, double start, double middle, double end) {
