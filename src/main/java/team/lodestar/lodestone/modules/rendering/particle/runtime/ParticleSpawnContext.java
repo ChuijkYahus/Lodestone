@@ -10,6 +10,7 @@ public class ParticleSpawnContext {
     public double vz = 0;
 
     public int lifetime = 20;
+    public int delay = 0;
 
     public ParticleSpawnContext position(double[] data) {
         return position(data[0], data[1], data[2]);
@@ -34,7 +35,12 @@ public class ParticleSpawnContext {
         return this;
     }
 
+    public ParticleSpawnContext delay(int delay) {
+        this.delay = delay;
+        return this;
+    }
+
     public ParticleSpawnContext copy() {
-        return new ParticleSpawnContext().position(x, y, z).motion(vx, vy, vz).lifetime(lifetime);
+        return new ParticleSpawnContext().position(x, y, z).motion(vx, vy, vz).lifetime(lifetime).delay(delay);
     }
 }
