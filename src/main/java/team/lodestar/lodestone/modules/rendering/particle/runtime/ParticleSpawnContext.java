@@ -11,6 +11,10 @@ public class ParticleSpawnContext {
 
     public int lifetime = 20;
 
+    public ParticleSpawnContext position(double[] data) {
+        return position(data[0], data[1], data[2]);
+    }
+
     public ParticleSpawnContext position(double x, double y, double z) {
         this.x = x;
         this.y = y;
