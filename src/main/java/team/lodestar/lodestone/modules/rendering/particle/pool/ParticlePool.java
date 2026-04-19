@@ -38,8 +38,6 @@ public class ParticlePool implements ParticleView {
     private long tickCount;
     private final Long2ObjectArrayMap<DelayedParticles> delayedParticles = new Long2ObjectArrayMap<>();
 
-    private final Map<ParticleComponentType<?>, ParticleStorageBinding> bindings = new HashMap<>();
-
     private final List<ParticleStorageBinding> preUpdateBindings = new ArrayList<>();
     private final List<ParticleStorageBinding> postUpdateBindings = new ArrayList<>();
     private final List<ParticleStorageBinding> preRenderBindings = new ArrayList<>();

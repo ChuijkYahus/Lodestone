@@ -14,7 +14,7 @@ public class CubeInfo {
         CORNERS
     }
 
-    private static final RandomSource CUBE_RANDOM = RandomSource.create();
+    private static final ThreadLocal<RandomSource> CUBE_RANDOM = ThreadLocal.withInitial(RandomSource::create);
 
     private final double[] min;
     private final double[] max;
@@ -42,18 +42,20 @@ public class CubeInfo {
     }
 
     public double[] pickPosition() {
-        double x = weight.asValueDistribution(CUBE_RANDOM.nextFloat(), min[0], max[0]);
-        double y = weight.asValueDistribution(CUBE_RANDOM.nextFloat(), min[1], max[1]);
-        double z = weight.asValueDistribution(CUBE_RANDOM.nextFloat(), min[2], max[2]);
+        RandomSource random = CUBE_RANDOM.get();
+
+        double x = weight.asValueDistribution(random.nextFloat(), min[0], max[0]);
+        double y = weight.asValueDistribution(random.nextFloat(), min[1], max[1]);
+        double z = weight.asValueDistribution(random.nextFloat(), min[2], max[2]);
         double[] values = new double[]{x, y, z};
         switch (mode) {
             case SURROUND -> {
-                int axis = CUBE_RANDOM.nextInt(3);
+                int axis = random.nextInt(3);
                 values[axis] = snapToFace(values[axis], min[axis], max[axis]);
             }
             case OUTLINE -> {
-                int axis = CUBE_RANDOM.nextInt(3);
-                int secondAxis = (axis + (CUBE_RANDOM.nextBoolean() ? 1 : 2)) % 3;
+                int axis = random.nextInt(3);
+                int secondAxis = (axis + (random.nextBoolean() ? 1 : 2)) % 3;
                 values[axis] = snapToFace(values[axis], min[axis], max[axis]);
                 values[secondAxis] = snapToFace(values[secondAxis], min[secondAxis], max[secondAxis]);
             }
