@@ -10,7 +10,7 @@ import team.lodestar.lodestone.modules.rendering.particle.visual.ParticleVisualE
 
 import java.util.*;
 
-public  class ParticleSpec {
+public class ParticleSpec {
     private static final Comparator<ParticleComponentType<?>> COMPONENT_PRIORITY = Comparator.comparingInt(ParticleComponentType::priority);
 
     private final Map<ParticleComponentType<?>, Object> componentConfigs;

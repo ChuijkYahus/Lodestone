@@ -80,7 +80,7 @@ public class ScreenshakeInstance {
         if (distance > falloffDistance || falloffDistance == 0) {
             return 0;
         }
-        float eased = positionData.falloffCurve().ease(distance / falloffDistance);
+        float eased = (float) positionData.falloffCurve().ease(distance / falloffDistance);
         float delta = 1 - eased;
         return strength * delta;
     }
@@ -92,15 +92,12 @@ public class ScreenshakeInstance {
         float pct = (progress * coefficient) / (float) duration;
         if (isTrinary()) {
             if (pct >= 0.5f) {
-                float delta = endingCurve.ease((pct - 0.5f)*2);
-                return Mth.lerp(delta, middleStrength, endingStrength);
+                return (float) endingCurve.lerp((pct - 0.5f)*2, middleStrength, endingStrength);
             } else {
-                float delta = startingCurve.ease(pct*2);
-                return Mth.lerp(delta, startingStrength, middleStrength);
+                return (float) startingCurve.lerp(pct*2, startingStrength, middleStrength);
             }
         } else {
-            float delta = startingCurve.ease(pct);
-            return Mth.lerp(delta, startingStrength, middleStrength);
+            return (float) startingCurve.lerp(pct, startingStrength, middleStrength);
         }
     }
 

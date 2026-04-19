@@ -1,5 +1,6 @@
 package team.lodestar.lodestone.modules.rendering.particle.pool;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
 import team.lodestar.lodestone.modules.rendering.particle.builder.ParticleSpec;
 import team.lodestar.lodestone.modules.rendering.particle.component.ParticleComponentType;
 import team.lodestar.lodestone.modules.rendering.particle.component.PostUpdateComponent;
@@ -11,11 +12,9 @@ import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticleStorag
 import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticleView;
 import team.lodestar.lodestone.modules.rendering.particle.storage.ParticleComponentStorage;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ParticlePool implements ParticleView {
@@ -36,6 +35,10 @@ public class ParticlePool implements ParticleView {
     private final Map<Integer, Integer> activeVisualCounts = new ConcurrentHashMap<>();
 
     private final Map<ParticleComponentType<?>, ParticleStorageBinding> bindings = new ConcurrentHashMap<>();
+    private long tickCount;
+    private final Long2ObjectArrayMap<DelayedParticles> delayedParticles = new Long2ObjectArrayMap<>();
+
+    private final Map<ParticleComponentType<?>, ParticleStorageBinding> bindings = new HashMap<>();
 
     private final List<ParticleStorageBinding> preUpdateBindings = new ArrayList<>();
     private final List<ParticleStorageBinding> postUpdateBindings = new ArrayList<>();
@@ -98,6 +101,9 @@ public class ParticlePool implements ParticleView {
         if (count >= capacity) {
             return;
         }
+        if (kidnapDelayedParticles(spec, ctx)) {
+            return;
+        }
 
         int i = count;
 
@@ -142,6 +148,10 @@ public class ParticlePool implements ParticleView {
     }
 
     public void tick(float dt) {
+        tickCount++;
+
+        addReadyDelayedParticles();
+
         for (ParticleStorageBinding binding : preUpdateBindings) {
             if (binding.storage() instanceof PreUpdateComponent c) {
                 c.preUpdate(count, dt, this);
@@ -223,6 +233,31 @@ public class ParticlePool implements ParticleView {
     public void clear() {
         while (count > 0) {
             remove(count - 1);
+        }
+    }
+
+    public boolean kidnapDelayedParticles(ParticleSpec spec, ParticleSpawnContext ctx) {
+        if (ctx.delay > 0) {
+            long time = tickCount + ctx.delay;
+            ctx.delay = 0;
+            if (!delayedParticles.containsKey(time)) {
+                delayedParticles.put(time, new DelayedParticles(spec));
+            }
+            delayedParticles.get(time).tryAdd(spec, ctx);
+            return true;
+        }
+        return false;
+    }
+
+    public void addReadyDelayedParticles() {
+        var delayed = delayedParticles.get(tickCount);
+        if (delayed == null) {
+            return;
+        }
+        delayedParticles.remove(tickCount);
+        var spec = delayed.spec;
+        for (ParticleSpawnContext particle : delayed.particles) {
+            spawn(spec, particle);
         }
     }
 
