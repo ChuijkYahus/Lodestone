@@ -1,10 +1,11 @@
 package team.lodestar.lodestone.modules.rendering.handlers;
 
-import net.minecraft.client.Minecraft;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
 import team.lodestar.lodestone.modules.rendering.particle.builder.ParticleSpec;
 import team.lodestar.lodestone.modules.rendering.particle.pool.ParticlePool;
 import team.lodestar.lodestone.modules.rendering.particle.pool.ParticlePoolGroup;
@@ -15,10 +16,10 @@ import team.lodestar.lodestone.modules.rendering.particle.visual.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-@EventBusSubscriber
+@EventBusSubscriber(value = Dist.CLIENT)
 public class ParticleHandler {
     private static final int DEFAULT_POOL_CAPACITY = 1000;
-    private static final Map<ParticlePoolKey, ParticlePoolGroup> poolGroups = new HashMap<>();
+    private static final Map<ParticlePoolKey, ParticlePoolGroup> poolGroups = new ConcurrentHashMap<>();
     private static final Map<Integer, CompiledParticleVisualSet> compiledVisuals = new ConcurrentHashMap<>();
     private static final ParticleVisualCollector collector = new ParticleVisualCollector();
 
@@ -36,7 +37,7 @@ public class ParticleHandler {
 
     public static void spawn(ParticleSpec spec, ParticleSpawnContext ctx, ParticlePoolGroup group) {
         compiledVisuals.computeIfAbsent(spec.visualId(), id -> new CompiledParticleVisualSet(spec.visuals()));
-        group.claimPool().spawn(spec, ctx);
+        group.claimPool(spec).spawn(spec, ctx);
     }
 
     public static ParticlePoolGroup getPoolGroup(ParticleSpec spec) {
@@ -44,30 +45,41 @@ public class ParticleHandler {
         return poolGroups.computeIfAbsent(key, k -> new ParticlePoolGroup(k, DEFAULT_POOL_CAPACITY));
     }
 
-    @SubscribeEvent
-    public static void onLevelTick(LevelTickEvent.Pre event) {
-        if (!event.getLevel().equals(Minecraft.getInstance().level)) return;
-
+    private static void tick() {
         for (ParticlePoolGroup group : poolGroups.values()) {
             for (ParticlePool pool : group.pools()) {
-                pool.tick(1);  // TODO: Not this, make something better
+                pool.tick(1.0f);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLevelTick(LevelTickEvent.Pre event) {
+        if (event.getLevel().isClientSide()) {
+            tick();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLevelUnload(LevelEvent.Unload event) {
+        if (event.getLevel().isClientSide()) {
+            for (ParticlePoolGroup group : poolGroups.values()) {
+                for (ParticlePool pool : group.pools()) {
+                    pool.clear();
+                }
             }
         }
     }
 
     @SubscribeEvent
     public static void onRenderLevelStage(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
-            return;
-        }
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) return;
 
         collector.clear();
 
         for (ParticlePoolGroup group : poolGroups.values()) {
             for (ParticlePool pool : group.pools()) {
-                if (pool.count() <= 0) {
-                    continue;
-                }
+                if (pool.count() <= 0) continue;
 
                 pool.preRender();
                 for (int visualId : pool.getActiveVisualIds()) {
@@ -80,13 +92,10 @@ public class ParticleHandler {
             }
         }
 
-        if (ParticleHandler.collector.isEmpty()) {
-            return;
-        }
+        if (collector.isEmpty()) return;
 
         Map<ParticleVisualBatchKey, List<ParticleVisualSubmission>> batches = new LinkedHashMap<>();
-
-        for (ParticleVisualSubmission submission : ParticleHandler.collector.submissions()) {
+        for (ParticleVisualSubmission submission : collector.submissions()) {
             ParticleVisualBatchKey key = ParticleVisualBatchKey.fromSubmission(submission);
             batches.computeIfAbsent(key, k -> new ArrayList<>()).add(submission);
         }
@@ -97,7 +106,6 @@ public class ParticleHandler {
             renderer.renderBatch(entry.getKey(), submissions, event.getPartialTick(), event.getModelViewMatrix(), event.getProjectionMatrix());
         }
     }
-
 
     public static Collection<ParticlePoolGroup> allPoolGroups() {
         return Collections.unmodifiableCollection(poolGroups.values());

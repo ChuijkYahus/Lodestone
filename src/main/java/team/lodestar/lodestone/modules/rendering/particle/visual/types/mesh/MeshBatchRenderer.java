@@ -14,7 +14,6 @@ import team.lodestar.lodestone.modules.rendering.particle.visual.ParticleVisualB
 import team.lodestar.lodestone.modules.rendering.particle.visual.ParticleVisualSubmission;
 import team.lodestar.lodestone.modules.rendering.particle.visual.instance.InstanceElement;
 import team.lodestar.lodestone.modules.rendering.particle.visual.instance.InstanceFormat;
-import team.lodestar.lodestone.modules.rendering.particle.visual.types.billboard.BillboardVisualDrawData;
 import team.lodestar.lodestone.systems.rendering.IVertexBuffer;
 
 import java.nio.FloatBuffer;
@@ -37,7 +36,7 @@ public class MeshBatchRenderer implements ParticleVisualBatchRenderer {
 
         int totalInstances = 0;
         for (ParticleVisualSubmission submission : submissions) {
-            BillboardVisualDrawData data = (BillboardVisualDrawData) submission.drawData();
+            MeshVisualDrawData data = (MeshVisualDrawData) submission.drawData();
             totalInstances += data.liveCount();
         }
 
@@ -53,22 +52,24 @@ public class MeshBatchRenderer implements ParticleVisualBatchRenderer {
             int currentInstanceOffset = 0;
 
             for (ParticleVisualSubmission submission : submissions) {
-                BillboardVisualDrawData data = (BillboardVisualDrawData) submission.drawData();
+                MeshVisualDrawData data = (MeshVisualDrawData) submission.drawData();
                 int targetId = data.targetVisualId();
                 int liveCount = data.liveCount();
 
-                int elementOffset = 0;
-                int particlesWritten = 0;
+                synchronized (data.particles()) {
+                    int elementOffset = 0;
+                    int particlesWritten = 0;
 
-                for (InstanceElement element : instanceFormat.elements()) {
-                    particlesWritten = element.writer().write(
-                            data.particles(), liveCount, targetId, pt, camera,
-                            instanceData, currentInstanceOffset, elementOffset, strideFloats
-                    );
-                    elementOffset += element.floatCount();
+                    for (InstanceElement element : instanceFormat.elements()) {
+                        particlesWritten = element.writer().write(
+                                data.particles(), liveCount, targetId, pt, camera,
+                                instanceData, currentInstanceOffset, elementOffset, strideFloats
+                        );
+                        elementOffset += element.floatCount();
+                    }
+
+                    currentInstanceOffset += particlesWritten;
                 }
-
-                currentInstanceOffset += particlesWritten;
             }
 
             instanceData.position(0);

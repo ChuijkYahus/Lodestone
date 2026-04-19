@@ -13,9 +13,9 @@ import team.lodestar.lodestone.modules.rendering.particle.storage.ParticleCompon
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ParticlePool implements ParticleView {
@@ -33,15 +33,16 @@ public class ParticlePool implements ParticleView {
     private final int[] age, lifetime, delay;
 
     private final int[] visualIds;
-    private final Map<Integer, Integer> activeVisualCounts = new HashMap<>();
+    private final Map<Integer, Integer> activeVisualCounts = new ConcurrentHashMap<>();
 
-    private final Map<ParticleComponentType<?>, ParticleStorageBinding> bindings = new HashMap<>();
+    private final Map<ParticleComponentType<?>, ParticleStorageBinding> bindings = new ConcurrentHashMap<>();
 
     private final List<ParticleStorageBinding> preUpdateBindings = new ArrayList<>();
     private final List<ParticleStorageBinding> postUpdateBindings = new ArrayList<>();
     private final List<ParticleStorageBinding> preRenderBindings = new ArrayList<>();
+    private final List<SwapRemoveListener> swapRemoveListeners = new ArrayList<>();
 
-    public ParticlePool(int capacity) {
+    public ParticlePool(int capacity, ParticleSpec spec) {
         this.capacity = capacity;
 
         this.x = new double[capacity];
@@ -66,6 +67,11 @@ public class ParticlePool implements ParticleView {
         this.delay = new int[capacity];
 
         this.visualIds = new int[capacity];
+
+        for (ParticleComponentType<?> type : spec.orderedComponentTypes()) {
+            ParticleComponentStorage storage = type.createStorage(capacity);
+            registerBinding(new ParticleStorageBinding(type, storage));
+        }
     }
 
     public int capacity() {
@@ -84,12 +90,14 @@ public class ParticlePool implements ParticleView {
         return activeVisualCounts.keySet();
     }
 
-    public void spawn(ParticleSpec spec, ParticleSpawnContext ctx) {
+    public synchronized void addSwapRemoveListener(SwapRemoveListener listener) {
+        swapRemoveListeners.add(listener);
+    }
+
+    public synchronized void spawn(ParticleSpec spec, ParticleSpawnContext ctx) {
         if (count >= capacity) {
             return;
         }
-
-        ensureBindings(spec);
 
         int i = count;
 
@@ -114,15 +122,6 @@ public class ParticlePool implements ParticleView {
         }
 
         count++;
-    }
-
-    private void ensureBindings(ParticleSpec spec) {
-        for (ParticleComponentType<?> type : spec.orderedComponentTypes()) {
-            if (!bindings.containsKey(type)) {
-                ParticleComponentStorage storage = type.createStorage(capacity);
-                registerBinding(new ParticleStorageBinding(type, storage));
-            }
-        }
     }
 
     private void registerBinding(ParticleStorageBinding binding) {
@@ -210,6 +209,10 @@ public class ParticlePool implements ParticleView {
 
         for (ParticleStorageBinding binding : bindings.values()) {
             binding.storage().onSwapRemove(index, last, this);
+        }
+
+        for (SwapRemoveListener listener : swapRemoveListeners) {
+            listener.onSwapRemove(index, last);
         }
 
         count--;

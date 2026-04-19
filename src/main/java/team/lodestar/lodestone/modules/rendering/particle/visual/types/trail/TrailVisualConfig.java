@@ -16,7 +16,7 @@ public class TrailVisualConfig {
     }
 
     public TrailVisualConfig maxPoints(int maxPoints) {
-        this.maxPoints = maxPoints;
+        this.maxPoints = Math.max(3, maxPoints);
         return this;
     }
 

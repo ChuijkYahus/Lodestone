@@ -56,18 +56,20 @@ public class BillboardBatchRenderer implements ParticleVisualBatchRenderer {
                 int targetId = data.targetVisualId();
                 int liveCount = data.liveCount();
 
-                int elementOffset = 0;
-                int particlesWritten = 0;
+                synchronized (data.particles()) {
+                    int elementOffset = 0;
+                    int particlesWritten = 0;
 
-                for (InstanceElement element : instanceFormat.elements()) {
-                    particlesWritten = element.writer().write(
-                            data.particles(), liveCount, targetId, pt, camera,
-                            instanceData, currentInstanceOffset, elementOffset, strideFloats
-                    );
-                    elementOffset += element.floatCount();
+                    for (InstanceElement element : instanceFormat.elements()) {
+                        particlesWritten = element.writer().write(
+                                data.particles(), liveCount, targetId, pt, camera,
+                                instanceData, currentInstanceOffset, elementOffset, strideFloats
+                        );
+                        elementOffset += element.floatCount();
+                    }
+
+                    currentInstanceOffset += particlesWritten;
                 }
-
-                currentInstanceOffset += particlesWritten;
             }
 
             instanceData.position(0);

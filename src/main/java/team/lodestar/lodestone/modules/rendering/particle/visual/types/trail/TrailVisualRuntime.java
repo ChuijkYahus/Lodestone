@@ -1,36 +1,32 @@
 package team.lodestar.lodestone.modules.rendering.particle.visual.types.trail;
 
-import com.mojang.blaze3d.vertex.VertexBuffer;
-import net.minecraft.resources.ResourceLocation;
 import team.lodestar.lodestone.modules.rendering.particle.pool.ParticlePool;
 import team.lodestar.lodestone.modules.rendering.particle.visual.*;
 
+import java.util.IdentityHashMap;
+import java.util.Map;
+
 public class TrailVisualRuntime implements ParticleVisualRuntime {
     private final TrailVisualConfig config;
-    private TrailVisualStorage storage;
-    private int initializedCapacity = -1;
-    private int initializedMaxPoints = -1;
+    private final Map<ParticlePool, TrailVisualStorage> storages = new IdentityHashMap<>();
 
     public TrailVisualRuntime(TrailVisualConfig config) {
         this.config = config;
     }
 
-    private void ensureStorage(ParticlePool pool) {
-        int capacity = pool.capacity();
-        int maxPoints = config.maxPoints;
-
-        if (storage == null || initializedCapacity != capacity || initializedMaxPoints != maxPoints) {
-            storage = new TrailVisualStorage(capacity, maxPoints);
-            initializedCapacity = capacity;
-            initializedMaxPoints = maxPoints;
-        }
+    private TrailVisualStorage getStorage(ParticlePool pool) {
+        return storages.computeIfAbsent(pool, p -> {
+            TrailVisualStorage storage = new TrailVisualStorage(p.capacity(), config.maxPoints);
+            p.addSwapRemoveListener(storage::onSwapRemove);
+            return storage;
+        });
     }
 
     @Override
     public void collect(ParticleVisualCollectContext context, ParticlePool pool, int liveCount) {
         if (liveCount <= 0 || config.renderType == null) return;
 
-        ensureStorage(pool);
+        TrailVisualStorage storage = getStorage(pool);
         storage.capture(context.particles(), liveCount, context.targetVisualId());
 
         var drawData = new TrailVisualDrawData(context.particles(), storage, liveCount, context.targetVisualId(), config.width);
