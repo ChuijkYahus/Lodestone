@@ -60,9 +60,7 @@ public class SphereInfo {
 
         double angleDelta = SPHERE_RANDOM.nextDouble();
         double angle = angleWeight.asValueDistribution(
-                angleDelta,
-                minAngle,
-                maxAngle
+                angleDelta, minAngle, maxAngle
         );
 
 
