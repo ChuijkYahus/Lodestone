@@ -9,9 +9,9 @@ public record InstanceFormat(List<InstanceElement> elements, int totalFloats, in
         private final List<InstanceElement> elements = new ArrayList<>();
         private int totalFloats = 0;
 
-        public Builder add(int floatCount, InstanceWriter writer) {
-            elements.add(new InstanceElement(floatCount, writer));
-            totalFloats += floatCount;
+        public Builder add(InstanceWriter writer) {
+            elements.add(new InstanceElement(writer));
+            totalFloats += writer.floatCount();
             return this;
         }
 

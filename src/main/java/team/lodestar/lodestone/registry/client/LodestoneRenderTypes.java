@@ -3,20 +3,16 @@ package team.lodestar.lodestone.registry.client;
 import com.mojang.blaze3d.platform.*;
 import com.mojang.blaze3d.systems.*;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.logging.log4j.util.*;
 import team.lodestar.lodestone.*;
 import team.lodestar.lodestone.systems.rendering.*;
 import team.lodestar.lodestone.systems.rendering.rendeertype.*;
 import team.lodestar.lodestone.systems.rendering.shader.ShaderHolder;
 
 import javax.annotation.*;
-import java.util.*;
 import java.util.function.*;
-import java.util.function.Supplier;
 
 import static com.mojang.blaze3d.vertex.DefaultVertexFormat.*;
 import static com.mojang.blaze3d.vertex.VertexFormat.Mode.*;
@@ -148,6 +144,13 @@ public class LodestoneRenderTypes extends RenderStateShard {
             .setShaderState(LodestoneShaders.DEBUG_TRAIL.getShard())
             .setTextureState(new TextureStateShard(LodestoneLib.lodestonePath("textures/painting/lefunny.png"), false, false))
             .setTransparencyState(StateShards.NORMAL_TRANSPARENCY)
+            .setCullState(NO_CULL)
+            .createCompositeState(false)
+    );
+
+    public static final RenderType DEBUG_POS_TEX_MAT = RenderType.create("pos_tex", POSITION_TEX, QUADS, 256, RenderType.CompositeState.builder()
+            .setShaderState(LodestoneShaders.DEBUG_POS_TEX_MAT.getShard())
+            .setTextureState(new TextureStateShard(LodestoneLib.lodestonePath("textures/painting/lefunny.png"), false, false))
             .setCullState(NO_CULL)
             .createCompositeState(false)
     );

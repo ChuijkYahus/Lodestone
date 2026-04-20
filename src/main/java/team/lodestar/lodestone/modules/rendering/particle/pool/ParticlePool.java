@@ -27,6 +27,7 @@ public class ParticlePool implements ParticleView {
     private final double[] vx, vy, vz;
     private final float[] r, g, b, a;
 
+    private final float[] xRot, yRot, zRot;
     private final float[] xScale, yScale, zScale;
 
     private final int[] age, lifetime, delay;
@@ -58,6 +59,10 @@ public class ParticlePool implements ParticleView {
         this.g = new float[capacity];
         this.b = new float[capacity];
         this.a = new float[capacity];
+
+        this.xRot = new float[capacity];
+        this.yRot = new float[capacity];
+        this.zRot = new float[capacity];
 
         this.xScale = new float[capacity];
         this.yScale = new float[capacity];
@@ -112,6 +117,19 @@ public class ParticlePool implements ParticleView {
         vx[i] = ctx.vx;
         vy[i] = ctx.vy;
         vz[i] = ctx.vz;
+
+        r[i] = ctx.r;
+        g[i] = ctx.g;
+        b[i] = ctx.b;
+        a[i] = ctx.a;
+
+        xRot[i] = ctx.xRot;
+        yRot[i] = ctx.yRot;
+        zRot[i] = ctx.zRot;
+
+        xScale[i] = ctx.xScale;
+        yScale[i] = ctx.yScale;
+        zScale[i] = ctx.zScale;
 
         age[i] = 0;
         lifetime[i] = ctx.lifetime;
@@ -208,6 +226,14 @@ public class ParticlePool implements ParticleView {
             g[index] = g[last];
             b[index] = b[last];
             a[index] = a[last];
+
+            xRot[index] = xRot[last];
+            yRot[index] = yRot[last];
+            zRot[index] = zRot[last];
+
+            xScale[index] = xScale[last];
+            yScale[index] = yScale[last];
+            zScale[index] = zScale[last];
 
             age[index] = age[last];
             lifetime[index] = lifetime[last];
@@ -307,6 +333,21 @@ public class ParticlePool implements ParticleView {
     @Override
     public float[] a() {
         return a;
+    }
+
+    @Override
+    public float[] xRot() {
+        return xRot;
+    }
+
+    @Override
+    public float[] yRot() {
+        return yRot;
+    }
+
+    @Override
+    public float[] zRot() {
+        return zRot;
     }
 
     @Override
