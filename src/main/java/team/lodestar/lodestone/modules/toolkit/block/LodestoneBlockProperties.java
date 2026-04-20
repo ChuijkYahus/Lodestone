@@ -105,7 +105,7 @@ public class LodestoneBlockProperties extends BlockBehaviour.Properties {
     }
 
 
-    public BlockBehaviour.Properties offsetFunction(BlockBehaviour.OffsetFunction offsetFunction) {
+    public LodestoneBlockProperties offsetFunction(BlockBehaviour.OffsetFunction offsetFunction) {
         this.offsetFunction = offsetFunction;
         return this;
     }
