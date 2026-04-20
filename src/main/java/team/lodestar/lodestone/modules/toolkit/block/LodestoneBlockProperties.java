@@ -3,6 +3,7 @@ package team.lodestar.lodestone.modules.toolkit.block;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.*;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlag;
 import net.minecraft.world.item.DyeColor;
@@ -14,6 +15,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.*;
 import net.neoforged.neoforge.data.loading.DatagenModLoader;
 import org.jetbrains.annotations.NotNull;
 import team.lodestar.lodestone.modules.core.datagen.DatagenOnly;
@@ -100,6 +102,18 @@ public class LodestoneBlockProperties extends BlockBehaviour.Properties {
         }
 
         return copy;
+    }
+
+
+    public BlockBehaviour.Properties offsetFunction(BlockBehaviour.OffsetFunction offsetFunction) {
+        this.offsetFunction = offsetFunction;
+        return this;
+    }
+
+    @Override
+    @NotNull
+    public LodestoneBlockProperties offsetType(@NotNull BlockBehaviour.OffsetType pOffsetType) {
+        return (LodestoneBlockProperties) super.offsetType(pOffsetType);
     }
 
     @DatagenOnly
@@ -391,12 +405,6 @@ public class LodestoneBlockProperties extends BlockBehaviour.Properties {
     @NotNull
     public LodestoneBlockProperties pushReaction(@NotNull PushReaction p_278265_) {
         return (LodestoneBlockProperties) super.pushReaction(p_278265_);
-    }
-
-    @Override
-    @NotNull
-    public LodestoneBlockProperties offsetType(@NotNull BlockBehaviour.OffsetType pOffsetType) {
-        return (LodestoneBlockProperties) super.offsetType(pOffsetType);
     }
 
     @Override

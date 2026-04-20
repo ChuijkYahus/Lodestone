@@ -26,8 +26,12 @@ public class SphereInfo {
         this.max = new double[]{xMax, yMax, zMax};
     }
 
-    public SphereInfo weighedAngle(Easing angleWeight, int angleSections) {
+    public SphereInfo weighedAngle(Easing angleWeight) {
         this.angleWeight = angleWeight;
+        return this;
+    }
+
+    public SphereInfo sectioned(int angleSections) {
         this.angleSections = angleSections;
         return this;
     }
@@ -54,11 +58,14 @@ public class SphereInfo {
             maxAngle = sector + half;
         }
 
+        double angleDelta = SPHERE_RANDOM.nextDouble();
         double angle = angleWeight.asValueDistribution(
-                SPHERE_RANDOM.nextDouble(),
+                angleDelta,
                 minAngle,
                 maxAngle
         );
+
+
 
         double pitch = SPHERE_RANDOM.nextDouble() * 6.28 - (3.14);
         double cosPitch = Math.cos(pitch);
