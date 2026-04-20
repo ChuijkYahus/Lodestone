@@ -8,6 +8,8 @@ import team.lodestar.lodestone.modules.core.easing.Easing;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticleSpawnContext;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.profile.ParticleSpawnProfile;
 
+import java.util.function.*;
+
 public class SphericalDistributionProfile implements ParticleSpawnProfile {
 
     private final SphereInfo info;
@@ -53,29 +55,10 @@ public class SphericalDistributionProfile implements ParticleSpawnProfile {
         this.info = new SphereInfo(xMin, yMin, zMin, xMax, yMax, zMax);
     }
 
-    public SphericalDistributionProfile weighedAngle(Easing weight) {
-        return weighedAngle(weight, 1);
-    }
-
-    public SphericalDistributionProfile weighedAngle(Easing weight, int angleDivisions) {
-        info.weighedAngle(weight, angleDivisions);
+    public SphericalDistributionProfile modify(Consumer<SphereInfo> modifier) {
+        modifier.accept(info);
         return this;
     }
-
-    public SphericalDistributionProfile weighedDistance(Easing weight) {
-        info.weighedDistance(weight);
-        return this;
-    }
-
-    public SphericalDistributionProfile outline() {
-        return mode(SphereInfo.PlacementMode.OUTLINE);
-    }
-
-    public SphericalDistributionProfile mode(SphereInfo.PlacementMode mode) {
-        info.mode(mode);
-        return this;
-    }
-
 
     @Override
     public void apply(ParticleSpawnContext context, int index, int count) {

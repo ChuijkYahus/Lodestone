@@ -1,6 +1,5 @@
 package team.lodestar.lodestone.modules.rendering.particle.runtime.profile.cube;
 
-import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 import team.lodestar.lodestone.modules.core.easing.Easing;
 
@@ -21,15 +20,15 @@ public class CubeInfo {
     private final double[] max;
 
     private PlacementMode mode = PlacementMode.DISTRIBUTE;
-    private Easing weight = Easing.LINEAR;
+    private Easing positionEasing = Easing.LINEAR;
 
     public CubeInfo(double xMin, double yMin, double zMin, double xMax, double yMax, double zMax) {
         this.min = new double[]{xMin, yMin, zMin};
         this.max = new double[]{xMax, yMax, zMax};
     }
 
-    public CubeInfo weighed(Easing weight) {
-        this.weight = Easing.EXPO_IN;
+    public CubeInfo withWeightedPosition(Easing positionEasing) {
+        this.positionEasing = positionEasing;
         return this;
     }
 
@@ -43,9 +42,9 @@ public class CubeInfo {
     }
 
     public double[] pickPosition() {
-        double x = weight.asValueDistribution(CUBE_RANDOM.nextFloat(), min[0], max[0]);
-        double y = weight.asValueDistribution(CUBE_RANDOM.nextFloat(), min[1], max[1]);
-        double z = weight.asValueDistribution(CUBE_RANDOM.nextFloat(), min[2], max[2]);
+        double x = positionEasing.asValueDistribution(CUBE_RANDOM.nextFloat(), min[0], max[0]);
+        double y = positionEasing.asValueDistribution(CUBE_RANDOM.nextFloat(), min[1], max[1]);
+        double z = positionEasing.asValueDistribution(CUBE_RANDOM.nextFloat(), min[2], max[2]);
         double[] values = new double[]{x, y, z};
         switch (mode) {
             case SURROUND -> {
