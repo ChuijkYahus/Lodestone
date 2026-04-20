@@ -54,7 +54,7 @@ public class CuboidDistributionProfile implements ParticleSpawnProfile {
     }
 
     public CuboidDistributionProfile weighed(Easing weight) {
-        info.weighed(weight);
+        info.withWeightedPosition(weight);
         return this;
     }
 
