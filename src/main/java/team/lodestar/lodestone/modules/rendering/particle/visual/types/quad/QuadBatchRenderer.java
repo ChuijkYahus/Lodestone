@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.modules.rendering.particle.visual.types.billboard;
+package team.lodestar.lodestone.modules.rendering.particle.visual.types.quad;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexBuffer;
@@ -23,8 +23,8 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public class BillboardBatchRenderer implements ParticleVisualBatchRenderer {
-    public static final BillboardBatchRenderer INSTANCE = new BillboardBatchRenderer();
+public class QuadBatchRenderer implements ParticleVisualBatchRenderer {
+    public static final QuadBatchRenderer INSTANCE = new QuadBatchRenderer();
 
     private int instanceVbo = -1;
 
@@ -38,7 +38,7 @@ public class BillboardBatchRenderer implements ParticleVisualBatchRenderer {
 
         int estimatedInstances = 0;
         for (ParticleVisualSubmission submission : submissions) {
-            BillboardVisualDrawData data = (BillboardVisualDrawData) submission.drawData();
+            QuadVisualDrawData data = (QuadVisualDrawData) submission.drawData();
             estimatedInstances += data.liveCount();
         }
 
@@ -54,7 +54,7 @@ public class BillboardBatchRenderer implements ParticleVisualBatchRenderer {
             int currentInstanceOffset = 0;
 
             for (ParticleVisualSubmission submission : submissions) {
-                BillboardVisualDrawData data = (BillboardVisualDrawData) submission.drawData();
+                QuadVisualDrawData data = (QuadVisualDrawData) submission.drawData();
                 int targetId = data.targetVisualId();
                 int liveCount = data.liveCount();
 
@@ -85,9 +85,6 @@ public class BillboardBatchRenderer implements ParticleVisualBatchRenderer {
             renderType.setupRenderState();
             quadBuffer.bind();
             ShaderInstance shader = RenderSystem.getShader();
-
-            if (shader.safeGetUniform("CamUp") != null) shader.safeGetUniform("CamUp").set(camera.getUpVector());
-            if (shader.safeGetUniform("CamLeft") != null) shader.safeGetUniform("CamLeft").set(camera.getLeftVector());
 
             glBindBuffer(GL_ARRAY_BUFFER, instanceVbo);
 

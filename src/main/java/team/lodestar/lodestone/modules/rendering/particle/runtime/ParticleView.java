@@ -15,6 +15,10 @@ public interface ParticleView {
     float[] b();
     float[] a();
 
+    float[] xRot();
+    float[] yRot();
+    float[] zRot();
+
     float[] xScale();
     float[] yScale();
     float[] zScale();

@@ -9,6 +9,19 @@ public class ParticleSpawnContext {
     public double vy = 0;
     public double vz = 0;
 
+    public float r = 1.0f;
+    public float g = 1.0f;
+    public float b = 1.0f;
+    public float a = 1.0f;
+
+    public float xRot = 0;
+    public float yRot = 0;
+    public float zRot = 0;
+
+    public float xScale = 1.0f;
+    public float yScale = 1.0f;
+    public float zScale = 1.0f;
+
     public int lifetime = 20;
     public int delay = 0;
 
@@ -27,6 +40,28 @@ public class ParticleSpawnContext {
         this.vx = vx;
         this.vy = vy;
         this.vz = vz;
+        return this;
+    }
+
+    public ParticleSpawnContext color(float r, float g, float b, float a) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+        return this;
+    }
+
+    public ParticleSpawnContext rotation(float xRot, float yRot, float zRot) {
+        this.xRot = xRot;
+        this.yRot = yRot;
+        this.zRot = zRot;
+        return this;
+    }
+
+    public ParticleSpawnContext scale(float xScale, float yScale, float zScale) {
+        this.xScale = xScale;
+        this.yScale = yScale;
+        this.zScale = zScale;
         return this;
     }
 

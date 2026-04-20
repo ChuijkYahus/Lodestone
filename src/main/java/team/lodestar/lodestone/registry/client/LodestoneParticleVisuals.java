@@ -5,8 +5,10 @@ import team.lodestar.lodestone.LodestoneLib;
 import team.lodestar.lodestone.modules.rendering.particle.visual.ParticleVisualType;
 import team.lodestar.lodestone.modules.rendering.particle.visual.types.billboard.BillboardVisualConfig;
 import team.lodestar.lodestone.modules.rendering.particle.visual.types.billboard.BillboardVisualRuntime;
+import team.lodestar.lodestone.modules.rendering.particle.visual.types.quad.QuadVisualConfig;
 import team.lodestar.lodestone.modules.rendering.particle.visual.types.mesh.MeshVisualConfig;
 import team.lodestar.lodestone.modules.rendering.particle.visual.types.mesh.MeshVisualRuntime;
+import team.lodestar.lodestone.modules.rendering.particle.visual.types.quad.QuadVisualRuntime;
 import team.lodestar.lodestone.modules.rendering.particle.visual.types.trail.TrailVisualConfig;
 import team.lodestar.lodestone.modules.rendering.particle.visual.types.trail.TrailVisualRuntime;
 
@@ -36,6 +38,14 @@ public class LodestoneParticleVisuals {
             ParticleVisualType.<MeshVisualConfig>builder(LodestoneLib.lodestonePath("mesh"))
                     .configFactory(MeshVisualConfig::new)
                     .runtimeFactory(MeshVisualRuntime::new)
+                    .renderStage(RenderLevelStageEvent.Stage.AFTER_PARTICLES)
+                    .build()
+    );
+
+    public static final ParticleVisualType<QuadVisualConfig> QUAD = LodestoneParticleVisuals.register(
+            ParticleVisualType.<QuadVisualConfig>builder(LodestoneLib.lodestonePath("quad"))
+                    .configFactory(QuadVisualConfig::new)
+                    .runtimeFactory(QuadVisualRuntime::new)
                     .renderStage(RenderLevelStageEvent.Stage.AFTER_PARTICLES)
                     .build()
     );
