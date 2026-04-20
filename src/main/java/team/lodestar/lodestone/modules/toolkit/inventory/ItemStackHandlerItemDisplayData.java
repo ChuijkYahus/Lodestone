@@ -69,6 +69,9 @@ public class ItemStackHandlerItemDisplayData implements LodestoneBlockEntityTick
     }
 
     public Optional<ItemDisplayDataEntry> getEntry(int i) {
+        if (dataEntries.length < i+1) {
+            return Optional.empty();
+        }
         return Optional.ofNullable(dataEntries[i]);
     }
 
