@@ -13,12 +13,12 @@ public abstract class LodestoneBlockEntityContainer<T extends LodestoneBlockEnti
 
     public final T blockEntity;
 
-    public LodestoneBlockEntityContainer(MenuType<?> menuType, int containerId, Inventory inv, RegistryFriendlyByteBuf data) {
-        this(menuType, containerId, inv, ContainerLevelAccess.create(inv.player.level(), data.readBlockPos()));
+    public LodestoneBlockEntityContainer(MenuType<?> menuType, int containerId, Inventory playerInventory, RegistryFriendlyByteBuf data) {
+        this(menuType, containerId, playerInventory, ContainerLevelAccess.create(playerInventory.player.level(), data.readBlockPos()));
     }
 
-    public LodestoneBlockEntityContainer(MenuType<?> menuType, int containerId, Inventory playerInv) {
-        this(menuType, containerId, playerInv, ContainerLevelAccess.NULL);
+    public LodestoneBlockEntityContainer(MenuType<?> menuType, int containerId, Inventory playerInventory) {
+        this(menuType, containerId, playerInventory, ContainerLevelAccess.NULL);
     }
 
     public LodestoneBlockEntityContainer(MenuType<?> menuType, int containerId, Inventory playerInventory, ContainerLevelAccess access) {
@@ -74,7 +74,7 @@ public abstract class LodestoneBlockEntityContainer<T extends LodestoneBlockEnti
                     return ItemStack.EMPTY;
                 }
             }
-            
+
             if (clickedItem.isEmpty()) {
                 slot.set(ItemStack.EMPTY);
                 slot.onTake(playerIn, clickedItem);
