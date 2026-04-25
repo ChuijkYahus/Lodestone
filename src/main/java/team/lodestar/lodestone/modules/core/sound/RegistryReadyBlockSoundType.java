@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.core.sound;
+package team.lodestar.lodestone.modules.core.sound;
 
 import net.minecraft.resources.*;
 import net.minecraft.sounds.*;
