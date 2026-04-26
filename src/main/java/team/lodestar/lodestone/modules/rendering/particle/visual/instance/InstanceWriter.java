@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface InstanceWriter {
 
-    int write(ParticleView particles, int liveCount, int targetId, float partialTick, Camera camera, FloatBuffer buffer, int startInstance, int elementOffset, int strideFloats);
+    int write(ParticleView particles, int liveCount, int targetId, float partialTicks, Camera camera, FloatBuffer buffer, int startInstance, int elementOffset, int strideFloats);
 
     int floatCount();
 

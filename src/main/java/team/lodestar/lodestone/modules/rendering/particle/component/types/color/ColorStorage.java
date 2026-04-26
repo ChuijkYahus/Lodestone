@@ -32,7 +32,7 @@ public class ColorStorage implements ParticleComponentStorage<ColorConfig>, PreR
     }
 
     @Override
-    public void preRender(int liveCount, ParticleView particles) {
+    public void preRender(int liveCount, ParticleView particles, float partialTicks) {
         int[] age = particles.age();
         int[] lifetime = particles.lifetime();
 

@@ -37,10 +37,10 @@ public class ParticleEmitterHandler {
     }
 
     public interface ItemParticleSupplier {
-        default void spawnEarlyParticles(ScreenParticleHolder target, Level level, float partialTick, ItemStack stack, float x, float y) {
+        default void spawnEarlyParticles(ScreenParticleHolder target, Level level, float partialTicks, ItemStack stack, float x, float y) {
         }
 
-        default void spawnLateParticles(ScreenParticleHolder target, Level level, float partialTick, ItemStack stack, float x, float y) {
+        default void spawnLateParticles(ScreenParticleHolder target, Level level, float partialTicks, ItemStack stack, float x, float y) {
         }
     }
 }

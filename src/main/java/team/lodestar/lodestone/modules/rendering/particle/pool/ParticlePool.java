@@ -1,6 +1,7 @@
 package team.lodestar.lodestone.modules.rendering.particle.pool;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
+import net.minecraft.client.*;
 import team.lodestar.lodestone.modules.rendering.particle.builder.ParticleSpec;
 import team.lodestar.lodestone.modules.rendering.particle.component.ParticleComponentType;
 import team.lodestar.lodestone.modules.rendering.particle.component.PostUpdateComponent;
@@ -204,10 +205,10 @@ public class ParticlePool implements ParticleView {
         }
     }
 
-    public void preRender() {
+    public void preRender(float partialTicks) {
         for (ParticleStorageBinding binding : preRenderBindings) {
             if (binding.storage() instanceof PreRenderComponent c) {
-                c.preRender(count, this);
+                c.preRender(count, this, partialTicks);
             }
         }
     }
