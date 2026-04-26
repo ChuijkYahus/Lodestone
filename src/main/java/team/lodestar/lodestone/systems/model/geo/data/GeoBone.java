@@ -151,6 +151,23 @@ public class GeoBone implements IRenderableModelPart<GeoBone> {
         }
     }
 
+    public void renderCustomParts(PoseStack poseStack, VertexConsumer vertexConsumer, VertexFormat vertexFormat, VertexFormat.Mode mode) {
+        if (this.isHidden) return;
+
+        poseStack.pushPose();
+        this.translateAndRotate(poseStack);
+
+        for (IRenderableModelPart<?> customPart : this.customParts) {
+            customPart.render(poseStack, vertexConsumer, vertexFormat, mode);
+        }
+
+        for (GeoBone child : this.children.values()) {
+            child.renderCustomParts(poseStack, vertexConsumer, vertexFormat, mode);
+        }
+
+        poseStack.popPose();
+    }
+
     public void translateAndRotate(PoseStack poseStack) {
         float px = -this.position.x / 16.0F;
         float py = this.position.y / 16.0F;
