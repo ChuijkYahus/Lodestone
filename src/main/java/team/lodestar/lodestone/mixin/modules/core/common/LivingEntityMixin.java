@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import team.lodestar.lodestone.core.sound.ExtendedSoundType;
+import team.lodestar.lodestone.modules.core.sound.*;
 
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {

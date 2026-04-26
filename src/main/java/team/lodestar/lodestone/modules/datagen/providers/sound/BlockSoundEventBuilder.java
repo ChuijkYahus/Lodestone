@@ -2,7 +2,7 @@ package team.lodestar.lodestone.modules.datagen.providers.sound;
 
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.common.data.SoundDefinition;
-import team.lodestar.lodestone.core.sound.RegistryReadyBlockSoundType;
+import team.lodestar.lodestone.modules.core.sound.*;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;

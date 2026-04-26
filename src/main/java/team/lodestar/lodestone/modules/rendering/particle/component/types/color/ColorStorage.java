@@ -2,12 +2,13 @@ package team.lodestar.lodestone.modules.rendering.particle.component.types.color
 
 import team.lodestar.lodestone.modules.core.easing.Easing;
 import team.lodestar.lodestone.modules.rendering.particle.component.PreRenderComponent;
+import team.lodestar.lodestone.modules.rendering.particle.component.types.*;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticleSpawnContext;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticleView;
 import team.lodestar.lodestone.modules.rendering.particle.storage.ParticleComponentStorage;
 
 public class ColorStorage implements ParticleComponentStorage<ColorConfig>, PreRenderComponent {
-    private final ColorMode[] mode;
+    private final ConstantOrLerp[] mode;
 
     private final float[] r0, g0, b0, a0;
     private final float[] r1, g1, b1, a1;
@@ -15,7 +16,7 @@ public class ColorStorage implements ParticleComponentStorage<ColorConfig>, PreR
     private final Easing[] easing;
 
     public ColorStorage(int capacity) {
-        this.mode = new ColorMode[capacity];
+        this.mode = new ConstantOrLerp[capacity];
 
         this.r0 = new float[capacity];
         this.g0 = new float[capacity];
@@ -38,14 +39,14 @@ public class ColorStorage implements ParticleComponentStorage<ColorConfig>, PreR
         for (int i = 0; i < liveCount; i++) {
 
             switch (mode[i]) {
-                case ColorMode.CONSTANT -> {
+                case ConstantOrLerp.CONSTANT -> {
                     particles.r()[i] = r0[i];
                     particles.g()[i] = g0[i];
                     particles.b()[i] = b0[i];
                     particles.a()[i] = a0[i];
                 }
 
-                case ColorMode.LERP -> {
+                case ConstantOrLerp.LERP -> {
                     float t = lifetime[i] <= 0 ? 1.0f : (float) age[i] / (float) lifetime[i];
                     t = easing[i].ease(t);
 
@@ -69,7 +70,7 @@ public class ColorStorage implements ParticleComponentStorage<ColorConfig>, PreR
         mode[particleIndex] = config.mode;
 
         switch (config.mode) {
-            case ColorMode.CONSTANT -> {
+            case ConstantOrLerp.CONSTANT -> {
                 r0[particleIndex] = config.r0;
                 g0[particleIndex] = config.g0;
                 b0[particleIndex] = config.b0;
@@ -81,7 +82,7 @@ public class ColorStorage implements ParticleComponentStorage<ColorConfig>, PreR
                 particles.a()[particleIndex] = config.a0;
             }
 
-            case ColorMode.LERP -> {
+            case ConstantOrLerp.LERP -> {
                 r0[particleIndex] = config.r0;
                 g0[particleIndex] = config.g0;
                 b0[particleIndex] = config.b0;

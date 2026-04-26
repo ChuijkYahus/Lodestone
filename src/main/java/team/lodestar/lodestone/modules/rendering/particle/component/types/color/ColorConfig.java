@@ -1,12 +1,13 @@
 package team.lodestar.lodestone.modules.rendering.particle.component.types.color;
 
 import team.lodestar.lodestone.modules.core.easing.Easing;
+import team.lodestar.lodestone.modules.rendering.particle.component.types.*;
 
 import java.awt.*;
 import java.util.Objects;
 
 public class ColorConfig {
-    protected ColorMode mode = ColorMode.CONSTANT;
+    protected ConstantOrLerp mode = ConstantOrLerp.CONSTANT;
 
     protected float r0 = 1.0f;
     protected float g0 = 1.0f;
@@ -29,7 +30,7 @@ public class ColorConfig {
     }
 
     public ColorConfig constant(float r, float g, float b, float a) {
-        this.mode = ColorMode.CONSTANT;
+        this.mode = ConstantOrLerp.CONSTANT;
         this.r0 = r;
         this.g0 = g;
         this.b0 = b;
@@ -46,7 +47,7 @@ public class ColorConfig {
     }
 
     public ColorConfig interpolate(float r0, float g0, float b0, float a0, float r1, float g1, float b1, float a1, Easing easing) {
-        this.mode = ColorMode.LERP;
+        this.mode = ConstantOrLerp.LERP;
         this.r0 = r0;
         this.g0 = g0;
         this.b0 = b0;

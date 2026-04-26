@@ -15,6 +15,8 @@ public interface ParticleView {
     float[] b();
     float[] a();
 
+    float[] spin();
+
     float[] xRot();
     float[] yRot();
     float[] zRot();
@@ -25,7 +27,6 @@ public interface ParticleView {
 
     int[] age();
     int[] lifetime();
-    int[] delay();
 
     int[] visualIds();
 }

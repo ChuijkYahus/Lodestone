@@ -27,10 +27,12 @@ public class ParticlePool implements ParticleView {
     private final double[] vx, vy, vz;
     private final float[] r, g, b, a;
 
+    private final float[] spin;
+
     private final float[] xRot, yRot, zRot;
     private final float[] xScale, yScale, zScale;
 
-    private final int[] age, lifetime, delay;
+    private final int[] age, lifetime;
 
     private final int[] visualIds;
     private final Map<Integer, Integer> activeVisualCounts = new ConcurrentHashMap<>();
@@ -60,6 +62,8 @@ public class ParticlePool implements ParticleView {
         this.b = new float[capacity];
         this.a = new float[capacity];
 
+        this.spin = new float[capacity];
+
         this.xRot = new float[capacity];
         this.yRot = new float[capacity];
         this.zRot = new float[capacity];
@@ -70,7 +74,6 @@ public class ParticlePool implements ParticleView {
 
         this.age = new int[capacity];
         this.lifetime = new int[capacity];
-        this.delay = new int[capacity];
 
         this.visualIds = new int[capacity];
 
@@ -350,6 +353,12 @@ public class ParticlePool implements ParticleView {
         return zRot;
     }
 
+
+    @Override
+    public float[] spin() {
+        return spin;
+    }
+
     @Override
     public float[] xScale() {
         return xScale;
@@ -373,11 +382,6 @@ public class ParticlePool implements ParticleView {
     @Override
     public int[] lifetime() {
         return lifetime;
-    }
-
-    @Override
-    public int[] delay() {
-        return delay;
     }
 
     @Override

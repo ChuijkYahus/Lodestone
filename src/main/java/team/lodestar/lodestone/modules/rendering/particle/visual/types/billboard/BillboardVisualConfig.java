@@ -1,13 +1,21 @@
 package team.lodestar.lodestone.modules.rendering.particle.visual.types.billboard;
 
 import net.minecraft.client.renderer.RenderType;
-import team.lodestar.lodestone.modules.rendering.particle.visual.instance.InstanceFormat;
+import team.lodestar.lodestone.modules.rendering.particle.visual.instance.*;
 
 import java.util.Objects;
 
 public class BillboardVisualConfig {
+
+
+    public static final InstanceFormat DEFAULT_FORMAT = new InstanceFormat.Builder()
+            .add(StandardInstanceWriters.POSITION)
+            .add(StandardInstanceWriters.SCALE)
+            .add(StandardInstanceWriters.COLOR)
+            .build();
+
     protected RenderType renderType;
-    protected InstanceFormat instanceFormat;
+    protected InstanceFormat instanceFormat = DEFAULT_FORMAT;
 
     public BillboardVisualConfig renderType(RenderType renderType) {
         this.renderType = renderType;

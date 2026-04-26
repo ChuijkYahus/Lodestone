@@ -8,6 +8,7 @@ import team.lodestar.lodestone.modules.rendering.particle.component.types.boids.
 import team.lodestar.lodestone.modules.rendering.particle.component.types.boids.BoidsStorage;
 import team.lodestar.lodestone.modules.rendering.particle.component.types.scale.ScaleConfig;
 import team.lodestar.lodestone.modules.rendering.particle.component.types.scale.ScaleStorage;
+import team.lodestar.lodestone.modules.rendering.particle.component.types.spin.*;
 import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticlePhase;
 import team.lodestar.lodestone.modules.rendering.particle.component.ParticleComponentType;
 import team.lodestar.lodestone.modules.rendering.particle.component.types.color.ColorConfig;
@@ -35,6 +36,15 @@ public class LodestoneParticleComponents {
                     .storageFactory(ScaleStorage::new)
                     .phases(ParticlePhase.PRE_RENDER)
                     .priority(1)
+                    .build()
+    );
+
+    public static final ParticleComponentType<SpinConfig> SPIN = LodestoneParticleComponents.register(
+            ParticleComponentType.<SpinConfig>builder(LodestoneLib.lodestonePath("spin"))
+                    .configFactory(SpinConfig::new)
+                    .storageFactory(SpinStorage::new)
+                    .phases(ParticlePhase.PRE_RENDER)
+                    .priority(2)
                     .build()
     );
 
