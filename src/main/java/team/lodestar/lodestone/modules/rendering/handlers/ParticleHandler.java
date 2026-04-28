@@ -77,11 +77,12 @@ public class ParticleHandler {
 
         collector.clear();
 
+        float partialTicks = event.getPartialTick().getGameTimeDeltaPartialTick(false);
         for (ParticlePoolGroup group : poolGroups.values()) {
             for (ParticlePool pool : group.pools()) {
                 if (pool.count() <= 0) continue;
 
-                pool.preRender();
+                pool.preRender(partialTicks);
                 for (int visualId : pool.getActiveVisualIds()) {
                     CompiledParticleVisualSet visuals = compiledVisuals.get(visualId);
                     if (visuals == null || visuals.isEmpty()) continue;

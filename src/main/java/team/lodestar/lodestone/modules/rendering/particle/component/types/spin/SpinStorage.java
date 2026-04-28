@@ -12,6 +12,6 @@ public class SpinStorage extends TrinaryEasedValuesStorage<SpinConfig> implement
 
     @Override
     protected void acceptValue(int liveCount, ParticleView particles, int particleIndex, float value) {
-//        particles.spin()[particleIndex] = value;
+        particles.spin()[particleIndex] += value;
     }
 }

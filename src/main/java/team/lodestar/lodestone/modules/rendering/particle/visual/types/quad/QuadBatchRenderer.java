@@ -29,7 +29,7 @@ public class QuadBatchRenderer implements ParticleVisualBatchRenderer {
     private int instanceVbo = -1;
 
     @Override
-    public void renderBatch(ParticleVisualBatchKey key, List<ParticleVisualSubmission> submissions, DeltaTracker partialTick, Matrix4f viewMat, Matrix4f projMat) {
+    public void renderBatch(ParticleVisualBatchKey key, List<ParticleVisualSubmission> submissions, DeltaTracker partialTicks, Matrix4f viewMat, Matrix4f projMat) {
         RenderType renderType = key.renderType();
         VertexBuffer quadBuffer = key.vertexBuffer();
         InstanceFormat instanceFormat = key.instanceFormat();
@@ -45,7 +45,7 @@ public class QuadBatchRenderer implements ParticleVisualBatchRenderer {
         if (estimatedInstances == 0) return;
 
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        float pt = partialTick.getGameTimeDeltaPartialTick(false);
+        float pt = partialTicks.getGameTimeDeltaPartialTick(false);
         int strideFloats = instanceFormat.totalFloats();
 
         FloatBuffer instanceData = MemoryUtil.memAllocFloat(estimatedInstances * strideFloats);

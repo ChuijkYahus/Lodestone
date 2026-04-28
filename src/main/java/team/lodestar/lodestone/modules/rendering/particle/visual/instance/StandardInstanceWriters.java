@@ -26,9 +26,9 @@ public class StandardInstanceWriters {
         }
 
         @Override
-        public int write(ParticleView particles, int liveCount, int targetId, float partialTick, Camera camera, FloatBuffer buffer, int startInstance, int elementOffset, int strideFloats) {
+        public int write(ParticleView particles, int liveCount, int targetId, float partialTicks, Camera camera, FloatBuffer buffer, int startInstance, int elementOffset, int strideFloats) {
             float dt = 1.0f; // TODO: Not this, make something better
-            float reversePt = 1.0f - partialTick;
+            float reversePt = 1.0f - partialTicks;
             float camX = (float) camera.getPosition().x;
             float camY = (float) camera.getPosition().y;
             float camZ = (float) camera.getPosition().z;
@@ -63,7 +63,7 @@ public class StandardInstanceWriters {
         }
 
         @Override
-        public int write(ParticleView particles, int liveCount, int targetId, float partialTick, Camera camera, FloatBuffer buffer, int startInstance, int elementOffset, int strideFloats) {
+        public int write(ParticleView particles, int liveCount, int targetId, float partialTicks, Camera camera, FloatBuffer buffer, int startInstance, int elementOffset, int strideFloats) {
             int[] visualIds = particles.visualIds();
             float[] xScale = particles.xScale(), yScale = particles.yScale(), zScale = particles.zScale();
 
@@ -89,7 +89,7 @@ public class StandardInstanceWriters {
         }
 
         @Override
-        public int write(ParticleView particles, int liveCount, int targetId, float partialTick, Camera camera, FloatBuffer buffer, int startInstance, int elementOffset, int strideFloats) {
+        public int write(ParticleView particles, int liveCount, int targetId, float partialTicks, Camera camera, FloatBuffer buffer, int startInstance, int elementOffset, int strideFloats) {
             int[] visualIds = particles.visualIds();
             float[] spin = particles.spin();
 
@@ -122,7 +122,7 @@ public class StandardInstanceWriters {
         }
 
         @Override
-        public int write(ParticleView particles, int liveCount, int targetId, float partialTick, Camera camera, FloatBuffer buffer, int startInstance, int elementOffset, int strideFloats) {
+        public int write(ParticleView particles, int liveCount, int targetId, float partialTicks, Camera camera, FloatBuffer buffer, int startInstance, int elementOffset, int strideFloats) {
             int[] visualIds = particles.visualIds();
 
             double[] xArr = particles.x(), yArr = particles.y(), zArr = particles.z();
@@ -130,7 +130,7 @@ public class StandardInstanceWriters {
             float[] xRotArr = particles.xRot(), yRotArr = particles.yRot(), zRotArr = particles.zRot();
             float[] xScaleArr = particles.xScale(), yScaleArr = particles.yScale(), zScaleArr = particles.zScale();
 
-            float reversePt = 1.0f - partialTick;
+            float reversePt = 1.0f - partialTicks;
             float camX = (float) camera.getPosition().x;
             float camY = (float) camera.getPosition().y;
             float camZ = (float) camera.getPosition().z;
@@ -145,9 +145,11 @@ public class StandardInstanceWriters {
                 float y = (float) (yArr[i] - (vyArr[i] * reversePt) - camY);
                 float z = (float) (zArr[i] - (vzArr[i] * reversePt) - camZ);
 
+                float appliedZRot = zRotArr[i];
+
                 model.identity()
                         .translate(x, y, z)
-                        .rotateXYZ(xRotArr[i], yRotArr[i], zRotArr[i])
+                        .rotateXYZ(xRotArr[i], yRotArr[i], appliedZRot)
                         .scale(xScaleArr[i], yScaleArr[i], zScaleArr[i]);
 
                 int bufferIdx = ((startInstance + written) * strideFloats) + elementOffset;
@@ -165,7 +167,7 @@ public class StandardInstanceWriters {
         }
 
         @Override
-        public int write(ParticleView particles, int liveCount, int targetId, float partialTick, Camera camera, FloatBuffer buffer, int startInstance, int elementOffset, int strideFloats) {
+        public int write(ParticleView particles, int liveCount, int targetId, float partialTicks, Camera camera, FloatBuffer buffer, int startInstance, int elementOffset, int strideFloats) {
             int[] visualIds = particles.visualIds();
             float[] rArr = particles.r(), gArr = particles.g(), bArr = particles.b(), aArr = particles.a();
 
@@ -191,7 +193,7 @@ public class StandardInstanceWriters {
         }
 
         @Override
-        public int write(ParticleView particles, int liveCount, int targetId, float partialTick, Camera camera, FloatBuffer buffer, int startInstance, int elementOffset, int strideFloats) {
+        public int write(ParticleView particles, int liveCount, int targetId, float partialTicks, Camera camera, FloatBuffer buffer, int startInstance, int elementOffset, int strideFloats) {
             int[] visualIds = particles.visualIds();
             int[] ageArr = particles.age();
 
@@ -214,7 +216,7 @@ public class StandardInstanceWriters {
         }
 
         @Override
-        public int write(ParticleView particles, int liveCount, int targetId, float partialTick, Camera camera, FloatBuffer buffer, int startInstance, int elementOffset, int strideFloats) {
+        public int write(ParticleView particles, int liveCount, int targetId, float partialTicks, Camera camera, FloatBuffer buffer, int startInstance, int elementOffset, int strideFloats) {
             int[] visualIds = particles.visualIds();
             int[] lifetimeArr = particles.lifetime();
 

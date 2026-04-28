@@ -26,7 +26,7 @@ public abstract class TrinaryEasedValuesStorage<T extends ITrinaryConfig> implem
     }
 
     @Override
-    public void preRender(int liveCount, ParticleView particles) {
+    public void preRender(int liveCount, ParticleView particles, float partialTicks) {
         int[] age = particles.age();
         int[] lifetime = particles.lifetime();
 
@@ -38,13 +38,13 @@ public abstract class TrinaryEasedValuesStorage<T extends ITrinaryConfig> implem
                     acceptValue(liveCount, particles, i, value);
                 }
                 case LERP -> {
-                    float t = lifetime[i] <= 0 ? 1.0f : (float) age[i] / (float) lifetime[i];
+                    float t = lifetime[i] <= 0 ? 1.0f : (age[i]+partialTicks) / (float) lifetime[i];
                     t = easing0[i].ease(t);
                     float value = lerp(s0[i], s1[i], t);
                     acceptValue(liveCount, particles, i, value);
                 }
                 case DOUBLE_LERP -> {
-                    float t = lifetime[i] <= 0 ? 1.0f : (float) age[i] / (float) lifetime[i];
+                    float t = lifetime[i] <= 0 ? 1.0f : (age[i]+partialTicks) / (float) lifetime[i];
                     if (t <= 0.5f) {
                         t = easing0[i].ease(t*2);
                         float value = lerp(s0[i], s1[i], t);

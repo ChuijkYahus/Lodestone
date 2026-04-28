@@ -124,13 +124,14 @@ public abstract class PostProcessor {
 
             if (postChain != null) {
                 var mc = Minecraft.getInstance();
-                time += mc.getTimer().getGameTimeDeltaPartialTick(false) / 20.0;
+                float partialTicks = mc.getTimer().getGameTimeDeltaPartialTick(false);
+                time += partialTicks / 20.0;
 
                 beforeProcess(viewModelMatrix);
 
                 applyDefaultUniforms();
                 if (!isActive) return;
-                postChain.process(mc.getTimer().getGameTimeDeltaPartialTick(false));
+                postChain.process(partialTicks);
 
                 GlStateManager._glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mc.getMainRenderTarget().frameBufferId);
                 afterProcess();

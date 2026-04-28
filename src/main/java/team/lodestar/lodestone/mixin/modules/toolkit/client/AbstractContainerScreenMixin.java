@@ -19,7 +19,7 @@ public class AbstractContainerScreenMixin {
     }
 
     @Inject(method = "renderSlotHighlight(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;IIF)V", at = @At("HEAD"), cancellable = true)
-    private void lodestone$modifySlotHighlightRendering(GuiGraphics guiGraphics, Slot slot, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+    private void lodestone$modifySlotHighlightRendering(GuiGraphics guiGraphics, Slot slot, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
         if (CategorizedCreativeTabHandler.disableSlotHighlight(slot)) {
             ci.cancel();
         }

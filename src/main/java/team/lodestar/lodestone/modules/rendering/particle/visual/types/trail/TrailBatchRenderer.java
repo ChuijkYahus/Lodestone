@@ -24,7 +24,7 @@ public class TrailBatchRenderer implements ParticleVisualBatchRenderer {
     private static float[] PERP_Z = new float[256];
 
     @Override
-    public void renderBatch(ParticleVisualBatchKey key, List<ParticleVisualSubmission> submissions, DeltaTracker partialTick, Matrix4f viewMat, Matrix4f projMat) {
+    public void renderBatch(ParticleVisualBatchKey key, List<ParticleVisualSubmission> submissions, DeltaTracker partialTicks, Matrix4f viewMat, Matrix4f projMat) {
         RenderType renderType = key.renderType();
         renderType.setupRenderState();
 
@@ -52,7 +52,7 @@ public class TrailBatchRenderer implements ParticleVisualBatchRenderer {
         double camZ = camera.getPosition().z;
         Vector3f look = camera.getLookVector();
 
-        float pt = partialTick.getGameTimeDeltaPartialTick(false);
+        float pt = partialTicks.getGameTimeDeltaPartialTick(false);
 
         for (ParticleVisualSubmission submission : submissions) {
             TrailVisualDrawData data = (TrailVisualDrawData) submission.drawData();
