@@ -3,7 +3,7 @@ package team.lodestar.lodestone.systems.model.geo.data;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.MultiBufferSource;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -15,7 +15,7 @@ public class GeoBone implements IRenderableModelPart<GeoBone> {
     private float yRot;
     private float zRot;
     private Vector3f scale = new Vector3f(1.0f, 1.0f, 1.0f);
-    private final List<GeoCube> cubes; // Not merging these so i dont confuse people where their cubes went
+    private final List<GeoCube> cubes;
     private final List<IRenderableModelPart<?>> customParts = new ArrayList<>();
     private final Map<String, GeoBone> children;
     private final String parent;
@@ -47,9 +47,8 @@ public class GeoBone implements IRenderableModelPart<GeoBone> {
         GeoBone bone = this.children.get(name);
         if (bone == null) {
             throw new NoSuchElementException("Can't find bone " + name);
-        } else {
-            return bone;
         }
+        return bone;
     }
 
     public void setPosition(Vector3f position) {
@@ -133,36 +132,42 @@ public class GeoBone implements IRenderableModelPart<GeoBone> {
     @Override
     public void render(PoseStack poseStack, VertexConsumer vertexConsumer, VertexFormat vertexFormat, VertexFormat.Mode mode) {
         if (this.isHidden) return;
-        if (!this.cubes.isEmpty() || !this.children.isEmpty()) {
-            poseStack.pushPose();
-            this.translateAndRotate(poseStack);
-            for (GeoCube cube : this.cubes) {
-                cube.render(poseStack, vertexConsumer, vertexFormat, mode);
-            }
+        if (this.cubes.isEmpty() && this.children.isEmpty() && this.customParts.isEmpty()) return;
 
-            for (IRenderableModelPart<?> customPart : this.customParts) {
+        poseStack.pushPose();
+        this.translateAndRotate(poseStack);
+        for (GeoCube cube : this.cubes) {
+            cube.render(poseStack, vertexConsumer, vertexFormat, mode);
+        }
+
+        for (IRenderableModelPart<?> customPart : this.customParts) {
+            if (!(customPart instanceof IBatchedRenderableModelPart<?>)) {
                 customPart.render(poseStack, vertexConsumer, vertexFormat, mode);
             }
-
-            for (GeoBone child : this.children.values()) {
-                child.render(poseStack, vertexConsumer, vertexFormat, mode);
-            }
-            poseStack.popPose();
         }
+
+        for (GeoBone child : this.children.values()) {
+            child.render(poseStack, vertexConsumer, vertexFormat, mode);
+        }
+        poseStack.popPose();
     }
 
-    public void renderCustomParts(PoseStack poseStack, VertexConsumer vertexConsumer, VertexFormat vertexFormat, VertexFormat.Mode mode) {
+    public void renderBatchedCustomParts(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource) {
         if (this.isHidden) return;
+
+        if (this.children.isEmpty() && this.customParts.isEmpty()) return;
 
         poseStack.pushPose();
         this.translateAndRotate(poseStack);
 
         for (IRenderableModelPart<?> customPart : this.customParts) {
-            customPart.render(poseStack, vertexConsumer, vertexFormat, mode);
+            if (customPart instanceof IBatchedRenderableModelPart<?> batchedPart) {
+                batchedPart.renderBatched(poseStack, bufferSource);
+            }
         }
 
         for (GeoBone child : this.children.values()) {
-            child.renderCustomParts(poseStack, vertexConsumer, vertexFormat, mode);
+            child.renderBatchedCustomParts(poseStack, bufferSource);
         }
 
         poseStack.popPose();
@@ -196,11 +201,6 @@ public class GeoBone implements IRenderableModelPart<GeoBone> {
             copiedCubes.add(cube.copy());
         }
 
-        List<IRenderableModelPart<?>> copiedCustomParts = new ArrayList<>();
-        for (IRenderableModelPart<?> part : this.customParts) {
-            copiedCustomParts.add((IRenderableModelPart<?>) part.copy());
-        }
-
         Map<String, GeoBone> copiedChildren = new HashMap<>();
         for (Map.Entry<String, GeoBone> entry : this.children.entrySet()) {
             copiedChildren.put(entry.getKey(), entry.getValue().copy());
@@ -208,12 +208,17 @@ public class GeoBone implements IRenderableModelPart<GeoBone> {
 
         GeoBone copiedBone = new GeoBone(copiedCubes, copiedChildren, this.parent);
         copiedBone.copyTransformFrom(this);
+
+        for (IRenderableModelPart<?> part : this.customParts) {
+            copiedBone.addCustomPart((IRenderableModelPart<?>) part.copy());
+        }
+
         return copiedBone;
     }
 
     /**
-     * A copy of the GeoBone and with its own copies of the original children but the same cubes.
-     * Used if you want to copy the transforms of a bone hierarchy without duplicating the cube data.
+     * A copy of the GeoBone with its own copies of the original children but the same cubes.
+     * Used if you want to copy the transforms of a bone hierarchy without duplicating cube data.
      */
     public GeoBone minimalCopy() {
         Map<String, GeoBone> copiedChildren = new HashMap<>();
@@ -223,7 +228,11 @@ public class GeoBone implements IRenderableModelPart<GeoBone> {
 
         GeoBone copiedBone = new GeoBone(this.cubes, copiedChildren, this.parent);
         copiedBone.copyTransformFrom(this);
+
+        for (IRenderableModelPart<?> part : this.customParts) {
+            copiedBone.addCustomPart((IRenderableModelPart<?>) part.copy());
+        }
+
         return copiedBone;
     }
-
 }
