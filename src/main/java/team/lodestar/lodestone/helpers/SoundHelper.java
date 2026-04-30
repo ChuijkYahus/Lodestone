@@ -52,7 +52,7 @@ public class SoundHelper {
 
     @SuppressWarnings("resource")
     public static void playSound(Entity target, SoundEvent soundEvent, SoundSource soundSource, double volume, double pitch) {
-        target.level().playSound(null, target, soundEvent, soundSource, (float) volume, (float) pitch);
+        target.level().playSound(null, target.getX(), target.getY(), target.getZ(), soundEvent, soundSource, (float) volume, (float) pitch);
     }
 
     public static void playSoundRandomPitch(Level level, BlockPos pos, SoundEvent soundEvent, SoundSource soundSource, double minPitch, double maxPitch) {
