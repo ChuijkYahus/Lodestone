@@ -208,12 +208,14 @@ public class VFXBuilders {
     }
 
     public static class ScreenVFXBuilder extends AbstractVFXBuilder {
-        float x0 = 0, y0 = 0, x1 = 1, y1 = 1;
-        int zLevel;
+        public float x0 = 0, y0 = 0, x1 = 1, y1 = 1;
+        public int zLevel;
 
         Supplier<ShaderInstance> shader;
         ResourceLocation texture;
         Tesselator tesselator = Tesselator.getInstance();
+        BufferBuilder builder;
+        int placedVertices;
 
         @Override
         public ScreenVFXBuilder setColor(int rgba) {
@@ -383,16 +385,28 @@ public class VFXBuilders {
         }
 
         public ScreenVFXBuilder blit(PoseStack stack) {
-            RenderSystem.setShader(getShader());
-            if (texture != null) {
-                RenderSystem.setShaderTexture(0, texture);
+            vertex(stack, x0, y1, u0, v1);
+            vertex(stack, x1, y1, u1, v1);
+            vertex(stack, x1, y0, u1, v0);
+            vertex(stack, x0, y0, u0, v0);
+            return this;
+        }
+
+        protected ScreenVFXBuilder vertex(PoseStack stack, float x, float y, float u, float v) {
+            if (builder == null) {
+                RenderSystem.setShader(getShader());
+                if (texture != null) {
+                    RenderSystem.setShaderTexture(0, texture);
+                }
+                builder = tesselator.begin(mode, format);
             }
-            var bufferBuilder = tesselator.begin(mode, format);
-            supplier.placeVertex(bufferBuilder, stack, this, x0, y1, zLevel, u0, v1);
-            supplier.placeVertex(bufferBuilder, stack, this, x1, y1, zLevel, u1, v1);
-            supplier.placeVertex(bufferBuilder, stack, this, x1, y0, zLevel, u1, v0);
-            supplier.placeVertex(bufferBuilder, stack, this, x0, y0, zLevel, u0, v0);
-            BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
+            supplier.placeVertex(builder, stack, this, x, y, zLevel, u, v);
+            placedVertices++;
+            if (placedVertices == 4) {
+                BufferUploader.drawWithShader(builder.buildOrThrow());
+                placedVertices = 0;
+                builder = null;
+            }
             return this;
         }
     }
