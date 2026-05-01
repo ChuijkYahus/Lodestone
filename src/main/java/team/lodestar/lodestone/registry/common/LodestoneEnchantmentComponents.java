@@ -68,7 +68,6 @@ public class LodestoneEnchantmentComponents {
         )::get;
     }
 
-    //TODO: Move this to lodestone
     public static <T> Supplier<DataComponentType<T>> special(DeferredRegister<DataComponentType<?>> registry, String name, Function<DataComponentType.Builder<T>, DataComponentType.Builder<T>> modifier) {
         return registry.register(name, () -> modifier.apply(DataComponentType.builder()).build());
     }
