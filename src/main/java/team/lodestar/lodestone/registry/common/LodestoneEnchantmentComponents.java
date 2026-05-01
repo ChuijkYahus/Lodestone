@@ -10,6 +10,7 @@ import team.lodestar.lodestone.*;
 import team.lodestar.lodestone.modules.toolkit.enchanting.*;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class LodestoneEnchantmentComponents {
@@ -40,30 +41,48 @@ public class LodestoneEnchantmentComponents {
                     .optional(LootContextParams.TOOL)
     );
 
-    public static Supplier<DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>>> valueEffect(DeferredRegister<DataComponentType<?>> registry,
+    public static ValueEffectSupplier valueEffect(DeferredRegister<DataComponentType<?>> registry,
             String name) {
         return registry.register(name, () ->
                 DataComponentType.<List<ConditionalEffect<EnchantmentValueEffect>>>builder()
                         .persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, LootContextParamSets.ENCHANTED_ITEM).listOf())
                         .build()
-        );
+        )::get;
     }
 
-    public static Supplier<DataComponentType<List<ConditionalEffect<EnchantmentEntityEffect>>>> entityEffect(DeferredRegister<DataComponentType<?>> registry,
+    public static EntityEffectSupplier entityEffect(DeferredRegister<DataComponentType<?>> registry,
             String name) {
         return registry.register(name, () ->
                 DataComponentType.<List<ConditionalEffect<EnchantmentEntityEffect>>>builder()
                         .persistent(ConditionalEffect.codec(EnchantmentEntityEffect.CODEC, ENCHANTED_ENTITY).listOf())
                         .build()
-        );
+        )::get;
     }
 
-    public static Supplier<DataComponentType<List<TargetedConditionalEffect<EnchantmentEntityEffect>>>> targetedEffect(DeferredRegister<DataComponentType<?>> registry,
+    public static TargetedEntityEffectSupplier targetedEffect(DeferredRegister<DataComponentType<?>> registry,
             String name) {
         return registry.register(name, () ->
                 DataComponentType.<List<TargetedConditionalEffect<EnchantmentEntityEffect>>>builder()
                         .persistent(TargetedConditionalEffect.codec(EnchantmentEntityEffect.CODEC, ENCHANTED_DAMAGE).listOf())
                         .build()
-        );
+        )::get;
+    }
+
+    //TODO: Move this to lodestone
+    public static <T> Supplier<DataComponentType<T>> special(DeferredRegister<DataComponentType<?>> registry, String name, Function<DataComponentType.Builder<T>, DataComponentType.Builder<T>> modifier) {
+        return registry.register(name, () -> modifier.apply(DataComponentType.builder()).build());
+    }
+
+
+    public interface ValueEffectSupplier extends Supplier<DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>>> {
+
+    }
+
+    public interface EntityEffectSupplier extends Supplier<DataComponentType<List<ConditionalEffect<EnchantmentEntityEffect>>>> {
+
+    }
+
+    public interface TargetedEntityEffectSupplier extends Supplier<DataComponentType<List<TargetedConditionalEffect<EnchantmentEntityEffect>>>> {
+
     }
 }
