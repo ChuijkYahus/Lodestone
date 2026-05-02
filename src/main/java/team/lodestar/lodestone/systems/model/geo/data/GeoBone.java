@@ -11,6 +11,7 @@ import java.util.*;
 
 public class GeoBone implements IRenderableModelPart<GeoBone> {
     private Vector3f position = new Vector3f(0.0f, 0.0f, 0.0f);
+    private Vector3f offset = new Vector3f(0.0f, 0.0f, 0.0f);
     private float xRot;
     private float yRot;
     private float zRot;
@@ -34,6 +35,9 @@ public class GeoBone implements IRenderableModelPart<GeoBone> {
         this.xRot = geoBone.xRot;
         this.yRot = geoBone.yRot;
         this.zRot = geoBone.zRot;
+        this.offset.x = geoBone.offset.x;
+        this.offset.y = geoBone.offset.y;
+        this.offset.z = geoBone.offset.z;
         this.position.x = geoBone.position.x;
         this.position.y = geoBone.position.y;
         this.position.z = geoBone.position.z;
@@ -65,6 +69,10 @@ public class GeoBone implements IRenderableModelPart<GeoBone> {
         this.zRot = (float)Math.toRadians(zDeg);
     }
 
+    public void setOffset(float x, float y, float z) {
+        this.offset.set(x, y, z);
+    }
+
     public void setScale(Vector3f scale) {
         this.scale = scale;
     }
@@ -75,6 +83,10 @@ public class GeoBone implements IRenderableModelPart<GeoBone> {
 
     public Vector3f getPosition() {
         return position;
+    }
+
+    public Vector3f getOffset() {
+        return this.offset;
     }
 
     public float getxRot() {
@@ -136,6 +148,8 @@ public class GeoBone implements IRenderableModelPart<GeoBone> {
 
         poseStack.pushPose();
         this.translateAndRotate(poseStack);
+        poseStack.translate(this.offset.x / 16.0f, this.offset.y / 16.0f, this.offset.z / 16.0f);
+
         for (GeoCube cube : this.cubes) {
             cube.render(poseStack, vertexConsumer, vertexFormat, mode);
         }
@@ -159,6 +173,7 @@ public class GeoBone implements IRenderableModelPart<GeoBone> {
 
         poseStack.pushPose();
         this.translateAndRotate(poseStack);
+        poseStack.translate(this.offset.x / 16.0f, this.offset.y / 16.0f, this.offset.z / 16.0f);
 
         for (IRenderableModelPart<?> customPart : this.customParts) {
             if (customPart instanceof IBatchedRenderableModelPart<?> batchedPart) {
