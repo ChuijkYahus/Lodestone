@@ -18,6 +18,7 @@ import team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionRes
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.success;
@@ -188,6 +189,9 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
     }
 
     public InventoryInteractionResult extractItem(ServerLevel level, Player player) {
+        return extractItem(level, s -> ItemHandlerHelper.giveItemToPlayer(player, s));
+    }
+    public InventoryInteractionResult extractItem(ServerLevel level, Consumer<ItemStack> extractor) {
         if (isEmpty()) {
             return InventoryInteractionResult.failure();
         }
@@ -200,7 +204,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         }
         var real = extractItem(slot, amount, false);
         var leftover = real.copyWithCount(real.getCount() - amount);
-        ItemHandlerHelper.giveItemToPlayer(player, real);
+        extractor.accept(real);
         return processResult(success(ResultType.EXTRACT, real, leftover));
     }
 
