@@ -174,7 +174,8 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         updateCaches();
         var heldStack = player.getItemInHand(hand);
         if (heldStack.isEmpty()) {
-            var extract = extractItem(level, player);
+            var extract = extractItem(level);
+            ItemHandlerHelper.giveItemToPlayer(player, extract.original());
             if (extract.wasSuccessful()) {
                 return Optional.of(extract);
             }
@@ -188,10 +189,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         return Optional.empty();
     }
 
-    public InventoryInteractionResult extractItem(ServerLevel level, Player player) {
-        return extractItem(level, s -> ItemHandlerHelper.giveItemToPlayer(player, s));
-    }
-    public InventoryInteractionResult extractItem(ServerLevel level, Consumer<ItemStack> extractor) {
+    public InventoryInteractionResult extractItem(ServerLevel level) {
         if (isEmpty()) {
             return InventoryInteractionResult.failure();
         }
@@ -204,7 +202,6 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         }
         var real = extractItem(slot, amount, false);
         var leftover = real.copyWithCount(real.getCount() - amount);
-        extractor.accept(real);
         return processResult(success(ResultType.EXTRACT, real, leftover));
     }
 
