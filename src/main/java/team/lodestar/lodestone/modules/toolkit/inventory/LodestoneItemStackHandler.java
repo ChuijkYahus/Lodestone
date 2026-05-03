@@ -167,14 +167,17 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         }
     }
 
-    public boolean interact(ServerLevel level, Player player, InteractionHand hand) {
+    public final boolean interact(ServerLevel level, Player player, InteractionHand hand) {
         var result = performInteraction(level, player, hand);
         return result.map(InventoryInteractionResult::wasSuccessful).orElse(false);
     }
 
-    public Optional<InventoryInteractionResult> performInteraction(ServerLevel level, Player player, InteractionHand hand) {
+    public final Optional<InventoryInteractionResult> performInteraction(ServerLevel level, Player player, InteractionHand hand) {
+        return performInteraction(level, player, player.getItemInHand(hand));
+    }
+
+    public Optional<InventoryInteractionResult> performInteraction(ServerLevel level, Player player, ItemStack heldStack) {
         updateCaches();
-        var heldStack = player.getItemInHand(hand);
         if (heldStack.isEmpty()) {
             var extract = extractItem(level);
             ItemHandlerHelper.giveItemToPlayer(player, extract.original());
