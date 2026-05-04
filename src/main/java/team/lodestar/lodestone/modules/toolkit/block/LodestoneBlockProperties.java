@@ -20,6 +20,7 @@ import net.neoforged.neoforge.data.loading.DatagenModLoader;
 import org.jetbrains.annotations.NotNull;
 import team.lodestar.lodestone.modules.core.datagen.DatagenOnly;
 import team.lodestar.lodestone.modules.core.datagen.LodestoneDatagenBlockData;
+import team.lodestar.lodestone.modules.core.util.BlockItemTagKey;
 
 import java.util.function.*;
 
@@ -146,6 +147,18 @@ public class LodestoneBlockProperties extends BlockBehaviour.Properties {
     @DatagenOnly
     @SafeVarargs
     public final LodestoneBlockProperties addTags(TagKey<Block>... tags) {
+        addDatagenData(d -> d.addTags(tags));
+        return this;
+    }
+
+    @DatagenOnly
+    public LodestoneBlockProperties addTag(BlockItemTagKey tag) {
+        addDatagenData(d -> d.addTag(tag));
+        return this;
+    }
+
+    @DatagenOnly
+    public final LodestoneBlockProperties addTags(BlockItemTagKey... tags) {
         addDatagenData(d -> d.addTags(tags));
         return this;
     }

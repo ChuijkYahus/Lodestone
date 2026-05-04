@@ -5,6 +5,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.data.loading.DatagenModLoader;
+import team.lodestar.lodestone.modules.core.util.BlockItemTagKey;
 import team.lodestar.lodestone.modules.toolkit.block.LodestoneBlockProperties;
 import team.lodestar.lodestone.modules.toolkit.block.LodestoneBlockProperties.BlockRenderType;
 
@@ -47,6 +48,18 @@ public class LodestoneDatagenBlockData {
     @SafeVarargs
     public final LodestoneDatagenBlockData addTags(TagKey<Block>... blockTagKeys) {
         tags.addAll(Arrays.asList(blockTagKeys));
+        return this;
+    }
+
+    public LodestoneDatagenBlockData addTag(BlockItemTagKey key) {
+        addTag(key.blockTag());
+        return this;
+    }
+
+    public final LodestoneDatagenBlockData addTags(BlockItemTagKey... blockTagKeys) {
+        for (BlockItemTagKey key : blockTagKeys) {
+            addTag(key.blockTag());
+        }
         return this;
     }
 

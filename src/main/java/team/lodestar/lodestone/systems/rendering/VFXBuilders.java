@@ -392,7 +392,7 @@ public class VFXBuilders {
             return this;
         }
 
-        protected ScreenVFXBuilder vertex(PoseStack stack, float x, float y, float u, float v) {
+        public ScreenVFXBuilder vertex(PoseStack stack, float x, float y, float u, float v) {
             if (builder == null) {
                 RenderSystem.setShader(getShader());
                 if (texture != null) {

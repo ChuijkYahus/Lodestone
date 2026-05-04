@@ -18,6 +18,9 @@ import team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionRes
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
 import static team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.success;
@@ -164,16 +167,20 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         }
     }
 
-    public boolean interact(ServerLevel level, Player player, InteractionHand hand) {
+    public final boolean interact(ServerLevel level, Player player, InteractionHand hand) {
         var result = performInteraction(level, player, hand);
         return result.map(InventoryInteractionResult::wasSuccessful).orElse(false);
     }
 
-    public Optional<InventoryInteractionResult> performInteraction(ServerLevel level, Player player, InteractionHand hand) {
+    public final Optional<InventoryInteractionResult> performInteraction(ServerLevel level, Player player, InteractionHand hand) {
+        return performInteraction(level, player, player.getItemInHand(hand));
+    }
+
+    public Optional<InventoryInteractionResult> performInteraction(ServerLevel level, Player player, ItemStack heldStack) {
         updateCaches();
-        var heldStack = player.getItemInHand(hand);
         if (heldStack.isEmpty()) {
-            var extract = extractItem(level, player);
+            var extract = extractItem(level);
+            ItemHandlerHelper.giveItemToPlayer(player, extract.original());
             if (extract.wasSuccessful()) {
                 return Optional.of(extract);
             }
@@ -187,20 +194,27 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         return Optional.empty();
     }
 
-    public InventoryInteractionResult extractItem(ServerLevel level, Player player) {
+    public InventoryInteractionResult extractItem(ServerLevel level) {
+        return extractItem(level, ItemStack::getCount);
+    }
+
+    public InventoryInteractionResult extractItem(ServerLevel level, int amount) {
+        return extractItem(level, s -> amount);
+    }
+
+    public InventoryInteractionResult extractItem(ServerLevel level, Function<ItemStack, Integer> amount) {
         if (isEmpty()) {
             return InventoryInteractionResult.failure();
         }
         var toExtract = nonEmptyItemStacks.getLast();
         int slot = stacks.indexOf(toExtract);
-        var amount = toExtract.getCount();
-        var simulated = extractItem(slot, amount, true);
+        var extracted = amount.apply(toExtract);
+        var simulated = extractItem(slot, extracted, true);
         if (simulated.equals(ItemStack.EMPTY)) {
             return unchanged(ResultType.EXTRACT, toExtract);
         }
-        var real = extractItem(slot, amount, false);
-        var leftover = real.copyWithCount(real.getCount() - amount);
-        ItemHandlerHelper.giveItemToPlayer(player, real);
+        var real = extractItem(slot, extracted, false);
+        var leftover = real.copyWithCount(real.getCount() - extracted);
         return processResult(success(ResultType.EXTRACT, real, leftover));
     }
 
