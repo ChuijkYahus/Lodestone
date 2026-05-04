@@ -19,7 +19,7 @@ import java.util.Map;
 public class ModelHandler {
     private static final Map<ResourceLocation, IRenderableModel> MODELS = new HashMap<>();
 
-    public IRenderableModel register(ResourceLocation location) {
+    public static IRenderableModel register(ResourceLocation location) {
         if (MODELS.containsKey(location)) {
             return MODELS.get(location);
         }
@@ -35,7 +35,7 @@ public class ModelHandler {
         return model;
     }
 
-    public <T extends IRenderableModel> T register(ResourceLocation location, T model) {
+    public static <T extends IRenderableModel> T register(ResourceLocation location, T model) {
         if (MODELS.containsKey(location)) {
             MODELS.get(location).cleanup();
         }
@@ -45,7 +45,7 @@ public class ModelHandler {
         return model;
     }
 
-    public boolean isRegistered(ResourceLocation location) {
+    public static boolean isRegistered(ResourceLocation location) {
         return MODELS.containsKey(location);
     }
 
