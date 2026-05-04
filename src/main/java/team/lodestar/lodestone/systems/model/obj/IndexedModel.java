@@ -7,8 +7,7 @@ import team.lodestar.lodestone.systems.model.IRenderableModel;
 import team.lodestar.lodestone.systems.model.obj.data.*;
 import team.lodestar.lodestone.systems.model.obj.modifier.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public abstract class IndexedModel implements IRenderableModel {
     protected List<Vertex> vertices;
@@ -19,12 +18,14 @@ public abstract class IndexedModel implements IRenderableModel {
     protected ResourceLocation modelId;
     protected VertexBuffer modelBuffer;
     protected MeshData meshData;
+    protected Map<String, ObjPart> parts;
 
     public IndexedModel(ResourceLocation modelId) {
         this.modelId = modelId;
         this.vertices = new ArrayList<>();
         this.meshes = new ArrayList<>();
         this.bakedIndices = new ArrayList<>();
+        this.parts = new HashMap<>();
     }
 
     public void applyModifiers() {
@@ -47,6 +48,19 @@ public abstract class IndexedModel implements IRenderableModel {
 
     public List<Integer> getBakedIndices() {
         return this.bakedIndices;
+    }
+
+    public Map<String, ObjPart> getParts() {
+        return this.parts;
+    }
+
+    public Optional<ObjPart> getPart(String name) {
+        return Optional.ofNullable(this.parts.get(name));
+    }
+
+    public List<IndexedMesh> getMeshesForPart(String name) {
+        ObjPart part = this.parts.get(name);
+        return part == null ? List.of() : part.getMeshes();
     }
 
     public void bakeIndices(VertexFormat.Mode mode, boolean triangulate) {
@@ -100,6 +114,21 @@ public abstract class IndexedModel implements IRenderableModel {
             }
         }
         return bufferBuilder.buildOrThrow();
+    }
+
+    public void renderPart(String partName, PoseStack poseStack, VertexConsumer vertexConsumer, RenderType renderType) {
+        ObjPart part = this.parts.get(partName);
+        if (part == null) {
+            return;
+        }
+
+        for (IndexedMesh mesh : part.getMeshes()) {
+            if (mesh.isCompatibleWith(renderType.mode())) {
+                for (Vertex vertex : mesh.getVertices(this)) {
+                    vertex.supplyVertexData(vertexConsumer, renderType.format(), poseStack);
+                }
+            }
+        }
     }
 
     @Override
