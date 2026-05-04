@@ -26,7 +26,7 @@ public class ModelHandler {
             return MODELS.get(location);
         }
 
-        String fileExtension = location.getPath().substring(location.getPath().lastIndexOf(".") + 1);
+        String fileExtension = location.getPath().substring(location.getPath().lastIndexOf("."));
         IRenderableModel model = switch (fileExtension) {
             case ".obj" -> new ObjModel(location);
             case ".geo" -> new BedrockGeometryModel(location);
