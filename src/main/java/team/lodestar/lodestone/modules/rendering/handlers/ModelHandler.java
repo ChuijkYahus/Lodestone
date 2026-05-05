@@ -33,6 +33,7 @@ public class ModelHandler {
             default -> throw new IllegalArgumentException("Unsupported model format: " + fileExtension);
         };
 
+        MODELS.put(location, model);
         if (initializedClient) {
             model.loadModel();
         }
