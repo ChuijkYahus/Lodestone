@@ -6,6 +6,7 @@ import org.joml.Vector3f;
 import team.lodestar.lodestone.systems.model.LodestoneParser;
 import team.lodestar.lodestone.systems.model.obj.data.IndexedMesh;
 import team.lodestar.lodestone.systems.model.obj.data.IndexedVertex;
+import team.lodestar.lodestone.systems.model.obj.data.ObjPart;
 import team.lodestar.lodestone.systems.model.obj.data.Vertex;
 
 import java.io.BufferedReader;
@@ -13,13 +14,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ObjParser extends LodestoneParser<ObjModel> {
     private static final String VERTEX_POSITION = "v ";
     private static final String VERTEX_NORMAL = "vn ";
     private static final String VERTEX_UV = "vt ";
     private static final String FACE = "f ";
+    private static final String OBJECT = "o ";
 
     @Override
     public void parse(Resource resource, ObjModel model) throws IOException {
@@ -35,6 +39,8 @@ public class ObjParser extends LodestoneParser<ObjModel> {
                 builder.addNormal(builder.parseVector3f(line));
             } else if (line.startsWith(VERTEX_UV)) {
                 builder.addUv(builder.parseVector2f(line));
+            } else if (line.startsWith(OBJECT)) {
+                builder.setObjectName(line.substring(2).trim());
             } else if (line.startsWith(FACE)) {
                 IndexedMesh mesh = builder.parseMesh(line);
                 builder.addMesh(mesh);
@@ -51,6 +57,8 @@ public class ObjParser extends LodestoneParser<ObjModel> {
 
         private List<IndexedVertex> indexedVertices = new ArrayList<>();
         private List<IndexedMesh> meshes = new ArrayList<>();
+        private final Map<String, ObjPart> parts = new HashMap<>();
+        private String currentObjectName = "blurblesnarp";
 
         private ObjModel model;
 
@@ -115,6 +123,7 @@ public class ObjParser extends LodestoneParser<ObjModel> {
 
         public void addMesh(IndexedMesh mesh) {
             this.meshes.add(mesh);
+            this.getCurrentPart().addMesh(mesh);
         }
 
         public boolean containsVertex(IndexedVertex indexedVertex) {
@@ -139,10 +148,24 @@ public class ObjParser extends LodestoneParser<ObjModel> {
             return vertex;
         }
 
+        public void setObjectName(String objectName) {
+            if (objectName == null || objectName.isBlank()) {
+                this.currentObjectName = "blurblesnarp";
+            } else {
+                this.currentObjectName = objectName;
+            }
+        }
+
+        private ObjPart getCurrentPart() {
+            return this.parts.computeIfAbsent(this.currentObjectName, ObjPart::new);
+        }
+
         public void build() {
             this.model.applyEarlyModifiers(this);
             this.indexedVertices.forEach(indexedVertex -> this.model.vertices.add(new Vertex(indexedVertex, this)));
-            this.model.meshes = meshes;
+
+            this.model.meshes.addAll(this.meshes);
+            this.model.parts.putAll(this.parts);
         }
 
         public List<Vector3f> getPositions() {

@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.event.GameShuttingDownEvent;
 import team.lodestar.lodestone.LodestoneLib;
@@ -18,6 +19,7 @@ import java.util.Map;
 @EventBusSubscriber(modid = LodestoneLib.LODESTONE, value = Dist.CLIENT)
 public class ModelHandler {
     private static final Map<ResourceLocation, IRenderableModel> MODELS = new HashMap<>();
+    private static boolean initializedClient = false;
 
     public static IRenderableModel register(ResourceLocation location) {
         if (MODELS.containsKey(location)) {
@@ -31,8 +33,10 @@ public class ModelHandler {
             default -> throw new IllegalArgumentException("Unsupported model format: " + fileExtension);
         };
 
-        model.loadModel();
-
+        MODELS.put(location, model);
+        if (initializedClient) {
+            model.loadModel();
+        }
         return model;
     }
 
@@ -42,7 +46,9 @@ public class ModelHandler {
         }
 
         MODELS.put(location, model);
-        model.loadModel();
+        if (initializedClient) {
+            model.loadModel();
+        }
         return model;
     }
 
@@ -64,6 +70,14 @@ public class ModelHandler {
         }
 
         return (T) model;
+    }
+
+    @SubscribeEvent
+    public static void clientInit(FMLClientSetupEvent event) {
+        initializedClient = true;
+        for (IRenderableModel model : MODELS.values()) {
+            model.loadModel();
+        }
     }
 
     @SubscribeEvent
