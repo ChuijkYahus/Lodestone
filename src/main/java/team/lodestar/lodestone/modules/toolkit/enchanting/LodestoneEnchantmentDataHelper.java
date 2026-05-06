@@ -5,10 +5,13 @@ import it.unimi.dsi.fastutil.objects.*;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.*;
 import net.minecraft.core.component.*;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.item.enchantment.effects.*;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.predicates.*;
 
 import javax.annotation.*;
@@ -276,5 +279,20 @@ public class LodestoneEnchantmentDataHelper {
         }
         //Non MatchTool conditions should always pass.
         return true;
+    }
+
+    /**
+     * Retrieves the level of a specific enchantment on the given ItemStack.
+     * @param level The current level
+     * @param key The ResourceKey of the Enchantment
+     * @param stack The ItemStack to check
+     * @return The enchantment level as an int
+     */
+    public static int getEnchantmentLevel(Level level, ResourceKey<Enchantment> key, ItemStack stack) {
+        HolderGetter<Enchantment> enchantmentLookup = level.registryAccess().asGetterLookup().lookupOrThrow(Registries.ENCHANTMENT);
+        if (stack != null) {
+            return stack.getEnchantmentLevel(enchantmentLookup.getOrThrow(key));
+        }
+        return 0;
     }
 }
