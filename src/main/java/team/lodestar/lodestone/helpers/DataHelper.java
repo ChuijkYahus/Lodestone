@@ -31,7 +31,7 @@ public class DataHelper {
     /**
      * Capitalizes the first character in each word and replaces [regex] with space
      */
-    public static String toTitleCase(String givenString, String regex) {
+    public static String toTitleCase(String givenString, String regex) { //TODO maybe move this to modules.toolkit.util.StringUtils ?
         String[] stringArray = givenString.split(regex);
         StringBuilder stringBuilder = new StringBuilder();
         for (String string : stringArray) {
