@@ -82,13 +82,14 @@ public interface IRenderableModel {
      * @param renderType
      */
     @ApiStatus.Internal
-    default void createModelBuffer(PoseStack poseStack, RenderType renderType) {
+    default VertexBuffer createModelBuffer(PoseStack poseStack, RenderType renderType) {
         if (this.getModelBuffer() == null) {
             this.setModelBuffer(new VertexBuffer(VertexBuffer.Usage.DYNAMIC));
         }
         this.getModelBuffer().bind();
         this.getModelBuffer().upload(this.createMesh(poseStack, renderType));
         VertexBuffer.unbind();
+        return getModelBuffer();
     }
 
     @ApiStatus.Internal
