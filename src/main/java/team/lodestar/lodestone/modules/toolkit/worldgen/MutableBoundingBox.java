@@ -3,7 +3,9 @@ package team.lodestar.lodestone.modules.toolkit.worldgen;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
-public class UnsafeBoundingBox {
+import java.util.Collection;
+
+public class MutableBoundingBox {
 
     protected int minX;
     protected int minY;
@@ -11,6 +13,16 @@ public class UnsafeBoundingBox {
     protected int maxX;
     protected int maxY;
     protected int maxZ;
+
+    public void encapsulate(Collection<Vec3i> pos) {
+        pos.forEach(this::encapsulate);
+    }
+
+    public void encapsulate(Vec3i... positions) {
+        for (Vec3i pos : positions) {
+            encapsulate(pos);
+        }
+    }
 
     public void encapsulate(Vec3i pos) {
         if (minX > pos.getX()) {
