@@ -45,6 +45,7 @@ public class ObjModel extends IndexedModel {
         public static Builder of(ResourceLocation modelId) {
             return new Builder(modelId);
         }
+
         public Builder bakeIndicies(VertexFormat.Mode primitiveMode, boolean convertQuadsToTriangles) {
             this.bakeMode = primitiveMode;
             return this;

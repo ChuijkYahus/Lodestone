@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.network;
+package team.lodestar.lodestone.modules.toolkit.codec;
 
 import com.mojang.datafixers.util.*;
 import com.mojang.serialization.Codec;
@@ -20,7 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class ExtraStreamCodecs {
+public class LodestoneStreamCodecs {
   public static final StreamCodec<ByteBuf, Vec3> VEC3 = StreamCodec.composite(
           ByteBufCodecs.DOUBLE, Vec3::x,
           ByteBufCodecs.DOUBLE, Vec3::y,

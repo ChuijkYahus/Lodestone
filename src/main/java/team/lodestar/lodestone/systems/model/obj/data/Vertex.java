@@ -121,7 +121,7 @@ public class Vertex implements VertexConsumer {
 
     public void supplyUv(VertexConsumer vertexConsumer) {
         Vector2f uv = this.getUv();
-        vertexConsumer.setUv(uv.x, uv.y);
+        vertexConsumer.setUv(uv.x, 1 - uv.y);
     }
 
     public void supplyUv1(VertexConsumer vertexConsumer) {
