@@ -14,17 +14,19 @@ public class MutableBoundingBox {
     protected int maxY;
     protected int maxZ;
 
-    public void encapsulate(Collection<? extends Vec3i> pos) {
+    public MutableBoundingBox encapsulate(Collection<? extends Vec3i> pos) {
         pos.forEach(this::encapsulate);
+        return this;
     }
 
-    public void encapsulate(Vec3i... positions) {
+    public MutableBoundingBox encapsulate(Vec3i... positions) {
         for (Vec3i pos : positions) {
             encapsulate(pos);
         }
+        return this;
     }
 
-    public void encapsulate(Vec3i pos) {
+    public MutableBoundingBox encapsulate(Vec3i pos) {
         if (minX > pos.getX()) {
             minX = pos.getX();
         }
@@ -43,6 +45,7 @@ public class MutableBoundingBox {
         if (maxZ < pos.getZ()) {
             maxZ = pos.getZ();
         }
+        return this;
     }
 
     public BoundingBox toBoundingBox() {
