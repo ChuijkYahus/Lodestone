@@ -14,7 +14,7 @@ public class MutableBoundingBox {
     protected int maxY;
     protected int maxZ;
 
-    public void encapsulate(Collection<Vec3i> pos) {
+    public void encapsulate(Collection<? extends Vec3i> pos) {
         pos.forEach(this::encapsulate);
     }
 
