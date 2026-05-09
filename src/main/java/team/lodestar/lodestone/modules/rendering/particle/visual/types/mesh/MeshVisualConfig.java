@@ -26,11 +26,9 @@ public class MeshVisualConfig {
         return this;
     }
 
-    public MeshVisualConfig instancedModel(IRenderableModel model) {
-        if (renderType == null) {
-            throw new IllegalArgumentException("Render type is null in config: " + this);
-        }
+    public MeshVisualConfig instancedModel(IRenderableModel model, RenderType renderType) {
         this.vertexBuffer = model.createModelBuffer(new PoseStack(), renderType);
+        this.renderType = renderType;
         return this;
     }
 
