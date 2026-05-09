@@ -11,14 +11,14 @@ import team.lodestar.lodestone.registry.common.tag.*;
 public class LodestoneAttributeEventHandler {
 
     public static void processAttributes(LivingDamageEvent.Pre event) {
-        if (event.getOriginalDamage() <= 0) {
+        if (event.getNewDamage() <= 0) {
             return;
         }
         var source = event.getSource();
         var target = event.getEntity();
         var damageType = source.typeHolder();
 
-        float amount = event.getOriginalDamage();
+        float amount = event.getNewDamage();
 
 
         if (damageType.is(LodestoneDamageTypeTags.AFFECTED_BY_MAGIC_RESISTANCE)) {
