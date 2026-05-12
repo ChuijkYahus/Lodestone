@@ -7,12 +7,12 @@ import java.util.Collection;
 
 public class MutableBoundingBox {
 
-    protected int minX;
-    protected int minY;
-    protected int minZ;
-    protected int maxX;
-    protected int maxY;
-    protected int maxZ;
+    protected int minX = Integer.MIN_VALUE;
+    protected int minY = Integer.MIN_VALUE;
+    protected int minZ = Integer.MIN_VALUE;
+    protected int maxX = Integer.MAX_VALUE;
+    protected int maxY = Integer.MAX_VALUE;
+    protected int maxZ = Integer.MAX_VALUE;
 
     public MutableBoundingBox encapsulate(Collection<? extends Vec3i> pos) {
         pos.forEach(this::encapsulate);
