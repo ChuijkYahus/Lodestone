@@ -3,6 +3,7 @@ package team.lodestar.lodestone.modules.toolkit.inventory;
 import net.minecraft.world.item.ItemStack;
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntity;
 
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -10,11 +11,14 @@ public class LodestoneItemStackBlockHandlerBuilder extends LodestoneItemStackHan
 
     protected final LodestoneBlockEntity parent;
 
-    protected Function<LodestoneItemStackBlockHandler, ItemStackHandlerItemDisplayData> displayData;
-
     protected LodestoneItemStackBlockHandlerBuilder(LodestoneBlockEntity parent, int slotCount) {
         super(slotCount);
         this.parent = parent;
+    }
+
+    public LodestoneItemStackBlockHandlerBuilder setInputPredicate(BiPredicate<LodestoneBlockEntity, ItemStack> inputPredicate) {
+        assert parent != null;
+        return (LodestoneItemStackBlockHandlerBuilder) super.setInputPredicate(s -> inputPredicate.test(parent, s));
     }
 
     @Override
