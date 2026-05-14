@@ -18,10 +18,7 @@ import team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionRes
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.Predicate;
+import java.util.function.*;
 
 import static team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.success;
 import static team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.unchanged;
@@ -33,7 +30,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
 
     protected final int slotCount;
     protected final int allowedItemSize;
-    protected final Predicate<ItemStack> inputPredicate;
+    protected final BiPredicate<LodestoneItemStackHandler, ItemStack> inputPredicate;
     protected final Runnable contentsChangeBehavior;
 
     protected ArrayList<ItemStack> nonEmptyItemStacks = new ArrayList<>();
@@ -44,7 +41,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         return new LodestoneItemStackHandlerBuilder(slotCount);
     }
 
-    public LodestoneItemStackHandler(int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable contentsChangeBehavior) {
+    public LodestoneItemStackHandler(int slotCount, int allowedItemSize, BiPredicate<LodestoneItemStackHandler, ItemStack> inputPredicate, Runnable contentsChangeBehavior) {
         super(slotCount);
         this.slotCount = slotCount;
         this.allowedItemSize = allowedItemSize;
@@ -60,7 +57,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         return allowedItemSize;
     }
 
-    public Predicate<ItemStack> getInputPredicate() {
+    public BiPredicate<LodestoneItemStackHandler, ItemStack> getInputPredicate() {
         return inputPredicate;
     }
 
@@ -100,7 +97,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
 
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-        if (!inputPredicate.test(stack)) {
+        if (!getInputPredicate().test(this, stack)) {
             return false;
         }
         return super.isItemValid(slot, stack);
@@ -118,12 +115,14 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
     }
 
     public void ensureSize() {
-        if (stacks.size() != slotCount) {
-            var updated = NonNullList.withSize(slotCount, ItemStack.EMPTY);
+        int slots = getSlotCount();
+        if (stacks.size() != slots) {
+            var updated = NonNullList.withSize(slots, ItemStack.EMPTY);
             for (int i = 0; i < stacks.size(); i++) {
-                if (i < slotCount) {
-                    updated.set(i, stacks.get(i));
+                if (i >= slots) {
+                    continue;
                 }
+                updated.set(i, stacks.get(i));
             }
             stacks = updated;
         }
@@ -223,7 +222,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         if (!simulated.wasSuccessful()) {
             return simulated;
         }
-        int count = simulated.getLeftoverCount(allowedItemSize);
+        int count = simulated.getLeftoverCount(getAllowedItemSize());
         var input = stack.split(count);
         return processResult(insertItem(input, false));
     }

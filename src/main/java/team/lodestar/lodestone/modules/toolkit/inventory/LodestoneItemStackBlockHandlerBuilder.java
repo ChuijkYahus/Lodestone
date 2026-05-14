@@ -16,11 +16,6 @@ public class LodestoneItemStackBlockHandlerBuilder extends LodestoneItemStackHan
         this.parent = parent;
     }
 
-    public LodestoneItemStackBlockHandlerBuilder setInputPredicate(BiPredicate<LodestoneBlockEntity, ItemStack> inputPredicate) {
-        assert parent != null;
-        return (LodestoneItemStackBlockHandlerBuilder) super.setInputPredicate(s -> inputPredicate.test(parent, s));
-    }
-
     @Override
     public LodestoneItemStackBlockHandlerBuilder limitItemSize(int allowedItemSize) {
         return (LodestoneItemStackBlockHandlerBuilder) super.limitItemSize(allowedItemSize);
@@ -33,6 +28,11 @@ public class LodestoneItemStackBlockHandlerBuilder extends LodestoneItemStackHan
 
     @Override
     public LodestoneItemStackBlockHandlerBuilder setInputPredicate(Predicate<ItemStack> inputPredicate) {
+        return (LodestoneItemStackBlockHandlerBuilder) super.setInputPredicate(inputPredicate);
+    }
+
+    @Override
+    public LodestoneItemStackBlockHandlerBuilder setInputPredicate(BiPredicate<LodestoneItemStackHandler, ItemStack> inputPredicate) {
         return (LodestoneItemStackBlockHandlerBuilder) super.setInputPredicate(inputPredicate);
     }
 
