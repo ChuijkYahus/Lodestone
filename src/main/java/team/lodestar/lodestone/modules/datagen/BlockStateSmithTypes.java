@@ -2,6 +2,7 @@ package team.lodestar.lodestone.modules.datagen;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
@@ -75,7 +76,7 @@ public class BlockStateSmithTypes {
     });
 
     /**
-     * Generates a wood block model and state, one of those 6-sided log blocks mainly used for building.
+     * Generates a wood block model and state, one of those 6-sided log blocks mainly used for building or by some tree mods for whatever reason.
      */
     public static BlockStateSmith<RotatedPillarBlock> WOOD_BLOCK = new BlockStateSmith<>(RotatedPillarBlock.class, (block, provider) -> {
         var name = provider.getBlockName(block);
@@ -115,7 +116,21 @@ public class BlockStateSmithTypes {
     });
 
     /**
-     * Generates stairs!
+     * Generates a redstone lamp based block model and state.
+     */
+    public static BlockStateSmith<Block> LAMP_BLOCK = new BlockStateSmith<>(Block.class, (block, provider) -> {
+        var name = provider.getBlockName(block);
+        provider.getVariantBuilder(block).forAllStates(s -> {
+            boolean value = s.getValue(BlockStateProperties.LIT);
+            var path = name + (value ? "_lit" : "");
+            var texture = provider.getBlockTexture(path);
+            var model = provider.models().cubeAll(path, texture);
+            return ConfiguredModel.builder().modelFile(model).build();
+        });
+    });
+
+    /**
+     * Generates a stairs block model and state.
      */
     public static BlockStateSmith<StairBlock> STAIRS_BLOCK = new BlockStateSmith<>(StairBlock.class, (block, provider) -> {
         var name = provider.getBlockName(block);
@@ -124,7 +139,7 @@ public class BlockStateSmithTypes {
     });
 
     /**
-     * Slabs!
+     * Generates a slab block model and state.
      */
     public static BlockStateSmith<SlabBlock> SLAB_BLOCK = new BlockStateSmith<>(SlabBlock.class, (block, provider) -> {
         var name = provider.getBlockName(block);
