@@ -18,7 +18,7 @@ public abstract class AbstractBlockStateSmith<T extends Block> {
         this.blockClass = blockClass;
     }
 
-    protected final void tryAct(BlockStateSystemData data, ItemModelSmith itemModelSmith, Supplier<? extends Block> registryObject, BiConsumer<T, LodestoneBlockStateSystem> actor) {
+    protected final void tryAct(BlockStateSystemData<?> data, ItemModelSmith itemModelSmith, Supplier<? extends Block> registryObject, BiConsumer<T, LodestoneBlockStateSystem> actor) {
         var block = registryObject.get();
         if (blockClass.isInstance(block)) {
             DatagenSystemCommons.CURRENT_BLOCK = block;
@@ -33,7 +33,7 @@ public abstract class AbstractBlockStateSmith<T extends Block> {
         }
     }
 
-    protected final void makeItemModel(BlockStateSystemData data, ItemModelSmith itemModelSmith, Block block) {
+    protected final void makeItemModel(BlockStateSystemData<?> data, ItemModelSmith itemModelSmith, Block block) {
         if (!itemModelSmith.equals(ItemModelSmithTypes.NO_DATAGEN)) {
             itemModelSmith.act(data.provider().itemModelProvider, block::asItem);
         }
