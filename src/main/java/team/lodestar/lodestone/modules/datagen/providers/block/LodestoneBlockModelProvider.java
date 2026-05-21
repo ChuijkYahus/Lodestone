@@ -4,6 +4,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.BlockModelProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -13,6 +14,7 @@ import team.lodestar.lodestone.modules.datagen.DatagenSystemCommons;
 import team.lodestar.lodestone.modules.datagen.IDatagenPathfinder;
 import team.lodestar.lodestone.modules.toolkit.block.LodestoneBlockProperties;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 @SuppressWarnings("NullableProblems")
@@ -69,6 +71,19 @@ public final class LodestoneBlockModelProvider extends BlockModelProvider implem
     public ModelFile.ExistingModelFile getExistingFile(ResourceLocation path) {
         var modified = DatagenSystemCommons.modifyModelParentPath(path);
         return super.getExistingFile(modified);
+    }
+
+    public ModelFile withExistingParent(Block block, ResourceLocation parent, String textureName) {
+        String name = getBlockName(block);
+        ResourceLocation texture = getBlockTexture(name);
+        return withExistingParent(block, parent, b -> b.texture(textureName, texture));
+    }
+
+    public ModelFile withExistingParent(Block block, ResourceLocation parent, Consumer<BlockModelBuilder> appender) {
+        String name = getBlockName(block);
+        BlockModelBuilder builder = withExistingParent(name, parent);
+        appender.accept(builder);
+        return builder;
     }
 
     public ModelFile predefinedModel(Block block) {
