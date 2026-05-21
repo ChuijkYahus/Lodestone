@@ -73,13 +73,13 @@ public final class LodestoneBlockModelProvider extends BlockModelProvider implem
         return super.getExistingFile(modified);
     }
 
-    public ModelFile withExistingParent(Block block, ResourceLocation parent, String textureName) {
+    public BlockModelBuilder withExistingParent(Block block, ResourceLocation parent, String textureName) {
         String name = getBlockName(block);
         ResourceLocation texture = getBlockTexture(name);
         return withExistingParent(block, parent, b -> b.texture(textureName, texture));
     }
 
-    public ModelFile withExistingParent(Block block, ResourceLocation parent, Consumer<BlockModelBuilder> appender) {
+    public BlockModelBuilder withExistingParent(Block block, ResourceLocation parent, Consumer<BlockModelBuilder> appender) {
         String name = getBlockName(block);
         BlockModelBuilder builder = withExistingParent(name, parent);
         appender.accept(builder);
