@@ -48,7 +48,7 @@ public class CategorizedCreativeTabHandler {
                 var menu = screen.getMenu();
                 int row = menu.getRowIndexForScroll(screen.scrollOffs) + slot.getSlotIndex() / 9;
                 int column = slot.getContainerSlot() % 9;
-                int itemIndex = row * 9 + Mth.floor(slot.getSlotIndex() / 9f) * 9;
+                int itemIndex = row * 9 + column;
                 var pose = guiGraphics.pose();
                 pose.pushPose();
                 pose.translate(0.0F, 0.0F, 100.0F);
