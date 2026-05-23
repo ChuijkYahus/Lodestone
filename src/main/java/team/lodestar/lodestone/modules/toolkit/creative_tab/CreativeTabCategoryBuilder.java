@@ -58,12 +58,15 @@ public class CreativeTabCategoryBuilder {
     }
 
     public final CreativeTabCategoryBuilder addItemStack(Supplier<ItemStack> item) {
-        entries.add(new CategoryItemEntry(item));
-        return this;
+        return entry(new CategoryItemEntry(item));
     }
 
     public CreativeTabCategoryBuilder nextLine() {
-        entries.add(NextLineEntry.INSTANCE);
+        return entry(NextLineEntry.INSTANCE);
+    }
+
+    public CreativeTabCategoryBuilder entry(CreativeTabCategoryEntry entry) {
+        entries.add(entry);
         return this;
     }
 
