@@ -74,7 +74,7 @@ public abstract class CategorizedCreativeTab extends CreativeModeTab {
         for (CreativeTabCategory category : tab.categories.values()) {
             if (category.hasHeader()) {
                 headerRows.put(location.getRow(), category.getHeader());
-                location.nextLine();
+                location.nextLine(true);
             }
             for (CreativeTabCategoryEntry entry : category.getEntries()) {
                 var slot = entry.bake(tab, location);
@@ -85,6 +85,7 @@ public abstract class CategorizedCreativeTab extends CreativeModeTab {
                 slots.put(index, slot);
                 location.step();
             }
+            location.nextLine(false);
         }
     }
 

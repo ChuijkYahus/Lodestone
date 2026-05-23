@@ -39,17 +39,20 @@ public class CategorizedCreativeTabHandler {
                 return false;
             }
             var categorizedTab = optional.get();
+            var visualInfo = categorizedTab.visualInfo;
+            if (visualInfo == null) {
+                return false;
+            }
             var item = slot.getItem();
             if (item.isEmpty()) {
                 var menu = screen.getMenu();
-                int row = menu.getRowIndexForScroll(screen.scrollOffs);
+                int row = menu.getRowIndexForScroll(screen.scrollOffs) + slot.getSlotIndex() / 9;
                 int column = slot.getContainerSlot() % 9;
                 int itemIndex = row * 9 + Mth.floor(slot.getSlotIndex() / 9f) * 9;
                 var pose = guiGraphics.pose();
                 pose.pushPose();
                 pose.translate(0.0F, 0.0F, 100.0F);
 
-                var visualInfo = categorizedTab.visualInfo;
                 var header = categorizedTab.getHeader(row);
                 if (header != null) {
                     var texture = visualInfo.getHeaderTexture(header, row, column);
@@ -111,6 +114,7 @@ public class CategorizedCreativeTabHandler {
                 mostRecentIndex++;
             }
             items.add(slotStorage.getSelectedItem());
+            mostRecentIndex++;
         }
     }
 }

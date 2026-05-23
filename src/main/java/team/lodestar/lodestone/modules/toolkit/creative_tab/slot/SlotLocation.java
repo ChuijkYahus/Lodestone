@@ -15,9 +15,9 @@ public class SlotLocation {
         }
     }
 
-    public void nextLine() {
+    public void nextLine(boolean force) {
         int missing = 9 - column;
-        if (missing == 0) {
+        if (!force && missing == 9) {
             return;
         }
         index += missing;

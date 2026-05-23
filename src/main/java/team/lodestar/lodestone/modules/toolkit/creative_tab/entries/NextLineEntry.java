@@ -14,7 +14,7 @@ public class NextLineEntry extends CreativeTabCategoryEntry {
 
     @Override
     public SlotStorage bake(CategorizedCreativeTab tab, SlotLocation location) {
-        location.nextLine();
+        location.nextLine(false);
         return null;
     }
 }
