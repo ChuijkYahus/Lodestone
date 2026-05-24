@@ -58,14 +58,29 @@ public class CreativeTabCategoryBuilder {
     }
 
     public final CreativeTabCategoryBuilder addItemStack(Supplier<ItemStack> item) {
-        return entry(new CategoryItemEntry(item));
+        return addEntry(new CategoryItemEntry(item));
     }
 
     public CreativeTabCategoryBuilder nextLine() {
-        return entry(NextLineEntry.INSTANCE);
+        return addEntry(NextLineEntry.INSTANCE);
     }
 
-    public CreativeTabCategoryBuilder entry(CreativeTabCategoryEntry entry) {
+    public CreativeTabCategoryBuilder addEntries(CreativeTabCategoryEntry... entries) {
+        for (CreativeTabCategoryEntry entry : entries) {
+            addEntry(entry);
+        }
+        return this;
+    }
+
+    @SafeVarargs
+    public final <T> CreativeTabCategoryBuilder addEntries(Function<T, CreativeTabCategoryEntry> function, T... entries) {
+        for (T entry : entries) {
+            addEntry(function.apply(entry));
+        }
+        return this;
+    }
+
+    public CreativeTabCategoryBuilder addEntry(CreativeTabCategoryEntry entry) {
         entries.add(entry);
         return this;
     }
