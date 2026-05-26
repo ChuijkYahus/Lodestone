@@ -269,6 +269,12 @@ public abstract class Easing {
         }
     };
 
+    public static final Easing SMOOTH_STEP = new Easing("smoothStep") {
+        public double ease(double delta) {
+            return 3*delta*delta - 2*delta*delta*delta;
+        }
+    };
+
     public static abstract class Back extends Easing {
 
         public static final double DEFAULT_OVERSHOOT = 1.70158f;
