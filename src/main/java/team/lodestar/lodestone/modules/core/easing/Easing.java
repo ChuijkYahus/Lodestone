@@ -39,8 +39,8 @@ public abstract class Easing {
 
     protected double exponentInOut(double delta, double exponent) {
         return delta < 0.5
-                ? (exponent * 2) * pow(delta, exponent)
-                : 1 - pow(-2 * delta + 2, exponent) / 2;
+                ? pow(2 * delta, exponent) / 2
+                : 1 - pow(2 * (1 - delta), exponent) / 2;
     }
 
     public double lerp(double delta, double min, double max) {
