@@ -102,18 +102,18 @@ public abstract class PostProcessor {
     private void applyDefaultUniforms() {
         var MC = Minecraft.getInstance();
         for (EffectInstance e : effects) {
-            e.getUniform("time").set((float) time);
-            e.getUniform("cameraPos").set(new Vector3f(MC.gameRenderer.getMainCamera().getPosition().toVector3f()));
-            e.getUniform("lookVector").set(MC.gameRenderer.getMainCamera().getLookVector());
-            e.getUniform("upVector").set(MC.gameRenderer.getMainCamera().getUpVector());
-            e.getUniform("leftVector").set(MC.gameRenderer.getMainCamera().getLeftVector());
-            e.getUniform("invViewMat").set(PostProcessor.viewModelMatrix.invert(new Matrix4f()));
-            e.getUniform("invProjMat").set(RenderSystem.getProjectionMatrix().invert(new Matrix4f()));
-            e.getUniform("nearPlaneDistance").set(GameRenderer.PROJECTION_Z_NEAR);
-            e.getUniform("farPlaneDistance").set(MC.gameRenderer.getDepthFar());
-            e.getUniform("fov").set((float) Math.toRadians(MC.gameRenderer.getFov(MC.gameRenderer.getMainCamera(), MC.getTimer().getGameTimeDeltaPartialTick(false), true)));
-            e.getUniform("aspectRatio").set((float) MC.getWindow().getWidth() / (float) MC.getWindow().getHeight());
-            e.getUniform("bobOffset").set(PostProcessor.viewModelMatrix.invert(new Matrix4f()).transformPosition(LodestoneRenderSystem.getViewBobOffset(), new Vector3f()));
+            e.safeGetUniform("time").set((float) time);
+            e.safeGetUniform("cameraPos").set(new Vector3f(MC.gameRenderer.getMainCamera().getPosition().toVector3f()));
+            e.safeGetUniform("lookVector").set(MC.gameRenderer.getMainCamera().getLookVector());
+            e.safeGetUniform("upVector").set(MC.gameRenderer.getMainCamera().getUpVector());
+            e.safeGetUniform("leftVector").set(MC.gameRenderer.getMainCamera().getLeftVector());
+            e.safeGetUniform("invViewMat").set(PostProcessor.viewModelMatrix.invert(new Matrix4f()));
+            e.safeGetUniform("invProjMat").set(RenderSystem.getProjectionMatrix().invert(new Matrix4f()));
+            e.safeGetUniform("nearPlaneDistance").set(GameRenderer.PROJECTION_Z_NEAR);
+            e.safeGetUniform("farPlaneDistance").set(MC.gameRenderer.getDepthFar());
+            e.safeGetUniform("fov").set((float) Math.toRadians(MC.gameRenderer.getFov(MC.gameRenderer.getMainCamera(), MC.getTimer().getGameTimeDeltaPartialTick(false), true)));
+            e.safeGetUniform("aspectRatio").set((float) MC.getWindow().getWidth() / (float) MC.getWindow().getHeight());
+            e.safeGetUniform("bobOffset").set(PostProcessor.viewModelMatrix.invert(new Matrix4f()).transformPosition(LodestoneRenderSystem.getViewBobOffset(), new Vector3f()));
         }
     }
 
