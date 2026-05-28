@@ -13,15 +13,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.ResultType;
+import team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.ItemStackTransaction;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.*;
-
-import static team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.success;
-import static team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.unchanged;
 
 /**
  * An extension of the ItemStackHandler class, designed to work well when several inventories are relevant in a singular context, such as a block that stores multiple types of items in different lists.
@@ -179,7 +177,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         updateCaches();
         if (heldStack.isEmpty()) {
             var extract = extractItem(level);
-            ItemHandlerHelper.giveItemToPlayer(player, extract.original());
+            ItemHandlerHelper.giveItemToPlayer(player, extract.getExternalChanges().getUpdated());
             if (extract.wasSuccessful()) {
                 return Optional.of(extract);
             }
@@ -203,39 +201,57 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
 
     public InventoryInteractionResult extractItem(ServerLevel level, Function<ItemStack, Integer> amount) {
         if (isEmpty()) {
-            return InventoryInteractionResult.failure();
+            return InventoryInteractionResult.EMPTY;
         }
         var toExtract = nonEmptyItemStacks.getLast();
         int slot = stacks.indexOf(toExtract);
         var extracted = amount.apply(toExtract);
         var simulated = extractItem(slot, extracted, true);
         if (simulated.equals(ItemStack.EMPTY)) {
-            return unchanged(ResultType.EXTRACT, toExtract);
+            return InventoryInteractionResult.EMPTY;
         }
         var real = extractItem(slot, extracted, false);
         var leftover = real.copyWithCount(real.getCount() - extracted);
-        return processResult(success(ResultType.EXTRACT, real, leftover));
+
+        return InventoryInteractionResult.create()
+                .internalChange(ItemStackTransaction.updated(toExtract, leftover, slot))
+                .externalChange(ItemStackTransaction.updated(ItemStack.EMPTY, real, slot))
+                .build(level, this);
     }
 
     public InventoryInteractionResult insertItem(ServerLevel level, ItemStack stack) {
-        var simulated = insertItem(stack, true);
+        var simulated = insertItem(level, stack, true);
         if (!simulated.wasSuccessful()) {
             return simulated;
         }
-        int count = simulated.getLeftoverCount(getAllowedItemSize());
+        var internalChanges = simulated.getInternalChanges();
+        int count = internalChanges.getExchangedCount(getAllowedItemSize());
         var input = stack.split(count);
-        return processResult(insertItem(input, false));
+        return insertItem(level, input, false);
     }
 
-    protected InventoryInteractionResult insertItem(ItemStack stack, boolean simulate) {
-        ItemStack leftover = ItemHandlerHelper.insertItem(this, stack, simulate);
-        if (leftover.equals(stack)) {
-            return unchanged(ResultType.INSERT, leftover);
+    protected InventoryInteractionResult insertItem(ServerLevel level, ItemStack stack, boolean simulate) {
+        if (stack.isEmpty()) {
+            return InventoryInteractionResult.EMPTY;
         }
-        return success(ResultType.INSERT, stack, leftover);
+
+        var untouched = stack;
+        var builder = InventoryInteractionResult.create();
+        for (int i = 0; i < getSlots(); i++) {
+            var previous = getStackInSlot(i);
+            stack = insertItem(i, stack, simulate);
+            var current = getStackInSlot(i);
+
+            builder.internalChange(ItemStackTransaction.updated(previous, current, i));
+            if (stack.isEmpty()) {
+                break;
+            }
+        }
+        builder.externalChange(ItemStackTransaction.updated(untouched, stack, -1));
+        return builder.build(level, this);
     }
 
-    protected InventoryInteractionResult processResult(InventoryInteractionResult result) {
+    protected InventoryInteractionResult processResult(ServerLevel level, InventoryInteractionResult result) {
         return result;
     }
 }

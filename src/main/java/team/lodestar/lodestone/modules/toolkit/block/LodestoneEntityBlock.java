@@ -130,7 +130,7 @@ public class LodestoneEntityBlock<T extends LodestoneBlockEntity> extends Block 
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        var blockEntity = getBlockEntity(level, pos);
+            var blockEntity = getBlockEntity(level, pos);
         if (blockEntity != null) {
             var earlyResult = blockEntity.onUseWithoutItem(player);
             return earlyResult.consumesAction() ? earlyResult : blockEntity.onUse(player, InteractionHand.MAIN_HAND).result();
