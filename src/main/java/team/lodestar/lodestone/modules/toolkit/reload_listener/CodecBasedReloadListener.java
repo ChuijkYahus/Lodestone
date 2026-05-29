@@ -40,7 +40,7 @@ public abstract class CodecBasedReloadListener<K, T> extends SimpleJsonResourceR
             var location = (ResourceLocation) objects.keySet().toArray()[i];
             var raw = objects.get(location);
             if (raw.isJsonArray()) {
-                var asArray = raw.getAsJsonArray();
+                JsonArray asArray = raw.getAsJsonArray();
                 for (JsonElement jsonElement : asArray) {
                     var object = jsonElement.getAsJsonObject();
                     readData(object, location);
