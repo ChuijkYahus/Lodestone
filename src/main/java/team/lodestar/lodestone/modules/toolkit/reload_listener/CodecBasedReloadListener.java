@@ -1,9 +1,6 @@
 package team.lodestar.lodestone.modules.toolkit.reload_listener;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
+import com.google.gson.*;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.RegistryOps;
@@ -41,15 +38,31 @@ public abstract class CodecBasedReloadListener<K, T> extends SimpleJsonResourceR
         data.clear();
         for (int i = 0; i < objects.size(); i++) {
             var location = (ResourceLocation) objects.keySet().toArray()[i];
-            var object = objects.get(location).getAsJsonObject();
-
-            try {
-                var result = getCodec().parse(RegistryOps.create(JsonOps.INSTANCE, getRegistryLookup()), object).result();
-                result.ifPresent(b -> data.put(getID(b), b));
-            } catch (JsonParseException exception) {
-                LodestoneLib.LOGGER.info("Something ominous has occurred... {}, {}", location, exception);
+            var raw = objects.get(location);
+            if (raw.isJsonArray()) {
+                var asArray = raw.getAsJsonArray();
+                for (JsonElement jsonElement : asArray) {
+                    var object = jsonElement.getAsJsonObject();
+                    readData(object, location);
+                }
+                continue;
             }
+            readData(raw, location);
         }
+    }
+
+    public void readData(JsonElement element, ResourceLocation location) {
+        if (!element.isJsonObject()) {
+            return;
+        }
+        var object = element.getAsJsonObject();
+        try {
+            var result = getCodec().parse(RegistryOps.create(JsonOps.INSTANCE, getRegistryLookup()), object).result();
+            result.ifPresent(b -> data.put(getID(b), b));
+        } catch (JsonParseException exception) {
+            LodestoneLib.LOGGER.info("Something ominous has occurred... {}, {}", location, exception);
+        }
+
     }
 
     public abstract Codec<K> getKeyCodec();
