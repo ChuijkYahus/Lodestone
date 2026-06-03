@@ -125,6 +125,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
             stacks = updated;
         }
     }
+
     public void load(HolderLookup.Provider provider, CompoundTag compound) {
         load(provider, compound, "inventory");
     }
@@ -181,8 +182,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
             if (extract.wasSuccessful()) {
                 return Optional.of(extract);
             }
-        }
-        else {
+        } else {
             var insert = insertItem(level, heldStack);
             if (insert.wasSuccessful()) {
                 return Optional.of(insert);
