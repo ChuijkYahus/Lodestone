@@ -213,7 +213,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         var real = extractItem(slot, extracted, false);
         var leftover = real.copyWithCount(real.getCount() - extracted);
 
-        return InventoryInteractionResult.create()
+        return InventoryInteractionResult.extract()
                 .internalChange(ItemStackTransaction.updated(toExtract, leftover, slot))
                 .externalChange(ItemStackTransaction.updated(ItemStack.EMPTY, real, slot))
                 .build(level, this);
@@ -236,7 +236,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         }
 
         var untouched = stack;
-        var builder = InventoryInteractionResult.create();
+        var builder = InventoryInteractionResult.insert();
         for (int i = 0; i < getSlots(); i++) {
             var previous = getStackInSlot(i);
             stack = insertItem(i, stack, simulate);

@@ -3,20 +3,36 @@ package team.lodestar.lodestone.modules.toolkit.inventory;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 
-import javax.swing.border.AbstractBorder;
-import java.util.ArrayList;
-import java.util.List;
-
 public final class InventoryInteractionResult {
 
-    public static InventoryInteractionResultBuilder create() {
-        return new InventoryInteractionResultBuilder();
+    public enum InteractionType {
+        INSERT,
+        EXTRACT,
+        OTHER
     }
-    public static final InventoryInteractionResult EMPTY = InventoryInteractionResult.create().build();
+
+    public static InventoryInteractionResultBuilder extract() {
+        return create(InteractionType.EXTRACT);
+    }
+
+    public static InventoryInteractionResultBuilder insert() {
+        return create(InteractionType.INSERT);
+    }
+    public static InventoryInteractionResultBuilder create(InteractionType interactionType) {
+        return new InventoryInteractionResultBuilder(interactionType);
+    }
+
+    public static final InventoryInteractionResult EMPTY = InventoryInteractionResult.create(InteractionType.OTHER).build();
+
     public static class InventoryInteractionResultBuilder {
 
+        private final InteractionType interactionType;
         private ItemStackTransaction internalChange;
         private ItemStackTransaction externalChange;
+
+        public InventoryInteractionResultBuilder(InteractionType interactionType) {
+            this.interactionType = interactionType;
+        }
 
 
         public InventoryInteractionResultBuilder internalChange(ItemStackTransaction internalChange) {
@@ -36,17 +52,19 @@ public final class InventoryInteractionResult {
         }
 
         protected InventoryInteractionResult build() {
-            return new InventoryInteractionResult(internalChange, externalChange);
+            return new InventoryInteractionResult(internalChange, externalChange, interactionType);
         }
 
     }
 
     private final ItemStackTransaction internalChanges;
     private final ItemStackTransaction externalChanges;
+    private final InteractionType interactionType;
 
-    public InventoryInteractionResult(ItemStackTransaction internalChanges, ItemStackTransaction externalChanges) {
+    public InventoryInteractionResult(ItemStackTransaction internalChanges, ItemStackTransaction externalChanges, InteractionType interactionType) {
         this.internalChanges = internalChanges;
         this.externalChanges = externalChanges;
+        this.interactionType = interactionType;
     }
 
     public boolean wasSuccessful() {
@@ -59,6 +77,18 @@ public final class InventoryInteractionResult {
 
     public ItemStackTransaction getInternalChanges() {
         return internalChanges;
+    }
+
+    public InteractionType getInteractionType() {
+        return interactionType;
+    }
+
+    public ItemStack getTransferredItem() {
+        return switch (getInteractionType()) {
+            case INSERT -> internalChanges.getNonEmpty();
+            case EXTRACT -> externalChanges.getNonEmpty();
+            case OTHER -> ItemStack.EMPTY;
+        };
     }
 
     public static class ItemStackTransaction {
@@ -89,6 +119,14 @@ public final class InventoryInteractionResult {
 
         public ItemStack getUpdated() {
             return updated;
+        }
+
+        public ItemStack getNonEmpty() {
+            var original = getOriginal();
+            if (original.isEmpty()) {
+                return getUpdated();
+            }
+            return original;
         }
 
         public int getSlot() {
