@@ -235,14 +235,13 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
             return InventoryInteractionResult.EMPTY;
         }
 
-        var untouched = stack;
+        var untouched = stack.copy();
         var builder = InventoryInteractionResult.insert();
         for (int i = 0; i < getSlots(); i++) {
-            var previous = getStackInSlot(i);
+            var current = getStackInSlot(0);
             stack = insertItem(i, stack, simulate);
-            var current = getStackInSlot(i);
-
-            builder.internalChange(ItemStackTransaction.updated(previous, current, i));
+            var inserted = untouched.copyWithCount(untouched.getCount()-stack.getCount());
+            builder.internalChange(ItemStackTransaction.updated(current, inserted, i));
             if (stack.isEmpty()) {
                 break;
             }
