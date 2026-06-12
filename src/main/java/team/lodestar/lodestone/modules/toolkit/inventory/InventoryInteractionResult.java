@@ -134,7 +134,7 @@ public final class InventoryInteractionResult {
         }
 
         public int getExchangedCount(int clamp) {
-            int leftover = original.getCount() - updated.getCount();
+            int leftover = updated.getCount() - original.getCount();
             return Math.min(leftover, clamp);
         }
 
