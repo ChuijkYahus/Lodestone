@@ -58,7 +58,7 @@ public class CategorizedCreativeTabHandler {
                     var texture = visualInfo.getHeaderTexture(header, row, column);
                     if (texture.isPresent()) {
                         var sprite = minecraft.getGuiSprites().getSprite(texture.get());
-                        guiGraphics.blit(slot.x - 1, slot.y - 2, 0, 18, 20, sprite);
+                        visualInfo.drawHeaderSlot(guiGraphics, slot.x, slot.y, sprite);
                     }
                     if (column == 0) {
                         var font = minecraft.font;
@@ -67,7 +67,7 @@ public class CategorizedCreativeTabHandler {
                         int y = slot.y + 1;
                         pose.pushPose();
                         pose.translate(0.0F, 0.0F, 100.0F);
-                        guiGraphics.drawString(font, title, x, y, 4210752, false);
+                        visualInfo.drawHeaderText(guiGraphics, font, title, x, y);
                         pose.popPose();
                     }
                 }
@@ -76,7 +76,7 @@ public class CategorizedCreativeTabHandler {
                     var texture = visualInfo.getEmptySlotTexture(data);
                     if (texture.isPresent()) {
                         var sprite = minecraft.getGuiSprites().getSprite(texture.get());
-                        guiGraphics.blit(slot.x, slot.y, 0, 16, 16, sprite);
+                        visualInfo.drawEmptySlot(guiGraphics, slot.x, slot.y, sprite);
                     }
                 }
                 pose.popPose();
