@@ -13,11 +13,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.ItemStackTransaction;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.*;
 
@@ -178,7 +176,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         updateCaches();
         if (heldStack.isEmpty()) {
             var extract = extractItem(level);
-            ItemHandlerHelper.giveItemToPlayer(player, extract.getExternalChanges().getUpdated());
+            ItemHandlerHelper.giveItemToPlayer(player, extract.externalChanges().getUpdated());
             if (extract.wasSuccessful()) {
                 return Optional.of(extract);
             }
@@ -213,10 +211,10 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         var real = extractItem(slot, extracted, false);
         var leftover = real.copyWithCount(real.getCount() - extracted);
 
-        return InventoryInteractionResult.extract()
-                .internalChange(ItemStackTransaction.updated(toExtract, leftover, slot))
-                .externalChange(ItemStackTransaction.updated(ItemStack.EMPTY, real, slot))
-                .build(level, this);
+        var builder = InventoryInteractionResult.extract()
+                .internalChange(InventoryItemStackTransaction.updated(toExtract, leftover, slot))
+                .externalChange(InventoryItemStackTransaction.updated(ItemStack.EMPTY, real, slot));
+        return processResult(level, builder);
     }
 
     public InventoryInteractionResult insertItem(ServerLevel level, ItemStack stack) {
@@ -224,7 +222,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         if (!simulated.wasSuccessful()) {
             return simulated;
         }
-        var internalChanges = simulated.getInternalChanges();
+        var internalChanges = simulated.internalChanges();
         int count = internalChanges.getExchangedCount(getAllowedItemSize());
         var input = stack.split(count);
         return insertItem(level, input, false);
@@ -241,16 +239,16 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
             var current = getStackInSlot(0);
             stack = insertItem(i, stack, simulate);
             var inserted = untouched.copyWithCount(untouched.getCount()-stack.getCount());
-            builder.internalChange(ItemStackTransaction.updated(current, inserted, i));
+            builder.internalChange(InventoryItemStackTransaction.updated(current, inserted, i));
             if (stack.isEmpty()) {
                 break;
             }
         }
-        builder.externalChange(ItemStackTransaction.updated(untouched, stack, -1));
-        return builder.build(level, this);
+        builder.externalChange(InventoryItemStackTransaction.updated(untouched, stack, -1));
+        return processResult(level, builder);
     }
 
-    protected InventoryInteractionResult processResult(ServerLevel level, InventoryInteractionResult result) {
-        return result;
+    protected InventoryInteractionResult processResult(ServerLevel level, InventoryInteractionResultBuilder result) {
+        return result.build();
     }
 }

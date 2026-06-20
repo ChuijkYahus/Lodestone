@@ -85,11 +85,4 @@ public abstract class LodestoneBlockEntityContainer<T extends LodestoneBlockEnti
         itemHandler.onContentsChanged(index);
         return result;
     }
-
-
-    //TODO: ???
-    @Override
-    public boolean stillValid(Player playerIn) {
-        return true;
-    }
 }

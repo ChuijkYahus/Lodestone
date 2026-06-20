@@ -5,7 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.event.RenderFrameEvent;
-import team.lodestar.lodestone.config.ClientConfig;
 import team.lodestar.lodestone.modules.rendering.particle.old_particle_system.screen.ScreenParticleOptions;
 import team.lodestar.lodestone.modules.rendering.particle.old_particle_system.screen.ScreenParticleHolder;
 import team.lodestar.lodestone.modules.rendering.particle.old_particle_system.screen.ScreenParticleItemStackKey;
@@ -40,10 +39,6 @@ public class ScreenParticleHandler {
     public static boolean renderingHotbar;
 
     public static void tickParticles() {
-        if (!ClientConfig.ENABLE_SCREEN_PARTICLES.getConfigValue()) {
-            return;
-        }
-
         ITEM_PARTICLES.values().forEach(ScreenParticleHolder::tick);
         ITEM_PARTICLES.values().removeIf(ScreenParticleHolder::isEmpty);
 
@@ -57,9 +52,6 @@ public class ScreenParticleHandler {
     }
 
     public static void renderItemStackEarly(PoseStack poseStack, ItemStack stack, int x, int y) {
-        if (!ClientConfig.ENABLE_SCREEN_PARTICLES.getConfigValue()) {
-            return;
-        }
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.level != null && minecraft.player != null) {
             if (minecraft.isPaused()) {

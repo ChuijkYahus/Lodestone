@@ -7,7 +7,6 @@ import net.minecraft.client.particle.*;
 import net.minecraft.util.*;
 import net.minecraft.world.phys.*;
 import org.joml.*;
-import team.lodestar.lodestone.config.*;
 import team.lodestar.lodestone.modules.rendering.particle.old_particle_system.*;
 import team.lodestar.lodestone.modules.rendering.particle.old_particle_system.data.*;
 import team.lodestar.lodestone.modules.rendering.particle.old_particle_system.data.color.*;
@@ -100,8 +99,8 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
 
     public VertexConsumer getVertexConsumer(VertexConsumer original) {
         VertexConsumer consumerToUse = original;
-        if (ClientConfig.DELAYED_PARTICLE_RENDERING.getConfigValue() && renderType instanceof LodestoneWorldParticleRenderType lodestoneRenderType) {
-            consumerToUse = renderLayer.getParticleTarget().getBuffer(lodestoneRenderType.renderType);
+        if (renderType instanceof LodestoneWorldParticleRenderType lodestone) {
+            consumerToUse = renderLayer.getParticleTarget().getBuffer(lodestone.renderType);
         }
         return consumerToUse;
     }

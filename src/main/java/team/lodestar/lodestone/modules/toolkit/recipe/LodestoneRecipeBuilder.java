@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.recipe.builder;
+package team.lodestar.lodestone.modules.toolkit.recipe;
 
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;

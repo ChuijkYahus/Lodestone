@@ -3,7 +3,6 @@ package team.lodestar.lodestone.modules.rendering.particle.old_particle_system.s
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.*;
-import team.lodestar.lodestone.config.*;
 import team.lodestar.lodestone.modules.rendering.particle.old_particle_system.render_types.LodestoneScreenParticleRenderType;
 import team.lodestar.lodestone.modules.rendering.particle.old_particle_system.screen.base.ScreenParticle;
 
@@ -44,9 +43,6 @@ public class ScreenParticleHolder {
     }
 
     public void render(@Nullable PoseStack poseStack) {
-        if (!ClientConfig.ENABLE_SCREEN_PARTICLES.getConfigValue()) {
-            return;
-        }
         particles.forEach((renderType, particles) -> {
             if (!particles.isEmpty()) {
                 var builder = renderType.begin(TESSELATOR, Minecraft.getInstance().getTextureManager());

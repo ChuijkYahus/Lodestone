@@ -2,10 +2,9 @@ package team.lodestar.lodestone.handlers;
 
 import net.minecraft.client.*;
 import net.minecraft.client.multiplayer.*;
-import net.minecraft.util.RandomSource;
+import net.minecraft.util.*;
 import net.neoforged.neoforge.client.event.*;
-import team.lodestar.lodestone.config.ClientConfig;
-import team.lodestar.lodestone.modules.core.easing.Easing;
+import team.lodestar.lodestone.modules.core.easing.*;
 import team.lodestar.lodestone.modules.toolkit.screenshake.*;
 
 import java.util.*;
@@ -20,7 +19,6 @@ public class ScreenshakeHandler {
     public static void computeAngles(ViewportEvent.ComputeCameraAngles event) {
         RandomSource random = Minecraft.getInstance().level.getRandom();
         if (intensity > 0) {
-            float intensity = (float) (ScreenshakeHandler.intensity * ClientConfig.SCREENSHAKE_INTENSITY.getConfigValue());
             float yaw = Easing.SINE_IN_OUT.asWeighedRandom(random, 0, intensity * 2) * (random.nextBoolean() ? 1 : -1);
             float pitch = Easing.SINE_IN_OUT.asWeighedRandom(random, 0, intensity * 2) * (random.nextBoolean() ? 1 : -1);
             event.setYaw(event.getYaw() + yaw);

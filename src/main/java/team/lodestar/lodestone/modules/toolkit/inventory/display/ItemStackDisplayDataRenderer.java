@@ -1,22 +1,11 @@
-package team.lodestar.lodestone.modules.toolkit.client;
+package team.lodestar.lodestone.modules.toolkit.inventory.display;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
-import org.joml.Math;
-import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntity;
-import team.lodestar.lodestone.modules.toolkit.inventory.ItemStackHandlerItemDisplayData;
 import team.lodestar.lodestone.modules.toolkit.inventory.LodestoneItemStackBlockHandler;
-import team.lodestar.lodestone.modules.toolkit.inventory.LodestoneItemStackHandler;
-
-import java.util.Optional;
 
 import static net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
 

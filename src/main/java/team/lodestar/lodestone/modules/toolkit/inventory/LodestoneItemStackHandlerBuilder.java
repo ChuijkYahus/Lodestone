@@ -1,11 +1,9 @@
 package team.lodestar.lodestone.modules.toolkit.inventory;
 
 import net.minecraft.world.item.ItemStack;
-import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntity;
 
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class LodestoneItemStackHandlerBuilder {
 
