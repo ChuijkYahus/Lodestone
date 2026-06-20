@@ -8,6 +8,7 @@ import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import team.lodestar.lodestone.handlers.*;
 import team.lodestar.lodestone.modules.toolkit.enchanting.*;
+import team.lodestar.lodestone.modules.toolkit.worldevent.*;
 
 @EventBusSubscriber
 public class GameEvents {
@@ -24,14 +25,12 @@ public class GameEvents {
 
     @SubscribeEvent
     public static void onDamage(LivingDamageEvent.Pre event) {
-        LodestoneAttributeEventHandler.processAttributes(event);
         ItemEventHandler.triggerHurtResponses(event);
     }
 
     @SubscribeEvent
     public static void onDamage(LivingDamageEvent.Post event) {
         ItemEventHandler.triggerHurtResponses(event);
-        LodestoneAttributeEventHandler.triggerMagicDamage(event);
     }
 
     @SubscribeEvent

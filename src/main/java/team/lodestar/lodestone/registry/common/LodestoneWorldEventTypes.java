@@ -4,7 +4,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import team.lodestar.lodestone.LodestoneLib;
-import team.lodestar.lodestone.systems.worldevent.WorldEventType;
+import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventType;
 
 import java.util.List;
 

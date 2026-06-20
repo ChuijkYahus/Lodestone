@@ -5,8 +5,8 @@ import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import team.lodestar.lodestone.handlers.LodestoneRenderHandler;
-import team.lodestar.lodestone.systems.postprocess.PostProcessHandler;
+import team.lodestar.lodestone.modules.rendering.LodestoneRenderingSystem;
+import team.lodestar.lodestone.modules.rendering.postprocess.PostProcessHandler;
 
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
@@ -17,7 +17,7 @@ public class LevelRendererMixin {
     }
     @ModifyVariable(method = "renderLevel", at = @At(value = "HEAD"), index = 6, argsOnly = true)
     public Matrix4f lodestone$cacheBlockModelViewMatrix(Matrix4f frustumMatrix) {
-        LodestoneRenderHandler.cacheModelViewMatrix(frustumMatrix);
+        LodestoneRenderingSystem.cacheModelViewMatrix(frustumMatrix);
         return frustumMatrix;
     }
 }

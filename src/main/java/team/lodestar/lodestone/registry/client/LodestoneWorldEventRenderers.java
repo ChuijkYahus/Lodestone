@@ -1,8 +1,8 @@
 package team.lodestar.lodestone.registry.client;
 
-import team.lodestar.lodestone.systems.worldevent.WorldEventInstance;
-import team.lodestar.lodestone.systems.worldevent.WorldEventRenderer;
-import team.lodestar.lodestone.systems.worldevent.WorldEventType;
+import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventInstance;
+import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventRenderer;
+import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventType;
 
 import java.util.HashMap;
 

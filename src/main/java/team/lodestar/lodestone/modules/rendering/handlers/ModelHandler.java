@@ -8,9 +8,9 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.event.GameShuttingDownEvent;
 import team.lodestar.lodestone.LodestoneLib;
-import team.lodestar.lodestone.systems.model.IRenderableModel;
-import team.lodestar.lodestone.systems.model.geo.BedrockGeometryModel;
-import team.lodestar.lodestone.systems.model.obj.ObjModel;
+import team.lodestar.lodestone.modules.rendering.model.IRenderableModel;
+import team.lodestar.lodestone.modules.rendering.model.geo.BedrockGeometryModel;
+import team.lodestar.lodestone.modules.rendering.model.obj.ObjModel;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;

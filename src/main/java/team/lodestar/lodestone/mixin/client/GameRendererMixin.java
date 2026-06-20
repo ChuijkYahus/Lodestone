@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
-import team.lodestar.lodestone.handlers.*;
-import team.lodestar.lodestone.systems.postprocess.PostProcessHandler;
+import team.lodestar.lodestone.modules.rendering.*;
+import team.lodestar.lodestone.modules.rendering.postprocess.PostProcessHandler;
 import team.lodestar.lodestone.systems.rendering.LodestoneRenderSystem;
 import team.lodestar.lodestone.systems.rendering.renderpass.RenderPassHandler;
 
@@ -22,7 +22,7 @@ public class GameRendererMixin {
 
     @Inject(method = "resize", at = @At(value = "HEAD"))
     public void lodestone$injectionResizeListener(int width, int height, CallbackInfo ci) {
-        LodestoneRenderHandler.resize(width, height);
+        LodestoneRenderingSystem.resize(width, height);
         PostProcessHandler.resize(width, height);
         RenderPassHandler.resize(width, height);
     }

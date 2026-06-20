@@ -12,8 +12,8 @@ import net.minecraft.resources.*;
 import net.minecraft.util.*;
 import net.minecraft.world.phys.*;
 import org.joml.*;
-import team.lodestar.lodestone.handlers.*;
 import team.lodestar.lodestone.helpers.*;
+import team.lodestar.lodestone.modules.rendering.*;
 import team.lodestar.lodestone.systems.rendering.cube.*;
 import team.lodestar.lodestone.systems.rendering.buffer.LodestoneRenderLayer;
 import team.lodestar.lodestone.systems.rendering.rendeertype.*;
@@ -417,7 +417,7 @@ public class VFXBuilders {
         private final Minecraft minecraft = Minecraft.getInstance();
 
         @Nonnull
-        protected LodestoneRenderLayer renderLayer = LodestoneRenderHandler.DEFERRED_RENDER;
+        protected LodestoneRenderLayer renderLayer = LodestoneRenderingSystem.DEFERRED_RENDER;
 
         protected MultiBufferSource bufferSource;
         protected RenderType renderType;
@@ -610,7 +610,7 @@ public class VFXBuilders {
         }
 
         protected Matrix4f getOffsetViewMatrix() {
-            var pose = new Matrix4f(LodestoneRenderHandler.MODEL_VIEW);
+            var pose = new Matrix4f(LodestoneRenderingSystem.MODEL_VIEW);
             var cameraPosition = getCameraPosition().toVector3f();
             return pose.translate(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
         }

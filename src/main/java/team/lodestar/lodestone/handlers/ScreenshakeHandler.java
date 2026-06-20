@@ -2,13 +2,11 @@ package team.lodestar.lodestone.handlers;
 
 import net.minecraft.client.*;
 import net.minecraft.client.multiplayer.*;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.neoforged.neoforge.client.event.*;
 import team.lodestar.lodestone.config.ClientConfig;
-import team.lodestar.lodestone.helpers.*;
 import team.lodestar.lodestone.modules.core.easing.Easing;
-import team.lodestar.lodestone.systems.screenshake.*;
+import team.lodestar.lodestone.modules.toolkit.screenshake.*;
 
 import java.util.*;
 import java.util.function.*;

@@ -2,8 +2,8 @@ package team.lodestar.lodestone.events.types.worldevent;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
-import team.lodestar.lodestone.systems.worldevent.WorldEventInstance;
-import team.lodestar.lodestone.systems.worldevent.WorldEventRenderer;
+import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventInstance;
+import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventRenderer;
 
 public class WorldEventRenderEvent extends WorldEventInstanceEvent {
     private final WorldEventRenderer<WorldEventInstance> renderer;

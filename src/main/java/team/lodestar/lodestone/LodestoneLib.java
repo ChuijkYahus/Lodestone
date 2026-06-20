@@ -24,12 +24,10 @@ public class LodestoneLib {
 
     public LodestoneLib() {
         IEventBus modBus = ModLoadingContext.get().getActiveContainer().getEventBus();
-        IEventBus forgeBus = NeoForge.EVENT_BUS;
         ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
 
         LodestoneBlockEntities.BLOCK_ENTITY_TYPES.register(modBus);
         LodestoneParticleTypes.PARTICLES.register(modBus);
-        LodestoneAttributes.ATTRIBUTES.register(modBus);
         LodestoneRecipeSerializers.RECIPE_SERIALIZERS.register(modBus);
         LodestoneAttachmentTypes.ATTACHMENT_TYPES.register(modBus);
         LodestonePlacementFillers.MODIFIERS.register(modBus);

@@ -5,7 +5,7 @@ import com.mojang.blaze3d.shaders.EffectProgram;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import team.lodestar.lodestone.systems.postprocess.LodestoneGlslPreprocessor;
+import team.lodestar.lodestone.modules.rendering.postprocess.LodestoneGlslPreprocessor;
 
 @Mixin(EffectProgram.class)
 public class EffectProgramMixin {

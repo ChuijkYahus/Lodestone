@@ -7,8 +7,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import team.lodestar.lodestone.LodestoneLib;
-import team.lodestar.lodestone.command.arguments.WorldEventInstanceArgument;
-import team.lodestar.lodestone.command.arguments.WorldEventTypeArgument;
+import team.lodestar.lodestone.modules.toolkit.command.arguments.WorldEventInstanceArgument;
+import team.lodestar.lodestone.modules.toolkit.command.arguments.WorldEventTypeArgument;
 
 import java.util.function.Supplier;
 

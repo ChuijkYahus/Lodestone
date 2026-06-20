@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import net.minecraft.client.renderer.RenderType;
 import team.lodestar.lodestone.modules.rendering.particle.visual.instance.InstanceFormat;
-import team.lodestar.lodestone.systems.model.IRenderableModel;
+import team.lodestar.lodestone.modules.rendering.model.IRenderableModel;
 
 import java.util.Objects;
 

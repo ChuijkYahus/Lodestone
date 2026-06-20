@@ -7,9 +7,9 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import team.lodestar.lodestone.handlers.screenparticle.ParticleEmitterHandler;
 import team.lodestar.lodestone.registry.common.particle.*;
-import team.lodestar.lodestone.systems.particle.world.type.LodestoneItemCrumbsParticleType;
-import team.lodestar.lodestone.systems.particle.world.type.LodestoneTerrainParticleType;
-import team.lodestar.lodestone.systems.particle.world.type.LodestoneWorldParticleType;
+import team.lodestar.lodestone.deprecated.particle.world.type.LodestoneItemCrumbsParticleType;
+import team.lodestar.lodestone.deprecated.particle.world.type.LodestoneTerrainParticleType;
+import team.lodestar.lodestone.deprecated.particle.world.type.LodestoneWorldParticleType;
 
 @EventBusSubscriber(value = Dist.CLIENT)
 public class ClientModEvents {

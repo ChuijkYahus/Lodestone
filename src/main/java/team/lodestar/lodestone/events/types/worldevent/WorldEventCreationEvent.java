@@ -2,7 +2,7 @@ package team.lodestar.lodestone.events.types.worldevent;
 
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.ICancellableEvent;
-import team.lodestar.lodestone.systems.worldevent.WorldEventInstance;
+import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventInstance;
 
 public class WorldEventCreationEvent extends WorldEventInstanceEvent implements ICancellableEvent {
     public WorldEventCreationEvent(WorldEventInstance worldEvent, Level level) {

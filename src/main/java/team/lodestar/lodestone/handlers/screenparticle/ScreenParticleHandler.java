@@ -2,18 +2,16 @@ package team.lodestar.lodestone.handlers.screenparticle;
 
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.event.RenderFrameEvent;
-import org.joml.*;
 import team.lodestar.lodestone.config.ClientConfig;
-import team.lodestar.lodestone.systems.particle.screen.ScreenParticleOptions;
-import team.lodestar.lodestone.systems.particle.screen.ScreenParticleHolder;
-import team.lodestar.lodestone.systems.particle.screen.ScreenParticleItemStackKey;
-import team.lodestar.lodestone.systems.particle.screen.ScreenParticleItemStackRetrievalKey;
-import team.lodestar.lodestone.systems.particle.screen.ScreenParticleType;
-import team.lodestar.lodestone.systems.particle.screen.base.ScreenParticle;
+import team.lodestar.lodestone.deprecated.particle.screen.ScreenParticleOptions;
+import team.lodestar.lodestone.deprecated.particle.screen.ScreenParticleHolder;
+import team.lodestar.lodestone.deprecated.particle.screen.ScreenParticleItemStackKey;
+import team.lodestar.lodestone.deprecated.particle.screen.ScreenParticleItemStackRetrievalKey;
+import team.lodestar.lodestone.deprecated.particle.screen.ScreenParticleType;
+import team.lodestar.lodestone.deprecated.particle.screen.base.ScreenParticle;
 
 import javax.annotation.*;
 import java.util.*;

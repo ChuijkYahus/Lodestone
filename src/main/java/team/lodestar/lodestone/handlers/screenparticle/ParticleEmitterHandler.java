@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import team.lodestar.lodestone.helpers.DataHelper;
-import team.lodestar.lodestone.systems.particle.screen.ScreenParticleHolder;
+import team.lodestar.lodestone.deprecated.particle.screen.ScreenParticleHolder;
 
 import java.util.*;
 

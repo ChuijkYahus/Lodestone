@@ -1,7 +1,7 @@
 package team.lodestar.lodestone.systems.rendering.renderfeature;
 
 import net.minecraft.resources.ResourceLocation;
-import team.lodestar.lodestone.systems.device.DeviceRequirementSet;
+import team.lodestar.lodestone.modules.rendering.device.DeviceRequirementSet;
 
 import java.util.List;
 import java.util.function.Supplier;

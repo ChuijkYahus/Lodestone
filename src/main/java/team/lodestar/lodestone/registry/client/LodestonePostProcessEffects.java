@@ -6,9 +6,9 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import team.lodestar.lodestone.LodestoneLib;
-import team.lodestar.lodestone.systems.postprocess.PostProcessHandler;
-import team.lodestar.lodestone.systems.postprocess.PostProcessor;
-import team.lodestar.lodestone.systems.postprocess.effects.*;
+import team.lodestar.lodestone.modules.rendering.postprocess.PostProcessHandler;
+import team.lodestar.lodestone.modules.rendering.postprocess.PostProcessor;
+import team.lodestar.lodestone.modules.rendering.postprocess.effects.*;
 
 import java.util.function.Supplier;
 
