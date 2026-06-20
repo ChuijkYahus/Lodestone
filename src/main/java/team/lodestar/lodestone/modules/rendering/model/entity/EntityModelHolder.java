@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.modules.rendering.model;
+package team.lodestar.lodestone.modules.rendering.model.entity;
 
 import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.*;

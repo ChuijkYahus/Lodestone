@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.modules.rendering.model.armor;
+package team.lodestar.lodestone.modules.rendering.model.entity.armor;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;

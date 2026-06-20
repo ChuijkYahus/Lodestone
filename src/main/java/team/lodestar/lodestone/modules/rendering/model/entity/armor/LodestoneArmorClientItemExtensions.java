@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.modules.rendering.model.armor;
+package team.lodestar.lodestone.modules.rendering.model.entity.armor;
 
 import net.minecraft.client.*;
 import net.minecraft.client.model.*;
@@ -8,6 +8,7 @@ import net.minecraft.world.item.*;
 import net.neoforged.neoforge.client.*;
 import net.neoforged.neoforge.client.extensions.common.*;
 import org.jetbrains.annotations.*;
+import team.lodestar.lodestone.modules.rendering.model.entity.*;
 
 import java.util.function.*;
 
@@ -17,6 +18,10 @@ import java.util.function.*;
  */
 public class LodestoneArmorClientItemExtensions implements IClientItemExtensions {
 	private final Supplier<? extends Model> model;
+
+	public LodestoneArmorClientItemExtensions(EntityModelHolder<? extends Model> model) {
+		this(model::getModel);
+	}
 
 	public LodestoneArmorClientItemExtensions(Supplier<? extends Model> model) {
 		this.model = model;
