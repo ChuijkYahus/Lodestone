@@ -35,25 +35,25 @@ public class SoundPlayer {
         return new SoundPlayer(soundEvent);
     }
 
-    protected SoundPlayer(SoundEvent soundEvent) {
+    public SoundPlayer(SoundEvent soundEvent) {
         this.soundEvent = soundEvent;
     }
 
-    protected SoundPlayer pitch(float pitch) {
+    public SoundPlayer pitch(float pitch) {
         return pitch(pitch, pitch);
     }
 
-    protected SoundPlayer pitch(float min, float max) {
+    public SoundPlayer pitch(float min, float max) {
         minPitch = min;
         maxPitch = max;
         return this;
     }
 
-    protected SoundPlayer volume(float volume) {
+    public SoundPlayer volume(float volume) {
         return volume(volume, volume);
     }
 
-    protected SoundPlayer volume(float min, float max) {
+    public SoundPlayer volume(float min, float max) {
         minVolume = min;
         maxVolume = max;
         return this;
@@ -62,6 +62,7 @@ public class SoundPlayer {
     public SoundPlayer play(Entity entity) {
         return play(entity.level(), entity.position().add(0, entity.getBbHeight(), 0), entity.getSoundSource());
     }
+
     public SoundPlayer play(Level level, Vec3 position, SoundSource source) {
         var random = level.random;
         float volume = Easing.SINE_IN_OUT.asWeighedRandom(random, minVolume, maxVolume);
