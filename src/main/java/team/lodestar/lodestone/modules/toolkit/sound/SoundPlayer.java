@@ -63,11 +63,15 @@ public class SoundPlayer {
         return play(entity.level(), entity.position().add(0, entity.getBbHeight(), 0), entity.getSoundSource());
     }
 
-    public SoundPlayer play(Level level, Vec3 position, SoundSource source) {
+    public SoundPlayer play(Level level, BlockPos position, SoundSource source) {
+        return play(level, position.getCenter(), source);
+    }
+    
+    public SoundPlayer play(Level level, Position position, SoundSource source) {
         var random = level.random;
         float volume = Easing.SINE_IN_OUT.asWeighedRandom(random, minVolume, maxVolume);
         float pitch = Easing.SINE_IN_OUT.asWeighedRandom(random, minPitch, maxPitch);
-        level.playSound(null, position.x, position.y, position.z, soundEvent, source, volume, pitch);
+        level.playSound(null, position.x(), position.y(), position.z(), soundEvent, source, volume, pitch);
         return this;
     }
 }
