@@ -66,7 +66,7 @@ public class SoundPlayer {
     public SoundPlayer play(Level level, BlockPos position, SoundSource source) {
         return play(level, position.getCenter(), source);
     }
-    
+
     public SoundPlayer play(Level level, Position position, SoundSource source) {
         var random = level.random;
         float volume = Easing.SINE_IN_OUT.asWeighedRandom(random, minVolume, maxVolume);
