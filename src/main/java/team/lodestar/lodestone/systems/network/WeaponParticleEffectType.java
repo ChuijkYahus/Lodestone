@@ -12,7 +12,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.*;
-import team.lodestar.lodestone.deprecated.particle.data.color.*;
+import team.lodestar.lodestone.modules.rendering.particle.old_particle_system.data.color.*;
 import team.lodestar.lodestone.systems.network.particle.*;
 
 import java.awt.*;
