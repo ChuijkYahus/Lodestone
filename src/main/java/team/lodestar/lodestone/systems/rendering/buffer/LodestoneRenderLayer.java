@@ -1,6 +1,6 @@
 package team.lodestar.lodestone.systems.rendering.buffer;
 
-import team.lodestar.lodestone.handlers.LodestoneRenderHandler;
+import team.lodestar.lodestone.modules.rendering.LodestoneRenderingSystem;
 
 public class LodestoneRenderLayer {
 
@@ -19,12 +19,12 @@ public class LodestoneRenderLayer {
         target.endBatches(false);
 
         //Trails are already mapped to screen coordinates by lodestone, we clear the model view matrix here to prevent messing things up
-        LodestoneRenderHandler.clearModelViewMatrix();
+        LodestoneRenderingSystem.clearModelViewMatrix();
 
         trailTarget.endBatches(false);
         trailTarget.endBatches(true);
 
-        LodestoneRenderHandler.restoreModelViewMatrix();
+        LodestoneRenderingSystem.restoreModelViewMatrix();
 
         target.endBatches(true);
         particleTarget.endBatches(true);

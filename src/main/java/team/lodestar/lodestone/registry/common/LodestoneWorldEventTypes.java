@@ -4,14 +4,14 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import team.lodestar.lodestone.LodestoneLib;
-import team.lodestar.lodestone.systems.worldevent.WorldEventType;
+import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventType;
 
 import java.util.List;
 
 public class LodestoneWorldEventTypes {
 
     public static ResourceKey<Registry<WorldEventType>> WORLD_EVENT_TYPE_KEY = ResourceKey.createRegistryKey(LodestoneLib.lodestonePath("world_event_type"));
-    public static final DeferredRegister<WorldEventType> WORLD_EVENT_TYPES = DeferredRegister.create(WORLD_EVENT_TYPE_KEY, LodestoneLib.LODESTONE);
+    public static final DeferredRegister<WorldEventType> WORLD_EVENT_TYPES = createRegistry(LodestoneLib.LODESTONE);
     public static final Registry<WorldEventType> WORLD_EVENT_TYPE_REGISTRY = WORLD_EVENT_TYPES.makeRegistry(builder -> builder.sync(true));
 
 

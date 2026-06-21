@@ -26,20 +26,20 @@ public class BlockStateSmith<T extends Block> extends AbstractBlockStateSmith<T>
     }
 
     @SafeVarargs
-    public final void act(BlockStateSystemData data, Supplier<? extends Block>... blocks) {
+    public final void act(BlockStateSystemData<?> data, Supplier<? extends Block>... blocks) {
         act(data, List.of(blocks));
     }
 
     @SafeVarargs
-    public final void act(BlockStateSystemData data, ItemModelSmith smith, Supplier<? extends Block>... blocks) {
+    public final void act(BlockStateSystemData<?> data, ItemModelSmith smith, Supplier<? extends Block>... blocks) {
         act(data, smith, List.of(blocks));
     }
 
-    public void act(BlockStateSystemData data, Collection<Supplier<? extends Block>> blocks) {
+    public void act(BlockStateSystemData<?> data, Collection<Supplier<? extends Block>> blocks) {
         act(data, defaultItemModelSmith, blocks);
     }
 
-    public void act(BlockStateSystemData data, ItemModelSmith smith, Collection<Supplier<? extends Block>> blocks) {
+    public void act(BlockStateSystemData<?> data, ItemModelSmith smith, Collection<Supplier<? extends Block>> blocks) {
         for (Supplier<? extends Block> block : blocks) {
             tryAct(data, smith, block, stateSupplier::act);
         }

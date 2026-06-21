@@ -1,8 +1,10 @@
 package team.lodestar.lodestone.modules.rendering.particle.visual.types.mesh;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import net.minecraft.client.renderer.RenderType;
 import team.lodestar.lodestone.modules.rendering.particle.visual.instance.InstanceFormat;
+import team.lodestar.lodestone.modules.rendering.model.IRenderableModel;
 
 import java.util.Objects;
 
@@ -21,6 +23,12 @@ public class MeshVisualConfig {
 
     public MeshVisualConfig instanceFormat(InstanceFormat instanceFormat) {
         this.instanceFormat = instanceFormat;
+        return this;
+    }
+
+    public MeshVisualConfig instancedModel(IRenderableModel model, RenderType renderType) {
+        this.vertexBuffer = model.createModelBuffer(new PoseStack(), renderType);
+        this.renderType = renderType;
         return this;
     }
 

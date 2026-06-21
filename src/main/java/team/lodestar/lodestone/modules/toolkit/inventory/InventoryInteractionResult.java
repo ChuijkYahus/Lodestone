@@ -1,33 +1,42 @@
 package team.lodestar.lodestone.modules.toolkit.inventory;
 
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 
-public record InventoryInteractionResult(ResultType resultType, ItemStack original, ItemStack result) {
+public record InventoryInteractionResult(
+        InventoryItemStackTransaction internalChanges,
+        InventoryItemStackTransaction externalChanges,
+        InventoryInteractionResult.InteractionType interactionType) {
 
-    public enum ResultType {
+    public enum InteractionType {
         INSERT,
         EXTRACT,
-        FAILURE
+        OTHER
     }
 
-    public static InventoryInteractionResult unchanged(ResultType resultType, ItemStack unchanged) {
-        return new InventoryInteractionResult(resultType, unchanged, unchanged);
+    public static InventoryInteractionResultBuilder extract() {
+        return create(InteractionType.EXTRACT);
     }
 
-    public static InventoryInteractionResult success(ResultType resultType, ItemStack original, ItemStack result) {
-        return new InventoryInteractionResult(resultType, original, result);
+    public static InventoryInteractionResultBuilder insert() {
+        return create(InteractionType.INSERT);
     }
 
-    public static InventoryInteractionResult failure() {
-        return new InventoryInteractionResult(ResultType.FAILURE, ItemStack.EMPTY, ItemStack.EMPTY);
+    public static InventoryInteractionResultBuilder create(InteractionType interactionType) {
+        return new InventoryInteractionResultBuilder(interactionType);
     }
+
+    public static final InventoryInteractionResult EMPTY = InventoryInteractionResult.create(InteractionType.OTHER).build();
 
     public boolean wasSuccessful() {
-        return !original.equals(result);
+        return internalChanges.wasSuccessful() || externalChanges.wasSuccessful();
     }
 
-    public int getLeftoverCount(int clamp) {
-        int leftover = original.getCount() - result.getCount();
-        return Math.min(leftover, clamp);
+    public ItemStack getTransferredItem() {
+        return switch (interactionType()) {
+            case INSERT -> internalChanges.getNonEmpty();
+            case EXTRACT -> externalChanges.getNonEmpty();
+            case OTHER -> ItemStack.EMPTY;
+        };
     }
+
 }

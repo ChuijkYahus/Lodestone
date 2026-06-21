@@ -1,9 +1,11 @@
 package team.lodestar.lodestone.modules.toolkit.creative_tab;
 
-import com.mojang.datafixers.util.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.*;
+import team.lodestar.lodestone.modules.toolkit.creative_tab.entries.CategoryItemEntry;
+import team.lodestar.lodestone.modules.toolkit.creative_tab.entries.CreativeTabCategoryEntry;
+import team.lodestar.lodestone.modules.toolkit.creative_tab.entries.NextLineEntry;
 
 import java.util.*;
 import java.util.function.*;
@@ -12,14 +14,19 @@ import java.util.function.*;
 public class CreativeTabCategoryBuilder {
 
     protected final CategorizedCreativeTab categorizedTab;
-    protected final String mod;
-    protected final String id;
-    protected final ArrayList<Either<Supplier<ItemStack>, CreativeTabCategory.Operation>> items = new ArrayList<>();
+    protected final ResourceLocation id;
 
-    public CreativeTabCategoryBuilder(CategorizedCreativeTab categorizedTab, String mod, String id) {
+    protected Function<CreativeTabCategory, CreativeTabHeader> header = CreativeTabHeader::new;
+    protected final ArrayList<CreativeTabCategoryEntry> entries = new ArrayList<>();
+
+    public CreativeTabCategoryBuilder(CategorizedCreativeTab categorizedTab, ResourceLocation id) {
         this.categorizedTab = categorizedTab;
-        this.mod = mod;
         this.id = id;
+    }
+
+    public CreativeTabCategoryBuilder setHeader(Function<CreativeTabCategory, CreativeTabHeader> header) {
+        this.header = header;
+        return this;
     }
 
     public final CreativeTabCategoryBuilder addItems(Consumer<CreativeTabCategoryBuilder> itemAdder) {
@@ -43,25 +50,42 @@ public class CreativeTabCategoryBuilder {
     }
 
     public final CreativeTabCategoryBuilder addItem(ItemLike item) {
-        return addItemStack(item.asItem().getDefaultInstance());
+        return addItemStack(item.asItem()::getDefaultInstance);
     }
 
     public final CreativeTabCategoryBuilder addItemStack(ItemStack item) {
-        items.add(Either.left(() -> item));
-        return this;
+        return addItemStack(() -> item);
     }
 
     public final CreativeTabCategoryBuilder addItemStack(Supplier<ItemStack> item) {
-        items.add(Either.left(item));
-        return this;
+        return addEntry(new CategoryItemEntry(item));
     }
 
     public CreativeTabCategoryBuilder nextLine() {
-        items.add(Either.right(CreativeTabCategory.Operation.NEXT_LINE));
+        return addEntry(NextLineEntry.INSTANCE);
+    }
+
+    public CreativeTabCategoryBuilder addEntries(CreativeTabCategoryEntry... entries) {
+        for (CreativeTabCategoryEntry entry : entries) {
+            addEntry(entry);
+        }
+        return this;
+    }
+
+    @SafeVarargs
+    public final <T> CreativeTabCategoryBuilder addEntries(Function<T, CreativeTabCategoryEntry> function, T... entries) {
+        for (T entry : entries) {
+            addEntry(function.apply(entry));
+        }
+        return this;
+    }
+
+    public CreativeTabCategoryBuilder addEntry(CreativeTabCategoryEntry entry) {
+        entries.add(entry);
         return this;
     }
 
     public void bake() {
-        categorizedTab.getCategories().put(id, new CreativeTabCategory(mod, id, items));
+        categorizedTab.appendCategory(id, new CreativeTabCategory(id, header, entries));
     }
 }

@@ -7,7 +7,7 @@ import net.minecraft.commands.Commands;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import team.lodestar.lodestone.command.*;
+import team.lodestar.lodestone.modules.toolkit.command.worldevent.*;
 
 import static team.lodestar.lodestone.LodestoneLib.LODESTONE;
 

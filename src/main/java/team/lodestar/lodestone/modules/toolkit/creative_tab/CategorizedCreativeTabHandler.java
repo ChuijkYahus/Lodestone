@@ -1,6 +1,7 @@
 package team.lodestar.lodestone.modules.toolkit.creative_tab;
 
-import com.mojang.datafixers.util.*;
+import com.google.common.collect.ImmutableList;
+import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.*;
@@ -8,9 +9,10 @@ import net.minecraft.network.chat.*;
 import net.minecraft.util.*;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.*;
+import team.lodestar.lodestone.modules.toolkit.creative_tab.entries.CreativeTabCategoryEntry;
+import team.lodestar.lodestone.modules.toolkit.creative_tab.slot.SlotStorage;
 
 import java.util.*;
-import java.util.function.*;
 
 public class CategorizedCreativeTabHandler {
     
@@ -37,39 +39,44 @@ public class CategorizedCreativeTabHandler {
                 return false;
             }
             var categorizedTab = optional.get();
+            var visualInfo = categorizedTab.visualInfo;
+            if (visualInfo == null) {
+                return false;
+            }
             var item = slot.getItem();
             if (item.isEmpty()) {
                 var menu = screen.getMenu();
-                int row = menu.getRowIndexForScroll(screen.scrollOffs);
+                int row = menu.getRowIndexForScroll(screen.scrollOffs) + slot.getSlotIndex() / 9;
                 int column = slot.getContainerSlot() % 9;
-                int itemIndex = row * 9 + Mth.floor(slot.getSlotIndex() / 9f) * 9;
+                int itemIndex = row * 9 + column;
                 var pose = guiGraphics.pose();
                 pose.pushPose();
                 pose.translate(0.0F, 0.0F, 100.0F);
 
-                var headers = categorizedTab.getHeaders();
-                if (headers.containsKey(itemIndex)) {
-                    var header = headers.get(itemIndex);
-                    var texture = categorizedTab.getHeaderTexture(header, row, column);
+                var header = categorizedTab.getHeader(row);
+                if (header != null) {
+                    var texture = visualInfo.getHeaderTexture(header, row, column);
                     if (texture.isPresent()) {
                         var sprite = minecraft.getGuiSprites().getSprite(texture.get());
-                        guiGraphics.blit(slot.x - 1, slot.y - 2, 0, 18, 20, sprite);
+                        visualInfo.drawHeaderSlot(guiGraphics, slot.x, slot.y, sprite);
                     }
                     if (column == 0) {
                         var font = minecraft.font;
-                        var title = Component.translatable(header.category().getHeaderLangKey());
+                        var title = header.getHeaderText();
                         int x = slot.x + 80 - font.width(title) / 2;
                         int y = slot.y + 1;
                         pose.pushPose();
                         pose.translate(0.0F, 0.0F, 100.0F);
-                        guiGraphics.drawString(font, title, x, y, 4210752, false);
+                        visualInfo.drawHeaderText(guiGraphics, font, title, x, y);
                         pose.popPose();
                     }
-                } else {
-                    var texture = categorizedTab.getEmptySlotTexture(row, column);
+                }
+                else {
+                    var data = categorizedTab.getSlotStorage(itemIndex);
+                    var texture = visualInfo.getEmptySlotTexture(data);
                     if (texture.isPresent()) {
                         var sprite = minecraft.getGuiSprites().getSprite(texture.get());
-                        guiGraphics.blit(slot.x, slot.y, 0, 16, 16, sprite);
+                        visualInfo.drawEmptySlot(guiGraphics, slot.x, slot.y, sprite);
                     }
                 }
                 pose.popPose();
@@ -93,40 +100,21 @@ public class CategorizedCreativeTabHandler {
         return false;
     }
 
-    public static void fillMenu(CreativeModeInventoryScreen.ItemPickerMenu menu, CategorizedCreativeTab categorizedTab) {
-        var categories = categorizedTab.getCategories().values();
+    public static void fillMenu(CreativeModeInventoryScreen.ItemPickerMenu menu, CategorizedCreativeTab tab) {
         var items = menu.items;
-        categorizedTab.getHeaders().clear();
+        tab.bakeCategoryData(tab);
         items.clear();
-        for (CreativeTabCategory category : categories) {
-            addCategoryHeader(menu, categorizedTab, category);
-            for (Either<Supplier<ItemStack>, CreativeTabCategory.Operation> either : category.items()) {
-                either.ifLeft(i -> {
-                    var item = i.get();
-                    if (categorizedTab.isItemVisible(item)) {
-                        items.add(item);
-                    }
-                });
-                either.ifRight(e -> clearRow(menu, false));
-            }
-            clearRow(menu, false);
-        }
-    }
 
-    public static void addCategoryHeader(CreativeModeInventoryScreen.ItemPickerMenu menu, CategorizedCreativeTab categorizedTab, CreativeTabCategory category) {
-        var items = menu.items;
-        var index = items.size();
-        clearRow(menu, true);
-        categorizedTab.getHeaders().put(index, new CreativeTabCategory.CategoryHeader(category));
-    }
-
-    public static void clearRow(CreativeModeInventoryScreen.ItemPickerMenu menu, boolean force) {
-        var items = menu.items;
-        int missing = 9 - items.size() % 9;
-        if (force || missing != 9) {
-            for (int i = 0; i < missing; i++) {
+        var slots = tab.slots;
+        int mostRecentIndex = 0;
+        for (int index : slots.keySet()) {
+            var slotStorage = slots.get(index);
+            while (mostRecentIndex < slotStorage.getItemIndex()) {
                 items.add(ItemStack.EMPTY);
+                mostRecentIndex++;
             }
+            items.add(slotStorage.getSelectedItem());
+            mostRecentIndex++;
         }
     }
 }

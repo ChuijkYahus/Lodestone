@@ -4,7 +4,7 @@ import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import team.lodestar.lodestone.LodestoneLib;
-import team.lodestar.lodestone.attachment.WorldEventAttachment;
+import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventAttachment;
 
 import java.util.function.Supplier;
 

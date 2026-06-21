@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * A config system allowing for static initialization of config values.
  * Value holders are stored in a hashmap, with the key being a pair represented by a configType String and the path of the value
  */
+//TODO: this needs to be redone, redesigned, to be more comfortable for the end user.
 public class LodestoneConfig {
 
     @SuppressWarnings("rawtypes")

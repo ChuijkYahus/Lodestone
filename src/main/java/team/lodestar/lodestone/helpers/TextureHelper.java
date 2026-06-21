@@ -2,7 +2,7 @@ package team.lodestar.lodestone.helpers;
 
 import com.mojang.blaze3d.pipeline.TextureTarget;
 import net.minecraft.client.Minecraft;
-import team.lodestar.lodestone.systems.texture.CustomizableTextureTarget;
+import team.lodestar.lodestone.modules.rendering.texture.CustomizableTextureTarget;
 
 import java.nio.ByteBuffer;
 

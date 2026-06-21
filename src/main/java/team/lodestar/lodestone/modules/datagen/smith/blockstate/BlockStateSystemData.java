@@ -6,5 +6,5 @@ import team.lodestar.lodestone.modules.datagen.providers.block.LodestoneBlockSta
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public record BlockStateSystemData(LodestoneBlockStateSystem provider, Consumer<Supplier<? extends Block>> consumer) {
+public record BlockStateSystemData<T extends LodestoneBlockStateSystem>(T provider, Consumer<Supplier<? extends Block>> consumer) {
 }

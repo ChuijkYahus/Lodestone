@@ -13,18 +13,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.ResultType;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.Predicate;
-
-import static team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.success;
-import static team.lodestar.lodestone.modules.toolkit.inventory.InventoryInteractionResult.unchanged;
+import java.util.function.*;
 
 /**
  * An extension of the ItemStackHandler class, designed to work well when several inventories are relevant in a singular context, such as a block that stores multiple types of items in different lists.
@@ -33,7 +26,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
 
     protected final int slotCount;
     protected final int allowedItemSize;
-    protected final Predicate<ItemStack> inputPredicate;
+    protected final BiPredicate<LodestoneItemStackHandler, ItemStack> inputPredicate;
     protected final Runnable contentsChangeBehavior;
 
     protected ArrayList<ItemStack> nonEmptyItemStacks = new ArrayList<>();
@@ -44,7 +37,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         return new LodestoneItemStackHandlerBuilder(slotCount);
     }
 
-    public LodestoneItemStackHandler(int slotCount, int allowedItemSize, Predicate<ItemStack> inputPredicate, Runnable contentsChangeBehavior) {
+    public LodestoneItemStackHandler(int slotCount, int allowedItemSize, BiPredicate<LodestoneItemStackHandler, ItemStack> inputPredicate, Runnable contentsChangeBehavior) {
         super(slotCount);
         this.slotCount = slotCount;
         this.allowedItemSize = allowedItemSize;
@@ -60,7 +53,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         return allowedItemSize;
     }
 
-    public Predicate<ItemStack> getInputPredicate() {
+    public BiPredicate<LodestoneItemStackHandler, ItemStack> getInputPredicate() {
         return inputPredicate;
     }
 
@@ -100,7 +93,7 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
 
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-        if (!inputPredicate.test(stack)) {
+        if (!getInputPredicate().test(this, stack)) {
             return false;
         }
         return super.isItemValid(slot, stack);
@@ -118,16 +111,19 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
     }
 
     public void ensureSize() {
-        if (stacks.size() != slotCount) {
-            var updated = NonNullList.withSize(slotCount, ItemStack.EMPTY);
+        int slots = getSlotCount();
+        if (stacks.size() != slots) {
+            var updated = NonNullList.withSize(slots, ItemStack.EMPTY);
             for (int i = 0; i < stacks.size(); i++) {
-                if (i < slotCount) {
-                    updated.set(i, stacks.get(i));
+                if (i >= slots) {
+                    continue;
                 }
+                updated.set(i, stacks.get(i));
             }
             stacks = updated;
         }
     }
+
     public void load(HolderLookup.Provider provider, CompoundTag compound) {
         load(provider, compound, "inventory");
     }
@@ -180,12 +176,11 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         updateCaches();
         if (heldStack.isEmpty()) {
             var extract = extractItem(level);
-            ItemHandlerHelper.giveItemToPlayer(player, extract.original());
+            ItemHandlerHelper.giveItemToPlayer(player, extract.externalChanges().getUpdated());
             if (extract.wasSuccessful()) {
                 return Optional.of(extract);
             }
-        }
-        else {
+        } else {
             var insert = insertItem(level, heldStack);
             if (insert.wasSuccessful()) {
                 return Optional.of(insert);
@@ -204,39 +199,56 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
 
     public InventoryInteractionResult extractItem(ServerLevel level, Function<ItemStack, Integer> amount) {
         if (isEmpty()) {
-            return InventoryInteractionResult.failure();
+            return InventoryInteractionResult.EMPTY;
         }
         var toExtract = nonEmptyItemStacks.getLast();
         int slot = stacks.indexOf(toExtract);
         var extracted = amount.apply(toExtract);
         var simulated = extractItem(slot, extracted, true);
         if (simulated.equals(ItemStack.EMPTY)) {
-            return unchanged(ResultType.EXTRACT, toExtract);
+            return InventoryInteractionResult.EMPTY;
         }
         var real = extractItem(slot, extracted, false);
         var leftover = real.copyWithCount(real.getCount() - extracted);
-        return processResult(success(ResultType.EXTRACT, real, leftover));
+
+        var builder = InventoryInteractionResult.extract()
+                .internalChange(InventoryItemStackTransaction.updated(toExtract, leftover, slot))
+                .externalChange(InventoryItemStackTransaction.updated(ItemStack.EMPTY, real, slot));
+        return processResult(level, builder);
     }
 
     public InventoryInteractionResult insertItem(ServerLevel level, ItemStack stack) {
-        var simulated = insertItem(stack, true);
+        var simulated = insertItem(level, stack, true);
         if (!simulated.wasSuccessful()) {
             return simulated;
         }
-        int count = simulated.getLeftoverCount(allowedItemSize);
+        var internalChanges = simulated.internalChanges();
+        int count = internalChanges.getExchangedCount(getAllowedItemSize());
         var input = stack.split(count);
-        return processResult(insertItem(input, false));
+        return insertItem(level, input, false);
     }
 
-    protected InventoryInteractionResult insertItem(ItemStack stack, boolean simulate) {
-        ItemStack leftover = ItemHandlerHelper.insertItem(this, stack, simulate);
-        if (leftover.equals(stack)) {
-            return unchanged(ResultType.INSERT, leftover);
+    protected InventoryInteractionResult insertItem(ServerLevel level, ItemStack stack, boolean simulate) {
+        if (stack.isEmpty()) {
+            return InventoryInteractionResult.EMPTY;
         }
-        return success(ResultType.INSERT, stack, leftover);
+
+        var untouched = stack.copy();
+        var builder = InventoryInteractionResult.insert();
+        for (int i = 0; i < getSlots(); i++) {
+            var current = getStackInSlot(0);
+            stack = insertItem(i, stack, simulate);
+            var inserted = untouched.copyWithCount(untouched.getCount()-stack.getCount());
+            builder.internalChange(InventoryItemStackTransaction.updated(current, inserted, i));
+            if (stack.isEmpty()) {
+                break;
+            }
+        }
+        builder.externalChange(InventoryItemStackTransaction.updated(untouched, stack, -1));
+        return processResult(level, builder);
     }
 
-    protected InventoryInteractionResult processResult(InventoryInteractionResult result) {
-        return result;
+    protected InventoryInteractionResult processResult(ServerLevel level, InventoryInteractionResultBuilder result) {
+        return result.build();
     }
 }

@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import org.jetbrains.annotations.NotNull;
-import team.lodestar.lodestone.handlers.LodestoneRenderHandler;
+import team.lodestar.lodestone.modules.rendering.LodestoneRenderingSystem;
 import team.lodestar.lodestone.systems.rendering.LodestoneRenderType;
 import team.lodestar.lodestone.systems.rendering.rendeertype.*;
 
@@ -55,9 +55,9 @@ public class LodestoneBufferSource extends MultiBufferSource.BufferSource {
 
     @Override
     public void endBatch(@NotNull RenderType renderType) {
-        LodestoneRenderHandler.updateUniforms(renderType);
+        LodestoneRenderingSystem.updateUniforms(renderType);
         super.endBatch(renderType);
-        LodestoneRenderHandler.resetUniforms(renderType);
+        LodestoneRenderingSystem.resetUniforms(renderType);
     }
 
     public Collection<RenderType> getAdditives() {

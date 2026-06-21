@@ -5,14 +5,8 @@ import net.minecraft.util.*;
 import net.neoforged.bus.api.*;
 import net.neoforged.fml.*;
 import net.neoforged.fml.common.*;
-import net.neoforged.fml.config.*;
-import net.neoforged.neoforge.common.*;
-import net.neoforged.neoforge.data.event.*;
 import org.apache.logging.log4j.*;
-import team.lodestar.lodestone.registry.common.LodestoneAttachmentTypes;
 import team.lodestar.lodestone.compability.*;
-import team.lodestar.lodestone.config.*;
-import team.lodestar.lodestone.modules.datagen.*;
 import team.lodestar.lodestone.registry.common.*;
 import team.lodestar.lodestone.registry.common.particle.*;
 
@@ -22,20 +16,15 @@ public class LodestoneLib {
     public static final String LODESTONE = "lodestone";
     public static final RandomSource RANDOM = RandomSource.create();
 
-    public LodestoneLib() {
-        IEventBus modBus = ModLoadingContext.get().getActiveContainer().getEventBus();
-        IEventBus forgeBus = NeoForge.EVENT_BUS;
-        ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
+    public LodestoneLib(IEventBus modEventBus, ModContainer modContainer) {
 
-        LodestoneBlockEntities.BLOCK_ENTITY_TYPES.register(modBus);
-        LodestoneParticleTypes.PARTICLES.register(modBus);
-        LodestoneAttributes.ATTRIBUTES.register(modBus);
-        LodestoneRecipeSerializers.RECIPE_SERIALIZERS.register(modBus);
-        LodestoneAttachmentTypes.ATTACHMENT_TYPES.register(modBus);
-        LodestonePlacementFillers.MODIFIERS.register(modBus);
-        LodestoneEnchantmentComponents.ENCHANTMENT_COMPONENTS.register(modBus);
-        LodestoneWorldEventTypes.WORLD_EVENT_TYPES.register(modBus);
-        LodestoneCommandArgumentTypes.register(modBus);
+        LodestoneParticleTypes.PARTICLES.register(modEventBus);
+        LodestonePlacementFillers.MODIFIERS.register(modEventBus);
+        LodestoneAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
+        LodestoneBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
+        LodestoneWorldEventTypes.WORLD_EVENT_TYPES.register(modEventBus);
+        LodestoneEnchantmentComponents.ENCHANTMENT_COMPONENTS.register(modEventBus);
+        LodestoneCommandArgumentTypes.register(modEventBus);
 
         CuriosCompat.init();
     }

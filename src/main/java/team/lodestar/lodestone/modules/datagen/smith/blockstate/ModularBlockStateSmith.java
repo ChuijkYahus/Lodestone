@@ -21,20 +21,20 @@ public class ModularBlockStateSmith<T extends Block> extends AbstractBlockStateS
     }
 
     @SafeVarargs
-    public final void act(BlockStateSystemData data, StateFunction<T> actor, ModelFileSupplier modelFileSupplier, Supplier<? extends Block>... blocks) {
+    public final void act(BlockStateSystemData<?> data, StateFunction<T> actor, ModelFileSupplier modelFileSupplier, Supplier<? extends Block>... blocks) {
         act(data, ItemModelSmithTypes.BLOCK_MODEL_ITEM, actor, modelFileSupplier, blocks);
     }
 
     @SafeVarargs
-    public final void act(BlockStateSystemData data, ItemModelSmith itemModelSmith, StateFunction<T> actor, ModelFileSupplier modelFileSupplier, Supplier<? extends Block>... blocks) {
+    public final void act(BlockStateSystemData<?> data, ItemModelSmith itemModelSmith, StateFunction<T> actor, ModelFileSupplier modelFileSupplier, Supplier<? extends Block>... blocks) {
         act(data, itemModelSmith, actor, modelFileSupplier, List.of(blocks));
     }
 
-    public void act(BlockStateSystemData data, StateFunction<T> actor, ModelFileSupplier modelFileSupplier, Collection<Supplier<? extends Block>> blocks) {
+    public void act(BlockStateSystemData<?> data, StateFunction<T> actor, ModelFileSupplier modelFileSupplier, Collection<Supplier<? extends Block>> blocks) {
         act(data, ItemModelSmithTypes.BLOCK_MODEL_ITEM, actor, modelFileSupplier, blocks);
     }
 
-    public void act(BlockStateSystemData data, ItemModelSmith itemModelSmith, StateFunction<T> actor, ModelFileSupplier modelFileSupplier, Collection<Supplier<? extends Block>> blocks) {
+    public void act(BlockStateSystemData<?> data, ItemModelSmith itemModelSmith, StateFunction<T> actor, ModelFileSupplier modelFileSupplier, Collection<Supplier<? extends Block>> blocks) {
         for (Supplier<? extends Block> block : blocks) {
             tryAct(data, itemModelSmith, block, (b, p) -> stateSupplier.act(b, p, actor, modelFileSupplier));
         }

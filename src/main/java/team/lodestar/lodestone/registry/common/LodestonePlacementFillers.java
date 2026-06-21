@@ -4,8 +4,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import team.lodestar.lodestone.systems.worldgen.filter.ChancePlacementFilter;
-import team.lodestar.lodestone.systems.worldgen.filter.DimensionPlacementFilter;
+import team.lodestar.lodestone.modules.toolkit.worldgen.filter.ChancePlacementFilter;
+import team.lodestar.lodestone.modules.toolkit.worldgen.filter.DimensionPlacementFilter;
 
 import static team.lodestar.lodestone.LodestoneLib.LODESTONE;
 

@@ -6,9 +6,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import team.lodestar.lodestone.LodestoneLib;
 import team.lodestar.lodestone.systems.asset.ReloadListener;
-import team.lodestar.lodestone.systems.model.IRenderableModel;
-import team.lodestar.lodestone.systems.model.geo.BedrockGeometryModel;
-import team.lodestar.lodestone.systems.model.obj.ObjModel;
+import team.lodestar.lodestone.modules.rendering.model.IRenderableModel;
+import team.lodestar.lodestone.modules.rendering.model.obj.ObjModel;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -13,6 +13,8 @@ import net.neoforged.neoforge.event.GameShuttingDownEvent;
 import team.lodestar.lodestone.LodestoneLib;
 import team.lodestar.lodestone.handlers.*;
 import team.lodestar.lodestone.handlers.screenparticle.ScreenParticleHandler;
+import team.lodestar.lodestone.modules.rendering.*;
+import team.lodestar.lodestone.modules.toolkit.worldevent.*;
 import team.lodestar.lodestone.registry.client.LodestoneModels;
 import team.lodestar.lodestone.systems.rendering.LodestoneRenderSystem;
 import team.lodestar.lodestone.systems.rendering.renderpass.RenderPassHandler;
@@ -48,12 +50,12 @@ public class ClientGameEvents {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void renderFog(ViewportEvent.RenderFog event) {
-        LodestoneRenderHandler.cacheFogData(event);
+        LodestoneRenderingSystem.cacheFogData(event);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void fogColors(ViewportEvent.ComputeFogColor event) {
-        LodestoneRenderHandler.cacheFogColors(event);
+        LodestoneRenderingSystem.cacheFogColors(event);
     }
 
     /**
@@ -70,7 +72,7 @@ public class ClientGameEvents {
         }
 
         if (event.getStage().equals(RenderLevelStageEvent.Stage.AFTER_WEATHER)) {
-            LodestoneRenderHandler.render();
+            LodestoneRenderingSystem.render();
         }
     }
 

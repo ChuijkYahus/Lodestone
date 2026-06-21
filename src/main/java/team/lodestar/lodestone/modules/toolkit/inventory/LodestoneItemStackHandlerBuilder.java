@@ -1,16 +1,15 @@
 package team.lodestar.lodestone.modules.toolkit.inventory;
 
 import net.minecraft.world.item.ItemStack;
-import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntity;
 
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class LodestoneItemStackHandlerBuilder {
 
     public final int slotCount;
     public int allowedItemSize = 64;
-    public Predicate<ItemStack> inputPredicate = s -> true;
+    public BiPredicate<LodestoneItemStackHandler, ItemStack> inputPredicate = (h, s) -> true;
     public Runnable onContentsChanged;
 
     protected LodestoneItemStackHandlerBuilder(int slotCount) {
@@ -23,6 +22,10 @@ public class LodestoneItemStackHandlerBuilder {
     }
 
     public LodestoneItemStackHandlerBuilder setInputPredicate(Predicate<ItemStack> inputPredicate) {
+        return setInputPredicate((h, s) -> inputPredicate.test(s));
+    }
+
+    public LodestoneItemStackHandlerBuilder setInputPredicate(BiPredicate<LodestoneItemStackHandler, ItemStack> inputPredicate) {
         this.inputPredicate = inputPredicate;
         return this;
     }

@@ -5,9 +5,9 @@ import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import team.lodestar.lodestone.LodestoneLib;
-import team.lodestar.lodestone.systems.particle.screen.ScreenParticleOptions;
-import team.lodestar.lodestone.systems.particle.screen.ScreenParticleType;
-import team.lodestar.lodestone.systems.particle.screen.LodestoneScreenParticleType;
+import team.lodestar.lodestone.modules.rendering.particle.old_particle_system.screen.ScreenParticleOptions;
+import team.lodestar.lodestone.modules.rendering.particle.old_particle_system.screen.ScreenParticleType;
+import team.lodestar.lodestone.modules.rendering.particle.old_particle_system.screen.LodestoneScreenParticleType;
 
 import java.util.ArrayList;
 
