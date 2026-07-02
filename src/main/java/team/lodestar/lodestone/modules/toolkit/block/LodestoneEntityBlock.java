@@ -120,12 +120,12 @@ public class LodestoneEntityBlock<T extends LodestoneBlockEntity> extends Block 
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean isMoving) {
         var blockEntity = getBlockEntity(level, pos);
         if (blockEntity != null) {
-            blockEntity.onNeighborUpdate(state, pos, fromPos);
+            blockEntity.onNeighborUpdate(state, pos, neighborPos);
         }
-        super.neighborChanged(state, level, pos, block, fromPos, isMoving);
+        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, isMoving);
     }
 
     @Override
