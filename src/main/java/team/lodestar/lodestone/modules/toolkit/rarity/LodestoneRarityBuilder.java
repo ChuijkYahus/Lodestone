@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Rarity;
 import net.neoforged.fml.common.asm.enumextension.EnumProxy;
 
+import java.awt.*;
 import java.util.function.UnaryOperator;
 
 /**
@@ -44,6 +45,11 @@ public class LodestoneRarityBuilder {
 
     public LodestoneRarityBuilder withColor(int color) {
         this.color = TextColor.fromRgb(color);
+        return this;
+    }
+
+    public LodestoneRarityBuilder withColor(Color color) {
+        this.color = TextColor.fromRgb(color.getRGB());
         return this;
     }
 
