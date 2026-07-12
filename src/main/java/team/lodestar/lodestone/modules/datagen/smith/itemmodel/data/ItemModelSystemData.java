@@ -39,13 +39,8 @@ public class ItemModelSystemData {
         return new DatagenItemQuery(items.stream().filter(clazz::isInstance));
     }
 
-    public DatagenItemQuery fromList(ItemLike... items) {
-        return new DatagenItemQuery(Arrays.stream(items).map(ItemLike::asItem));
-    }
-
-    @SafeVarargs
-    public final DatagenItemQuery fromList(Supplier<? extends Item>... items) {
-        return new DatagenItemQuery(Arrays.stream(items).map(Supplier::get));
+    public DatagenItemQuery allRemaining() {
+        return new DatagenItemQuery(items.stream());
     }
 
     public ItemModelSmithResult approveAct(ItemModelSmith smith, Item item) {

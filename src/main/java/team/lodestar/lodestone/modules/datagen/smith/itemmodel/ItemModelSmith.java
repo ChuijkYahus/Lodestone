@@ -69,7 +69,7 @@ public class ItemModelSmith {
     }
 
     public List<ItemModelSmithResult> act(ItemModelSystemData data, ItemLike... items) {
-        return act(data, d -> d.fromList(items));
+        return act(data, DatagenItemQuery.fromList(items));
     }
 
     public List<ItemModelSmithResult> act(ItemModelSystemData data, Class<? extends Item> itemClass) {
