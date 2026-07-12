@@ -34,9 +34,7 @@ public abstract class AbstractBlockStateSmith<T extends Block> {
     }
 
     protected final void makeItemModel(BlockStateSystemData<?> data, ItemModelSmith itemModelSmith, Block block) {
-        if (!itemModelSmith.equals(ItemModelSmithTypes.NO_DATAGEN)) {
-            itemModelSmith.act(data.provider().itemModelProvider, block::asItem);
-        }
+        itemModelSmith.act(data.provider().itemModelProvider, block.asItem());
     }
 
     public interface StateFunction<T extends Block> {
