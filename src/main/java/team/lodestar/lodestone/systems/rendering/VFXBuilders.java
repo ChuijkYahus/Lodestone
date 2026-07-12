@@ -232,6 +232,16 @@ public class VFXBuilders {
         }
 
         @Override
+        public ScreenVFXBuilder setColor(int rgb, int a) {
+            return (ScreenVFXBuilder) super.setColor(rgb, a);
+        }
+
+        @Override
+        public ScreenVFXBuilder setColor(int rgb, float a) {
+            return (ScreenVFXBuilder) super.setColor(rgb, a);
+        }
+
+        @Override
         public ScreenVFXBuilder setColor(Color color) {
             return (ScreenVFXBuilder) super.setColor(color);
         }
@@ -438,6 +448,16 @@ public class VFXBuilders {
         @Override
         public WorldVFXBuilder setColor(int rgba) {
             return (WorldVFXBuilder) super.setColor(rgba);
+        }
+
+        @Override
+        public WorldVFXBuilder setColor(int rgb, int a) {
+            return (WorldVFXBuilder) super.setColor(rgb, a);
+        }
+
+        @Override
+        public WorldVFXBuilder setColor(int rgb, float a) {
+            return (WorldVFXBuilder) super.setColor(rgb, a);
         }
 
         @Override
