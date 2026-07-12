@@ -1,5 +1,6 @@
 package team.lodestar.lodestone.modules.datagen.smith.itemmodel.data;
 
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -23,7 +24,7 @@ public class ItemModelSystemData {
 
     public ItemModelSystemData(LodestoneItemModelSystem provider, Collection<? extends Supplier<? extends Item>> items) {
         this.provider = provider;
-        this.items = items.stream().map(Supplier::get).collect(Collectors.toSet());
+        this.items = items.stream().map(Supplier::get).filter(i -> !(i instanceof BlockItem)).collect(Collectors.toSet());
     }
 
     public LodestoneItemModelSystem provider() {

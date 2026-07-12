@@ -72,11 +72,6 @@ public class ItemModelSmith {
         return act(data, d -> d.fromList(items));
     }
 
-    @SafeVarargs
-    public final List<ItemModelSmithResult> act(ItemModelSystemData data, Supplier<? extends Item>... items) {
-        return act(data, d -> d.fromList(items));
-    }
-
     public List<ItemModelSmithResult> act(ItemModelSystemData data, Class<? extends Item> itemClass) {
         return act(data, d -> d.ofClass(itemClass));
     }
