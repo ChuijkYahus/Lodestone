@@ -114,6 +114,15 @@ public class VFXBuilders {
         public AbstractVFXBuilder setColor(int rgba) {
             return setColor((rgba >> 16) & 0xFF, (rgba >> 8) & 0xFF, rgba & 0xFF, (rgba >> 24) & 0xFF);
         }
+
+        public AbstractVFXBuilder setColor(int rgb, int a) {
+            return setColor((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF, a);
+        }
+
+        public AbstractVFXBuilder setColor(int rgb, float a) {
+            return setColor((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF).setAlpha(a);
+        }
+
         public AbstractVFXBuilder setColor(Color color) {
             return setColor(color.getRed(), color.getGreen(), color.getBlue());
         }
