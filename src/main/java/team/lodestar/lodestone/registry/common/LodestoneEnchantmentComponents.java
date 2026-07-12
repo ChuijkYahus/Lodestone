@@ -41,8 +41,8 @@ public class LodestoneEnchantmentComponents {
                     .optional(LootContextParams.TOOL)
     );
 
-    public static ValueEffectSupplier valueEffect(DeferredRegister<DataComponentType<?>> registry,
-            String name) {
+    public static ValueEffectDataComponent valueEffect(DeferredRegister<DataComponentType<?>> registry,
+                                                       String name) {
         return registry.register(name, () ->
                 DataComponentType.<List<ConditionalEffect<EnchantmentValueEffect>>>builder()
                         .persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, LootContextParamSets.ENCHANTED_ITEM).listOf())
@@ -50,8 +50,8 @@ public class LodestoneEnchantmentComponents {
         )::get;
     }
 
-    public static EntityEffectSupplier entityEffect(DeferredRegister<DataComponentType<?>> registry,
-            String name) {
+    public static EntityEffectDataComponent entityEffect(DeferredRegister<DataComponentType<?>> registry,
+                                                         String name) {
         return registry.register(name, () ->
                 DataComponentType.<List<ConditionalEffect<EnchantmentEntityEffect>>>builder()
                         .persistent(ConditionalEffect.codec(EnchantmentEntityEffect.CODEC, ENCHANTED_ENTITY).listOf())
@@ -59,8 +59,8 @@ public class LodestoneEnchantmentComponents {
         )::get;
     }
 
-    public static TargetedEntityEffectSupplier targetedEffect(DeferredRegister<DataComponentType<?>> registry,
-            String name) {
+    public static TargetedEntityEffectDataComponent targetedEffect(DeferredRegister<DataComponentType<?>> registry,
+                                                                   String name) {
         return registry.register(name, () ->
                 DataComponentType.<List<TargetedConditionalEffect<EnchantmentEntityEffect>>>builder()
                         .persistent(TargetedConditionalEffect.codec(EnchantmentEntityEffect.CODEC, ENCHANTED_DAMAGE).listOf())
@@ -73,15 +73,15 @@ public class LodestoneEnchantmentComponents {
     }
 
 
-    public interface ValueEffectSupplier extends Supplier<DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>>> {
+    public interface ValueEffectDataComponent extends Supplier<DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>>> {
 
     }
 
-    public interface EntityEffectSupplier extends Supplier<DataComponentType<List<ConditionalEffect<EnchantmentEntityEffect>>>> {
+    public interface EntityEffectDataComponent extends Supplier<DataComponentType<List<ConditionalEffect<EnchantmentEntityEffect>>>> {
 
     }
 
-    public interface TargetedEntityEffectSupplier extends Supplier<DataComponentType<List<TargetedConditionalEffect<EnchantmentEntityEffect>>>> {
+    public interface TargetedEntityEffectDataComponent extends Supplier<DataComponentType<List<TargetedConditionalEffect<EnchantmentEntityEffect>>>> {
 
     }
 }

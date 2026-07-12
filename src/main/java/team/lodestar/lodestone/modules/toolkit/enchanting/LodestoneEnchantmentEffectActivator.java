@@ -1,6 +1,7 @@
 package team.lodestar.lodestone.modules.toolkit.enchanting;
 
 import com.mojang.datafixers.util.*;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.*;
 import net.minecraft.server.level.*;
 import net.minecraft.world.damagesource.*;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.mutable.*;
 import javax.annotation.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.function.Supplier;
 
 /**
  * A helper class to activate enchantment effects in a more convenient way than through the use of {@link EnchantmentHelper}.
@@ -51,6 +53,8 @@ public class LodestoneEnchantmentEffectActivator<T> {
     private ContextSupplier contextSupplier;
     private EnchantmentTarget targetLimit;
 
+    private LodestoneEnchantmentEffectIntercom.AttachedIntercom<?> intercom;
+
     private LodestoneEnchantmentEffectActivator(Either<DataComponentType<List<ConditionalEffect<T>>>, DataComponentType<List<TargetedConditionalEffect<T>>>> componentType, ServerLevel level) {
         this.componentType = componentType;
         this.level = level;
@@ -82,6 +86,11 @@ public class LodestoneEnchantmentEffectActivator<T> {
         return this;
     }
 
+    public <K extends LodestoneEnchantmentEffectIntercom.EnchantmentIntercomData> LodestoneEnchantmentEffectActivator<T> attachIntercom(LodestoneEnchantmentEffectIntercom<K> intercom, Supplier<K> data) {
+        this.intercom = intercom.attach(data);
+        return this;
+    }
+
     public void triggerEntityEffects(ItemStack enchantedItem, LivingEntity target) {
         triggerEntityEffects(enchantedItem, target, target);
     }
@@ -92,7 +101,7 @@ public class LodestoneEnchantmentEffectActivator<T> {
     }
 
     public void triggerEntityEffects(EnchantedItemInUse enchantedItem, Entity target) {
-        applyEffects((effect, entity, enchantmentLevel) -> {
+        applyEffectsOnItem((effect, entity, enchantmentLevel) -> {
             if (effect instanceof EnchantmentEntityEffect entityEffect) {
                 entityEffect.apply(level, enchantmentLevel, enchantedItem, entity, entity.position());
             }
@@ -120,7 +129,7 @@ public class LodestoneEnchantmentEffectActivator<T> {
      */
     public float modifyValue(ItemStack enchantedItem, Entity target, float baseValue) {
         MutableFloat value = new MutableFloat(baseValue);
-        applyEffects((effect, entity, enchantmentLevel) -> {
+        applyEffectsOnItem((effect, entity, enchantmentLevel) -> {
             if (effect instanceof EnchantmentValueEffect valueEffect) {
                 value.setValue(valueEffect.process(enchantmentLevel, level.getRandom(), value.getValue()));
             }
@@ -147,7 +156,7 @@ public class LodestoneEnchantmentEffectActivator<T> {
      */
     public float modifyValue(LivingEntity target, float baseValue) {
         MutableFloat value = new MutableFloat(baseValue);
-        applyEffects((effect, entity, enchantmentLevel) -> {
+        applyEffectsOnEquipment((effect, entity, enchantmentLevel) -> {
             if (effect instanceof EnchantmentValueEffect valueEffect) {
                 value.setValue(valueEffect.process(enchantmentLevel, level.getRandom(), value.getValue()));
             }
@@ -163,7 +172,7 @@ public class LodestoneEnchantmentEffectActivator<T> {
      */
     public boolean hasEffect(ItemStack enchantedItem, Entity target) {
         AtomicBoolean hasEffect = new AtomicBoolean(false);
-        applyEffects((effect, entity, enchantmentLevel) -> hasEffect.set(true), enchantedItem, target);
+        applyEffectsOnItem((effect, entity, enchantmentLevel) -> hasEffect.set(true), enchantedItem, target);
         return hasEffect.get();
     }
     /**
@@ -173,38 +182,14 @@ public class LodestoneEnchantmentEffectActivator<T> {
      * @param enchantedItem The enchanted item.
      * @param target        The entity to affect. In case of targeted effects, this ends up being the victim.
      */
-    public void applyEffects(EnchantmentEffectAcceptor<T> acceptor, ItemStack enchantedItem, Entity target) {
+    public void applyEffectsOnItem(EnchantmentEffectAcceptor<T> acceptor, ItemStack enchantedItem, Entity target) {
         if (contextSupplier == null) {
             throw new IllegalStateException("Context is not set");
         }
 
         EnchantmentHelper.runIterationOnItem(enchantedItem, ((enchantment, enchantmentLevel) -> {
-            LootContext context = contextSupplier.getContext(enchantedItem, enchantmentLevel);
-            componentType.ifLeft(componentType -> {
-                for (ConditionalEffect<T> effect : enchantment.value().getEffects(componentType)) {
-                    if (effect.matches(context)) {
-                        acceptor.apply(effect.effect(), target, enchantmentLevel);
-                    }
-                }
-            });
-            componentType.ifRight(componentType -> {
-                for (TargetedConditionalEffect<T> effect : enchantment.value().getEffects(componentType)) {
-                    if (targetLimit != null && effect.enchanted() != targetLimit) {
-                        continue;
-                    }
-                    if (effect.matches(context)) {
-                        DamageSource source = context.getParam(LootContextParams.DAMAGE_SOURCE);
-                        Entity entity = switch (effect.affected()) {
-                            case ATTACKER -> source.getEntity();
-                            case DAMAGING_ENTITY -> source.getDirectEntity();
-                            case VICTIM -> target;
-                        };
-                        if (entity != null) {
-                            acceptor.apply(effect.effect(), entity, enchantmentLevel);
-                        }
-                    }
-                }
-            });
+            var context = contextSupplier.getContext(enchantedItem, enchantmentLevel);
+            applyEffects(acceptor, target, enchantment, enchantmentLevel, context);
         }));
     }
 
@@ -214,39 +199,52 @@ public class LodestoneEnchantmentEffectActivator<T> {
      * @param acceptor The effect acceptor.
      * @param target   The entity to affect. In case of targeted effects, this ends up being the victim.
      */
-    public void applyEffects(EnchantmentEffectAcceptor<T> acceptor, LivingEntity target) {
+    public void applyEffectsOnEquipment(EnchantmentEffectAcceptor<T> acceptor, LivingEntity target) {
         if (contextSupplier == null) {
             throw new IllegalStateException("Context is not set");
         }
 
         EnchantmentHelper.runIterationOnEquipment(target, ((enchantment, enchantmentLevel, enchantedItem) -> {
-            LootContext context = contextSupplier.getContext(enchantedItem.itemStack(), enchantmentLevel);
-            componentType.ifLeft(componentType -> {
-                for (ConditionalEffect<T> effect : enchantment.value().getEffects(componentType)) {
-                    if (effect.matches(context)) {
-                        acceptor.apply(effect.effect(), target, enchantmentLevel);
-                    }
-                }
-            });
-            componentType.ifRight(componentType -> {
-                for (TargetedConditionalEffect<T> effect : enchantment.value().getEffects(componentType)) {
-                    if (targetLimit != null && effect.enchanted() != targetLimit) {
-                        continue;
-                    }
-                    if (effect.matches(context)) {
-                        DamageSource source = context.getParam(LootContextParams.DAMAGE_SOURCE);
-                        Entity entity = switch (effect.affected()) {
-                            case ATTACKER -> source.getEntity();
-                            case DAMAGING_ENTITY -> source.getDirectEntity();
-                            case VICTIM -> target;
-                        };
-                        if (entity != null) {
-                            acceptor.apply(effect.effect(), entity, enchantmentLevel);
-                        }
-                    }
-                }
-            });
+            var context = contextSupplier.getContext(enchantedItem.itemStack(), enchantmentLevel);
+            applyEffects(acceptor, target, enchantment, enchantmentLevel, context);
         }));
+    }
+
+    private void applyEffects(EnchantmentEffectAcceptor<T> acceptor, Entity target, Holder<Enchantment> enchantment, int enchantmentLevel, LootContext context) {
+        componentType.ifLeft(componentType -> {
+            for (ConditionalEffect<T> effect : enchantment.value().getEffects(componentType)) {
+                if (effect.matches(context)) {
+                    if (intercom != null) {
+                        intercom.write();
+                    }
+                    acceptor.apply(effect.effect(), target, enchantmentLevel);
+                }
+            }
+        });
+        componentType.ifRight(componentType -> {
+            for (TargetedConditionalEffect<T> effect : enchantment.value().getEffects(componentType)) {
+                if (targetLimit != null && effect.enchanted() != targetLimit) {
+                    continue;
+                }
+                if (effect.matches(context)) {
+                    DamageSource source = context.getParam(LootContextParams.DAMAGE_SOURCE);
+                    Entity entity = switch (effect.affected()) {
+                        case ATTACKER -> source.getEntity();
+                        case DAMAGING_ENTITY -> source.getDirectEntity();
+                        case VICTIM -> target;
+                    };
+                    if (entity != null) {
+                        if (intercom != null) {
+                            intercom.write();
+                        }
+                        acceptor.apply(effect.effect(), entity, enchantmentLevel);
+                    }
+                }
+            }
+        });
+        if (intercom != null) {
+            intercom.clear();
+        }
     }
 
     public static LootContext entityContext(ServerLevel level, int enchantmentLevel, Entity entity, Vec3 origin, @Nullable ItemStack tool) {
