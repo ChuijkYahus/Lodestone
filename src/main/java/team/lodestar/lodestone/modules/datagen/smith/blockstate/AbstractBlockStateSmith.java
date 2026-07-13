@@ -5,6 +5,7 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import team.lodestar.lodestone.modules.datagen.DatagenSystemCommons;
 import team.lodestar.lodestone.modules.datagen.ItemModelSmithTypes;
 import team.lodestar.lodestone.modules.datagen.providers.block.LodestoneBlockStateSystem;
+import team.lodestar.lodestone.modules.datagen.smith.itemmodel.EmptyItemModelSmith;
 import team.lodestar.lodestone.modules.datagen.smith.itemmodel.ItemModelSmith;
 
 import java.util.function.BiConsumer;
@@ -34,6 +35,10 @@ public abstract class AbstractBlockStateSmith<T extends Block> {
     }
 
     protected final void makeItemModel(BlockStateSystemData<?> data, ItemModelSmith itemModelSmith, Block block) {
+        if (itemModelSmith instanceof EmptyItemModelSmith) {
+            //TODO: The .act() call here should go through the item model system data thing
+            return;
+        }
         itemModelSmith.act(data.provider().itemModelProvider, block.asItem());
     }
 
