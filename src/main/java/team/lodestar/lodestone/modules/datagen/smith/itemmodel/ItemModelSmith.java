@@ -4,12 +4,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
+import org.jetbrains.annotations.Nullable;
 import team.lodestar.lodestone.modules.datagen.providers.item.LodestoneItemModelSystem;
 import team.lodestar.lodestone.modules.datagen.smith.itemmodel.data.DatagenItemQuery;
 import team.lodestar.lodestone.modules.datagen.smith.itemmodel.data.ItemModelSystemData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -83,12 +85,16 @@ public class ItemModelSmith {
     public List<ItemModelSmithResult> act(ItemModelSystemData data, DatagenItemQuery queried) {
         var result = new ArrayList<ItemModelSmithResult>();
         for (Item item : queried.getItems()) {
-            result.add(act(data, item));
+            var entry = act(data, item);
+            if (entry.isEmpty()) {
+                continue;
+            }
+            result.add(entry.get());
         }
         return result;
     }
 
-    public final ItemModelSmithResult act(ItemModelSystemData data, Item item) {
+    public final Optional<ItemModelSmithResult> act(ItemModelSystemData data, Item item) {
         return data.approveAct(this, item);
     }
 

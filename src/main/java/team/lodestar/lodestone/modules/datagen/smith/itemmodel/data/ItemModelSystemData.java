@@ -4,12 +4,15 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jetbrains.annotations.Nullable;
 import team.lodestar.lodestone.modules.datagen.providers.item.LodestoneItemModelSystem;
+import team.lodestar.lodestone.modules.datagen.smith.itemmodel.EmptyItemModelSmith;
 import team.lodestar.lodestone.modules.datagen.smith.itemmodel.ItemModelSmith;
 import team.lodestar.lodestone.modules.datagen.smith.itemmodel.ItemModelSmithResult;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -43,9 +46,12 @@ public class ItemModelSystemData {
         return new DatagenItemQuery(items.stream());
     }
 
-    public ItemModelSmithResult approveAct(ItemModelSmith smith, Item item) {
+    public Optional<ItemModelSmithResult> approveAct(ItemModelSmith smith, Item item) {
+        if (smith instanceof EmptyItemModelSmith) {
+            return Optional.empty();
+        }
         var result = smith.act(provider, item);
         items.remove(item);
-        return result;
+        return Optional.of(result);
     }
 }
