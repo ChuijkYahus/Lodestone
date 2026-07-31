@@ -2,17 +2,17 @@ package team.lodestar.lodestone.registry.client;
 
 import net.minecraft.resources.ResourceLocation;
 import team.lodestar.lodestone.LodestoneLib;
-import team.lodestar.lodestone.modules.rendering.particle.component.types.attractor.AttractorConfig;
-import team.lodestar.lodestone.modules.rendering.particle.component.types.attractor.AttractorStorage;
-import team.lodestar.lodestone.modules.rendering.particle.component.types.boids.BoidsConfig;
-import team.lodestar.lodestone.modules.rendering.particle.component.types.boids.BoidsStorage;
-import team.lodestar.lodestone.modules.rendering.particle.component.types.scale.ScaleConfig;
-import team.lodestar.lodestone.modules.rendering.particle.component.types.scale.ScaleStorage;
-import team.lodestar.lodestone.modules.rendering.particle.component.types.spin.*;
-import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticlePhase;
-import team.lodestar.lodestone.modules.rendering.particle.component.ParticleComponentType;
-import team.lodestar.lodestone.modules.rendering.particle.component.types.color.ColorConfig;
-import team.lodestar.lodestone.modules.rendering.particle.component.types.color.ColorStorage;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.component.types.attractor.AttractorConfig;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.component.types.attractor.AttractorStorage;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.component.types.boids.BoidsConfig;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.component.types.boids.BoidsStorage;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.component.types.scale.ScaleConfig;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.component.types.scale.ScaleStorage;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.component.types.spin.*;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.runtime.ParticlePhase;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.component.ParticleComponentType;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.component.types.color.ColorConfig;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.component.types.color.ColorStorage;
 
 import java.util.*;
 
