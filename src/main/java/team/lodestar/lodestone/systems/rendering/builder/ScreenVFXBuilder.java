@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.function.Supplier;
@@ -106,5 +107,115 @@ public class ScreenVFXBuilder extends AbstractVFXBuilder {
             builder = null;
         }
         return this;
+    }
+
+    @Override
+    public ScreenVFXBuilder setFormat(VertexFormat format) {
+        return (ScreenVFXBuilder) super.setFormat(format);
+    }
+
+    @Override
+    public ScreenVFXBuilder setColor(int rgba) {
+        return (ScreenVFXBuilder) super.setColor(rgba);
+    }
+
+    @Override
+    public ScreenVFXBuilder setColor(int rgb, int a) {
+        return (ScreenVFXBuilder) super.setColor(rgb, a);
+    }
+
+    @Override
+    public ScreenVFXBuilder setColor(int rgb, float a) {
+        return (ScreenVFXBuilder) super.setColor(rgb, a);
+    }
+
+    @Override
+    public ScreenVFXBuilder setColor(Color color) {
+        return (ScreenVFXBuilder) super.setColor(color);
+    }
+
+    @Override
+    public ScreenVFXBuilder setColor(Color color, int a) {
+        return (ScreenVFXBuilder) super.setColor(color, a);
+    }
+
+    @Override
+    public ScreenVFXBuilder setColor(Color color, float a) {
+        return (ScreenVFXBuilder) super.setColor(color, a);
+    }
+
+    @Override
+    public ScreenVFXBuilder setColor(int r, int g, int b, int a) {
+        return (ScreenVFXBuilder) super.setColor(r, g, b, a);
+    }
+
+    @Override
+    public ScreenVFXBuilder setColor(float r, float g, float b, float a) {
+        return (ScreenVFXBuilder) super.setColor(r, g, b, a);
+    }
+
+    @Override
+    public ScreenVFXBuilder setColor(int r, int g, int b) {
+        return (ScreenVFXBuilder) super.setColor(r, g, b);
+    }
+
+    @Override
+    public ScreenVFXBuilder setColor(float r, float g, float b) {
+        return (ScreenVFXBuilder) super.setColor(r, g, b);
+    }
+
+    @Override
+    public ScreenVFXBuilder multiplyColor(float scalar) {
+        return (ScreenVFXBuilder) super.multiplyColor(scalar);
+    }
+
+    @Override
+    public ScreenVFXBuilder multiplyColor(float r, float g, float b) {
+        return (ScreenVFXBuilder) super.multiplyColor(r, g, b);
+    }
+
+    @Override
+    public ScreenVFXBuilder setAlpha(int a) {
+        return (ScreenVFXBuilder) super.setAlpha(a);
+    }
+
+    @Override
+    public ScreenVFXBuilder setAlpha(float a) {
+        return (ScreenVFXBuilder) super.setAlpha(a);
+    }
+
+    @Override
+    public ScreenVFXBuilder setUVWithWidth(float u, float v, float width, float height, float canvasSize) {
+        return (ScreenVFXBuilder) super.setUVWithWidth(u, v, width, height, canvasSize);
+    }
+
+    @Override
+    public ScreenVFXBuilder setUVWithWidth(float u, float v, float width, float height, float canvasSizeX, float canvasSizeY) {
+        return (ScreenVFXBuilder) super.setUVWithWidth(u, v, width, height, canvasSizeX, canvasSizeY);
+    }
+
+    @Override
+    public ScreenVFXBuilder setUVWithWidth(float u, float v, float width, float height) {
+        return (ScreenVFXBuilder) super.setUVWithWidth(u, v, width, height);
+    }
+
+    @Override
+    public ScreenVFXBuilder setUV(float u0, float v0, float u1, float v1, float canvasSize) {
+        return (ScreenVFXBuilder) super.setUV(u0, v0, u1, v1, canvasSize);
+    }
+
+    @Override
+    public ScreenVFXBuilder setUV(float u0, float v0, float u1, float v1, float canvasSizeX, float canvasSizeY) {
+        return (ScreenVFXBuilder) super.setUV(u0, v0, u1, v1, canvasSizeX, canvasSizeY);
+    }
+
+    @Override
+    public ScreenVFXBuilder setUV(float u0, float v0, float u1, float v1) {
+        return (ScreenVFXBuilder) super.setUV(u0, v0, u1, v1);
+    }
+
+    @Override
+    public ScreenVFXBuilder setNormal(Vector3f normal) {
+        return (ScreenVFXBuilder) super.setNormal(normal);
     }
 }
