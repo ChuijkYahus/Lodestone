@@ -60,7 +60,11 @@ public class SoundPlayer {
     }
 
     public SoundPlayer play(Entity entity) {
-        return play(entity.level(), entity.position().add(0, entity.getBbHeight(), 0), entity.getSoundSource());
+        return play(entity, entity.getSoundSource());
+    }
+
+    public SoundPlayer play(Entity entity, SoundSource source) {
+        return play(entity.level(), entity.position().add(0, entity.getBbHeight(), 0), source);
     }
 
     public SoundPlayer play(Level level, BlockPos position, SoundSource source) {
