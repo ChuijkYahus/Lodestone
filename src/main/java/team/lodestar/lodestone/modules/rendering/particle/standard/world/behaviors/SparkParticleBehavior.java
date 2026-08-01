@@ -5,7 +5,8 @@ import net.minecraft.client.*;
 import net.minecraft.util.*;
 import net.minecraft.world.phys.*;
 import team.lodestar.lodestone.modules.rendering.particle.standard.world.*;
-import team.lodestar.lodestone.systems.rendering.*;
+import team.lodestar.lodestone.systems.rendering.builder.VFXBuilders;
+import team.lodestar.lodestone.systems.rendering.builder.WorldVFXBuilder;
 
 /**
  * A particle behavior, renders as a moving spark that follows the velocity of the particle.
@@ -13,7 +14,7 @@ import team.lodestar.lodestone.systems.rendering.*;
  */
 public class SparkParticleBehavior implements LodestoneParticleBehavior {
 
-    private static final VFXBuilders.WorldVFXBuilder SPARK_BUILDER = VFXBuilders.createWorld().setFormat(DefaultVertexFormat.PARTICLE);
+    private static final WorldVFXBuilder SPARK_BUILDER = VFXBuilders.createWorld().setFormat(DefaultVertexFormat.PARTICLE);
 
     public static final Vec3 UP = new Vec3(0, 1, 0);
     public static final Vec3 DOWN = new Vec3(0, -1, 0);

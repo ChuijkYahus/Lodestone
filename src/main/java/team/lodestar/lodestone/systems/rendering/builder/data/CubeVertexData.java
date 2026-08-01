@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.systems.rendering.cube;
+package team.lodestar.lodestone.systems.rendering.builder.data;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
