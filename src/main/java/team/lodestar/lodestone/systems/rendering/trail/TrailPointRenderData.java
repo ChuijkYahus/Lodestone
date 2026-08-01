@@ -26,13 +26,13 @@ public class TrailPointRenderData {
     }
 
     public void renderStart(VertexConsumer vertexConsumer, WorldVFXBuilder builder, float u0, float v0, float u1) {
-        builder.getSupplier().placeVertex(vertexConsumer, builder, xp, yp, z, u0, v0);
-        builder.getSupplier().placeVertex(vertexConsumer, builder, xn, yn, z, u1, v0);
+        builder.vertex(vertexConsumer, xp, yp, z, u0, v0);
+        builder.vertex(vertexConsumer, xn, yn, z, u1, v0);
     }
 
     public void renderEnd(VertexConsumer vertexConsumer, WorldVFXBuilder builder, float u0, float u1, float v1) {
-        builder.getSupplier().placeVertex(vertexConsumer, builder, xn, yn, z, u1, v1);
-        builder.getSupplier().placeVertex(vertexConsumer, builder, xp, yp, z, u0, v1);
+        builder.vertex(vertexConsumer, xn, yn, z, u1, v1);
+        builder.vertex(vertexConsumer, xp, yp, z, u0, v1);
     }
 
     public void renderMid(VertexConsumer vertexConsumer, WorldVFXBuilder builder, float u0, float v0, float u1, float v1) {

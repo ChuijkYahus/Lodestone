@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import org.joml.Vector3f;
 import team.lodestar.lodestone.helpers.RenderHelper;
@@ -129,13 +130,17 @@ public abstract class AbstractVFXBuilder {
         return this;
     }
 
-    protected void vertex(VertexConsumer consumer, PoseStack.Pose pose, float x, float y, float z, float u, float v) {
+    public void vertex(VertexConsumer consumer, float x, float y, float z, float u, float v) {
+        vertex(consumer, null, x, y, z, u, v);
+    }
+
+    public void vertex(VertexConsumer consumer, @Nullable PoseStack.Pose pose, float x, float y, float z, float u, float v) {
         for (VertexFormatElement element : format.getElements()) {
             vertex(element, consumer, pose, x, y, z, u, v);
         }
     }
 
-    protected void vertex(VertexFormatElement element, VertexConsumer consumer, PoseStack.Pose pose, float x, float y, float z, float u, float v) {
+    private void vertex(VertexFormatElement element, VertexConsumer consumer, @Nullable PoseStack.Pose pose, float x, float y, float z, float u, float v) {
         switch (element.id()) {
             case 0 -> {
                 if (pose == null) {
@@ -160,20 +165,8 @@ public abstract class AbstractVFXBuilder {
                 }
             }
 
-
-
-
             default -> {
-                // TODO: handle more VertexFormatElements
             }
         }
-    }
-
-    public static Vector3f normal(PoseStack stack) {
-        return normal(stack.last().normal());
-    }
-
-    public static Vector3f normal(Matrix3f transform) {
-        return new Vector3f(0, 1, 0).mul(transform);
     }
 }
