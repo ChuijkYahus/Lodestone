@@ -2,6 +2,7 @@ package team.lodestar.lodestone.modules.toolkit.sound;
 
 import net.minecraft.core.*;
 import net.minecraft.sounds.*;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.*;
 import net.minecraft.world.phys.*;
@@ -46,6 +47,12 @@ public class SoundPlayer {
     public SoundPlayer pitch(double min, double max) {
         minPitch = min;
         maxPitch = max;
+        return this;
+    }
+
+    public SoundPlayer pitchVariance(double variance) {
+        minPitch = Math.max(minPitch - variance, 0);
+        maxPitch = Math.min(maxPitch + variance, 2);
         return this;
     }
 
