@@ -14,7 +14,7 @@ import team.lodestar.lodestone.modules.rendering.particle.standard.data.spin.*;
 import team.lodestar.lodestone.modules.rendering.particle.standard.render_types.*;
 import team.lodestar.lodestone.modules.rendering.particle.standard.world.behaviors.*;
 import team.lodestar.lodestone.modules.rendering.particle.standard.world.options.*;
-import team.lodestar.lodestone.systems.rendering.buffer.*;
+import team.lodestar.lodestone.systems.rendering.LodestoneRenderLayer;
 
 import javax.annotation.*;
 import java.awt.*;

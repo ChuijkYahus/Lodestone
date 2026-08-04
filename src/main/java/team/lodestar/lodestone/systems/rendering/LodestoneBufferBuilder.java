@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.systems.rendering.vertexconsumer;
+package team.lodestar.lodestone.systems.rendering;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.VertexConsumer;

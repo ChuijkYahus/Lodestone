@@ -1,7 +1,6 @@
 package team.lodestar.lodestone.systems.rendering.rendeertype;
 
 import team.lodestar.lodestone.registry.client.*;
-import team.lodestar.lodestone.systems.rendering.*;
 
 import java.util.*;
 import java.util.function.*;

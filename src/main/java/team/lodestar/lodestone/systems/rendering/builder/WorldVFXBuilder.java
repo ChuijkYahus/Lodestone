@@ -17,7 +17,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import team.lodestar.lodestone.helpers.RenderHelper;
 import team.lodestar.lodestone.modules.rendering.LodestoneRenderingSystem;
-import team.lodestar.lodestone.systems.rendering.buffer.LodestoneRenderLayer;
+import team.lodestar.lodestone.systems.rendering.LodestoneRenderLayer;
 import team.lodestar.lodestone.systems.rendering.builder.data.CubeVertexData;
 import team.lodestar.lodestone.systems.rendering.rendeertype.LodestoneRenderTypeBuilder;
 import team.lodestar.lodestone.systems.rendering.trail.TrailPoint;

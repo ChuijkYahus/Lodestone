@@ -1,13 +1,11 @@
-package team.lodestar.lodestone.systems.rendering;
+package team.lodestar.lodestone.systems.rendering.rendeertype;
 
 import com.mojang.blaze3d.systems.*;
 import com.mojang.blaze3d.vertex.*;
-import net.minecraft.client.*;
 import net.minecraft.client.renderer.*;
-import team.lodestar.lodestone.handlers.*;
 import team.lodestar.lodestone.registry.client.*;
 import team.lodestar.lodestone.registry.client.LodestoneRenderTypes.*;
-import team.lodestar.lodestone.systems.rendering.rendeertype.*;
+import team.lodestar.lodestone.systems.rendering.StateShards;
 
 import javax.annotation.*;
 import java.util.*;

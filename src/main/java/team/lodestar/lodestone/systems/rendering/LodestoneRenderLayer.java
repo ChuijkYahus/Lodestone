@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.systems.rendering.buffer;
+package team.lodestar.lodestone.systems.rendering;
 
 import team.lodestar.lodestone.modules.rendering.LodestoneRenderingSystem;
 

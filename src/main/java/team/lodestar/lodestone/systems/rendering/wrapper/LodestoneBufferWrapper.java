@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.systems.rendering.buffer;
+package team.lodestar.lodestone.systems.rendering.wrapper;
 
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.renderer.*;
