@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.systems.rendering.vertexconsumer;
+package team.lodestar.lodestone.systems.rendering.vertexconsumer.wrapper;
 
 import com.mojang.blaze3d.vertex.*;
 import org.jetbrains.annotations.*;
@@ -7,9 +7,17 @@ import org.jetbrains.annotations.*;
  * A {@link VertexConsumer} that forwards all calls to multiple other {@link VertexConsumer}s.
  * <p>Useful for rendering the same geometry to multiple buffers.</p>
  */
-public abstract class VertexConsumerWrapper implements VertexConsumer {
+public class VertexConsumerWrapper implements VertexConsumer {
 
-    public abstract VertexConsumer[] getWrappedConsumers();
+    protected final VertexConsumer[] wrapped;
+
+    public VertexConsumerWrapper(VertexConsumer... wrapped) {
+        this.wrapped = wrapped;
+    }
+
+    public VertexConsumer[] getWrappedConsumers() {
+        return wrapped;
+    }
 
     @Override
     public @NotNull VertexConsumer addVertex(float x, float y, float z) {
