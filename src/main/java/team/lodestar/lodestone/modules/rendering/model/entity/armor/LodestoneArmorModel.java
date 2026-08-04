@@ -80,7 +80,7 @@ public class LodestoneArmorModel extends HumanoidModel<LivingEntity> {
     @Override
     protected Iterable<ModelPart> bodyParts() {
         switch (slot) {
-            case BODY -> {
+            case CHEST -> {
                 return ImmutableList.of(bodyArmor, leftArmArmor, rightArmArmor);
             }
             case LEGS -> {
