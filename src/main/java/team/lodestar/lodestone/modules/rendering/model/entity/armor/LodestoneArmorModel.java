@@ -79,13 +79,18 @@ public class LodestoneArmorModel extends HumanoidModel<LivingEntity> {
 
     @Override
     protected Iterable<ModelPart> bodyParts() {
-        if (slot == EquipmentSlot.CHEST) {
-            return ImmutableList.of(bodyArmor, leftArmArmor, rightArmArmor);
-        } else if (slot == EquipmentSlot.LEGS) {
-            return ImmutableList.of(leftLegArmor, rightLegArmor, waistArmor);
-        } else if (slot == EquipmentSlot.FEET) {
-            return ImmutableList.of(leftFootArmor, rightFootArmor);
-        } else return ImmutableList.of();
+        switch (slot) {
+            case BODY -> {
+                return ImmutableList.of(bodyArmor, leftArmArmor, rightArmArmor);
+            }
+            case LEGS -> {
+                return ImmutableList.of(leftLegArmor, rightLegArmor, waistArmor);
+            }
+            case FEET -> {
+                return ImmutableList.of(leftFootArmor, rightFootArmor);
+            }
+        }
+        return ImmutableList.of();
     }
 
     public void copyFromDefault(HumanoidModel model) {
