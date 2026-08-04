@@ -69,7 +69,7 @@ public class LodestoneArmorModel extends HumanoidModel<LivingEntity> {
         PartDefinition left_legging = root.getChild("left_leg");
         PartDefinition right_foot = root.getChild("right_foot");
         PartDefinition left_foot = root.getChild("left_foot");
-        return modelBuilder.createArmorLayer(mesh, root, head, body, right_arm, left_arm, waist, right_legging, left_legging, right_foot, left_foot);
+        return modelBuilder.createArmorLayer(mesh, root, head, body, waist, right_arm, left_arm, right_legging, left_legging, right_foot, left_foot);
     }
 
     @Override
