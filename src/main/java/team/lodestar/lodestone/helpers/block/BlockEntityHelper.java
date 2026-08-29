@@ -3,6 +3,7 @@ package team.lodestar.lodestone.helpers.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.phys.AABB;
 
 import java.util.Collection;
@@ -10,6 +11,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static net.minecraft.core.SectionPos.blockToSectionCoord;
 
 /**
  * A collection of various helper methods related to block entities
@@ -156,7 +159,13 @@ public class BlockEntityHelper {
                         IntStream.iterate((int) Math.floor(bb.minZ), j -> j < Math.ceil(bb.maxZ) + 16, j -> j + 16)
                                 .boxed().flatMap(j -> {
                                     // get chunk access
-                                    ChunkAccess c = world.getChunk(new BlockPos(i, 0, j));
+                                    var x = blockToSectionCoord(i);
+                                    var z = blockToSectionCoord(j);
+                                    // try and get chunk
+                                    var c = world.getChunk(x, z, ChunkStatus.FULL, false);
+                                    if (c == null) {
+                                        return Stream.empty();
+                                    }
                                     // get block entities in chunk
                                     return c.getBlockEntitiesPos().stream();
                                 })

@@ -116,6 +116,16 @@ public class BlockStateSmithTypes {
     });
 
     /**
+     * Generates a carpet blockstate.
+     */
+    public static BlockStateSmith<Block> CARPET_BLOCK = new BlockStateSmith<>(Block.class, (block, provider) -> {
+        var name = provider.getBlockName(block);
+        var textureName = provider.getBlockTexture(name.replace("_carpet", ""));
+        var model = provider.models().carpet(name, textureName);
+        provider.simpleBlock(block, model);
+    });
+
+    /**
      * Generates a redstone lamp based block model and state.
      */
     public static BlockStateSmith<Block> LAMP_BLOCK = new BlockStateSmith<>(Block.class, (block, provider) -> {
