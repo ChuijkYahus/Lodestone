@@ -6,12 +6,12 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
-import team.lodestar.lodestone.modules.rendering.particle.builder.ParticleSpec;
-import team.lodestar.lodestone.modules.rendering.particle.pool.ParticlePool;
-import team.lodestar.lodestone.modules.rendering.particle.pool.ParticlePoolGroup;
-import team.lodestar.lodestone.modules.rendering.particle.pool.ParticlePoolKey;
-import team.lodestar.lodestone.modules.rendering.particle.runtime.ParticleSpawnContext;
-import team.lodestar.lodestone.modules.rendering.particle.visual.*;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.builder.ParticleSpec;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.pool.ParticlePool;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.pool.ParticlePoolGroup;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.pool.ParticlePoolKey;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.runtime.ParticleSpawnContext;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.visual.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

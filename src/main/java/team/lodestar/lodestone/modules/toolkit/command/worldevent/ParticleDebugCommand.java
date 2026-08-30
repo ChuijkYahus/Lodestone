@@ -8,8 +8,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.*;
 import team.lodestar.lodestone.modules.rendering.handlers.ParticleHandler;
-import team.lodestar.lodestone.modules.rendering.particle.pool.ParticlePool;
-import team.lodestar.lodestone.modules.rendering.particle.pool.ParticlePoolGroup;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.pool.ParticlePool;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.pool.ParticlePoolGroup;
 
 import java.util.ArrayList;
 import java.util.List;

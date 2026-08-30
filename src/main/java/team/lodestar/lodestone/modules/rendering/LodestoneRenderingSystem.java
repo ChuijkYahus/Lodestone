@@ -10,8 +10,8 @@ import net.neoforged.neoforge.client.event.*;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL30C;
 import team.lodestar.lodestone.helpers.RenderHelper;
-import team.lodestar.lodestone.systems.rendering.*;
-import team.lodestar.lodestone.systems.rendering.buffer.LodestoneRenderLayer;
+import team.lodestar.lodestone.systems.rendering.LodestoneRenderLayer;
+import team.lodestar.lodestone.systems.rendering.rendeertype.LodestoneRenderType;
 import team.lodestar.lodestone.systems.rendering.shader.ExtendedShaderInstance;
 
 import java.util.*;

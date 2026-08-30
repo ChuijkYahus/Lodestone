@@ -49,7 +49,13 @@ vec4 projectionUVFromLocalSpace(vec4 position) {
 
 // Lumitransparent color transformation
 vec4 transformColor(vec4 initialColor, float lumiTransparent, vec4 vertexColor, vec4 colorModulator) {
-    initialColor = lumiTransparent == 1. ? vec4(initialColor.xyz, (0.21 * initialColor.r + 0.71 * initialColor.g + 0.07 * initialColor.b)) : initialColor;
+    if (lumiTransparent == 1.) {
+        if (initialColor.a > 0.) {
+            float lumi = 0.21 * initialColor.r + 0.71 * initialColor.g + 0.07 * initialColor.b;
+            initialColor = vec4(initialColor.xyz, lumi);
+        }
+    }
+
     return initialColor * vertexColor * colorModulator;
 }
 

@@ -1,8 +1,10 @@
 package team.lodestar.lodestone.modules.toolkit.item;
 
+import net.minecraft.core.*;
 import net.minecraft.core.component.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.*;
+import net.minecraft.world.entity.ai.attributes.*;
 import net.minecraft.world.flag.*;
 import net.minecraft.world.food.*;
 import net.minecraft.world.item.*;
@@ -57,7 +59,7 @@ public class LodestoneItemProperties extends Item.Properties {
                 builder.add(entry.attribute(), entry.modifier(), entry.slot());
             }
             for (ItemAttributeModifiers.Entry entry : attributes.modifiers()) {
-                builder.add(entry.attribute(), entry.modifier(), entry.slot());
+                builder.add(entry.attribute().getDelegate(), entry.modifier(), entry.slot());
             }
             return attributes(builder.build());
         }

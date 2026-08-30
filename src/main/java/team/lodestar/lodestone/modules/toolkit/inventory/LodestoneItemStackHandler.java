@@ -214,7 +214,9 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
         var builder = InventoryInteractionResult.extract()
                 .internalChange(InventoryItemStackTransaction.updated(toExtract, leftover, slot))
                 .externalChange(InventoryItemStackTransaction.updated(ItemStack.EMPTY, real, slot));
-        return processResult(level, builder);
+        var result = builder.build();
+        processResult(level, result);
+        return result;
     }
 
     public InventoryInteractionResult insertItem(ServerLevel level, ItemStack stack) {
@@ -245,10 +247,12 @@ public class LodestoneItemStackHandler extends ItemStackHandler {
             }
         }
         builder.externalChange(InventoryItemStackTransaction.updated(untouched, stack, -1));
-        return processResult(level, builder);
+        var result = builder.build();
+        processResult(level, result);
+        return result;
     }
 
-    protected InventoryInteractionResult processResult(ServerLevel level, InventoryInteractionResultBuilder result) {
-        return result.build();
+    protected void processResult(ServerLevel level, InventoryInteractionResult result) {
+
     }
 }

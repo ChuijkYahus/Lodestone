@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import team.lodestar.lodestone.modules.rendering.particle.old_particle_system.data.color.*;
+import team.lodestar.lodestone.modules.rendering.particle.standard.data.color.*;
 
 import java.util.Collections;
 import java.util.List;

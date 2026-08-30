@@ -2,6 +2,7 @@ package team.lodestar.lodestone.modules.toolkit.sound;
 
 import net.minecraft.core.*;
 import net.minecraft.sounds.*;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.*;
 import net.minecraft.world.phys.*;
@@ -15,8 +16,8 @@ import java.util.function.*;
  */
 public class SoundPlayer {
 
-    private float minPitch = 1, maxPitch = 1;
-    private float minVolume = 1, maxVolume = 1;
+    private double minPitch = 1, maxPitch = 1;
+    private double minVolume = 1, maxVolume = 1;
     private final SoundEvent soundEvent;
 
     public static SoundPlayer create(DeferredHolder<SoundEvent, SoundEvent> soundEvent) {
@@ -39,28 +40,38 @@ public class SoundPlayer {
         this.soundEvent = soundEvent;
     }
 
-    public SoundPlayer pitch(float pitch) {
+    public SoundPlayer pitch(double pitch) {
         return pitch(pitch, pitch);
     }
 
-    public SoundPlayer pitch(float min, float max) {
+    public SoundPlayer pitch(double min, double max) {
         minPitch = min;
         maxPitch = max;
         return this;
     }
 
-    public SoundPlayer volume(float volume) {
+    public SoundPlayer pitchVariance(double variance) {
+        minPitch = Math.max(minPitch - variance, 0);
+        maxPitch = Math.min(maxPitch + variance, 2);
+        return this;
+    }
+
+    public SoundPlayer volume(double volume) {
         return volume(volume, volume);
     }
 
-    public SoundPlayer volume(float min, float max) {
+    public SoundPlayer volume(double min, double max) {
         minVolume = min;
         maxVolume = max;
         return this;
     }
 
     public SoundPlayer play(Entity entity) {
-        return play(entity.level(), entity.position().add(0, entity.getBbHeight(), 0), entity.getSoundSource());
+        return play(entity, entity.getSoundSource());
+    }
+
+    public SoundPlayer play(Entity entity, SoundSource source) {
+        return play(entity.level(), entity.position().add(0, entity.getBbHeight(), 0), source);
     }
 
     public SoundPlayer play(Level level, BlockPos position, SoundSource source) {
@@ -69,8 +80,8 @@ public class SoundPlayer {
 
     public SoundPlayer play(Level level, Position position, SoundSource source) {
         var random = level.random;
-        float volume = Easing.SINE_IN_OUT.asWeighedRandom(random, minVolume, maxVolume);
-        float pitch = Easing.SINE_IN_OUT.asWeighedRandom(random, minPitch, maxPitch);
+        float volume = (float) Easing.SINE_IN_OUT.asWeighedRandom(random, minVolume, maxVolume);
+        float pitch = (float) Easing.SINE_IN_OUT.asWeighedRandom(random, minPitch, maxPitch);
         level.playSound(null, position.x(), position.y(), position.z(), soundEvent, source, volume, pitch);
         return this;
     }

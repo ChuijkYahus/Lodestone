@@ -2,15 +2,15 @@ package team.lodestar.lodestone.registry.client;
 
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import team.lodestar.lodestone.LodestoneLib;
-import team.lodestar.lodestone.modules.rendering.particle.visual.ParticleVisualType;
-import team.lodestar.lodestone.modules.rendering.particle.visual.types.billboard.BillboardVisualConfig;
-import team.lodestar.lodestone.modules.rendering.particle.visual.types.billboard.BillboardVisualRuntime;
-import team.lodestar.lodestone.modules.rendering.particle.visual.types.quad.QuadVisualConfig;
-import team.lodestar.lodestone.modules.rendering.particle.visual.types.mesh.MeshVisualConfig;
-import team.lodestar.lodestone.modules.rendering.particle.visual.types.mesh.MeshVisualRuntime;
-import team.lodestar.lodestone.modules.rendering.particle.visual.types.quad.QuadVisualRuntime;
-import team.lodestar.lodestone.modules.rendering.particle.visual.types.trail.TrailVisualConfig;
-import team.lodestar.lodestone.modules.rendering.particle.visual.types.trail.TrailVisualRuntime;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.visual.ParticleVisualType;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.visual.types.billboard.BillboardVisualConfig;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.visual.types.billboard.BillboardVisualRuntime;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.visual.types.quad.QuadVisualConfig;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.visual.types.mesh.MeshVisualConfig;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.visual.types.mesh.MeshVisualRuntime;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.visual.types.quad.QuadVisualRuntime;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.visual.types.trail.TrailVisualConfig;
+import team.lodestar.lodestone.modules.rendering.particle.pooled.visual.types.trail.TrailVisualRuntime;
 
 import java.util.*;
 

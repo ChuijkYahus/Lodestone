@@ -2,13 +2,18 @@ package team.lodestar.lodestone.modules.datagen.smith.itemmodel;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
+import org.jetbrains.annotations.Nullable;
 import team.lodestar.lodestone.modules.datagen.providers.item.LodestoneItemModelSystem;
+import team.lodestar.lodestone.modules.datagen.smith.itemmodel.data.DatagenItemQuery;
+import team.lodestar.lodestone.modules.datagen.smith.itemmodel.data.ItemModelSystemData;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
@@ -65,27 +70,35 @@ public class ItemModelSmith {
         return new ConfiguredItemModelSmith(modelSupplier);
     }
 
-    @SafeVarargs
-    public final List<ItemModelSmithResult> act(ItemModelSystemData data, Supplier<? extends Item>... items) {
-        return act(data, List.of(items));
+    public List<ItemModelSmithResult> act(ItemModelSystemData data, ItemLike... items) {
+        return act(data, DatagenItemQuery.fromList(items));
     }
 
-    public final List<ItemModelSmithResult> act(ItemModelSystemData data, Collection<Supplier<? extends Item>> items) {
-        var copy = new ArrayList<>(items);
+    public List<ItemModelSmithResult> act(ItemModelSystemData data, Class<? extends Item> itemClass) {
+        return act(data, d -> d.ofClass(itemClass));
+    }
+
+    public List<ItemModelSmithResult> act(ItemModelSystemData data, Function<ItemModelSystemData, DatagenItemQuery> queried) {
+        return act(data, queried.apply(data));
+    }
+
+    public List<ItemModelSmithResult> act(ItemModelSystemData data, DatagenItemQuery queried) {
         var result = new ArrayList<ItemModelSmithResult>();
-        for (Supplier<? extends Item> item : copy) {
-            result.add(act(data, item));
+        for (Item item : queried.getItems()) {
+            var entry = act(data, item);
+            if (entry.isEmpty()) {
+                continue;
+            }
+            result.add(entry.get());
         }
         return result;
     }
 
-    public ItemModelSmithResult act(ItemModelSystemData data, Supplier<? extends Item> itemSupplier) {
-        data.consumer().accept(itemSupplier);
-        return act(data.provider(), itemSupplier);
+    public final Optional<ItemModelSmithResult> act(ItemModelSystemData data, Item item) {
+        return data.approveAct(this, item);
     }
 
-    public ItemModelSmithResult act(LodestoneItemModelSystem provider, Supplier<? extends Item> itemSupplier) {
-        var item = itemSupplier.get();
+    public final ItemModelSmithResult act(LodestoneItemModelSystem provider, Item item) {
         preDatagen(provider, item);
         var model = modelSupplier.act(item, provider);
         var result = new ItemModelSmithResult(provider, item, model);
